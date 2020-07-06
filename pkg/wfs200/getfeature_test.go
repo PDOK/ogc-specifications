@@ -95,11 +95,11 @@ func TestParseBodyGetFeature(t *testing.T) {
 		// Not a XML document
 		3: {Body: []byte(`GetFeature`),
 			Result: GetFeature{XMLName: xml.Name{Local: "GetFeature"}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}},
-			Error:  &WFSException{ErrorMessage: "Could not process XML, is it XML?"},
+			Error:  &WFSException{ExceptionText: "Could not process XML, is it XML?"},
 		},
 		// No document
 		4: {Result: GetFeature{XMLName: xml.Name{Local: "GetFeature"}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}},
-			Error: &WFSException{ErrorMessage: "Could not process XML, is it XML?"},
+			Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"},
 		},
 	}
 
@@ -475,7 +475,7 @@ func TestValidate(t *testing.T) {
 		1: {gf: GetFeature{
 			XMLName:     xml.Name{Local: `GetFeature`},
 			BaseRequest: BaseRequest{Version: `unknown`, Service: Service}},
-			err: &ows.OWSException{ErrorMessage: `unknown is an invalid version number`},
+			err: &ows.OWSException{ExceptionText: `unknown is an invalid version number`},
 		},
 	}
 	for k, v := range tests {

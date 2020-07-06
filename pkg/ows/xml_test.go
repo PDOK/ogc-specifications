@@ -2,23 +2,28 @@ package ows
 
 import (
 	"encoding/xml"
+	"errors"
 	"testing"
 )
 
 func TestUnMarshalXMLAttribute(t *testing.T) {
 	var tests = []struct {
-		xmlraw   string
-		expected XMLAttribute
+		xmlraw    string
+		expected  XMLAttribute
+		exception error
 	}{
 		0: {xmlraw: `<startelement attr="one"/>`, expected: XMLAttribute{xml.Attr{Name: xml.Name{Local: "attr"}, Value: "one"}}},
 		1: {xmlraw: `<startelement attr="two" attr="three"/>`, expected: XMLAttribute{xml.Attr{Name: xml.Name{Local: "attr"}, Value: "two"}, xml.Attr{Name: xml.Name{Local: "attr"}, Value: "three"}}},
 		2: {xmlraw: `<startelement b:attr="two" b:item="three"/>`, expected: XMLAttribute{xml.Attr{Name: xml.Name{Space: "b", Local: "attr"}, Value: "two"}, xml.Attr{Name: xml.Name{Space: "b", Local: "item"}, Value: "three"}}},
+		3: {xmlraw: `<startelement attr="one"`, exception: errors.New("XML syntax error on line 1: unexpected EOF")},
 	}
 
 	for k, a := range tests {
 		var xmlattr XMLAttribute
 		if err := xml.Unmarshal([]byte(a.xmlraw), &xmlattr); err != nil {
-			t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
+			if err.Error() != a.exception.Error() {
+				t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
+			}
 		}
 
 		if len(a.expected) != len(xmlattr) {
@@ -44,6 +49,7 @@ func TestUnMarshalXMLBoundingBox(t *testing.T) {
 	var tests = []struct {
 		xmlraw      string
 		boundingbox BoundingBox
+		exception   error
 	}{
 		// BoundingBox from GetMap schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
 		0: {xmlraw: `<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">
@@ -68,14 +74,23 @@ func TestUnMarshalXMLBoundingBox(t *testing.T) {
 			<ows:UpperCorner/>
 			</BoundingBox>`,
 			boundingbox: BoundingBox{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", Dimensions: "2"}},
+		5: {xmlraw: `<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326" dimensions="2">
+			<ows:LowerCorner>Not a coord</ows:LowerCorner>
+			<ows:UpperCorner/>
+			corrupt xml"`,
+			exception: errors.New("XML syntax error on line 4: unexpected EOF")},
 	}
 	for k, a := range tests {
 		var bbox BoundingBox
 		if err := xml.Unmarshal([]byte(a.xmlraw), &bbox); err != nil {
-			t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
-		}
-		if a.boundingbox != bbox {
-			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.boundingbox, bbox)
+			if err.Error() != a.exception.Error() {
+				t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
+			}
+
+		} else {
+			if a.boundingbox != bbox {
+				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.boundingbox, bbox)
+			}
 		}
 	}
 }

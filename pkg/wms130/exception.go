@@ -10,16 +10,16 @@ import (
 // WMSServiceExceptionReport struct
 // TODO exception restucturing
 type WMSServiceExceptionReport struct {
-	XMLName          xml.Name      `xml:"ServiceExceptionReport"`
-	Version          string        `xml:"version,attr"`
-	Xmlns            string        `xml:"xmlns,attr"`
-	Xsi              string        `xml:"xsi,attr"`
-	SchemaLocation   string        `xml:"schemaLocation,attr"`
-	ServiceException ows.Exception `xml:"ServiceException"`
+	XMLName          xml.Name        `xml:"ServiceExceptionReport"`
+	Version          string          `xml:"version,attr"`
+	Xmlns            string          `xml:"xmlns,attr"`
+	Xsi              string          `xml:"xsi,attr"`
+	SchemaLocation   string          `xml:"schemaLocation,attr"`
+	ServiceException []ows.Exception `xml:"ServiceException"`
 }
 
 // Report returns WMSServiceExceptionReport
-func (r WMSServiceExceptionReport) Report(err ows.Exception) []byte {
+func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
 	r.ServiceException = err
 	si, _ := xml.MarshalIndent(r, "", " ")
 	return append([]byte(xml.Header), si...)
@@ -27,14 +27,14 @@ func (r WMSServiceExceptionReport) Report(err ows.Exception) []byte {
 
 // WMSException grouping the error message variables together
 type WMSException struct {
-	ErrorMessage string `xml:",chardata"`
-	ErrorCode    string `xml:"code,attr"`
-	LocatorCode  string `xml:"locator,attr"`
+	ExceptionText string `xml:",chardata"`
+	ErrorCode     string `xml:"code,attr"`
+	LocatorCode   string `xml:"locator,attr"`
 }
 
-// Error returns available ErrorMessage
+// Error returns available ExceptionText
 func (e WMSException) Error() string {
-	return e.ErrorMessage
+	return e.ExceptionText
 }
 
 // Code returns available ErrorCode
@@ -58,8 +58,8 @@ func InvalidFormat() WMSException {
 func InvalidCRS(s ...string) WMSException {
 	if len(s) == 1 {
 		return WMSException{
-			ErrorMessage: s[0],
-			ErrorCode:    `InvalidCRS`,
+			ExceptionText: s[0],
+			ErrorCode:     `InvalidCRS`,
 		}
 	}
 	return WMSException{
@@ -70,15 +70,15 @@ func InvalidCRS(s ...string) WMSException {
 // LayerNotDefined exception
 func LayerNotDefined(undefinedlayer string) WMSException {
 	return WMSException{
-		ErrorMessage: fmt.Sprintf("The layer: %s is not known by the server", undefinedlayer),
-		ErrorCode:    `LayerNotDefined`,
+		ExceptionText: fmt.Sprintf("The layer: %s is not known by the server", undefinedlayer),
+		ErrorCode:     `LayerNotDefined`,
 	}
 }
 
 // StyleNotDefined exception
 func StyleNotDefined() WMSException {
 	return WMSException{
-		ErrorMessage: `There is a one-to-one correspondence between the values in the LAYERS parameter and the values in the STYLES parameter. 
+		ExceptionText: `There is a one-to-one correspondence between the values in the LAYERS parameter and the values in the STYLES parameter. 
 	Expecting an empty string for the STYLES like STYLES= or comma-separated list STYLES=,,, or using keyword default STYLES=default,default,...`,
 		ErrorCode: `StyleNotDefined`,
 	}

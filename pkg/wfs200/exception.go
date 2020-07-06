@@ -10,17 +10,17 @@ import (
 // WFSExceptionReport struct
 // TODO exception restucturing
 type WFSExceptionReport struct {
-	XMLName        xml.Name      `xml:"ExceptionReport"`
-	Ows            string        `xml:"xmlns:ows,attr"`
-	Xsi            string        `xml:"xmlns:xsi,attr"`
-	SchemaLocation string        `xml:"xsi:schemaLocation,attr"`
-	Version        string        `xml:"version,attr"`
-	Language       string        `xml:"xml:lang,attr"`
-	Exception      ows.Exception `xml:"Exception"`
+	XMLName        xml.Name        `xml:"ExceptionReport"`
+	Ows            string          `xml:"xmlns:ows,attr"`
+	Xsi            string          `xml:"xmlns:xsi,attr"`
+	SchemaLocation string          `xml:"xsi:schemaLocation,attr"`
+	Version        string          `xml:"version,attr"`
+	Language       string          `xml:"xml:lang,attr"`
+	Exception      []ows.Exception `xml:"Exception"`
 }
 
 // Report returns WFSExceptionReport
-func (r WFSExceptionReport) Report(err ows.Exception) []byte {
+func (r WFSExceptionReport) Report(errors []ows.Exception) []byte {
 	r.SchemaLocation = `http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd`
 	r.Ows = `http://www.opengis.net/ows/1.1`
 	r.Xsi = `http://www.w3.org/2001/XMLSchema-instance`
@@ -34,15 +34,15 @@ func (r WFSExceptionReport) Report(err ows.Exception) []byte {
 
 // WFSException struct
 type WFSException struct {
-	ErrorMessage  string `xml:",chardata"`
+	ExceptionText string `xml:",chardata"`
 	ExceptionCode string `xml:"exceptionCode,attr"`
 	LocatorCode   string `xml:"locator,attr"`
 	// ExceptionText string `xml:"ExceptionText"`
 }
 
-// Error returns available ErrorMessage
+// Error returns available ExceptionText
 func (e WFSException) Error() string {
-	return e.ErrorMessage
+	return e.ExceptionText
 }
 
 // Code returns available ErrorCode
@@ -107,7 +107,7 @@ func LockHasExpired() WFSException {
 // OperationParsingFailed exception
 func OperationParsingFailed(value, locator string) WFSException {
 	return WFSException{
-		ErrorMessage:  fmt.Sprintf("Failed to parse the operation, found: %s", value),
+		ExceptionText: fmt.Sprintf("Failed to parse the operation, found: %s", value),
 		LocatorCode:   locator,
 		ExceptionCode: "OperationParsingFailed"}
 }

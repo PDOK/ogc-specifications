@@ -22,10 +22,9 @@ func (xmlattr *XMLAttribute) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 	*xmlattr = newattributes
 
 	for {
-		token, err := d.Token()
-		if err != nil {
-			return err
-		}
+		// if it got this far the XML is 'valid' and the xmlattr are set
+		// so we ignore the err
+		token, _ := d.Token()
 		switch el := token.(type) {
 		case xml.EndElement:
 			if el == start.End() {
