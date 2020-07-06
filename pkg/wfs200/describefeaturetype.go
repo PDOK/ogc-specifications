@@ -101,8 +101,3 @@ type BaseDescribeFeatureTypeRequest struct {
 	OutputFormat *string `xml:"outputFormat,attr"`
 	TypeName     *string `xml:"typeNames,attr"`
 }
-
-// Validate a DescribeFeatureType
-func (dft *DescribeFeatureType) Validate() ows.Exception {
-	return nil
-}

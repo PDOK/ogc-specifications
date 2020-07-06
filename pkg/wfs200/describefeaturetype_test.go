@@ -197,36 +197,3 @@ func TestBuildBodyDescribeFeatureType(t *testing.T) {
 		}
 	}
 }
-
-func TestValidateDescribeFeatureType(t *testing.T) {
-	var tests = []struct {
-		dft DescribeFeatureType
-		err ows.Exception
-	}{
-		0: {dft: DescribeFeatureType{
-			XMLName:     xml.Name{Local: `DescribeFeatureType`},
-			BaseRequest: BaseRequest{Version: Version, Service: Service},
-			BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
-				OutputFormat: sp(`application/json`),
-				TypeName:     sp(`example:example`)}},
-			err: nil,
-		},
-		1: {dft: DescribeFeatureType{
-			XMLName:     xml.Name{Local: `DescribeFeatureType`},
-			BaseRequest: BaseRequest{Version: `unknown`, Service: Service},
-			BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
-				OutputFormat: sp(`application/json`),
-				TypeName:     sp(`example:example`)}},
-			err: &ows.OWSException{ExceptionText: `unknown is an invalid version number`},
-		},
-	}
-	for k, v := range tests {
-		err := v.dft.Validate()
-		if err != nil {
-			if err.Error() != v.err.Error() {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, v.err, err)
-			}
-		}
-
-	}
-}
