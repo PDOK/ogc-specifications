@@ -26,7 +26,7 @@ func (r WFSExceptionReport) Report(errors []ows.Exception) []byte {
 	r.Xsi = `http://www.w3.org/2001/XMLSchema-instance`
 	r.Version = Version
 	r.Language = `en`
-	r.Exception = err
+	r.Exception = errors
 
 	si, _ := xml.MarshalIndent(r, "", " ")
 	return append([]byte(xml.Header), si...)

@@ -20,7 +20,7 @@ type WMSServiceExceptionReport struct {
 
 // Report returns WMSServiceExceptionReport
 func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
-	r.ServiceException = err
+	r.ServiceException = errors
 	si, _ := xml.MarshalIndent(r, "", " ")
 	return append([]byte(xml.Header), si...)
 }

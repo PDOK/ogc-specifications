@@ -26,7 +26,7 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
 					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: &WFSException{ExceptionText: "expected element type <GetCapabilities> but have <Unknown>"}},
+		1: {Body: []byte("<Unknown/>"), Error: &WFSException{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
 		// no XML document
 		2: {Body: []byte("no XML document, just a string"), Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"}},
 		// document at all
