@@ -20,6 +20,11 @@ type WMSServiceExceptionReport struct {
 
 // Report returns WMSServiceExceptionReport
 func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
+	r.Version = Version
+	r.Xmlns = `http://www.opengis.net/ogc`
+	r.Xsi = `http://www.w3.org/2001/XMLSchema-instance`
+	r.SchemaLocation = `http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd`
+
 	r.ServiceException = errors
 	si, _ := xml.MarshalIndent(r, "", " ")
 	return append([]byte(xml.Header), si...)
@@ -29,7 +34,7 @@ func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
 type WMSException struct {
 	ExceptionText string `xml:",chardata"`
 	ErrorCode     string `xml:"code,attr"`
-	LocatorCode   string `xml:"locator,attr"`
+	LocatorCode   string `xml:"locator,attr,omitempty"`
 }
 
 // Error returns available ExceptionText

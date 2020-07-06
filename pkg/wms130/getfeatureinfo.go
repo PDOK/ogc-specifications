@@ -40,8 +40,3 @@ func (gfi *GetFeatureInfo) BuildBody() []byte {
 // GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request
 type GetFeatureInfo struct {
 }
-
-// Validate a GetFeatureInfo
-func (gfi *GetFeatureInfo) Validate() ows.Exception {
-	return nil
-}

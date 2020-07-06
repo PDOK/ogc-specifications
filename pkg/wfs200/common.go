@@ -18,12 +18,3 @@ type BaseRequest struct {
 	Version string           `xml:"version,attr" validate:"required,eq=2.0.0"`
 	Attr    ows.XMLAttribute `xml:",attr"`
 }
-
-// Validate the BaseRequest
-func (b *BaseRequest) Validate() ows.Exception {
-	return nil
-}
-
-func sp(s string) *string {
-	return &s
-}

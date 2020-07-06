@@ -335,8 +335,3 @@ type Elevation struct {
 		Max float64 `xml:"Max"`
 	} `xml:"Interval"`
 }
-
-// Validate a GetMap
-func (gm *GetMap) Validate() ows.Exception {
-	return nil
-}

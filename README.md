@@ -24,6 +24,12 @@ go get github.com/pdok/ogc-specifications
 import "github.com/pdok/ogc-specifications"
 ```
 
+## Test
+
+```go
+go test ./... -covermode=atomic
+```
+
 ## How to Contribute
 
 Make a pull request...

@@ -689,8 +689,3 @@ type GetFeature struct {
 	BaseGetFeatureRequest
 	Query Query `xml:"Query"`
 }
-
-// Validate a GetFeature structure
-func (gf *GetFeature) Validate() ows.Exception {
-	return nil
-}

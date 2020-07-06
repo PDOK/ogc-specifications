@@ -382,7 +382,7 @@ func TestBuildBody(t *testing.T) {
 <GetMap service="" version="">
  <StyledLayerDescriptor version=""></StyledLayerDescriptor>
  <CRS></CRS>
- <BoundingBox crs="" dimensions="">
+ <BoundingBox>
   <LowerCorner>0.000000 0.000000</LowerCorner>
   <UpperCorner>0.000000 0.000000</UpperCorner>
  </BoundingBox>

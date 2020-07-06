@@ -21,9 +21,9 @@ type WFSExceptionReport struct {
 
 // Report returns WFSExceptionReport
 func (r WFSExceptionReport) Report(errors []ows.Exception) []byte {
-	r.SchemaLocation = `http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd`
 	r.Ows = `http://www.opengis.net/ows/1.1`
 	r.Xsi = `http://www.w3.org/2001/XMLSchema-instance`
+	r.SchemaLocation = `http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd`
 	r.Version = Version
 	r.Language = `en`
 	r.Exception = errors
@@ -36,7 +36,7 @@ func (r WFSExceptionReport) Report(errors []ows.Exception) []byte {
 type WFSException struct {
 	ExceptionText string `xml:",chardata"`
 	ExceptionCode string `xml:"exceptionCode,attr"`
-	LocatorCode   string `xml:"locator,attr"`
+	LocatorCode   string `xml:"locator,attr,omitempty"`
 	// ExceptionText string `xml:"ExceptionText"`
 }
 

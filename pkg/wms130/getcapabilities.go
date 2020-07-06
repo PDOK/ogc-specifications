@@ -83,8 +83,3 @@ type GetCapabilities struct {
 	Version string           `xml:"version,attr" validate:"eq=1.3.0"`
 	Attr    ows.XMLAttribute `xml:",attr"`
 }
-
-// Validate a GetCapabilities
-func (gc *GetCapabilities) Validate() ows.Exception {
-	return nil
-}

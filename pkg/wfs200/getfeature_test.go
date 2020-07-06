@@ -8,6 +8,10 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
+func sp(s string) *string {
+	return &s
+}
+
 func TestBuildBody(t *testing.T) {
 	var tests = []struct {
 		gf     GetFeature
@@ -458,32 +462,6 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 		result := a.GeoBBox.MarshalText()
 		if result != a.Expected {
 			t.Errorf("test: %d, expected: %s,\n got: %s", k, a.Expected, result)
-		}
-	}
-}
-
-func TestValidate(t *testing.T) {
-	var tests = []struct {
-		gf  GetFeature
-		err ows.Exception
-	}{
-		0: {gf: GetFeature{
-			XMLName:     xml.Name{Local: `GetFeature`},
-			BaseRequest: BaseRequest{Version: Version, Service: Service}},
-			err: nil,
-		},
-		1: {gf: GetFeature{
-			XMLName:     xml.Name{Local: `GetFeature`},
-			BaseRequest: BaseRequest{Version: `unknown`, Service: Service}},
-			err: &ows.OWSException{ExceptionText: `unknown is an invalid version number`},
-		},
-	}
-	for k, v := range tests {
-		err := v.gf.Validate()
-		if err != nil {
-			if err.Error() != v.err.Error() {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, v.err, err)
-			}
 		}
 	}
 }
