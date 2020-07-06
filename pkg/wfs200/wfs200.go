@@ -130,9 +130,8 @@ type Constraint struct {
 
 // Operation struct for the WFS 2.0.0
 type Operation struct {
-	Proxy string `yaml:"proxy"`
-	Name  string `xml:"name,attr"`
-	DCP   struct {
+	Name string `xml:"name,attr"`
+	DCP  struct {
 		HTTP struct {
 			Get  *Method `xml:"ows:Get,omitempty" yaml:"get"`
 			Post *Method `xml:"ows:Post,omitempty" yaml:"post"`

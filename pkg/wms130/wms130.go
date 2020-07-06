@@ -118,7 +118,6 @@ type Layer struct {
 
 // RequestType containing the formats and DCPTypes available
 type RequestType struct {
-	Proxy   string   `yaml:"proxy"`
 	Format  []string `xml:"Format" yaml:"format"`
 	DCPType DCPType  `xml:"DCPType" yaml:"dcptype"`
 }
