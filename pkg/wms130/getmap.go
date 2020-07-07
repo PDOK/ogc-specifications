@@ -257,18 +257,13 @@ func (gm *GetMap) BuildBody() []byte {
 type GetMap struct {
 	XMLName xml.Name `xml:"GetMap" validate:"required"`
 	BaseRequest
-	GetMapCore
-	Exceptions *string      `xml:"Exceptions"`
-	Elevation  *[]Elevation `xml:"Elevation"`
-	Time       *string      `xml:"Time"`
-}
-
-// GetMapCore split from GetMap so we can reuse for GetFeatureInfo
-type GetMapCore struct {
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" validate:"required"`
 	CRS                   string                `xml:"CRS" validate:"required"`
 	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" validate:"required"`
 	Output                Output                `xml:"Output" validate:"required"`
+	Exceptions            *string               `xml:"Exceptions"`
+	Elevation             *[]Elevation          `xml:"Elevation"`
+	Time                  *string               `xml:"Time"`
 }
 
 // Output struct

@@ -10,6 +10,9 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
+// <map_request_copy>
+var getFeatureMandatoryGetMapParameters = []string{LAYERS, CRS, BBOX, WIDTH, HEIGHT}
+
 //
 const (
 	getfeatureinfo = `GetFeatureInfo`
@@ -129,9 +132,12 @@ func (gfi *GetFeatureInfo) BuildBody() []byte {
 type GetFeatureInfo struct {
 	XMLName xml.Name `xml:"GetFeatureInfo" validate:"required"`
 	BaseRequest
-	// // WMS <map request copy>
-	// // 7.3.3.4 map_request_copy
-	GetMapCore
+	// <map_request_copy>
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"LayerDescriptor" validate:"required"`
+	CRS                   string                `xml:"CRS" validate:"required"`
+	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" validate:"required"`
+	Output                Output                `xml:"Output" validate:"required"`
+
 	QueryLayers  []string `xml:"querylayers" validate:"required"`
 	InfoFormat   *string  `xml:"infoformat"`
 	FeatureCount *int     `xml:"featurecount"`
