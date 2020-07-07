@@ -12,9 +12,9 @@ import (
 type WMSServiceExceptionReport struct {
 	XMLName          xml.Name        `xml:"ServiceExceptionReport"`
 	Version          string          `xml:"version,attr"`
-	Xmlns            string          `xml:"xmlns,attr"`
-	Xsi              string          `xml:"xsi,attr"`
-	SchemaLocation   string          `xml:"schemaLocation,attr"`
+	Xmlns            string          `xml:"xmlns,attr,omitempty"`
+	Xsi              string          `xml:"xsi,attr,omitempty"`
+	SchemaLocation   string          `xml:"schemaLocation,attr,omitempty"`
 	ServiceException []ows.Exception `xml:"ServiceException"`
 }
 

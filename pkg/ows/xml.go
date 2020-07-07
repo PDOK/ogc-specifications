@@ -50,9 +50,6 @@ func (p *Position) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 		}
 		switch el := token.(type) {
 		case xml.CharData:
-			// var positionstr string
-			// elmt := xml.CharData(el)
-
 			coords := getPositionFromString(string([]byte(el)))
 			if len(coords) >= 2 {
 				// take first 2 positions (xy)

@@ -11,9 +11,9 @@ import (
 // TODO exception restucturing
 type WFSExceptionReport struct {
 	XMLName        xml.Name        `xml:"ExceptionReport"`
-	Ows            string          `xml:"xmlns:ows,attr"`
-	Xsi            string          `xml:"xmlns:xsi,attr"`
-	SchemaLocation string          `xml:"xsi:schemaLocation,attr"`
+	Ows            string          `xml:"xmlns:ows,attr,omitempty"`
+	Xsi            string          `xml:"xmlns:xsi,attr,omitempty"`
+	SchemaLocation string          `xml:"xsi:schemaLocation,attr,omitempty"`
 	Version        string          `xml:"version,attr"`
 	Language       string          `xml:"xml:lang,attr,omitempty"`
 	Exception      []ows.Exception `xml:"Exception"`
