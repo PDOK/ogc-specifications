@@ -3,6 +3,7 @@ package wms130
 import (
 	"encoding/xml"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -37,6 +38,24 @@ func (gfi *GetFeatureInfo) Type() string {
 
 // ParseBody builds a GetFeatureInfo object based on the given body
 func (gfi *GetFeatureInfo) ParseBody(body []byte) ows.Exception {
+	var xmlattributes ows.XMLAttribute
+	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
+		return ows.MissingParameterValue()
+	}
+	if err := xml.Unmarshal(body, &gfi); err != nil {
+		return ows.MissingParameterValue("REQUEST")
+	}
+	var n []xml.Attr
+	for _, a := range xmlattributes {
+		switch strings.ToUpper(a.Name.Local) {
+		case VERSION:
+		case SERVICE:
+		default:
+			n = append(n, a)
+		}
+	}
+
+	gfi.Attr = ows.StripDuplicateAttr(n)
 	return nil
 }
 
@@ -101,7 +120,9 @@ func (gfi *GetFeatureInfo) BuildQuery() url.Values {
 
 // BuildBody builds a 'new' XML document 'based' on the 'original' XML document
 func (gfi *GetFeatureInfo) BuildBody() []byte {
-	return []byte(``)
+	si, _ := xml.MarshalIndent(gfi, "", "")
+	re := regexp.MustCompile(`><.*>`)
+	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request

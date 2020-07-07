@@ -33,7 +33,7 @@ func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
 // WMSException grouping the error message variables together
 type WMSException struct {
 	ExceptionText string `xml:",chardata"`
-	ErrorCode     string `xml:"code,attr"`
+	ExceptionCode string `xml:"code,attr"`
 	LocatorCode   string `xml:"locator,attr,omitempty"`
 }
 
@@ -42,9 +42,9 @@ func (e WMSException) Error() string {
 	return e.ExceptionText
 }
 
-// Code returns available ErrorCode
+// Code returns available ExceptionCode
 func (e WMSException) Code() string {
-	return e.ErrorCode
+	return e.ExceptionCode
 }
 
 // Locator returns available LocatorCode
@@ -55,7 +55,7 @@ func (e WMSException) Locator() string {
 // InvalidFormat exception
 func InvalidFormat() WMSException {
 	return WMSException{
-		ErrorCode: `InvalidFormat`,
+		ExceptionCode: `InvalidFormat`,
 	}
 }
 
@@ -63,20 +63,25 @@ func InvalidFormat() WMSException {
 func InvalidCRS(s ...string) WMSException {
 	if len(s) == 1 {
 		return WMSException{
-			ExceptionText: s[0],
-			ErrorCode:     `InvalidCRS`,
+			ExceptionText: fmt.Sprintf("CRS is not known by this service: %s", s[0]),
+			ExceptionCode: `InvalidCRS`,
 		}
 	}
 	return WMSException{
-		ErrorCode: `InvalidCRS`,
+		ExceptionCode: `InvalidCRS`,
 	}
 }
 
 // LayerNotDefined exception
-func LayerNotDefined(undefinedlayer string) WMSException {
+func LayerNotDefined(s ...string) WMSException {
+	if len(s) == 1 {
+		return WMSException{
+			ExceptionText: fmt.Sprintf("The layer: %s is not known by the server", s[0]),
+			ExceptionCode: `LayerNotDefined`,
+		}
+	}
 	return WMSException{
-		ExceptionText: fmt.Sprintf("The layer: %s is not known by the server", undefinedlayer),
-		ErrorCode:     `LayerNotDefined`,
+		ExceptionCode: `LayerNotDefined`,
 	}
 }
 
@@ -85,54 +90,57 @@ func StyleNotDefined() WMSException {
 	return WMSException{
 		ExceptionText: `There is a one-to-one correspondence between the values in the LAYERS parameter and the values in the STYLES parameter. 
 	Expecting an empty string for the STYLES like STYLES= or comma-separated list STYLES=,,, or using keyword default STYLES=default,default,...`,
-		ErrorCode: `StyleNotDefined`,
+		ExceptionCode: `StyleNotDefined`,
 	}
 }
 
 // LayerNotQueryable exception
-func LayerNotQueryable() WMSException {
+func LayerNotQueryable(s ...string) WMSException {
+	if len(s) == 1 {
+		return WMSException{
+			ExceptionText: fmt.Sprintf("Layer: %s, can not be queried", s[0]),
+			ExceptionCode: `LayerNotQueryable`,
+			LocatorCode:   s[0],
+		}
+	}
 	return WMSException{
-		ErrorCode: `LayerNotQueryable`,
+		ExceptionCode: `LayerNotQueryable`,
 	}
 }
 
 // InvalidPoint exception
-func InvalidPoint() WMSException {
+func InvalidPoint(i, j int) WMSException {
+	// TODO provide giving WIDTH and HEIGTH values in Exception response
 	return WMSException{
-		ErrorCode: `InvalidPoint`,
+		ExceptionText: fmt.Sprintf("The parameters I and J are invalid, given: %d, %d", i, j),
+		ExceptionCode: `InvalidPoint`,
 	}
 }
 
 // CurrentUpdateSequence exception
 func CurrentUpdateSequence() WMSException {
 	return WMSException{
-		ErrorCode: `CurrentUpdateSequence`,
+		ExceptionCode: `CurrentUpdateSequence`,
 	}
 }
 
 // InvalidUpdateSequence exception
 func InvalidUpdateSequence() WMSException {
 	return WMSException{
-		ErrorCode: `InvalidUpdateSequence`,
+		ExceptionCode: `InvalidUpdateSequence`,
 	}
 }
 
 // MissingDimensionValue exception
 func MissingDimensionValue() WMSException {
 	return WMSException{
-		ErrorCode: `MissingDimensionValue`,
+		ExceptionCode: `MissingDimensionValue`,
 	}
 }
 
 // InvalidDimensionValue exception
 func InvalidDimensionValue() WMSException {
 	return WMSException{
-		ErrorCode: `InvalidDimensionValue`,
+		ExceptionCode: `InvalidDimensionValue`,
 	}
-}
-
-// OperationNotSupported exception -> available in OWS Exceptions
-func OperationNotSupported() WMSException {
-	// TODO Use the error.OperationNotSupported instead of this one
-	return WMSException{}
 }

@@ -14,6 +14,14 @@ This package has support for the following OGC Webservice Specifications:
 
 It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice.
 
+## Notice
+
+This is still a 'work in progres' with the following mayor todo's:
+
+- [ ] Validation support
+- [ ] WMTS support
+- [ ] WCS support
+
 ## Installation
 
 ```go
