@@ -16,22 +16,22 @@ type ExceptionReport interface {
 
 // OWSExceptionReport struct
 type OWSExceptionReport struct {
-	xmlname        xml.Name    `xml:"ExceptionReport"`
-	ows            string      `xml:"xmlns:ows,attr"`
-	xsi            string      `xml:"xmlns:xsi,attr"`
-	schemaLocation string      `xml:"xsi:schemaLocation,attr"`
-	version        string      `xml:"version,attr"`
-	language       string      `xml:"xml:lang,attr"`
+	XMLName        xml.Name    `xml:"ows:ExceptionReport"`
+	Ows            string      `xml:"xmlns:ows,attr,omitempty"`
+	Xsi            string      `xml:"xmlns:xsi,attr,omitempty"`
+	SchemaLocation string      `xml:"xsi:schemaLocation,attr,omitempty"`
+	Version        string      `xml:"version,attr"`
+	Language       string      `xml:"xml:lang,attr,omitempty"`
 	Exception      []Exception `xml:"Exception"`
 }
 
 // Report returns OWSExceptionReport
 func (r OWSExceptionReport) Report(errors []Exception) []byte {
-	r.schemaLocation = `http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd`
-	r.ows = `http://www.opengis.net/ows/1.1`
-	r.xsi = `http://www.w3.org/2001/XMLSchema-instance`
-	r.version = version
-	r.language = `en`
+	r.SchemaLocation = `http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd`
+	r.Ows = `http://www.opengis.net/ows/1.1`
+	r.Xsi = `http://www.w3.org/2001/XMLSchema-instance`
+	r.Version = version
+	r.Language = `en`
 	r.Exception = errors
 
 	si, _ := xml.MarshalIndent(r, "", " ")
@@ -50,9 +50,10 @@ type Exception interface {
 
 // OWSException grouping the error message variables together
 type OWSException struct {
-	ExceptionText string `xml:",chardata"`
-	ExceptionCode string `xml:"exceptionCode,attr"`
-	LocatorCode   string `xml:"locator,attr,omitempty"`
+	XMLName       xml.Name `xml:"ows:Exception"`
+	ExceptionText string   `xml:",chardata"`
+	ExceptionCode string   `xml:"exceptionCode,attr"`
+	LocatorCode   string   `xml:"locator,attr,omitempty"`
 }
 
 // Error returns available ExceptionText

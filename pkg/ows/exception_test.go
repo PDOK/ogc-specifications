@@ -74,7 +74,7 @@ func TestOWSException(t *testing.T) {
 	}
 }
 
-func TestReport(t *testing.T) {
+func TestOWSReport(t *testing.T) {
 	var tests = []struct {
 		exceptions []Exception
 		result     []byte
@@ -82,18 +82,18 @@ func TestReport(t *testing.T) {
 	}{
 		0: {exceptions: []Exception{OWSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<OWSExceptionReport>
- <Exception exceptionCode=""></Exception>
-</OWSExceptionReport>`)},
+<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="1.0.0" xml:lang="en">
+ <ows:Exception exceptionCode=""></ows:Exception>
+</ows:ExceptionReport>`)},
 		1: {exceptions: []Exception{
 			OperationNotSupported(`WKS`),
 			VersionNegotiationFailed(`0.0.1`),
 		},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<OWSExceptionReport>
- <Exception exceptionCode="OperationNotSupported" locator="WKS">This service does not know the operation: WKS</Exception>
- <Exception exceptionCode="VersionNegotiationFailed" locator="VERSION">0.0.1 is an invalid version number</Exception>
-</OWSExceptionReport>`)},
+<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="1.0.0" xml:lang="en">
+ <ows:Exception exceptionCode="OperationNotSupported" locator="WKS">This service does not know the operation: WKS</ows:Exception>
+ <ows:Exception exceptionCode="VersionNegotiationFailed" locator="VERSION">0.0.1 is an invalid version number</ows:Exception>
+</ows:ExceptionReport>`)},
 	}
 
 	for k, a := range tests {
