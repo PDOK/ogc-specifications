@@ -5,4 +5,5 @@ package ows
 type Specification interface {
 	Service() string
 	Version() string
+	Validate() bool
 }

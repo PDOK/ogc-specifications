@@ -101,7 +101,7 @@ func TestReport(t *testing.T) {
 		r := report.Report(a.exceptions)
 
 		if string(r) != string(a.result) {
-			t.Errorf("test: %d, expected: %s\n got: %s", k, r, a.result)
+			t.Errorf("test: %d, expected: %s\n got: %s", k, a.result, r)
 		}
 	}
 }

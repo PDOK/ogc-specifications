@@ -22,6 +22,11 @@ func (wms130 *Wms130) Version() string {
 	return Version
 }
 
+// Validate function of the wms130 spec
+func (wms130 *Wms130) Validate() bool {
+	return false
+}
+
 // Wms130 base struct
 type Wms130 struct {
 	XMLName    xml.Name `xml:"WMS_Capabilities"`

@@ -12,6 +12,13 @@ func sp(s string) *string {
 	return &s
 }
 
+func TestGetFeatureType(t *testing.T) {
+	dft := GetFeature{}
+	if dft.Type() != `GetFeature` {
+		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetFeature`, dft.Type())
+	}
+}
+
 func TestBuildBody(t *testing.T) {
 	var tests = []struct {
 		gf     GetFeature
@@ -39,7 +46,6 @@ func TestBuildBody(t *testing.T) {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
 		}
 	}
-
 }
 
 // TODO
@@ -245,6 +251,8 @@ func TestParseQueryParameters(t *testing.T) {
 		// // Complex Filter
 		// 0: {QueryParams: map[string][]string{FILTER: []string{`<Filter><OR><AND><PropertyIsLike wildcard='*' singleChar='.' escape='!'><PropertyName>NAME</PropertyName><Literal>Syd*</Literal></PropertyIsLike><PropertyIsEqualTo><PropertyName>POPULATION</PropertyName><Literal>4250065</Literal></PropertyIsEqualTo></AND><DWithin><PropertyName>Geometry</PropertyName><Point srsName="mekker"><coordinates>135.500000,34.666667</coordinates></Point><Distance units='m'>10000</Distance></DWithin></OR></Filter>`}, SRSNAME: []string{"srsname"}},
 		// 	Result: GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{}}, BaseRequest: BaseRequest{Version: Version}}},
+		9: {QueryParams: map[string][]string{BBOX: {`1,1,2,2`}, FILTER: {`<Filter><ResourceId rid="one"/><ResourceId rid="two"/><ResourceId rid="three"/></Filter>`}, SRSNAME: {"srsname"}},
+			Result: GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{1, 1}, UpperCorner: ows.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 	}
 
 	for k, q := range tests {
@@ -398,6 +406,8 @@ func TestBuildQueryString(t *testing.T) {
 			Query: Query{Filter: &Filter{ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}}}}},
 			expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, STARTINDEX: {"100"}, COUNT: {"21"},
 				FILTER: {url.QueryEscape(`<Filter><ResourceId rid="one"></ResourceId><ResourceId rid="two"></ResourceId></Filter>`)}}},
+		2: {getfeature: GetFeature{XMLName: xml.Name{Local: getfeature}, BaseRequest: BaseRequest{Service: Service, Version: Version}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("xml"), ResultType: sp("hits")}},
+			expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"xml"}, RESULTTYPE: {"hits"}}},
 	}
 
 	for k, q := range tests {
@@ -427,8 +437,8 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 		Query    string
 		Expected GEOBBOX
 	}{
-		0: {Query: "18.54,-72.3544,18.62,-72.2564", Expected: GEOBBOX{Envelope: Envelope{LowerCorner: "18.54 -72.3544", UpperCorner: "18.62 -72.2564"}}},
-		1: {Query: "49.1874,-123.2778,49.3504,-122.8892,urn:ogc:def:crs:EPSG::4326", Expected: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: "49.1874 -123.2778", UpperCorner: "49.3504 -122.8892"}}},
+		0: {Query: "18.54,-72.3544,18.62,-72.2564", Expected: GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{18.54, -72.3544}, UpperCorner: ows.Position{18.62, -72.2564}}}},
+		1: {Query: "49.1874,-123.2778,49.3504,-122.8892,urn:ogc:def:crs:EPSG::4326", Expected: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: ows.Position{49.1874, -123.2778}, UpperCorner: ows.Position{49.3504, -122.8892}}}},
 		2: {Query: "", Expected: GEOBBOX{}},
 		3: {Query: "18.54;-72.3544;18.62;-72.2564", Expected: GEOBBOX{}},
 	}
@@ -452,8 +462,8 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 		GeoBBox  GEOBBOX
 		Expected string
 	}{
-		0: {Expected: "18.54,-72.3544,18.62,-72.2564", GeoBBox: GEOBBOX{Envelope: Envelope{LowerCorner: "18.54 -72.3544", UpperCorner: "18.62 -72.2564"}}},
-		1: {Expected: "49.1874,-123.2778,49.3504,-122.8892,urn:ogc:def:crs:EPSG::4326", GeoBBox: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: "49.1874 -123.2778", UpperCorner: "49.3504 -122.8892"}}},
+		0: {Expected: "18.540000,-72.354400,18.620000,-72.256400", GeoBBox: GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{18.54, -72.3544}, UpperCorner: ows.Position{18.62, -72.2564}}}},
+		1: {Expected: "49.187400,-123.277800,49.350400,-122.889200,urn:ogc:def:crs:EPSG::4326", GeoBBox: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: ows.Position{49.1874, -123.2778}, UpperCorner: ows.Position{49.3504, -122.8892}}}},
 		2: {Expected: "", GeoBBox: GEOBBOX{}},
 		3: {Expected: "", GeoBBox: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326")}},
 	}

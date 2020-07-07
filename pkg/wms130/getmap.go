@@ -30,8 +30,8 @@ const (
 	ELEVATION   = `ELEVATION`
 )
 
-var wmsmandatoryparameters = []string{LAYERS, STYLES, CRS, BBOX, WIDTH, HEIGHT, FORMAT}
-var wmsoptionalparameters = []string{TRANSPARENT, BGCOLOR, EXCEPTIONS, TIME, ELEVATION}
+var getMapMandatoryParameters = []string{LAYERS, STYLES, CRS, BBOX, WIDTH, HEIGHT, FORMAT}
+var getMapOptionalParameters = []string{TRANSPARENT, BGCOLOR, EXCEPTIONS, TIME, ELEVATION}
 
 // Type returns GetMap
 func (gm *GetMap) Type() string {
@@ -112,7 +112,7 @@ func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
 	}
 
 	// WMS optional parameters
-	for _, k := range wmsoptionalparameters {
+	for _, k := range getMapOptionalParameters {
 		if len(query[k]) > 0 {
 			switch k {
 			case TRANSPARENT:
@@ -205,7 +205,7 @@ func (gm *GetMap) BuildQuery() url.Values {
 	querystring[SERVICE] = []string{gm.BaseRequest.Service}
 	querystring[VERSION] = []string{gm.BaseRequest.Version}
 
-	for _, k := range wmsmandatoryparameters {
+	for _, k := range getMapMandatoryParameters {
 		switch k {
 		case LAYERS:
 			querystring[LAYERS] = []string{gm.StyledLayerDescriptor.getLayerQueryParameter()}
@@ -224,7 +224,7 @@ func (gm *GetMap) BuildQuery() url.Values {
 		}
 	}
 
-	for _, k := range wmsoptionalparameters {
+	for _, k := range getMapOptionalParameters {
 		switch k {
 		case TRANSPARENT:
 			if gm.Output.Transparent != nil {
@@ -257,13 +257,18 @@ func (gm *GetMap) BuildBody() []byte {
 type GetMap struct {
 	XMLName xml.Name `xml:"GetMap" validate:"required"`
 	BaseRequest
+	GetMapCore
+	Exceptions *string      `xml:"Exceptions"`
+	Elevation  *[]Elevation `xml:"Elevation"`
+	Time       *string      `xml:"Time"`
+}
+
+// GetMapCore split from GetMap so we can reuse for GetFeatureInfo
+type GetMapCore struct {
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" validate:"required"`
-	CRS                   string                `xml:"CRS" validate:"required,epsg"`
+	CRS                   string                `xml:"CRS" validate:"required"`
 	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" validate:"required"`
 	Output                Output                `xml:"Output" validate:"required"`
-	Exceptions            *string               `xml:"Exceptions"`
-	Elevation             *[]Elevation          `xml:"Elevation"`
-	Time                  *string               `xml:"Time"`
 }
 
 // Output struct

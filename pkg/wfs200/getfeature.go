@@ -2,8 +2,10 @@ package wfs200
 
 import (
 	"encoding/xml"
+	"fmt"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
@@ -531,8 +533,8 @@ type Box struct {
 
 // Envelope struct for GeometryOperand
 type Envelope struct {
-	LowerCorner string `xml:"lowerCorner"`
-	UpperCorner string `xml:"upperCorner"`
+	LowerCorner ows.Position `xml:"lowerCorner"`
+	UpperCorner ows.Position `xml:"upperCorner"`
 	// Geometry
 }
 
@@ -624,8 +626,17 @@ func (gb *GEOBBOX) UnmarshalText(q string) ows.Exception {
 	regex := regexp.MustCompile(`,`)
 	result := regex.Split(q, -1)
 	if len(result) == 4 || len(result) == 5 {
-		gb.Envelope.LowerCorner = result[0] + ` ` + result[1]
-		gb.Envelope.UpperCorner = result[2] + ` ` + result[3]
+		lx, err := strconv.ParseFloat(result[0], 64)
+		ly, err := strconv.ParseFloat(result[1], 64)
+		ux, err := strconv.ParseFloat(result[2], 64)
+		uy, err := strconv.ParseFloat(result[3], 64)
+
+		if err != nil {
+			return InvalidValue(BBOX)
+		}
+
+		gb.Envelope.LowerCorner = ows.Position{lx, ly}
+		gb.Envelope.UpperCorner = ows.Position{ux, uy}
 	}
 	if len(result) == 5 {
 		gb.SrsName = &result[4]
@@ -637,8 +648,8 @@ func (gb *GEOBBOX) UnmarshalText(q string) ows.Exception {
 func (gb *GEOBBOX) MarshalText() string {
 	regex := regexp.MustCompile(` `)
 	var str string
-	if len(gb.Envelope.LowerCorner) > 0 && len(gb.Envelope.UpperCorner) > 0 {
-		str = gb.Envelope.LowerCorner + ` ` + gb.Envelope.UpperCorner
+	if len(gb.Envelope.LowerCorner) >= 2 && len(gb.Envelope.UpperCorner) >= 2 && gb.Envelope.LowerCorner != gb.Envelope.UpperCorner {
+		str = fmt.Sprintf("%f,%f,%f,%f", gb.Envelope.LowerCorner[0], gb.Envelope.LowerCorner[1], gb.Envelope.UpperCorner[0], gb.Envelope.UpperCorner[1])
 	}
 	if len(str) > 0 && gb.SrsName != nil {
 		str = str + ` ` + *gb.SrsName

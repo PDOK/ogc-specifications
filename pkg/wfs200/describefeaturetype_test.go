@@ -8,6 +8,13 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
+func TestDescribeFeatureType(t *testing.T) {
+	dft := DescribeFeatureType{}
+	if dft.Type() != `DescribeFeatureType` {
+		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `DescribeFeatureType`, dft.Type())
+	}
+}
+
 func TestParseBodyDescribeFeatureType(t *testing.T) {
 	var tests = []struct {
 		Body   []byte

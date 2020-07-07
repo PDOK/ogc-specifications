@@ -4,7 +4,16 @@ import (
 	"encoding/xml"
 	"net/url"
 	"testing"
+
+	"github.com/pdok/ogc-specifications/pkg/ows"
 )
+
+func TestGetCapabilitiesType(t *testing.T) {
+	dft := GetCapabilities{}
+	if dft.Type() != `GetCapabilities` {
+		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetCapabilities`, dft.Type())
+	}
+}
 
 func TestParseBodyGetCapabilities(t *testing.T) {
 	var tests = []struct {
@@ -117,6 +126,61 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 			if n.Result.Version != gc.Version {
 				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.Version, gc.Version)
 			}
+		}
+	}
+}
+
+func TestGetCapabilitiesBuildQuery(t *testing.T) {
+	var tests = []struct {
+		Object   GetCapabilities
+		Excepted url.Values
+		Error    ows.Exception
+	}{
+		0: {Object: GetCapabilities{Service: Service, Version: Version, XMLName: xml.Name{Local: `GetCapabilities`}},
+			Excepted: map[string][]string{
+				VERSION: {Version},
+				SERVICE: {Service},
+				REQUEST: {`GetCapabilities`},
+			}},
+	}
+
+	for k, n := range tests {
+		url := n.Object.BuildQuery()
+		if len(n.Excepted) != len(url) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+		} else {
+			for _, rid := range url {
+				found := false
+				for _, erid := range n.Excepted {
+					if rid[0] == erid[0] {
+						found = true
+						break
+					}
+				}
+				if !found {
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+				}
+				found = false
+			}
+		}
+	}
+}
+
+func TestGetCapabilitiesBuildBody(t *testing.T) {
+	var tests = []struct {
+		gc     GetCapabilities
+		result string
+	}{
+		0: {gc: GetCapabilities{Service: Service, Version: Version, XMLName: xml.Name{Local: `GetCapabilities`}},
+			result: `<?xml version="1.0" encoding="UTF-8"?>
+<GetCapabilities service="WFS" version="2.0.0"/>`},
+	}
+
+	for k, v := range tests {
+		body := v.gc.BuildBody()
+
+		if string(body) != v.result {
+			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
 		}
 	}
 }

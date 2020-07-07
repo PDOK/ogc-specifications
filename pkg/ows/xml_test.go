@@ -114,3 +114,29 @@ func TestMarshalXMLPosition(t *testing.T) {
 		}
 	}
 }
+
+func TestUnMarshalXMLPosition(t *testing.T) {
+	var tests = []struct {
+		position  Position
+		xml       string
+		exception error
+	}{
+		0: {position: Position{}, xml: "<Position>0.000000 0.000000</Position>", exception: errors.New("")},
+		1: {position: Position{-180.0, 90.0}, xml: "<Position>-180.000000 90.000000</Position>", exception: errors.New("")},
+		2: {position: Position{}, xml: "<Position/>", exception: errors.New("")},
+		3: {position: Position{}, xml: "EOF", exception: errors.New("EOF")},
+	}
+	for k, a := range tests {
+		var position Position
+		if err := xml.Unmarshal([]byte(a.xml), &position); err != nil {
+			if err.Error() != a.exception.Error() {
+				t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
+			}
+
+		} else {
+			if a.position != position {
+				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.position, position)
+			}
+		}
+	}
+}

@@ -15,7 +15,7 @@ type WFSExceptionReport struct {
 	Xsi            string          `xml:"xmlns:xsi,attr"`
 	SchemaLocation string          `xml:"xsi:schemaLocation,attr"`
 	Version        string          `xml:"version,attr"`
-	Language       string          `xml:"xml:lang,attr"`
+	Language       string          `xml:"xml:lang,attr,omitempty"`
 	Exception      []ows.Exception `xml:"Exception"`
 }
 
@@ -91,7 +91,12 @@ func InvalidLockID() WFSException {
 }
 
 // InvalidValue exception
-func InvalidValue() WFSException {
+func InvalidValue(s ...string) WFSException {
+	if len(s) == 1 {
+		return WFSException{ExceptionText: fmt.Sprintf("The parameter: %s, contains a InvalidValue", s[0]),
+			ExceptionCode: "InvalidValue",
+			LocatorCode:   s[0]}
+	}
 	return WFSException{
 		ExceptionCode: "InvalidValue",
 	}

@@ -34,62 +34,91 @@ func (xmlattr *XMLAttribute) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 	}
 }
 
-// UnmarshalXML for BoundingBox
-func (b *BoundingBox) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var boundingbox BoundingBox
-	for _, attr := range start.Attr {
-		switch attr.Name.Local {
-		case "crs":
-			boundingbox.Crs = attr.Value
-		case "dimensions":
-			boundingbox.Dimensions = attr.Value
-		}
-	}
+// // UnmarshalXML for BoundingBox
+// func (b *BoundingBox) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+// 	var boundingbox BoundingBox
+// 	for _, attr := range start.Attr {
+// 		switch attr.Name.Local {
+// 		case "crs":
+// 			boundingbox.Crs = attr.Value
+// 		case "dimensions":
+// 			boundingbox.Dimensions = attr.Value
+// 		}
+// 	}
 
+// 	for {
+// 		token, err := d.Token()
+// 		if err != nil {
+// 			return err
+// 		}
+// 		switch el := token.(type) {
+// 		case xml.StartElement:
+// 			//TODO compact code
+// 			if el.Name.Local == "LowerCorner" {
+// 				// var position string
+// 				// elmt := xml.StartElement(el)
+// 				// d.DecodeElement(&position, &elmt)
+
+// 				// coords := getPositionFromString(position)
+// 				// if len(coords) >= 2 {
+// 				// 	// take first 2 positions (xy)
+// 				// 	boundingbox.LowerCorner = [2]float64{coords[0], coords[1]}
+// 				p := Position{}
+// 				boundingbox.LowerCorner =
+// 				}
+// 			}
+// 			if el.Name.Local == "UpperCorner" {
+// 				var position string
+// 				elmt := xml.StartElement(el)
+// 				d.DecodeElement(&position, &elmt)
+
+// 				coords := getPositionFromString(position)
+// 				if len(coords) >= 2 {
+// 					// take first 2 positions (xy)
+// 					boundingbox.UpperCorner = [2]float64{coords[0], coords[1]}
+// 				}
+// 			}
+
+// 		case xml.EndElement:
+// 			if el == start.End() {
+// 				*b = boundingbox
+// 				return nil
+// 			}
+// 		}
+// 	}
+// }
+
+// MarshalXML Postion
+func (p *Position) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	s := fmt.Sprintf("%f %f", p[0], p[1])
+	return e.EncodeElement(s, start)
+}
+
+// UnmarshalXML Position
+func (p *Position) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var position Position
 	for {
 		token, err := d.Token()
 		if err != nil {
 			return err
 		}
 		switch el := token.(type) {
-		case xml.StartElement:
-			//TODO compact code
-			if el.Name.Local == "LowerCorner" {
-				var position string
-				elmt := xml.StartElement(el)
-				d.DecodeElement(&position, &elmt)
+		case xml.CharData:
+			// var positionstr string
+			// elmt := xml.CharData(el)
 
-				coords := getPositionFromString(position)
-				if len(coords) >= 2 {
-					// take first 2 positions (xy)
-					boundingbox.LowerCorner = [2]float64{coords[0], coords[1]}
-				}
+			coords := getPositionFromString(string([]byte(el)))
+			if len(coords) >= 2 {
+				// take first 2 positions (xy)
+				position = [2]float64{coords[0], coords[1]}
 			}
-			if el.Name.Local == "UpperCorner" {
-				var position string
-				elmt := xml.StartElement(el)
-				d.DecodeElement(&position, &elmt)
-
-				coords := getPositionFromString(position)
-				if len(coords) >= 2 {
-					// take first 2 positions (xy)
-					boundingbox.UpperCorner = [2]float64{coords[0], coords[1]}
-				}
-			}
-
 		case xml.EndElement:
 			if el == start.End() {
-				*b = boundingbox
+				*p = position
 				return nil
 			}
 		}
 	}
-}
-
-// MarshalXML Postion
-func (p *Position) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	s := fmt.Sprintf("%f %f", p[0], p[1])
-	return e.EncodeElement(s, start)
 }
 
 func getPositionFromString(position string) []float64 {

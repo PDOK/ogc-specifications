@@ -12,6 +12,13 @@ func sp(s string) *string {
 	return &s
 }
 
+func TestGetMapType(t *testing.T) {
+	dft := GetMap{}
+	if dft.Type() != `GetMap` {
+		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetMap`, dft.Type())
+	}
+}
+
 func TestBuildBoundingBox(t *testing.T) {
 	var tests = []struct {
 		boundingbox string
@@ -128,23 +135,25 @@ func TestParseBodyGetFeature(t *testing.T) {
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
 						xml.Attr{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/sld GetMap.xsd"},
 					}},
-				StyledLayerDescriptor: StyledLayerDescriptor{
-					Version: "1.1.0",
-					NamedLayer: []NamedLayer{
-						{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
-						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
-						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
-					}},
-				CRS: "EPSG:4326",
-				BoundingBox: ows.BoundingBox{
-					Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
-					LowerCorner: [2]float64{-180.0, -90.0},
-					UpperCorner: [2]float64{180.0, 90.0},
+				GetMapCore: GetMapCore{
+					StyledLayerDescriptor: StyledLayerDescriptor{
+						Version: "1.1.0",
+						NamedLayer: []NamedLayer{
+							{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+							{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+							{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+						}},
+					CRS: "EPSG:4326",
+					BoundingBox: ows.BoundingBox{
+						Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
+						LowerCorner: [2]float64{-180.0, -90.0},
+						UpperCorner: [2]float64{180.0, 90.0},
+					},
+					Output: Output{
+						Size:        Size{Width: 1024, Height: 512},
+						Format:      "image/jpeg",
+						Transparent: sp("false")},
 				},
-				Output: Output{
-					Size:        Size{Width: 1024, Height: 512},
-					Format:      "image/jpeg",
-					Transparent: sp("false")},
 				Exceptions: sp("XML"),
 			},
 		},
@@ -249,21 +258,23 @@ func TestParseQuery(t *testing.T) {
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
 				},
-				StyledLayerDescriptor: StyledLayerDescriptor{
-					NamedLayer: []NamedLayer{
-						{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
-						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
-						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
-					}},
-				CRS: "EPSG:4326",
-				BoundingBox: ows.BoundingBox{
-					LowerCorner: [2]float64{-180.0, -90.0},
-					UpperCorner: [2]float64{180.0, 90.0},
+				GetMapCore: GetMapCore{
+					StyledLayerDescriptor: StyledLayerDescriptor{
+						NamedLayer: []NamedLayer{
+							{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+							{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+							{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+						}},
+					CRS: "EPSG:4326",
+					BoundingBox: ows.BoundingBox{
+						LowerCorner: [2]float64{-180.0, -90.0},
+						UpperCorner: [2]float64{180.0, 90.0},
+					},
+					Output: Output{
+						Size:        Size{Width: 1024, Height: 512},
+						Format:      "image/jpeg",
+						Transparent: sp("false")},
 				},
-				Output: Output{
-					Size:        Size{Width: 1024, Height: 512},
-					Format:      "image/jpeg",
-					Transparent: sp("false")},
 				Exceptions: sp("XML"),
 			}},
 		3: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
@@ -272,7 +283,8 @@ func TestParseQuery(t *testing.T) {
 			BaseRequest: BaseRequest{
 				Version: "1.3.0",
 			},
-			Output: Output{BGcolor: sp(`0x7F7F7F`)}}},
+			GetMapCore: GetMapCore{Output: Output{BGcolor: sp(`0x7F7F7F`)}},
+		}},
 	}
 	for k, n := range tests {
 		var gm GetMap
@@ -299,21 +311,23 @@ func TestBuildQuery(t *testing.T) {
 				Version: "1.3.0",
 				Service: "WMS",
 			},
-			StyledLayerDescriptor: StyledLayerDescriptor{
-				NamedLayer: []NamedLayer{
-					{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
-					{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
-					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
-				}},
-			CRS: "EPSG:4326",
-			BoundingBox: ows.BoundingBox{
-				LowerCorner: [2]float64{-180.0, -90.0},
-				UpperCorner: [2]float64{180.0, 90.0},
+			GetMapCore: GetMapCore{
+				StyledLayerDescriptor: StyledLayerDescriptor{
+					NamedLayer: []NamedLayer{
+						{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+					}},
+				CRS: "EPSG:4326",
+				BoundingBox: ows.BoundingBox{
+					LowerCorner: [2]float64{-180.0, -90.0},
+					UpperCorner: [2]float64{180.0, 90.0},
+				},
+				Output: Output{
+					Size:        Size{Width: 1024, Height: 512},
+					Format:      "image/jpeg",
+					Transparent: sp("false")},
 			},
-			Output: Output{
-				Size:        Size{Width: 1024, Height: 512},
-				Format:      "image/jpeg",
-				Transparent: sp("false")},
 			Exceptions: sp("XML"),
 		}, Excepted: map[string][]string{
 			LAYERS:      {`Rivers,Roads,Houses`},
@@ -330,10 +344,11 @@ func TestBuildQuery(t *testing.T) {
 			SERVICE:     {`WMS`},
 		}},
 		1: {Object: GetMap{
-			CRS: "EPSG:4326",
-			BoundingBox: ows.BoundingBox{
-				LowerCorner: [2]float64{-180.0, -90.0},
-				UpperCorner: [2]float64{180.0, 90.0},
+			GetMapCore: GetMapCore{CRS: "EPSG:4326",
+				BoundingBox: ows.BoundingBox{
+					LowerCorner: [2]float64{-180.0, -90.0},
+					UpperCorner: [2]float64{180.0, 90.0},
+				},
 			},
 		},
 			Excepted: map[string][]string{

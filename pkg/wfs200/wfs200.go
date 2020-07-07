@@ -22,6 +22,11 @@ func (wfs200 *Wfs200) Version() string {
 	return Version
 }
 
+// Validate function of the wfs200 spec
+func (wfs200 *Wfs200) Validate() bool {
+	return false
+}
+
 // Wfs200 base struct
 type Wfs200 struct {
 	XMLName               xml.Name `xml:"wfs:WFS_Capabilities"`
