@@ -12,7 +12,7 @@ This package has support for the following OGC Webservice Specifications:
 | WFS | DescribeFeatureType |
 | WFS | GetFeature |
 
-It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice.
+It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and query strings based on those structs.
 
 ## Notice
 
