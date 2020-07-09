@@ -10,8 +10,8 @@ import (
 // WMSServiceExceptionReport struct
 // TODO exception restucturing
 type WMSServiceExceptionReport struct {
-	XMLName          xml.Name        `xml:"ServiceExceptionReport"`
-	Version          string          `xml:"version,attr"`
+	XMLName          xml.Name        `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
+	Version          string          `xml:"version,attr" yaml:"version"`
 	Xmlns            string          `xml:"xmlns,attr,omitempty"`
 	Xsi              string          `xml:"xsi,attr,omitempty"`
 	SchemaLocation   string          `xml:"schemaLocation,attr,omitempty"`
@@ -32,9 +32,9 @@ func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
 
 // WMSException grouping the error message variables together
 type WMSException struct {
-	ExceptionText string `xml:",chardata"`
-	ExceptionCode string `xml:"code,attr"`
-	LocatorCode   string `xml:"locator,attr,omitempty"`
+	ExceptionText string `xml:",chardata"  yaml:"exception"`
+	ExceptionCode string `xml:"code,attr"  yaml:"code"`
+	LocatorCode   string `xml:"locator,attr,omitempty"  yaml:"locator"`
 }
 
 // Error returns available ExceptionText

@@ -14,7 +14,7 @@ const (
 // BaseRequest based on Table 5 WFS2.0.0 spec
 // Note: not usable for GetCapabilities request regarding deviation of Optional/Mandatory parameters SERVICE and VERSION
 type BaseRequest struct {
-	Service string           `xml:"service,attr" validate:"oneof=WFS wfs"`
-	Version string           `xml:"version,attr" validate:"required,eq=2.0.0"`
+	Service string           `xml:"service,attr" yaml:"service" validate:"oneof=WFS wfs"`
+	Version string           `xml:"version,attr" yaml:"version" validate:"required,eq=2.0.0"`
 	Attr    ows.XMLAttribute `xml:",attr"`
 }

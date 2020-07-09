@@ -10,12 +10,12 @@ import (
 // WFSExceptionReport struct
 // TODO exception restucturing
 type WFSExceptionReport struct {
-	XMLName        xml.Name        `xml:"ExceptionReport"`
+	XMLName        xml.Name        `xml:"ExceptionReport" yaml:"exceptionreport"`
 	Ows            string          `xml:"xmlns:ows,attr,omitempty"`
 	Xsi            string          `xml:"xmlns:xsi,attr,omitempty"`
 	SchemaLocation string          `xml:"xsi:schemaLocation,attr,omitempty"`
-	Version        string          `xml:"version,attr"`
-	Language       string          `xml:"xml:lang,attr,omitempty"`
+	Version        string          `xml:"version,attr" yaml:"version"`
+	Language       string          `xml:"xml:lang,attr,omitempty" yaml:"lang"`
 	Exception      []ows.Exception `xml:"Exception"`
 }
 
@@ -34,9 +34,9 @@ func (r WFSExceptionReport) Report(errors []ows.Exception) []byte {
 
 // WFSException struct
 type WFSException struct {
-	ExceptionText string `xml:",chardata"`
-	ExceptionCode string `xml:"exceptionCode,attr"`
-	LocatorCode   string `xml:"locator,attr,omitempty"`
+	ExceptionText string `xml:",chardata" yaml:"exception"`
+	ExceptionCode string `xml:"exceptionCode,attr" yaml:"exceptioncode"`
+	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locatorcode"`
 	// ExceptionText string `xml:"ExceptionText"`
 }
 

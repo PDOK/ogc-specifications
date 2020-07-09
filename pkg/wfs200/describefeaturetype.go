@@ -91,13 +91,13 @@ func (dft *DescribeFeatureType) BuildBody() []byte {
 
 // DescribeFeatureType struct with the needed parameters/attributes needed for making a DescribeFeatureType request
 type DescribeFeatureType struct {
-	XMLName xml.Name `xml:"DescribeFeatureType"`
+	XMLName xml.Name `xml:"DescribeFeatureType" yaml:"describefeaturetype"`
 	BaseRequest
 	BaseDescribeFeatureTypeRequest
 }
 
 // BaseDescribeFeatureTypeRequest struct used by GetFeature
 type BaseDescribeFeatureTypeRequest struct {
-	OutputFormat *string `xml:"outputFormat,attr"`
-	TypeName     *string `xml:"typeNames,attr"`
+	OutputFormat *string `xml:"outputFormat,attr" yaml:"outputformat"`
+	TypeName     *string `xml:"typeNames,attr" yaml:"typenames"`
 }

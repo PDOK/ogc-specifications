@@ -16,12 +16,12 @@ type ExceptionReport interface {
 
 // OWSExceptionReport struct
 type OWSExceptionReport struct {
-	XMLName        xml.Name    `xml:"ows:ExceptionReport"`
+	XMLName        xml.Name    `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
 	Ows            string      `xml:"xmlns:ows,attr,omitempty"`
 	Xsi            string      `xml:"xmlns:xsi,attr,omitempty"`
 	SchemaLocation string      `xml:"xsi:schemaLocation,attr,omitempty"`
-	Version        string      `xml:"version,attr"`
-	Language       string      `xml:"xml:lang,attr,omitempty"`
+	Version        string      `xml:"version,attr" yaml:"version"`
+	Language       string      `xml:"xml:lang,attr,omitempty" yaml:"lang"`
 	Exception      []Exception `xml:"Exception"`
 }
 
@@ -51,9 +51,9 @@ type Exception interface {
 // OWSException grouping the error message variables together
 type OWSException struct {
 	XMLName       xml.Name `xml:"ows:Exception"`
-	ExceptionText string   `xml:",chardata"`
-	ExceptionCode string   `xml:"exceptionCode,attr"`
-	LocatorCode   string   `xml:"locator,attr,omitempty"`
+	ExceptionText string   `xml:",chardata" yaml:"exception"`
+	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptioncode"`
+	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locationcode"`
 }
 
 // Error returns available ExceptionText

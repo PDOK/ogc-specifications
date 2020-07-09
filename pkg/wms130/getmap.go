@@ -255,35 +255,35 @@ func (gm *GetMap) BuildBody() []byte {
 // GetMap struct with the needed parameters/attributes needed for making a GetMap request
 // Struct based on http://schemas.opengis.net/sld/1.1//example_getmap.xml
 type GetMap struct {
-	XMLName xml.Name `xml:"GetMap" validate:"required"`
+	XMLName xml.Name `xml:"GetMap" yaml:"getmap" validate:"required"`
 	BaseRequest
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" validate:"required"`
-	CRS                   string                `xml:"CRS" validate:"required"`
-	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" validate:"required"`
-	Output                Output                `xml:"Output" validate:"required"`
-	Exceptions            *string               `xml:"Exceptions"`
-	Elevation             *[]Elevation          `xml:"Elevation"`
-	Time                  *string               `xml:"Time"`
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor" validate:"required"`
+	CRS                   string                `xml:"CRS" yaml:"crs" validate:"required"`
+	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox" validate:"required"`
+	Output                Output                `xml:"Output" yaml:"output" validate:"required"`
+	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
+	Elevation             *[]Elevation          `xml:"Elevation" yaml:"elavation"`
+	Time                  *string               `xml:"Time" yaml:"time"`
 }
 
 // Output struct
 type Output struct {
-	Size        Size    `xml:"Size" validate:"required"`
-	Format      string  `xml:"Format" validate:"required"`
-	Transparent *string `xml:"Transparent"`
-	BGcolor     *string `xml:"BGcolor"`
+	Size        Size    `xml:"Size" yaml:"size" validate:"required"`
+	Format      string  `xml:"Format" yaml:"format" validate:"required"`
+	Transparent *string `xml:"Transparent" yaml:"transparent"`
+	BGcolor     *string `xml:"BGcolor" yaml:"bgcolor"`
 }
 
 // Size struct
 type Size struct {
-	Width  int `xml:"Width" validate:"required,min=1,max=5000"`
-	Height int `xml:"Height" validate:"required,min=1,max=5000"`
+	Width  int `xml:"Width" yaml:"width" validate:"required,min=1,max=5000"`
+	Height int `xml:"Height" yaml:"height" validate:"required,min=1,max=5000"`
 }
 
 // StyledLayerDescriptor struct
 type StyledLayerDescriptor struct {
-	Version    string       `xml:"version,attr" validate:"required"`
-	NamedLayer []NamedLayer `xml:"NamedLayer" validate:"required"`
+	Version    string       `xml:"version,attr" yaml:"version" validate:"required"`
+	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedlayer" validate:"required"`
 }
 
 // TODO maybe 'merge' both func in a single one with 2 outputs
@@ -316,22 +316,22 @@ func (sld *StyledLayerDescriptor) getStyleQueryParameter() string {
 
 // NamedLayer struct
 type NamedLayer struct {
-	Name       string      `xml:"Name" validate:"required"`
-	NamedStyle *NamedStyle `xml:"NamedStyle"`
+	Name       string      `xml:"Name" yaml:"name" validate:"required"`
+	NamedStyle *NamedStyle `xml:"NamedStyle" yaml:"namedstyle"`
 }
 
 // NamedStyle contains the style name that needs be applied
 type NamedStyle struct {
-	Name string `xml:"Name" validate:"required"`
+	Name string `xml:"Name" yaml:"name" validate:"required"`
 }
 
 // Elevation struct for GetMap requests
 // The extent string declares what value(s) along the Dimension axis are appropriate for the corresponding layer.
 // The extent string has the syntax shown in Table C.2.
 type Elevation struct {
-	Value    float64 `xml:"Value"`
+	Value    float64 `xml:"Value" yaml:"value"`
 	Interval struct {
-		Min float64 `xml:"Min"`
-		Max float64 `xml:"Max"`
-	} `xml:"Interval"`
+		Min float64 `xml:"Min" yaml:"min"`
+		Max float64 `xml:"Max" yaml:"max"`
+	} `xml:"Interval" yaml:"interval"`
 }
