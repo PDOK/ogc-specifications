@@ -12,6 +12,10 @@ func sp(s string) *string {
 	return &s
 }
 
+func ip(i int) *int {
+	return &i
+}
+
 func TestGetMapType(t *testing.T) {
 	dft := GetMap{}
 	if dft.Type() != `GetMap` {
@@ -78,7 +82,7 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 	}
 }
 
-func TestParseBodyGetFeature(t *testing.T) {
+func TestGetMapParseBody(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
 		Excepted GetMap
@@ -232,7 +236,7 @@ func TestGetStyleQueryParameter(t *testing.T) {
 	}
 }
 
-func TestParseQuery(t *testing.T) {
+func TestGetMapParseQuery(t *testing.T) {
 	var tests = []struct {
 		Query    url.Values
 		Excepted GetMap
@@ -428,7 +432,7 @@ func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
 				}
 			}
 			if !c {
-				t.Errorf("testBaseRequest.Attr : %d, expected: %s ,\n got: %s", k, expected.BaseRequest.Attr, result.BaseRequest.Attr)
+				t.Errorf("test BaseRequest.Attr : %d, expected: %s ,\n got: %s", k, expected.BaseRequest.Attr, result.BaseRequest.Attr)
 			}
 			c = false
 		}

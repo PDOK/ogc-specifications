@@ -75,7 +75,7 @@ func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
 		}
 	}
 
-	// WMS mandatory parameters
+	// GetMap mandatory parameters
 
 	var styles, layers []string
 
