@@ -77,7 +77,7 @@ func (gmkvp *GetMapKVP) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// ParseKVP proces the simple struct to a complex struct
+// ParseKVP process the simple struct to a complex struct
 func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
 
 	gm.BaseRequest.ParseKVP(gmkvp.Service, gmkvp.Version)
@@ -104,6 +104,9 @@ func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
 	gm.BoundingBox = bbox
 
 	output, err := buildOutput(gmkvp.Height, gmkvp.Width, gmkvp.Format, gmkvp.Transparent, gmkvp.BGColor)
+	if err != nil {
+		return err
+	}
 	gm.Output = output
 
 	gm.Exceptions = gmkvp.Exceptions
