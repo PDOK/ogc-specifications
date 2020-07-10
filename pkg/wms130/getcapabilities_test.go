@@ -143,7 +143,6 @@ func TestGetCapabilitiesBuildQuery(t *testing.T) {
 				if !found {
 					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 				}
-				found = false
 			}
 		}
 	}

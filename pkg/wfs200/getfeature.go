@@ -625,12 +625,20 @@ func (gb *GEOBBOX) UnmarshalText(q string) ows.Exception {
 	regex := regexp.MustCompile(`,`)
 	result := regex.Split(q, -1)
 	if len(result) == 4 || len(result) == 5 {
-		lx, err := strconv.ParseFloat(result[0], 64)
-		ly, err := strconv.ParseFloat(result[1], 64)
-		ux, err := strconv.ParseFloat(result[2], 64)
-		uy, err := strconv.ParseFloat(result[3], 64)
 
-		if err != nil {
+		var lx, ly, ux, uy float64
+		var err error
+
+		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
+			return InvalidValue(BBOX)
+		}
+		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
+			return InvalidValue(BBOX)
+		}
+		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
+			return InvalidValue(BBOX)
+		}
+		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
 			return InvalidValue(BBOX)
 		}
 

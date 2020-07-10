@@ -380,7 +380,6 @@ func TestMergeResourceIDGroups(t *testing.T) {
 				if !found {
 					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.outputRids, mergedRids)
 				}
-				found = false
 			}
 		}
 	}
@@ -426,7 +425,6 @@ func TestBuildQueryString(t *testing.T) {
 				if !found {
 					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.expectedquery, result)
 				}
-				found = false
 			}
 		}
 	}
@@ -434,18 +432,31 @@ func TestBuildQueryString(t *testing.T) {
 
 func TestUnmarshalTextGeoBOXX(t *testing.T) {
 	var tests = []struct {
-		Query    string
-		Expected GEOBBOX
+		Query     string
+		Expected  GEOBBOX
+		Exception ows.Exception
 	}{
 		0: {Query: "18.54,-72.3544,18.62,-72.2564", Expected: GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{18.54, -72.3544}, UpperCorner: ows.Position{18.62, -72.2564}}}},
 		1: {Query: "49.1874,-123.2778,49.3504,-122.8892,urn:ogc:def:crs:EPSG::4326", Expected: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: ows.Position{49.1874, -123.2778}, UpperCorner: ows.Position{49.3504, -122.8892}}}},
 		2: {Query: "", Expected: GEOBBOX{}},
 		3: {Query: "18.54;-72.3544;18.62;-72.2564", Expected: GEOBBOX{}},
+		// Needs a beter solution
+		4: {Query: "error,-72.3544,18.62,-72.2564", Exception: InvalidValue(`BBOX`)},
+		5: {Query: "18.54,error,18.62,-72.2564", Exception: InvalidValue(`BBOX`)},
+		6: {Query: "18.54,-72.3544,error,-72.2564", Exception: InvalidValue(`BBOX`)},
+		7: {Query: "18.54,-72.3544,18.62,error", Exception: InvalidValue(`BBOX`)},
 	}
 
 	for k, a := range tests {
 		var gb GEOBBOX
-		gb.UnmarshalText(a.Query)
+		err := gb.UnmarshalText(a.Query)
+
+		if err != nil {
+			if err != a.Exception {
+				t.Errorf("test: %d, expected: %+v,\n got: %+v", k, a.Exception, err)
+			}
+		}
+
 		if gb.Envelope != a.Expected.Envelope {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v", k, a.Expected.Envelope, gb.Envelope)
 		}
