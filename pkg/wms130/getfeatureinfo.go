@@ -11,9 +11,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
-// <map_request_copy>
-var getFeatureMandatoryGetMapParameters = []string{LAYERS, CRS, BBOX, WIDTH, HEIGHT}
-
 //
 const (
 	getfeatureinfo = `GetFeatureInfo`
@@ -31,8 +28,8 @@ const (
 var getFeatureInfoMandatoryParameters, getFeatureInfoOptionalParameters []string
 
 func init() {
-	getFeatureInfoMandatoryParameters = append(getMapMandatoryParameters, []string{QUERYLAYERS, I, J}...)
-	getFeatureInfoOptionalParameters = append(getMapOptionalParameters, []string{INFOFORMAT, FEATURECOUNT}...)
+	getFeatureInfoMandatoryParameters = []string{LAYERS, STYLES, CRS, BBOX, WIDTH, HEIGHT, FORMAT, QUERYLAYERS, I, J}
+	getFeatureInfoOptionalParameters = []string{TRANSPARENT, BGCOLOR, EXCEPTIONS, INFOFORMAT, FEATURECOUNT}
 }
 
 // Type returns GetFeatureInfo

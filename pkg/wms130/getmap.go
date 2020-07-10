@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
-	"github.com/pdok/ogc-specifications/pkg/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -30,12 +29,11 @@ const (
 	TRANSPARENT = `TRANSPARENT`
 	BGCOLOR     = `BGCOLOR`
 	EXCEPTIONS  = `EXCEPTIONS` // defaults to XML
-	TIME        = `TIME`
-	ELEVATION   = `ELEVATION`
-)
 
-var getMapMandatoryParameters = []string{LAYERS, STYLES, CRS, BBOX, WIDTH, HEIGHT, FORMAT}
-var getMapOptionalParameters = []string{TRANSPARENT, BGCOLOR, EXCEPTIONS, TIME, ELEVATION}
+	// TODO: something with Time & Elevation
+	// TIME        = `TIME`
+	// ELEVATION   = `ELEVATION`
+)
 
 // Type returns GetMap
 func (gm *GetMap) Type() string {
@@ -57,9 +55,10 @@ type GetMapKVP struct {
 	Format      string  `yaml:"format,omitempty"`
 	Transparent *string `yaml:"transparent,omitempty"`
 	BGColor     *string `yaml:"bgcolor,omitempty"`
-	Time        *string `yaml:"time,omitempty"`
-	Elevation   *string `yaml:"elevation,omitempty"`
-	Exceptions  *string `yaml:"exceptions,omitempty"`
+	// TODO: something with Time & Elevation
+	// Time        *string `yaml:"time,omitempty"`
+	// Elevation   *string `yaml:"elevation,omitempty"`
+	Exceptions *string `yaml:"exceptions,omitempty"`
 }
 
 // ParseQuery builds a GetMapKVP object based on the available query parameters
@@ -189,9 +188,7 @@ func (gmkvp *GetMapKVP) BuildQuery() url.Values {
 	fields := reflect.TypeOf(*gmkvp)
 	values := reflect.ValueOf(*gmkvp)
 
-	num := fields.NumField()
-
-	for i := 0; i < num; i++ {
+	for i := 0; i < fields.NumField(); i++ {
 		field := fields.Field(i)
 		value := values.Field(i)
 		// fmt.Print("Type:", field.Type, ",", field.Name, "=", value, "\n")
@@ -199,11 +196,11 @@ func (gmkvp *GetMapKVP) BuildQuery() url.Values {
 		switch value.Kind() {
 		case reflect.String:
 			v := value.String()
-			query[strings.ToLower(field.Name)] = []string{v}
+			query[strings.ToUpper(field.Name)] = []string{v}
 		case reflect.Ptr:
 			v := value.Elem()
 			if v.IsValid() {
-				query[strings.ToLower(field.Name)] = []string{fmt.Sprintf("%v", v)}
+				query[strings.ToUpper(field.Name)] = []string{fmt.Sprintf("%v", v)}
 			}
 		}
 	}
@@ -216,7 +213,7 @@ func (gm *GetMap) BuildQuery() url.Values {
 	gmkvp := GetMapKVP{}
 	gmkvp.ParseGetMap(gm)
 
-	query := utils.KeysToUpper(gmkvp.BuildQuery())
+	query := gmkvp.BuildQuery()
 
 	return query
 }
@@ -359,8 +356,9 @@ type GetMap struct {
 	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox" validate:"required"`
 	Output                Output                `xml:"Output" yaml:"output" validate:"required"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
-	Elevation             *[]Elevation          `xml:"Elevation" yaml:"elavation"`
-	Time                  *string               `xml:"Time" yaml:"time"`
+	// TODO: something with Time & Elevation
+	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elavation"`
+	// Time                  *string               `xml:"Time" yaml:"time"`
 }
 
 // Output struct
