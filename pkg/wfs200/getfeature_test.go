@@ -239,7 +239,6 @@ func TestParseQueryParameters(t *testing.T) {
 		// Startindex & resulttype
 		3: {QueryParams: map[string][]string{OUTPUTFORMAT: {"application/xml"}, STARTINDEX: {"1000"}, RESULTTYPE: {"hits"}, TYPENAMES: {"dummy"}, COUNT: {"3"}, VERSION: {Version}},
 			Result: GetFeature{BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3), Startindex: ip(1000), ResultType: sp("hits")}, BaseRequest: BaseRequest{Version: Version}, Query: Query{TypeNames: "dummy"}}},
-		// Nothing, except for Version needs to be set
 		4: {QueryParams: map[string][]string{},
 			Exception: ows.MissingParameterValue(VERSION),
 		},

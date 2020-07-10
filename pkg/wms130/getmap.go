@@ -60,16 +60,14 @@ func (gm *GetMap) ParseBody(body []byte) ows.Exception {
 
 // ParseQuery builds a GetMap object based on the available query parameters
 func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
+
 	if len(query) == 0 {
+		// When there are no query value we know that at least
+		// the manadorty VERSION parameter is missing.
 		return ows.MissingParameterValue(VERSION)
 	}
 
 	q := utils.KeysToUpper(query)
-
-	// Base
-	if len(q[REQUEST]) > 0 {
-		gm.XMLName.Local = q[REQUEST][0]
-	}
 
 	var br BaseRequest
 	if err := br.ParseQueryParameters(q); err != nil {
@@ -78,9 +76,11 @@ func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
 	gm.BaseRequest = br
 
 	// GetMap mandatory parameters
+	if len(q[REQUEST]) > 0 {
+		gm.XMLName.Local = q[REQUEST][0]
+	}
 
 	var styles, layers []string
-
 	if len(query[STYLES]) > 0 {
 		styles = strings.Split(query[STYLES][0], ",")
 	}
@@ -113,7 +113,7 @@ func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
 		gm.Output.Format = query[FORMAT][0]
 	}
 
-	// WMS optional parameters
+	// GetMap optional parameters
 	for _, k := range getMapOptionalParameters {
 		if len(query[k]) > 0 {
 			switch k {

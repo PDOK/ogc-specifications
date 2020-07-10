@@ -123,6 +123,9 @@ func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
 			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype},
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: Service, Version: Version}}},
+		6: {Query: map[string][]string{},
+			Exception: ows.MissingParameterValue(VERSION),
+		},
 	}
 
 	for k, n := range tests {

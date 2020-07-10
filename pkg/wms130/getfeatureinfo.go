@@ -70,6 +70,8 @@ func (gfi *GetFeatureInfo) ParseBody(body []byte) ows.Exception {
 func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 
 	if len(query) == 0 {
+		// When there are no query value we know that at least
+		// the manadorty VERSION parameter is missing.
 		return ows.MissingParameterValue(VERSION)
 	}
 
