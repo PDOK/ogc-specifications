@@ -21,6 +21,8 @@ This is still a 'work in progres' with the following major todo's:
 - [ ] Validation support
 - [ ] WMTS support
 - [ ] WCS support
+- [ ] OGC response support (at least for the metadata calls like DescribeFeatureType)
+- [ ] WFS StoredQuery
 
 ## Installation
 
@@ -37,6 +39,10 @@ import "github.com/pdok/ogc-specifications"
 ```go
 go test ./... -covermode=atomic
 ```
+
+## Usage
+
+- [Simple BBOX](./examples/simple-bbox/main.go)
 
 ## How to Contribute
 
