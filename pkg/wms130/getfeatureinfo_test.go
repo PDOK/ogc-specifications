@@ -167,7 +167,7 @@ func TestGetFeatureInfoParseQuery(t *testing.T) {
 		Error    ows.Exception
 	}{
 		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Excepted: GetFeatureInfo{XMLName: xml.Name{Local: getfeatureinfo}, BaseRequest: BaseRequest{Version: Version, Service: Service}}},
-		1: {Query: url.Values{}, Excepted: GetFeatureInfo{}},
+		1: {Query: url.Values{}, Error: ows.MissingParameterValue(VERSION)},
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:       {`Rivers,Roads,Houses`},
 			STYLES:       {`CenterLine,,Outline`},
@@ -207,10 +207,10 @@ func TestGetFeatureInfoParseQuery(t *testing.T) {
 				InfoFormat:   sp(`application/json`),
 			},
 		},
-		3: {Query: map[string][]string{WIDTH: {`not a number`}}, Error: ows.MissingParameterValue(WIDTH, `not a number`)},
-		4: {Query: map[string][]string{HEIGHT: {`not a number`}}, Error: ows.MissingParameterValue(HEIGHT, `not a number`)},
-		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}}, Error: InvalidPoint(`not a number`, `1`)},
-		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}}, Error: InvalidPoint(`1`, `not a number`)},
+		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(WIDTH, `not a number`)},
+		4: {Query: map[string][]string{HEIGHT: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(HEIGHT, `not a number`)},
+		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}}, Error: InvalidPoint(`not a number`, `1`)},
+		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}}, Error: InvalidPoint(`1`, `not a number`)},
 	}
 	for k, n := range tests {
 		var gfi GetFeatureInfo

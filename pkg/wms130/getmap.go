@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 //
@@ -59,21 +60,22 @@ func (gm *GetMap) ParseBody(body []byte) ows.Exception {
 
 // ParseQuery builds a GetMap object based on the available query parameters
 func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
-	// Base
-	for _, k := range WMSbaseparameters {
-		if len(query[k]) > 0 {
-			switch k {
-			case REQUEST:
-				if strings.ToUpper(query[k][0]) == strings.ToUpper(getmap) {
-					gm.XMLName.Local = getmap
-				}
-			case SERVICE:
-				gm.BaseRequest.Service = strings.ToUpper(query[k][0])
-			case VERSION:
-				gm.BaseRequest.Version = strings.ToUpper(query[k][0])
-			}
-		}
+	if len(query) == 0 {
+		return ows.MissingParameterValue(VERSION)
 	}
+
+	q := utils.KeysToUpper(query)
+
+	// Base
+	if len(q[REQUEST]) > 0 {
+		gm.XMLName.Local = q[REQUEST][0]
+	}
+
+	var br BaseRequest
+	if err := br.ParseQueryParameters(q); err != nil {
+		return err
+	}
+	gm.BaseRequest = br
 
 	// GetMap mandatory parameters
 

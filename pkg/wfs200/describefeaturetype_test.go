@@ -100,25 +100,25 @@ func TestParseBodyDescribeFeatureType(t *testing.T) {
 
 func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
 	var tests = []struct {
-		Query  url.Values
-		Result DescribeFeatureType
-		Error  ows.Exception
+		Query     url.Values
+		Result    DescribeFeatureType
+		Exception ows.Exception
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
-		0: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {describefeaturetype}, "version": {"2.0.0"}},
+		0: {Query: map[string][]string{"SERVICE": {Service}, "Request": {describefeaturetype}, "version": {"2.0.0"}},
 			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
 		// Missing mandatory SERVICE attribute
 		1: {Query: map[string][]string{"Request": {describefeaturetype}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}}},
+			Exception: ows.MissingParameterValue(VERSION)},
 		// Missing optional VERSION attribute
-		2: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {describefeaturetype}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS"}}},
+		2: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "Version": {"2.0.0"}},
+			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: Version}}},
 		// Unknown optional VERSION attribute
-		3: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {describefeaturetype}, "version": {"no version supplied"}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
+		3: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"no version supplied"}},
+			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "no version supplied"}}},
 		// Not configured optional VERSION attribute
-		4: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {describefeaturetype}, "version": {"1.1.0"}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
+		4: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"1.1.0"}},
+			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "1.1.0"}}},
 		5: {Query: map[string][]string{VERSION: {Version}, SERVICE: {Service}, REQUEST: {describefeaturetype}, TYPENAME: {"acme:anvils"}},
 			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype},
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
@@ -129,8 +129,8 @@ func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
 		var dft DescribeFeatureType
 		err := dft.ParseQuery(n.Query)
 		if err != nil {
-			if err.Error() != n.Error.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+			if err.Error() != n.Exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
 			}
 		} else {
 			if n.Result.XMLName.Local != dft.XMLName.Local {

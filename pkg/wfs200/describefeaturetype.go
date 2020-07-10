@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 
 	"regexp"
 	"strings"
@@ -47,16 +48,21 @@ func (dft *DescribeFeatureType) ParseBody(body []byte) ows.Exception {
 
 // ParseQuery builds a DescribeFeatureType object based on the available query parameters
 func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
+
+	q := utils.KeysToUpper(query)
+
+	var br BaseRequest
+	if err := br.ParseQueryParameters(q); err != nil {
+		return err
+	}
+	dft.BaseRequest = br
+
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
 			if strings.ToUpper(v[0]) == strings.ToUpper(describefeaturetype) {
 				dft.XMLName.Local = describefeaturetype
 			}
-		case SERVICE:
-			dft.BaseRequest.Service = Service
-		case VERSION:
-			dft.BaseRequest.Version = Version
 		case TYPENAME:
 			dft.BaseDescribeFeatureTypeRequest.TypeName = &v[0] //TODO maybe process as a comma separated list
 		case OUTPUTFORMAT:

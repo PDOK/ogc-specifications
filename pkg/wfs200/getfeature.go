@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 // Contains the GetFeature struct and specific functions for building a GetFeature request
@@ -80,31 +81,38 @@ func (gf *GetFeature) ParseBody(body []byte) ows.Exception {
 // ParseQuery builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
 func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
+
+	if len(query) == 0 {
+		return ows.MissingParameterValue(VERSION)
+	}
+
+	q := utils.KeysToUpper(query)
+
 	// Base
-	if len(query[REQUEST]) > 0 {
-		gf.XMLName.Local = query[REQUEST][0]
+	if len(q[REQUEST]) > 0 {
+		gf.XMLName.Local = q[REQUEST][0]
 	}
-	if len(query[SERVICE]) > 0 {
-		gf.BaseRequest.Service = query[SERVICE][0]
+
+	var br BaseRequest
+	if err := br.ParseQueryParameters(q); err != nil {
+		return err
 	}
-	if len(query[VERSION]) > 0 {
-		gf.BaseRequest.Version = query[VERSION][0]
-	} else {
-		gf.BaseRequest.Version = Version // When VERSION is not available then add the known VERSION (2.0.0)
-	}
+	gf.BaseRequest = br
 
 	// Table 5
 	for k, m := range table5 {
-		if len(query[k]) > 0 {
+		if len(q[k]) > 0 {
 			switch k {
 			case STARTINDEX:
-				gf.Startindex = &query[k][0]
+				i, _ := strconv.Atoi(q[k][0])
+				gf.Startindex = &i
 			case COUNT:
-				gf.Count = &query[k][0]
+				i, _ := strconv.Atoi(q[k][0])
+				gf.Count = &i
 			case OUTPUTFORMAT:
-				gf.OutputFormat = &query[k][0]
+				gf.OutputFormat = &q[k][0]
 			case RESULTTYPE:
-				gf.ResultType = &query[k][0]
+				gf.ResultType = &q[k][0]
 			default:
 				if m {
 					//TODO add return error, missing mandatory key... or accept for now and check during validation
@@ -115,10 +123,10 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 
 	// Table 7
 	for k, m := range table7 {
-		if len(query[k]) > 0 {
+		if len(q[k]) > 0 {
 			switch k {
 			case NAMESPACES:
-				gf.BaseRequest.Attr = procesNamespaces(query[k][0])
+				gf.BaseRequest.Attr = procesNamespaces(q[k][0])
 			default:
 				if m {
 					//TODO add return error, missing mandatory key... or accept for now and check during validation
@@ -129,19 +137,19 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 
 	// Table 8
 	for k, m := range table8 {
-		if len(query[k]) > 0 {
+		if len(q[k]) > 0 {
 			switch k {
 			case TYPENAMES:
-				gf.Query.TypeNames = query[k][0]
+				gf.Query.TypeNames = q[k][0]
 			case ALIASES:
 				// TODO
 				// 7.9.2.4.3 aliases parameter
 				// fes:AbstractAdhocQueryExpressionType type (see ISO 19143, 6.3.2)
 			case SRSNAME:
-				gf.Query.SrsName = &query[k][0]
+				gf.Query.SrsName = &q[k][0]
 			case FILTER:
 				var filter Filter
-				if err := xml.Unmarshal([]byte(query[k][0]), &filter); err != nil {
+				if err := xml.Unmarshal([]byte(q[k][0]), &filter); err != nil {
 					// TODO what if the filter is corrupt
 					// Now it won't unmarshal resulting in a empty/corrupt (but maybe valid) filter object
 					// Validation of the content is handled further downstream
@@ -161,7 +169,7 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 				// For now we are gonna skip it
 			case RESOURCEID:
 				// Resourceid's are
-				ids := strings.Split(query[k][0], `,`)
+				ids := strings.Split(q[k][0], `,`)
 				var resourceids []ResourceID
 				for _, id := range ids {
 					resourceids = append(resourceids, ResourceID{Rid: id})
@@ -176,7 +184,7 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 				}
 			case BBOX:
 				var geobbox GEOBBOX
-				geobbox.UnmarshalText(query[k][0])
+				geobbox.UnmarshalText(q[k][0])
 				if gf.Query.Filter != nil {
 					gf.Query.Filter.BBOX = &geobbox
 				} else {
@@ -255,8 +263,8 @@ func procesNamespaces(namespace string) []xml.Attr {
 // BaseGetFeatureRequest struct used by GetFeature
 type BaseGetFeatureRequest struct {
 	OutputFormat *string `xml:"outputFormat,attr" yaml:"outputformat"`
-	Count        *string `xml:"count,attr" yaml:"count"`
-	Startindex   *string `xml:"startindex,attr" yaml:"startindex"`
+	Count        *int    `xml:"count,attr" yaml:"count"`
+	Startindex   *int    `xml:"startindex,attr" yaml:"startindex"`
 	ResultType   *string `xml:"resultType,attr" yaml:"resulttype"`
 }
 
@@ -268,11 +276,11 @@ func (b *BaseGetFeatureRequest) BuildQueryString() url.Values {
 		switch k {
 		case STARTINDEX:
 			if b.Startindex != nil {
-				querystring[STARTINDEX] = []string{*b.Startindex}
+				querystring[STARTINDEX] = []string{strconv.Itoa(*b.Startindex)}
 			}
 		case COUNT:
 			if b.Count != nil {
-				querystring[COUNT] = []string{*b.Count}
+				querystring[COUNT] = []string{strconv.Itoa(*b.Count)}
 			}
 		case OUTPUTFORMAT:
 			if b.OutputFormat != nil {

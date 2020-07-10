@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 // <map_request_copy>
@@ -67,21 +68,23 @@ func (gfi *GetFeatureInfo) ParseBody(body []byte) ows.Exception {
 
 // ParseQuery builds a GetFeatureInfo object based on the available query parameters
 func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
-	// Base
-	for _, k := range WMSbaseparameters {
-		if len(query[k]) > 0 {
-			switch k {
-			case REQUEST:
-				if strings.ToUpper(query[k][0]) == strings.ToUpper(getfeatureinfo) {
-					gfi.XMLName.Local = getfeatureinfo
-				}
-			case SERVICE:
-				gfi.BaseRequest.Service = strings.ToUpper(query[k][0])
-			case VERSION:
-				gfi.BaseRequest.Version = strings.ToUpper(query[k][0])
-			}
-		}
+
+	if len(query) == 0 {
+		return ows.MissingParameterValue(VERSION)
 	}
+
+	q := utils.KeysToUpper(query)
+
+	// Base
+	if len(q[REQUEST]) > 0 {
+		gfi.XMLName.Local = q[REQUEST][0]
+	}
+
+	var br BaseRequest
+	if err := br.ParseQueryParameters(q); err != nil {
+		return err
+	}
+	gfi.BaseRequest = br
 
 	var styles, layers []string
 

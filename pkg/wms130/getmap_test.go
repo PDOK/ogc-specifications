@@ -243,7 +243,7 @@ func TestGetMapParseQuery(t *testing.T) {
 		Error    ows.Exception
 	}{
 		0: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version}}, Excepted: GetMap{XMLName: xml.Name{Local: getmap}, BaseRequest: BaseRequest{Version: Version, Service: Service}}},
-		1: {Query: url.Values{}, Excepted: GetMap{}},
+		1: {Query: url.Values{}, Error: ows.MissingParameterValue(VERSION)},
 		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
