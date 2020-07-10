@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
-	"github.com/pdok/ogc-specifications/pkg/utils"
+	"gopkg.in/yaml.v2"
 )
 
 //
@@ -39,6 +39,99 @@ func (gm *GetMap) Type() string {
 	return getmap
 }
 
+//GetMapKVP struct
+type GetMapKVP struct {
+	// Table 8 - The Parameters of a GetMap request
+	Request     string  `yaml:"request,omitempty"`
+	Version     string  `yaml:"version,omitempty"`
+	Service     string  `yaml:"service,omitempty"`
+	Layers      string  `yaml:"layers,omitempty"`
+	Styles      string  `yaml:"styles,omitempty"`
+	CRS         string  `yaml:"crs,omitempty"`
+	Bbox        string  `yaml:"bbox,omitempty"`
+	Width       string  `yaml:"width,omitempty"`
+	Height      string  `yaml:"height,omitempty"`
+	Format      string  `yaml:"format,omitempty"`
+	Transparent *string `yaml:"transparent,omitempty"`
+	BGColor     *string `yaml:"bgcolor,omitempty"`
+	Time        *string `yaml:"time,omitempty"`
+	Elevation   *string `yaml:"elevation,omitempty"`
+	Exceptions  *string `yaml:"exceptions,omitempty"`
+}
+
+// ParseQuery builds a GetMapKVP object based on the available query parameters
+func (gmkvp *GetMapKVP) ParseQuery(query url.Values) ows.Exception {
+	flatten := map[string]string{}
+	for k, v := range query {
+		if len(v) > 1 {
+			return ows.InvalidParameterValue(k, strings.Join(v, ","))
+		}
+		flatten[strings.ToLower(k)] = v[0]
+	}
+
+	y, _ := yaml.Marshal(&flatten)
+	if err := yaml.Unmarshal(y, &gmkvp); err != nil {
+		return ows.NoApplicableCode(`Could not read query parameters`)
+	}
+
+	return nil
+}
+
+// ParseKVP proces the simple struct to a complex struct
+func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
+
+	gm.BaseRequest.ParseKVP(gmkvp.Service, gmkvp.Version)
+
+	var layers, styles []string
+	if gmkvp.Layers != `` {
+		layers = strings.Split(gmkvp.Layers, ",")
+	}
+	if gmkvp.Styles != `` {
+		styles = strings.Split(gmkvp.Styles, ",")
+	}
+
+	sld, err := buildStyledLayerDescriptor(layers, styles)
+	if err != nil {
+		return err
+	}
+	gm.StyledLayerDescriptor = sld
+
+	gm.CRS = gmkvp.CRS
+	bbox, err := buildBoundingBox(gmkvp.Bbox)
+	if err != nil {
+		return err
+	}
+	gm.BoundingBox = bbox
+
+	output, err := buildOutput(gmkvp.Height, gmkvp.Width, gmkvp.Format, gmkvp.Transparent, gmkvp.BGColor)
+	gm.Output = output
+
+	gm.Exceptions = gmkvp.Exceptions
+
+	return nil
+}
+
+// ParseQuery builds a GetMap object based on the available query parameters
+func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
+
+	if len(query) == 0 {
+		// When there are no query value we know that at least
+		// the manadorty VERSION parameter is missing.
+		return ows.MissingParameterValue(VERSION)
+	}
+
+	gmkvp := GetMapKVP{}
+	if err := gmkvp.ParseQuery(query); err != nil {
+		return err
+	}
+
+	if err := gm.ParseKVP(gmkvp); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ParseBody builds a GetMap object based on the given body
 func (gm *GetMap) ParseBody(body []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
@@ -56,146 +149,6 @@ func (gm *GetMap) ParseBody(body []byte) ows.Exception {
 	}
 	gm.BaseRequest.Attr = ows.StripDuplicateAttr(n)
 	return nil
-}
-
-// ParseQuery builds a GetMap object based on the available query parameters
-func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
-
-	if len(query) == 0 {
-		// When there are no query value we know that at least
-		// the manadorty VERSION parameter is missing.
-		return ows.MissingParameterValue(VERSION)
-	}
-
-	q := utils.KeysToUpper(query)
-
-	var br BaseRequest
-	if err := br.ParseQueryParameters(q); err != nil {
-		return err
-	}
-	gm.BaseRequest = br
-
-	// GetMap mandatory parameters
-	if len(q[REQUEST]) > 0 {
-		gm.XMLName.Local = q[REQUEST][0]
-	}
-
-	var styles, layers []string
-	if len(query[STYLES]) > 0 {
-		styles = strings.Split(query[STYLES][0], ",")
-	}
-	if len(query[LAYERS]) > 0 {
-		layers = strings.Split(query[LAYERS][0], ",")
-	}
-
-	sld, err := buildStyledLayerDescriptor(layers, styles)
-	if err == nil {
-		gm.StyledLayerDescriptor = sld
-	} else {
-		return err
-	}
-
-	if len(query[CRS]) > 0 {
-		gm.CRS = query[CRS][0]
-	}
-	if len(query[BBOX]) > 0 {
-		gm.BoundingBox = buildBoundingBox(query[BBOX][0])
-	}
-	if len(query[WIDTH]) > 0 {
-		i, _ := strconv.Atoi(query[WIDTH][0])
-		gm.Output.Size.Width = i
-	}
-	if len(query[HEIGHT]) > 0 {
-		i, _ := strconv.Atoi(query[HEIGHT][0])
-		gm.Output.Size.Height = i
-	}
-	if len(query[FORMAT]) > 0 {
-		gm.Output.Format = query[FORMAT][0]
-	}
-
-	// GetMap optional parameters
-	for _, k := range getMapOptionalParameters {
-		if len(query[k]) > 0 {
-			switch k {
-			case TRANSPARENT:
-				gm.Output.Transparent = &query[k][0]
-			case BGCOLOR:
-				gm.Output.BGcolor = &query[k][0]
-			case EXCEPTIONS:
-				gm.Exceptions = &query[k][0]
-				// case TIME:
-				// No Time implementation (for now...)
-				// Time format in ccyy-mm-ddThh:mm:ss.sssZ but also need support for time ranges
-				// see: OGC 06-042 (WMS 1.3.0 spec)
-				// case ELEVATION:
-				// skip for now, same 'issue' as with the TIME
-			}
-		}
-	}
-
-	return nil
-}
-
-func buildBoundingBox(boundingbox string) ows.BoundingBox {
-	bbox := strings.Split(boundingbox, ",")
-
-	// check if all 'strings' are parsable to float64
-	for _, crd := range bbox {
-		_, err := strconv.ParseFloat(crd, 64)
-		if err != nil {
-			return ows.BoundingBox{}
-		}
-	}
-
-	if len(bbox) == 4 {
-		lcx, _ := strconv.ParseFloat(bbox[0], 64)
-		lcy, _ := strconv.ParseFloat(bbox[1], 64)
-		ucx, _ := strconv.ParseFloat(bbox[2], 64)
-		ucy, _ := strconv.ParseFloat(bbox[3], 64)
-		return ows.BoundingBox{LowerCorner: [2]float64{lcx, lcy},
-			UpperCorner: [2]float64{ucx, ucy}}
-	}
-	return ows.BoundingBox{}
-}
-
-func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, ows.Exception) {
-	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
-	// 1. cnt(STYLE) == 0 -> Added LAYERS
-	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
-	// 3. cnt(LAYERS) == cnt(STYLES) -> merge LAYERS STYLES
-	// 4. cnt(LAYERS) != cnt(STYLES) -> raise error Style not defined/Styles do not correspond with layers
-	//    normally when 4 would occure this could be done in the validate step... but,..
-	//    with the serialisation -> struct it would become a valid object (yes!?.. YES!)
-	//    That is because POST xml and GET KVP handle this 'different' (at least not in the same way...)
-	//    When 3 is hit the validation at the Validation step wil resolve this
-
-	// 1.
-	if len(styles) == 0 {
-		var sld StyledLayerDescriptor
-		for _, layer := range layers {
-			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer})
-		}
-		sld.Version = "1.1.0"
-		return sld, nil
-		// 2.
-	} else if len(layers) == 0 {
-		// do nothing
-		// will be resolved during validation
-
-		// 3.
-	} else if len(layers) == len(styles) {
-		var sld StyledLayerDescriptor
-		for k, layer := range layers {
-			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer, NamedStyle: &NamedStyle{Name: styles[k]}})
-		}
-		sld.Version = "1.1.0"
-		return sld, nil
-		// 4.
-	} else if len(layers) != len(styles) {
-		return StyledLayerDescriptor{}, StyleNotDefined()
-	}
-
-	return StyledLayerDescriptor{}, nil
 }
 
 // BuildQuery builds a new query string that will be proxied
@@ -254,6 +207,152 @@ func (gm *GetMap) BuildBody() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
+func buildOutput(height, width, format string, transparent, bgcolor *string) (Output, ows.Exception) {
+
+	output := Output{}
+
+	h, err := strconv.Atoi(height)
+	if err != nil {
+		return output, ows.InvalidParameterValue(HEIGHT, height)
+	}
+	w, err := strconv.Atoi(width)
+	if err != nil {
+		return output, ows.InvalidParameterValue(WIDTH, width)
+	}
+
+	output.Size = Size{Height: h, Width: w}
+	output.Format = format
+	output.Transparent = transparent
+	output.BGcolor = bgcolor
+
+	return output, nil
+}
+
+func buildBoundingBox(boundingbox string) (ows.BoundingBox, ows.Exception) {
+	result := strings.Split(boundingbox, ",")
+	var lx, ly, ux, uy float64
+	var err error
+
+	if len(result) < 4 {
+		return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+	}
+
+	if len(result) == 4 || len(result) == 5 {
+		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
+			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+		}
+		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
+			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+		}
+		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
+			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+		}
+		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
+			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+		}
+	}
+
+	if len(result) == 5 {
+		return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
+			UpperCorner: [2]float64{ux, uy}, Crs: result[4]}, nil
+	}
+
+	return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
+		UpperCorner: [2]float64{ux, uy}}, nil
+}
+
+func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, ows.Exception) {
+	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
+	// 1. cnt(STYLE) == 0 -> Added LAYERS
+	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
+	// 3. cnt(LAYERS) == cnt(STYLES) -> merge LAYERS STYLES
+	// 4. cnt(LAYERS) != cnt(STYLES) -> raise error Style not defined/Styles do not correspond with layers
+	//    normally when 4 would occure this could be done in the validate step... but,..
+	//    with the serialisation -> struct it would become a valid object (yes!?.. YES!)
+	//    That is because POST xml and GET KVP handle this 'different' (at least not in the same way...)
+	//    When 3 is hit the validation at the Validation step wil resolve this
+
+	// 1.
+	if len(styles) == 0 {
+		var sld StyledLayerDescriptor
+		for _, layer := range layers {
+			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer})
+		}
+		sld.Version = "1.1.0"
+		return sld, nil
+		// 2.
+	} else if len(layers) == 0 {
+		// do nothing
+		// will be resolved during validation
+
+		// 3.
+	} else if len(layers) == len(styles) {
+		var sld StyledLayerDescriptor
+		for k, layer := range layers {
+			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer, NamedStyle: &NamedStyle{Name: styles[k]}})
+		}
+		sld.Version = "1.1.0"
+		return sld, nil
+		// 4.
+	} else if len(layers) != len(styles) {
+		return StyledLayerDescriptor{}, StyleNotDefined()
+	}
+
+	return StyledLayerDescriptor{}, nil
+}
+
+// // GetMap from GetMapKVP
+// func (gmkvp *GetMapKVP) GetMap() GetMap {
+// 	gm := GetMap{}
+// 	gm.BaseRequest.ParseKVPParameters(gmkvp.Service, gmkvp.Version)
+
+// 	var layers, styles []string
+// 	if gmkvp.Layers != `` {
+// 		layers = strings.Split(gmkvp.Layers, ",")
+// 	}
+// 	if gmkvp.Styles != `` {
+// 		styles = strings.Split(gmkvp.Styles, ",")
+// 	}
+
+// 	if sld, err := buildStyledLayerDescriptor(layers, styles); err != nil {
+// 		gm.StyledLayerDescriptor = sld
+// 	}
+
+// 	gm.CRS = gmkvp.CRS
+// 	gm.BoundingBox = buildBoundingBox(gmkvp.Bbox)
+// 	gm.Output.Size.Height = gmkvp.Heigth
+
+// 	return gm
+// }
+
+// TODO maybe 'merge' both func in a single one with 2 outputs
+// so their are 'insync' ...?
+func (sld *StyledLayerDescriptor) getLayerQueryParameter() string {
+	queryvalue := ""
+	for p, l := range sld.NamedLayer {
+		queryvalue = queryvalue + l.Name
+		if p < len(sld.NamedLayer)-1 {
+			queryvalue = queryvalue + ","
+		}
+	}
+	return queryvalue
+}
+
+func (sld *StyledLayerDescriptor) getStyleQueryParameter() string {
+	queryvalue := ""
+	for p, l := range sld.NamedLayer {
+		if l.Name != "" {
+			if l.NamedStyle != nil {
+				queryvalue = queryvalue + l.NamedStyle.Name
+			}
+			if p < len(sld.NamedLayer)-1 {
+				queryvalue = queryvalue + ","
+			}
+		}
+	}
+	return queryvalue
+}
+
 // GetMap struct with the needed parameters/attributes needed for making a GetMap request
 // Struct based on http://schemas.opengis.net/sld/1.1//example_getmap.xml
 type GetMap struct {
@@ -286,34 +385,6 @@ type Size struct {
 type StyledLayerDescriptor struct {
 	Version    string       `xml:"version,attr" yaml:"version" validate:"required"`
 	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedlayer" validate:"required"`
-}
-
-// TODO maybe 'merge' both func in a single one with 2 outputs
-// so their are 'insync' ...?
-func (sld *StyledLayerDescriptor) getLayerQueryParameter() string {
-	queryvalue := ""
-	for p, l := range sld.NamedLayer {
-		queryvalue = queryvalue + l.Name
-		if p < len(sld.NamedLayer)-1 {
-			queryvalue = queryvalue + ","
-		}
-	}
-	return queryvalue
-}
-
-func (sld *StyledLayerDescriptor) getStyleQueryParameter() string {
-	queryvalue := ""
-	for p, l := range sld.NamedLayer {
-		if l.Name != "" {
-			if l.NamedStyle != nil {
-				queryvalue = queryvalue + l.NamedStyle.Name
-			}
-			if p < len(sld.NamedLayer)-1 {
-				queryvalue = queryvalue + ","
-			}
-		}
-	}
-	return queryvalue
 }
 
 // NamedLayer struct

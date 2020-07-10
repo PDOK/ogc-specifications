@@ -101,7 +101,12 @@ func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 			case CRS:
 				gfi.CRS = query[k][0]
 			case BBOX:
-				gfi.BoundingBox = buildBoundingBox(query[k][0])
+				var bbox ows.BoundingBox
+				var err ows.Exception
+				if bbox, err = buildBoundingBox(query[k][0]); err != nil {
+					return err
+				}
+				gfi.BoundingBox = bbox
 			case WIDTH:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {

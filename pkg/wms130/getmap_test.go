@@ -27,20 +27,25 @@ func TestBuildBoundingBox(t *testing.T) {
 	var tests = []struct {
 		boundingbox string
 		bbox        ows.BoundingBox
+		Exception   ows.Exception
 	}{
 		0: {boundingbox: "0,0,100,100", bbox: ows.BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{100, 100}}},
 		1: {boundingbox: "0,0,-100,-100", bbox: ows.BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{-100, -100}}}, // while this isn't correct, this will be 'addressed' in the validation step
-		2: {boundingbox: "0,0,100", bbox: ows.BoundingBox{}},
-		3: {boundingbox: ",,,", bbox: ows.BoundingBox{}},
-		4: {boundingbox: ",,,100", bbox: ows.BoundingBox{}},
-		5: {boundingbox: "number,,,100", bbox: ows.BoundingBox{}},
+		2: {boundingbox: "0,0,100", Exception: ows.InvalidParameterValue(`0,0,100`, BBOX)},
+		3: {boundingbox: ",,,", Exception: ows.InvalidParameterValue(`,,,`, BBOX)},
+		4: {boundingbox: ",,,100", Exception: ows.InvalidParameterValue(`,,,100`, BBOX)},
+		5: {boundingbox: "number,,,100", Exception: ows.InvalidParameterValue(`number,,,100`, BBOX)},
 	}
 
 	for k, test := range tests {
-		bbox := buildBoundingBox(test.boundingbox)
-
-		if bbox != test.bbox {
-			t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.bbox, bbox)
+		if bbox, err := buildBoundingBox(test.boundingbox); err != nil {
+			if err != test.Exception {
+				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.Exception, err)
+			}
+		} else {
+			if bbox != test.bbox {
+				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.bbox, bbox)
+			}
 		}
 	}
 }
@@ -238,12 +243,15 @@ func TestGetStyleQueryParameter(t *testing.T) {
 
 func TestGetMapParseQuery(t *testing.T) {
 	var tests = []struct {
-		Query    url.Values
-		Excepted GetMap
-		Error    ows.Exception
+		Query     url.Values
+		Excepted  GetMap
+		Exception ows.Exception
 	}{
-		0: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version}}, Excepted: GetMap{XMLName: xml.Name{Local: getmap}, BaseRequest: BaseRequest{Version: Version, Service: Service}}},
-		1: {Query: url.Values{}, Error: ows.MissingParameterValue(VERSION)},
+		0: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version}},
+			Exception: ows.InvalidParameterValue(``, BBOX),
+		},
+		1: {Query: url.Values{},
+			Exception: ows.MissingParameterValue(VERSION)},
 		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
@@ -255,6 +263,7 @@ func TestGetMapParseQuery(t *testing.T) {
 			FORMAT:      {`image/jpeg`},
 			TRANSPARENT: {`FALSE`},
 			EXCEPTIONS:  {`XML`},
+			BGCOLOR:     {`0x7F7F7F`},
 		},
 			Excepted: GetMap{
 				BaseRequest: BaseRequest{
@@ -274,24 +283,17 @@ func TestGetMapParseQuery(t *testing.T) {
 				Output: Output{
 					Size:        Size{Width: 1024, Height: 512},
 					Format:      "image/jpeg",
-					Transparent: sp("false")},
+					Transparent: sp("false"),
+					BGcolor:     sp(`0x7F7F7F`)},
 				Exceptions: sp("XML"),
 			}},
-		3: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
-			BGCOLOR: {`0x7F7F7F`},
-		}, Excepted: GetMap{
-			BaseRequest: BaseRequest{
-				Version: "1.3.0",
-			},
-			Output: Output{BGcolor: sp(`0x7F7F7F`)},
-		}},
 	}
 	for k, n := range tests {
 		var gm GetMap
 		err := gm.ParseQuery(n.Query)
 		if err != nil {
-			if err.Error() != n.Error.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+			if err.Error() != n.Exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
 			}
 		} else {
 			compareGetMapObject(gm, n.Excepted, t, k)

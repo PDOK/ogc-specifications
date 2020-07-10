@@ -630,6 +630,22 @@ type Distance struct {
 	Text  string `xml:",chardata"`
 }
 
+// GEOBBOX for SpatialOperator
+type GEOBBOX struct {
+	Units          *string  `xml:"unit,attr" yaml:"unit"` // unit or units..
+	SrsName        *string  `xml:"srsName,attr" yaml:"srsname"`
+	ValueReference *string  `xml:"ValueReference" yaml:"valuereference"`
+	Envelope       Envelope `xml:"Envelope" yaml:"envelope"`
+	// Text           string   `xml:",chardata"`
+	// <fes:BBOX>
+	// 	<fes:ValueReference>/RS1/geometry</fes:ValueReference>
+	// 	<gml:Envelope srsName="urn:ogc:def:crs:EPSG::1234">
+	// 		<gml:lowerCorner>10 10</gml:lowerCorner>
+	// 		<gml:upperCorner>20 20</gml:upperCorner>
+	// 	</gml:Envelope>
+	// </fes:BBOX>
+}
+
 // UnmarshalText a string to a GEOBBOX object
 func (gb *GEOBBOX) UnmarshalText(q string) ows.Exception {
 	regex := regexp.MustCompile(`,`)
@@ -672,22 +688,6 @@ func (gb *GEOBBOX) MarshalText() string {
 		str = str + ` ` + *gb.SrsName
 	}
 	return regex.ReplaceAllString(str, `,`)
-}
-
-// GEOBBOX for SpatialOperator
-type GEOBBOX struct {
-	Units          *string  `xml:"unit,attr" yaml:"unit"` // unit or units..
-	SrsName        *string  `xml:"srsName,attr" yaml:"srsname"`
-	ValueReference *string  `xml:"ValueReference" yaml:"valuereference"`
-	Envelope       Envelope `xml:"Envelope" yaml:"envelope"`
-	// Text           string   `xml:",chardata"`
-	// <fes:BBOX>
-	// 	<fes:ValueReference>/RS1/geometry</fes:ValueReference>
-	// 	<gml:Envelope srsName="urn:ogc:def:crs:EPSG::1234">
-	// 		<gml:lowerCorner>10 10</gml:lowerCorner>
-	// 		<gml:upperCorner>20 20</gml:upperCorner>
-	// 	</gml:Envelope>
-	// </fes:BBOX>
 }
 
 // SortBy for Query

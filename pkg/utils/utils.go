@@ -5,11 +5,20 @@ import (
 	"strings"
 )
 
-// KeysToUpper convert all the keys to lowercase
-func KeysToUpper(query url.Values) url.Values {
-	newquery := url.Values{}
-	for key, values := range query {
-		newquery[strings.ToUpper(key)] = append(newquery[strings.ToUpper(key)], values...)
+// KeysToUpper convert all the keys to UpperCase
+func KeysToUpper(q url.Values) url.Values {
+	r := url.Values{}
+	for k, v := range q {
+		r[strings.ToUpper(k)] = append(r[strings.ToUpper(k)], v...)
 	}
-	return newquery
+	return r
+}
+
+// KeysToLower convert all the keys to LowerCase
+func KeysToLower(q url.Values) url.Values {
+	r := url.Values{}
+	for k, v := range q {
+		r[strings.ToLower(k)] = append(r[strings.ToLower(k)], v...)
+	}
+	return r
 }

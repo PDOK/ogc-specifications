@@ -95,7 +95,7 @@ func MissingParameterValue(s ...string) OWSException {
 // InvalidParameterValue exception
 func InvalidParameterValue(value, locator string) OWSException {
 	return OWSException{
-		ExceptionText: fmt.Sprintf("%s %s does not exist in this server. Please check the capabilities and reformulate your request", locator, value),
+		ExceptionText: fmt.Sprintf("%s contains a invalid value: %s", locator, value),
 		LocatorCode:   value,
 		ExceptionCode: `InvalidParameterValue`,
 	}
@@ -118,7 +118,13 @@ func InvalidUpdateSequence() OWSException {
 }
 
 // OptionNotSupported exception
-func OptionNotSupported() OWSException {
+func OptionNotSupported(s ...string) OWSException {
+	if len(s) == 1 {
+		return OWSException{
+			ExceptionText: s[0],
+			ExceptionCode: `OptionNotSupported`,
+		}
+	}
 	return OWSException{
 		ExceptionCode: `OptionNotSupported`,
 	}
