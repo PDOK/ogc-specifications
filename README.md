@@ -27,6 +27,7 @@ This is still a 'work in progres' with the following major todo's:
 - [ ] WCS support
 - [ ] OGC response support (at least for the metadata calls like DescribeFeatureType)
 - [ ] WFS StoredQuery
+- [ ] WMS Time & Elevation parameters
 
 ## Installation
 

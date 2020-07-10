@@ -2,11 +2,14 @@ package wms130
 
 import (
 	"encoding/xml"
+	"fmt"
 	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -64,6 +67,8 @@ func (gmkvp *GetMapKVP) ParseQuery(query url.Values) ows.Exception {
 	flatten := map[string]string{}
 	for k, v := range query {
 		if len(v) > 1 {
+			// When there are is more then one value
+			// return a InvalidParameterValue Exception
 			return ows.InvalidParameterValue(k, strings.Join(v, ","))
 		}
 		flatten[strings.ToLower(k)] = v[0]
@@ -77,10 +82,33 @@ func (gmkvp *GetMapKVP) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
+// ParseGetMap builds a GetMapKVP object based on a GetMap struct
+func (gmkvp *GetMapKVP) ParseGetMap(gm *GetMap) ows.Exception {
+
+	gmkvp.Request = getmap
+	gmkvp.Version = Version
+	gmkvp.Service = Service
+	gmkvp.Layers = gm.StyledLayerDescriptor.getLayerQueryParameter()
+	gmkvp.Styles = gm.StyledLayerDescriptor.getStyleQueryParameter()
+	gmkvp.CRS = gm.CRS
+	gmkvp.Bbox = gm.BoundingBox.BuildQueryString()
+	gmkvp.Width = strconv.Itoa(gm.Output.Size.Width)
+	gmkvp.Height = strconv.Itoa(gm.Output.Size.Height)
+	gmkvp.Format = gm.Output.Format
+	gmkvp.Transparent = gm.Output.Transparent
+	gmkvp.BGColor = gm.Output.BGcolor
+	// TODO: something with Time & Elevation
+	// gmkvp.Time = gm.Time
+	// gmkvp.Elevation = gm.Elevation
+	gmkvp.Exceptions = gm.Exceptions
+
+	return nil
+}
+
 // ParseKVP process the simple struct to a complex struct
 func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
 
-	gm.BaseRequest.ParseKVP(gmkvp.Service, gmkvp.Version)
+	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
 
 	var layers, styles []string
 	if gmkvp.Layers != `` {
@@ -154,54 +182,43 @@ func (gm *GetMap) ParseBody(body []byte) ows.Exception {
 	return nil
 }
 
+// BuildQuery builds a url.Values query from a GetMapKVP struct
+func (gmkvp *GetMapKVP) BuildQuery() url.Values {
+	query := make(map[string][]string)
+
+	fields := reflect.TypeOf(*gmkvp)
+	values := reflect.ValueOf(*gmkvp)
+
+	num := fields.NumField()
+
+	for i := 0; i < num; i++ {
+		field := fields.Field(i)
+		value := values.Field(i)
+		// fmt.Print("Type:", field.Type, ",", field.Name, "=", value, "\n")
+
+		switch value.Kind() {
+		case reflect.String:
+			v := value.String()
+			query[strings.ToLower(field.Name)] = []string{v}
+		case reflect.Ptr:
+			v := value.Elem()
+			if v.IsValid() {
+				query[strings.ToLower(field.Name)] = []string{fmt.Sprintf("%v", v)}
+			}
+		}
+	}
+	return query
+}
+
 // BuildQuery builds a new query string that will be proxied
 func (gm *GetMap) BuildQuery() url.Values {
-	querystring := make(map[string][]string)
 
-	// base
-	querystring[REQUEST] = []string{gm.XMLName.Local}
-	querystring[SERVICE] = []string{gm.BaseRequest.Service}
-	querystring[VERSION] = []string{gm.BaseRequest.Version}
+	gmkvp := GetMapKVP{}
+	gmkvp.ParseGetMap(gm)
 
-	for _, k := range getMapMandatoryParameters {
-		switch k {
-		case LAYERS:
-			querystring[LAYERS] = []string{gm.StyledLayerDescriptor.getLayerQueryParameter()}
-		case STYLES:
-			querystring[STYLES] = []string{gm.StyledLayerDescriptor.getStyleQueryParameter()}
-		case CRS:
-			querystring[CRS] = []string{gm.CRS}
-		case BBOX:
-			querystring[BBOX] = []string{gm.BoundingBox.BuildQueryString()}
-		case WIDTH:
-			querystring[WIDTH] = []string{strconv.Itoa(gm.Output.Size.Width)}
-		case HEIGHT:
-			querystring[HEIGHT] = []string{strconv.Itoa(gm.Output.Size.Height)}
-		case FORMAT:
-			querystring[FORMAT] = []string{gm.Output.Format}
-		}
-	}
+	query := utils.KeysToUpper(gmkvp.BuildQuery())
 
-	for _, k := range getMapOptionalParameters {
-		switch k {
-		case TRANSPARENT:
-			if gm.Output.Transparent != nil {
-				querystring[TRANSPARENT] = []string{*gm.Output.Transparent}
-			}
-		case BGCOLOR:
-			if gm.Output.BGcolor != nil {
-				querystring[BGCOLOR] = []string{*gm.Output.BGcolor}
-			}
-		case EXCEPTIONS:
-			if gm.Exceptions != nil {
-				querystring[EXCEPTIONS] = []string{*gm.Exceptions}
-			}
-			// case TIME:
-			// case ELEVATION:
-		}
-	}
-
-	return querystring
+	return query
 }
 
 // BuildBody builds a 'new' XML document 'based' on the 'original' XML document
@@ -303,30 +320,6 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 
 	return StyledLayerDescriptor{}, nil
 }
-
-// // GetMap from GetMapKVP
-// func (gmkvp *GetMapKVP) GetMap() GetMap {
-// 	gm := GetMap{}
-// 	gm.BaseRequest.ParseKVPParameters(gmkvp.Service, gmkvp.Version)
-
-// 	var layers, styles []string
-// 	if gmkvp.Layers != `` {
-// 		layers = strings.Split(gmkvp.Layers, ",")
-// 	}
-// 	if gmkvp.Styles != `` {
-// 		styles = strings.Split(gmkvp.Styles, ",")
-// 	}
-
-// 	if sld, err := buildStyledLayerDescriptor(layers, styles); err != nil {
-// 		gm.StyledLayerDescriptor = sld
-// 	}
-
-// 	gm.CRS = gmkvp.CRS
-// 	gm.BoundingBox = buildBoundingBox(gmkvp.Bbox)
-// 	gm.Output.Size.Height = gmkvp.Heigth
-
-// 	return gm
-// }
 
 // TODO maybe 'merge' both func in a single one with 2 outputs
 // so their are 'insync' ...?

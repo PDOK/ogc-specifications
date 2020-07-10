@@ -37,8 +37,8 @@ func (b *BaseRequest) ParseQueryParameters(query url.Values) ows.Exception {
 	return nil
 }
 
-// ParseKVP builds a BaseRequest struct
-func (b *BaseRequest) ParseKVP(service, version string) ows.Exception {
+// Build builds a BaseRequest struct
+func (b *BaseRequest) Build(service, version string) ows.Exception {
 	if service != `` {
 		// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
 		b.Service = service
