@@ -216,7 +216,7 @@ func (gfi *GetFeatureInfo) BuildQuery() url.Values {
 
 // BuildBody builds a 'new' XML document 'based' on the 'original' XML document
 // Note: this GetFeatureInfo XML body is a interpretation and there isn't a
-// good/real OGC exmaple request. So for now we use the GetMap, that is a large part
+// good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.
 func (gfi *GetFeatureInfo) BuildBody() []byte {
 	si, _ := xml.MarshalIndent(gfi, "", " ")

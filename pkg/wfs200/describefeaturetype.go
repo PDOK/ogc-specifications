@@ -58,7 +58,7 @@ func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
 		case VERSION:
 			dft.BaseRequest.Version = Version
 		case TYPENAME:
-			dft.BaseDescribeFeatureTypeRequest.TypeName = &v[0] //TODO maybe process as a comma seperated list
+			dft.BaseDescribeFeatureTypeRequest.TypeName = &v[0] //TODO maybe process as a comma separated list
 		case OUTPUTFORMAT:
 			// TODO nothing for now always assume the default text/xml; subtype=gml/3.2
 		}

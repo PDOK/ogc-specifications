@@ -104,7 +104,7 @@ type ServiceProvider struct {
 	} `xml:"ows:ServiceContact" yaml:"servicecontact"`
 }
 
-// Method in seperated struct so to use it as a Pointer
+// Method in separated struct so to use it as a Pointer
 type Method struct {
 	Type string `xml:"xlink:type,attr" yaml:"type"`
 	Href string `xml:"xlink:href,attr" yaml:"href"`

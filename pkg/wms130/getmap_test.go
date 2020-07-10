@@ -219,7 +219,7 @@ func TestGetStyleQueryParameter(t *testing.T) {
 				{Name: "Roads"},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}}, Excepted: "CenterLine,,Outline"},
-		// 4. sould fail in the validation step
+		// 4. This needs to fail in the validation step
 		4: {StyledLayerDescriptor: StyledLayerDescriptor{
 			NamedLayer: []NamedLayer{
 				{NamedStyle: &NamedStyle{Name: "CenterLine"}},

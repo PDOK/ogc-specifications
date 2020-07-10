@@ -157,12 +157,12 @@ func buildBoundingBox(boundingbox string) ows.BoundingBox {
 }
 
 func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, ows.Exception) {
-	// Because the LAYERS & STYLES parameters are intertwined we proces as follows:
+	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
 	// 1. cnt(STYLE) == 0 -> Added LAYERS
 	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
 	// 3. cnt(LAYERS) == cnt(STYLES) -> merge LAYERS STYLES
 	// 4. cnt(LAYERS) != cnt(STYLES) -> raise error Style not defined/Styles do not correspond with layers
-	//    normally when 4 would occure this sould be done in the validate step... but,..
+	//    normally when 4 would occure this could be done in the validate step... but,..
 	//    with the serialisation -> struct it would become a valid object (yes!?.. YES!)
 	//    That is because POST xml and GET KVP handle this 'different' (at least not in the same way...)
 	//    When 3 is hit the validation at the Validation step wil resolve this

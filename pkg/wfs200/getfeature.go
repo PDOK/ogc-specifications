@@ -144,7 +144,7 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 				if err := xml.Unmarshal([]byte(query[k][0]), &filter); err != nil {
 					// TODO what if the filter is corrupt
 					// Now it won't unmarshal resulting in a empty/corrupt (but maybe valid) filter object
-					// Validation of the content is handled futher downstream
+					// Validation of the content is handled further downstream
 				}
 				if gf.Query.Filter != nil {
 					// We are at this point only interressed in the RESOURCEID's
