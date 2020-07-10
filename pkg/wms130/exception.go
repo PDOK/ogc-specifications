@@ -34,7 +34,7 @@ func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
 type WMSException struct {
 	ExceptionText string `xml:",chardata"  yaml:"exception"`
 	ExceptionCode string `xml:"code,attr"  yaml:"code"`
-	LocatorCode   string `xml:"locator,attr,omitempty"  yaml:"locator"`
+	LocatorCode   string `xml:"locator,attr,omitempty"  yaml:"locator,omitempty"`
 }
 
 // Error returns available ExceptionText

@@ -14,8 +14,8 @@ import (
 //   <gml:coord><gml:X>-55</gml:X><gml:Y>50</gml:Y></gml:coord>
 // </BoundingBox>
 type BoundingBox struct {
-	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs"`
-	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions"`
+	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
+	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
 	LowerCorner Position `xml:"LowerCorner" yaml:"lowercorner"`
 	UpperCorner Position `xml:"UpperCorner" yaml:"uppercorner"`
 }

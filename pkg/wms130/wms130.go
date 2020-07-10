@@ -37,12 +37,12 @@ type Wms130 struct {
 
 // Namespaces struct containing the namespaces needed for the XML document
 type Namespaces struct {
-	XmlnsWMS           string `xml:"xmlns,attr" yaml:"wms"`                                    //http://www.opengis.net/wms
-	XmlnsSLD           string `xml:"xmlns:sld,attr" yaml:"sld"`                                //http://www.opengis.net/sld
-	XmlnsXlink         string `xml:"xmlns:xlink,attr" yaml:"xlink"`                            //http://www.w3.org/1999/xlink
-	XmlnsXSI           string `xml:"xmlns:xsi,attr" yaml:"xsi"`                                //http://www.w3.org/2001/XMLSchema-instance
-	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspirecommon"` //http://inspire.ec.europa.eu/schemas/common/1.0
-	XmlnsInspireVs     string `xml:"xmlns:inspire_vs,attr,omitempty" yaml:"inspirevs"`         //http://inspire.ec.europa.eu/schemas/inspire_vs/1.0
+	XmlnsWMS           string `xml:"xmlns,attr" yaml:"wms"`                                              //http://www.opengis.net/wms
+	XmlnsSLD           string `xml:"xmlns:sld,attr" yaml:"sld"`                                          //http://www.opengis.net/sld
+	XmlnsXlink         string `xml:"xmlns:xlink,attr" yaml:"xlink"`                                      //http://www.w3.org/1999/xlink
+	XmlnsXSI           string `xml:"xmlns:xsi,attr" yaml:"xsi"`                                          //http://www.w3.org/2001/XMLSchema-instance
+	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspirecommon,omitempty"` //http://inspire.ec.europa.eu/schemas/common/1.0
+	XmlnsInspireVs     string `xml:"xmlns:inspire_vs,attr,omitempty" yaml:"inspirevs,omitempty"`         //http://inspire.ec.europa.eu/schemas/inspire_vs/1.0
 	Version            string `xml:"version,attr" yaml:"version"`
 	SchemaLocation     string `xml:"xsi:schemaLocation,attr" yaml:"schemalocation"`
 }

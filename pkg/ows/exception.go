@@ -21,7 +21,7 @@ type OWSExceptionReport struct {
 	Xsi            string      `xml:"xmlns:xsi,attr,omitempty"`
 	SchemaLocation string      `xml:"xsi:schemaLocation,attr,omitempty"`
 	Version        string      `xml:"version,attr" yaml:"version"`
-	Language       string      `xml:"xml:lang,attr,omitempty" yaml:"lang"`
+	Language       string      `xml:"xml:lang,attr,omitempty" yaml:"lang,omitempty"`
 	Exception      []Exception `xml:"Exception"`
 }
 

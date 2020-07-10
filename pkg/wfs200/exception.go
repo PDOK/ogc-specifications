@@ -15,7 +15,7 @@ type WFSExceptionReport struct {
 	Xsi            string          `xml:"xmlns:xsi,attr,omitempty"`
 	SchemaLocation string          `xml:"xsi:schemaLocation,attr,omitempty"`
 	Version        string          `xml:"version,attr" yaml:"version"`
-	Language       string          `xml:"xml:lang,attr,omitempty" yaml:"lang"`
+	Language       string          `xml:"xml:lang,attr,omitempty" yaml:"lang,omitempty"`
 	Exception      []ows.Exception `xml:"Exception"`
 }
 
@@ -36,7 +36,7 @@ func (r WFSExceptionReport) Report(errors []ows.Exception) []byte {
 type WFSException struct {
 	ExceptionText string `xml:",chardata" yaml:"exception"`
 	ExceptionCode string `xml:"exceptionCode,attr" yaml:"exceptioncode"`
-	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locatorcode"`
+	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locatorcode,omitempty"`
 	// ExceptionText string `xml:"ExceptionText"`
 }
 
