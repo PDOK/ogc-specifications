@@ -1,4 +1,4 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 func TestGetFeatureInfoType(t *testing.T) {
@@ -209,8 +210,8 @@ func TestGetFeatureInfoParseQuery(t *testing.T) {
 		},
 		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(WIDTH, `not a number`)},
 		4: {Query: map[string][]string{HEIGHT: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(HEIGHT, `not a number`)},
-		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}}, Error: InvalidPoint(`not a number`, `1`)},
-		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}}, Error: InvalidPoint(`1`, `not a number`)},
+		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}}, Error: exception.InvalidPoint(`not a number`, `1`)},
+		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}}, Error: exception.InvalidPoint(`1`, `not a number`)},
 	}
 	for k, n := range tests {
 		var gfi GetFeatureInfo

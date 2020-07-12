@@ -1,10 +1,16 @@
-package wms130
+package exception
 
 import (
 	"encoding/xml"
 	"fmt"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+)
+
+// Type and Version as constant
+const (
+	Service string = `WMS`
+	Version string = `1.3.0`
 )
 
 // WMSServiceExceptionReport struct

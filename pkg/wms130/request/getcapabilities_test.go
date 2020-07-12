@@ -1,4 +1,4 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"

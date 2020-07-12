@@ -1,9 +1,15 @@
-package wms130
+package request
 
 import (
 	"net/url"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+)
+
+// Type and Version as constant
+const (
+	Service string = `WMS`
+	Version string = `1.3.0`
 )
 
 // WMS 1.3.0 Tokens

@@ -1,4 +1,4 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 //
@@ -122,13 +123,13 @@ func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 			case I:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {
-					return InvalidPoint(query[I][0], query[J][0])
+					return exception.InvalidPoint(query[I][0], query[J][0])
 				}
 				gfi.I = i
 			case J:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {
-					return InvalidPoint(query[I][0], query[J][0])
+					return exception.InvalidPoint(query[I][0], query[J][0])
 				}
 				gfi.J = i
 			}

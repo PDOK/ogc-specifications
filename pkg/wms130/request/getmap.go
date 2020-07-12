@@ -1,4 +1,4 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"
@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 	"gopkg.in/yaml.v2"
 )
 
@@ -312,7 +313,7 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 		return sld, nil
 		// 4.
 	} else if len(layers) != len(styles) {
-		return StyledLayerDescriptor{}, StyleNotDefined()
+		return StyledLayerDescriptor{}, exception.StyleNotDefined()
 	}
 
 	return StyledLayerDescriptor{}, nil

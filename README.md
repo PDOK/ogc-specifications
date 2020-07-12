@@ -7,14 +7,14 @@
 The package ogc-specifications is a implementation of the OGC Webservice Specifications as defined by the [OGC](https://www.ogc.org/).
 This package has support for the following OGC Webservice Specifications:
 
-| Spec | Request or Operation |
-| --- | --- |
-| WMS | GetCapabilities |
-| WMS | GetMap |
-| WMS | GetFeatureInfo |
-| WFS | GetCapabilities |
-| WFS | DescribeFeatureType |
-| WFS | GetFeature |
+| Spec | Operation | Request | Reponse |
+| --- | --- | --- | --- |
+| WMS | GetCapabilities | [x]  | [x] |
+| WMS | GetMap | [x] | [ ] |
+| WMS | GetFeatureInfo | [x] | [ ] |
+| WFS | GetCapabilities | [x] | [x] |
+| WFS | DescribeFeatureType | [x] | [ ] |
+| WFS | GetFeature | [x] | [ ] |
 
 It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and query strings based on those structs.
 
