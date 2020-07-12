@@ -9,10 +9,10 @@ This package has support for the following OGC Webservice Specifications:
 
 | Spec | Operation | Request | Reponse |
 | --- | --- | --- | --- |
-| WMS | GetCapabilities | :heavy_check_mark:  | :white_check_mark: |
+| WMS | GetCapabilities | :heavy_check_mark:  | :grey_exclamation: |
 | WMS | GetMap | :heavy_check_mark: | |
 | WMS | GetFeatureInfo | :heavy_check_mark: | |
-| WFS | GetCapabilities | :heavy_check_mark: | :white_check_mark: |
+| WFS | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
 | WFS | DescribeFeatureType | :heavy_check_mark: | |
 | WFS | GetFeature | :heavy_check_mark: | |
 
