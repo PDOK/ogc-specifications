@@ -1,4 +1,4 @@
-package wfs200
+package request
 
 import (
 	"encoding/xml"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
 func sp(s string) *string {
@@ -455,10 +456,10 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 		2: {Query: "", Expected: GEOBBOX{}},
 		3: {Query: "18.54;-72.3544;18.62;-72.2564", Expected: GEOBBOX{}},
 		// Needs a beter solution
-		4: {Query: "error,-72.3544,18.62,-72.2564", Exception: InvalidValue(`BBOX`)},
-		5: {Query: "18.54,error,18.62,-72.2564", Exception: InvalidValue(`BBOX`)},
-		6: {Query: "18.54,-72.3544,error,-72.2564", Exception: InvalidValue(`BBOX`)},
-		7: {Query: "18.54,-72.3544,18.62,error", Exception: InvalidValue(`BBOX`)},
+		4: {Query: "error,-72.3544,18.62,-72.2564", Exception: exception.InvalidValue(`BBOX`)},
+		5: {Query: "18.54,error,18.62,-72.2564", Exception: exception.InvalidValue(`BBOX`)},
+		6: {Query: "18.54,-72.3544,error,-72.2564", Exception: exception.InvalidValue(`BBOX`)},
+		7: {Query: "18.54,-72.3544,18.62,error", Exception: exception.InvalidValue(`BBOX`)},
 	}
 
 	for k, a := range tests {

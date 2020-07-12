@@ -1,9 +1,15 @@
-package wfs200
+package request
 
 import (
 	"net/url"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+)
+
+//
+const (
+	Service = `WFS`
+	Version = `2.0.0`
 )
 
 // WFS 2.0.0 Tokens

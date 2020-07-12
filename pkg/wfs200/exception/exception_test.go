@@ -1,4 +1,4 @@
-package wfs200
+package exception
 
 import (
 	"testing"

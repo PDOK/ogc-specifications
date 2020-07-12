@@ -1,4 +1,4 @@
-package wfs200
+package request
 
 import (
 	"encoding/xml"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
 func TestGetCapabilitiesType(t *testing.T) {
@@ -35,11 +36,11 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
 					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: &WFSException{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
+		1: {Body: []byte("<Unknown/>"), Error: &exception.WFSException{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"}},
+		2: {Body: []byte("no XML document, just a string"), Error: &exception.WFSException{ExceptionText: "Could not process XML, is it XML?"}},
 		// document at all
-		3: {Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"}},
+		3: {Error: &exception.WFSException{ExceptionText: "Could not process XML, is it XML?"}},
 		// Duplicate attributes in XML message with the same value
 		4: {Body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
 			Result: GetCapabilities{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
@@ -106,7 +107,7 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 			Result: GetCapabilities{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "NO VERSION FOUND"}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			Error: &WFSException{ExceptionText: "Failed to parse the operation, found: "}},
+			Error: &exception.WFSException{ExceptionText: "Failed to parse the operation, found: "}},
 	}
 
 	for k, n := range tests {
