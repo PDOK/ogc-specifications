@@ -9,12 +9,12 @@ This package has support for the following OGC Webservice Specifications:
 
 | Spec | Operation | Request | Reponse |
 | --- | --- | --- | --- |
-| WMS | GetCapabilities | [x]  | [x] |
-| WMS | GetMap | [x] | [ ] |
-| WMS | GetFeatureInfo | [x] | [ ] |
-| WFS | GetCapabilities | [x] | [x] |
-| WFS | DescribeFeatureType | [x] | [ ] |
-| WFS | GetFeature | [x] | [ ] |
+| WMS | GetCapabilities | :heavy_check_mark:  | :white_check_mark: |
+| WMS | GetMap | :heavy_check_mark: | |
+| WMS | GetFeatureInfo | :heavy_check_mark: | |
+| WFS | GetCapabilities | :heavy_check_mark: | :white_check_mark: |
+| WFS | DescribeFeatureType | :heavy_check_mark: | |
+| WFS | GetFeature | :heavy_check_mark: | |
 
 It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and query strings based on those structs.
 
