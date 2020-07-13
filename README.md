@@ -1,6 +1,6 @@
 ![GitHub license](https://img.shields.io/github/license/PDOK/ogc-specifications)
 ![GitHub release](https://img.shields.io/github/release/PDOK/ogc-specifications.svg)
-![Go report](https://goreportcard.com/badge/github.com/pdok/ogc-specifications)
+[![Go Report Card](https://goreportcard.com/badge/PDOK/ogc-specifications)](https://goreportcard.com/report/PDOK/ogc-specifications) 
 
 # ogc-specifications
 
