@@ -125,6 +125,7 @@ func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
 	gm.StyledLayerDescriptor = sld
 
 	gm.CRS = gmkvp.CRS
+
 	bbox, err := buildBoundingBox(gmkvp.Bbox)
 	if err != nil {
 		return err
