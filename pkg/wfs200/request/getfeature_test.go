@@ -264,7 +264,7 @@ func TestParseQueryParameters(t *testing.T) {
 
 	for tid, q := range tests {
 		var gf GetFeature
-		if err := gf.ParseQuery(q.QueryParams); err != nil {
+		if err := gf.ParseKVP(q.QueryParams); err != nil {
 			if err != q.Exception {
 				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, q.Exception, err)
 			}
@@ -355,7 +355,7 @@ func TestParseQueryInnerXML(t *testing.T) {
 
 	for k, q := range tests {
 		var gf GetFeature
-		gf.ParseQuery(q.QueryParams)
+		gf.ParseKVP(q.QueryParams)
 
 		if q.Result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content != gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.Result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content, gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content)
@@ -405,7 +405,7 @@ func BenchmarkBuildQueryString(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		//fmt.Println(i)
-		gf.BuildQuery()
+		gf.BuildKVP()
 	}
 }
 
@@ -425,7 +425,7 @@ func TestBuildQueryString(t *testing.T) {
 	}
 
 	for k, q := range tests {
-		result := q.getfeature.BuildQuery()
+		result := q.getfeature.BuildKVP()
 		if len(q.expectedquery) != len(result) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.expectedquery, result)
 		} else {

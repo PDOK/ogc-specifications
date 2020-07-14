@@ -94,7 +94,7 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 
 	for k, n := range tests {
 		var gc GetCapabilities
-		err := gc.ParseQuery(n.Query)
+		err := gc.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -128,7 +128,7 @@ func TestGetCapabilitiesBuildQuery(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildQuery()
+		url := n.Object.BuildKVP()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {

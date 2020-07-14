@@ -64,8 +64,8 @@ func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a GetFeatureInfo object based on the available query parameters
-func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
+// ParseKVP builds a GetFeatureInfo object based on the available query parameters
+func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
 
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -81,7 +81,7 @@ func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 	}
 
 	var br BaseRequest
-	if err := br.ParseQueryParameters(q); err != nil {
+	if err := br.ParseKVP(q); err != nil {
 		return err
 	}
 	gfi.BaseRequest = br
@@ -170,8 +170,8 @@ func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (gfi *GetFeatureInfo) BuildQuery() url.Values {
+// BuildKVP builds a new query string that will be proxied
+func (gfi *GetFeatureInfo) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 
 	// base

@@ -67,7 +67,7 @@ func TestGetFeatureInfoBuildQuery(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildQuery()
+		url := n.Object.BuildKVP()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -215,7 +215,7 @@ func TestGetFeatureInfoParseQuery(t *testing.T) {
 	}
 	for k, n := range tests {
 		var gfi GetFeatureInfo
-		err := gfi.ParseQuery(n.Query)
+		err := gfi.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)

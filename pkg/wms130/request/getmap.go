@@ -62,12 +62,12 @@ type GetMapKVP struct {
 	Exceptions *string `yaml:"exceptions,omitempty"`
 }
 
-// ParseQuery builds a GetMapKVP object based on the available query parameters
-func (gmkvp *GetMapKVP) ParseQuery(query url.Values) ows.Exception {
+// ParseKVP builds a GetMapKVP object based on the available query parameters
+func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exception {
 	flatten := map[string]string{}
 	for k, v := range query {
 		if len(v) > 1 {
-			// When there are is more then one value
+			// When there is more then one value
 			// return a InvalidParameterValue Exception
 			return ows.InvalidParameterValue(k, strings.Join(v, ","))
 		}
@@ -84,7 +84,6 @@ func (gmkvp *GetMapKVP) ParseQuery(query url.Values) ows.Exception {
 
 // ParseGetMap builds a GetMapKVP object based on a GetMap struct
 func (gmkvp *GetMapKVP) ParseGetMap(gm *GetMap) ows.Exception {
-
 	gmkvp.Request = getmap
 	gmkvp.Version = Version
 	gmkvp.Service = Service
@@ -105,10 +104,30 @@ func (gmkvp *GetMapKVP) ParseGetMap(gm *GetMap) ows.Exception {
 	return nil
 }
 
-// ParseKVP process the simple struct to a complex struct
-func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
+// BuildOutput builds a Output struct from the KVP information
+func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
+	output := Output{}
 
-	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
+	h, err := strconv.Atoi(gmkvp.Height)
+	if err != nil {
+		return output, ows.InvalidParameterValue(HEIGHT, gmkvp.Height)
+	}
+	w, err := strconv.Atoi(gmkvp.Width)
+	if err != nil {
+		return output, ows.InvalidParameterValue(WIDTH, gmkvp.Width)
+	}
+
+	output.Size = Size{Height: h, Width: w}
+	output.Format = gmkvp.Format
+	output.Transparent = gmkvp.Transparent
+	output.BGcolor = gmkvp.BGColor
+
+	return output, nil
+}
+
+// BuildStyledLayerDescriptor buils a StyledLayerDescriptor struct from the KVP information
+func (gmkvp *GetMapKVP) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
+	sld := StyledLayerDescriptor{}
 
 	var layers, styles []string
 	if gmkvp.Layers != `` {
@@ -119,6 +138,18 @@ func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
 	}
 
 	sld, err := buildStyledLayerDescriptor(layers, styles)
+	if err != nil {
+		return sld, err
+	}
+
+	return sld, nil
+}
+
+// ParseGetMapKVP process the simple struct to a complex struct
+func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
+	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
+
+	sld, err := gmkvp.BuildStyledLayerDescriptor()
 	if err != nil {
 		return err
 	}
@@ -132,7 +163,7 @@ func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
 	}
 	gm.BoundingBox = bbox
 
-	output, err := buildOutput(gmkvp.Height, gmkvp.Width, gmkvp.Format, gmkvp.Transparent, gmkvp.BGColor)
+	output, err := gmkvp.BuildOutput()
 	if err != nil {
 		return err
 	}
@@ -143,9 +174,8 @@ func (gm *GetMap) ParseKVP(gmkvp GetMapKVP) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a GetMap object based on the available query parameters
-func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
-
+// ParseKVP builds a GetMap object based on the available query parameters
+func (gm *GetMap) ParseKVP(query url.Values) ows.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
@@ -153,11 +183,11 @@ func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
 	}
 
 	gmkvp := GetMapKVP{}
-	if err := gmkvp.ParseQuery(query); err != nil {
+	if err := gmkvp.ParseKVP(query); err != nil {
 		return err
 	}
 
-	if err := gm.ParseKVP(gmkvp); err != nil {
+	if err := gm.ParseGetMapKVP(gmkvp); err != nil {
 		return err
 	}
 
@@ -183,8 +213,8 @@ func (gm *GetMap) ParseXML(body []byte) ows.Exception {
 	return nil
 }
 
-// BuildQuery builds a url.Values query from a GetMapKVP struct
-func (gmkvp *GetMapKVP) BuildQuery() url.Values {
+// BuildKVP builds a url.Values query from a GetMapKVP struct
+func (gmkvp *GetMapKVP) BuildKVP() url.Values {
 	query := make(map[string][]string)
 
 	fields := reflect.TypeOf(*gmkvp)
@@ -209,13 +239,12 @@ func (gmkvp *GetMapKVP) BuildQuery() url.Values {
 	return query
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (gm *GetMap) BuildQuery() url.Values {
-
+// BuildKVP builds a new query string that will be proxied
+func (gm *GetMap) BuildKVP() url.Values {
 	gmkvp := GetMapKVP{}
 	gmkvp.ParseGetMap(gm)
 
-	query := gmkvp.BuildQuery()
+	query := gmkvp.BuildKVP()
 
 	return query
 }
@@ -224,27 +253,6 @@ func (gm *GetMap) BuildQuery() url.Values {
 func (gm *GetMap) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gm, "", " ")
 	return append([]byte(xml.Header), si...)
-}
-
-func buildOutput(height, width, format string, transparent, bgcolor *string) (Output, ows.Exception) {
-
-	output := Output{}
-
-	h, err := strconv.Atoi(height)
-	if err != nil {
-		return output, ows.InvalidParameterValue(HEIGHT, height)
-	}
-	w, err := strconv.Atoi(width)
-	if err != nil {
-		return output, ows.InvalidParameterValue(WIDTH, width)
-	}
-
-	output.Size = Size{Height: h, Width: w}
-	output.Format = format
-	output.Transparent = transparent
-	output.BGcolor = bgcolor
-
-	return output, nil
 }
 
 func buildBoundingBox(boundingbox string) (ows.BoundingBox, ows.Exception) {

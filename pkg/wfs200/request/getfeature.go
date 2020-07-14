@@ -79,9 +79,9 @@ func (gf *GetFeature) ParseXML(doc []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a GetCapabilities object based on the available query parameters
+// ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
-func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
+func (gf *GetFeature) ParseKVP(query url.Values) ows.Exception {
 
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -97,7 +97,7 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 	}
 
 	var br BaseRequest
-	if err := br.ParseQueryParameters(q); err != nil {
+	if err := br.ParseKVP(q); err != nil {
 		return err
 	}
 	gf.BaseRequest = br
@@ -214,7 +214,7 @@ func (gf *GetFeature) BuildXML() []byte {
 }
 
 // BuildQuery builds a new query string that will be proxied
-func (gf *GetFeature) BuildQuery() url.Values {
+func (gf *GetFeature) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	// base
 	querystring[REQUEST] = []string{gf.XMLName.Local}

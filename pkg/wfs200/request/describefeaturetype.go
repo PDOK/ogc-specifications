@@ -46,8 +46,8 @@ func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
+// ParseKVP builds a DescribeFeatureType object based on the available query parameters
+func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exception {
 
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -58,7 +58,7 @@ func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
 	q := utils.KeysToUpper(query)
 
 	var br BaseRequest
-	if err := br.ParseQueryParameters(q); err != nil {
+	if err := br.ParseKVP(q); err != nil {
 		return err
 	}
 	dft.BaseRequest = br
@@ -79,8 +79,8 @@ func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (dft *DescribeFeatureType) BuildQuery() url.Values {
+// BuildKVP builds a new query string that will be proxied
+func (dft *DescribeFeatureType) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{dft.XMLName.Local}
 	querystring[SERVICE] = []string{dft.BaseRequest.Service}

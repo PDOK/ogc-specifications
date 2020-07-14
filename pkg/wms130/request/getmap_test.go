@@ -291,7 +291,7 @@ func TestGetMapParseQuery(t *testing.T) {
 	}
 	for k, n := range tests {
 		var gm GetMap
-		err := gm.ParseQuery(n.Query)
+		err := gm.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Exception.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
@@ -368,7 +368,7 @@ func TestBuildQuery(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildQuery()
+		url := n.Object.BuildKVP()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {

@@ -28,8 +28,8 @@ type BaseRequest struct {
 	Attr    ows.XMLAttribute `xml:",attr"`
 }
 
-// ParseQueryParameters builds a BaseRequest truct based on the given parameters
-func (b *BaseRequest) ParseQueryParameters(query url.Values) ows.Exception {
+// ParseKVP builds a BaseRequest truct based on the given parameters
+func (b *BaseRequest) ParseKVP(query url.Values) ows.Exception {
 	if len(query[SERVICE]) > 0 {
 		// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
 		b.Service = query[SERVICE][0]

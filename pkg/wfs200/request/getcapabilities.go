@@ -44,8 +44,8 @@ func (gc *GetCapabilities) ParseXML(doc []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseQuery(query url.Values) ows.Exception {
+// ParseKVP builds a GetCapabilities object based on the available query parameters
+func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exception {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -61,8 +61,8 @@ func (gc *GetCapabilities) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (gc *GetCapabilities) BuildQuery() url.Values {
+// BuildKVP builds a new query string that will be proxied
+func (gc *GetCapabilities) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}

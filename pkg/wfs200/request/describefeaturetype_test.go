@@ -131,7 +131,7 @@ func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
 
 	for k, n := range tests {
 		var dft DescribeFeatureType
-		err := dft.ParseQuery(n.Query)
+		err := dft.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Exception.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
@@ -170,7 +170,7 @@ func TestBuildQuery(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		values := v.dft.BuildQuery()
+		values := v.dft.BuildKVP()
 		c := false
 		for _, value := range values {
 			for _, q := range v.query {
