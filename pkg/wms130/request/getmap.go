@@ -127,8 +127,6 @@ func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
 
 // BuildStyledLayerDescriptor buils a StyledLayerDescriptor struct from the KVP information
 func (gmkvp *GetMapKVP) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
-	sld := StyledLayerDescriptor{}
-
 	var layers, styles []string
 	if gmkvp.Layers != `` {
 		layers = strings.Split(gmkvp.Layers, ",")

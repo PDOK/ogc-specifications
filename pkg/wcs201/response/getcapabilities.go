@@ -145,7 +145,7 @@ type Operation struct {
 	} `xml:"ows:DCP" yaml:"dcp"`
 }
 
-// Post in seperated struct so to use it as a Pointer
+// Post in separated struct so to use it as a Pointer
 type Post struct {
 	Type       string `xml:"xlink:type,attr" yaml:"type"`
 	Href       string `xml:"xlink:href,attr" yaml:"href"`
