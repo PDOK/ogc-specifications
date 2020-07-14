@@ -188,7 +188,7 @@ func (gfi *GetFeatureInfo) BuildKVP() url.Values {
 		case CRS:
 			querystring[CRS] = []string{gfi.CRS}
 		case BBOX:
-			querystring[BBOX] = []string{gfi.BoundingBox.BuildQueryString()}
+			querystring[BBOX] = []string{gfi.BoundingBox.BuildKVP()}
 		case WIDTH:
 			querystring[WIDTH] = []string{strconv.Itoa(gfi.Size.Width)}
 		case HEIGHT:
@@ -244,13 +244,13 @@ type GetFeatureInfo struct {
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor" validate:"required"`
 	CRS                   string                `xml:"CRS" yaml:"crs" validate:"required"`
 	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox" validate:"required"`
-	// We skip the OutPut struct, because these are not required parameters
+	// We skip the Output struct, because these are not required parameters
 	Size Size `xml:"Size" yaml:"size" validate:"required"`
 
 	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers" validate:"required"`
-	InfoFormat   *string  `xml:"InfoFormat" yaml:"infoformat"`
-	FeatureCount *int     `xml:"FeatureCount" yaml:"featurecount"`
 	I            int      `xml:"I" yaml:"i" validate:"required"`
 	J            int      `xml:"J" yaml:"j" validate:"required"`
+	InfoFormat   *string  `xml:"InfoFormat" yaml:"infoformat"`
+	FeatureCount *int     `xml:"FeatureCount" yaml:"featurecount"`
 	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`
 }
