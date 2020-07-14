@@ -166,3 +166,21 @@ func TestGetCapabilitiesBuildBody(t *testing.T) {
 		}
 	}
 }
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkGetCapabilitiesBuildKVP(b *testing.B) {
+	gc := GetCapabilities{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
+	for i := 0; i < b.N; i++ {
+		gc.BuildKVP()
+	}
+}
+
+func BenchmarkGetCapabilitiesBuildXML(b *testing.B) {
+	gc := GetCapabilities{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
+	for i := 0; i < b.N; i++ {
+		gc.BuildXML()
+	}
+}

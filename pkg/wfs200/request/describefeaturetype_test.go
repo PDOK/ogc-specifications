@@ -208,3 +208,31 @@ func TestBuildBodyDescribeFeatureType(t *testing.T) {
 		}
 	}
 }
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
+	df := DescribeFeatureType{
+		XMLName:     xml.Name{Local: `DescribeFeatureType`},
+		BaseRequest: BaseRequest{Version: Version, Service: Service},
+		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
+			OutputFormat: sp(`application/json`),
+			TypeName:     sp(`example:example`)}}
+	for i := 0; i < b.N; i++ {
+		df.BuildKVP()
+	}
+}
+
+func BenchmarkDescribeFeatureTypeBuildXML(b *testing.B) {
+	df := DescribeFeatureType{
+		XMLName:     xml.Name{Local: `DescribeFeatureType`},
+		BaseRequest: BaseRequest{Version: Version, Service: Service},
+		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
+			OutputFormat: sp(`application/json`),
+			TypeName:     sp(`example:example`)}}
+	for i := 0; i < b.N; i++ {
+		df.BuildXML()
+	}
+}

@@ -401,3 +401,63 @@ func compareGetFeatureInfoObject(result, expected GetFeatureInfo, t *testing.T, 
 		}
 	}
 }
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
+	gfi := GetFeatureInfo{
+		XMLName: xml.Name{Local: `GetFeatureInfo`},
+		BaseRequest: BaseRequest{
+			Service: Service,
+			Version: Version},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: "EPSG:4326",
+		BoundingBox: ows.BoundingBox{
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Size:        Size{Width: 1024, Height: 512},
+		QueryLayers: []string{`CenterLine`},
+		InfoFormat:  sp(`application/json`),
+		I:           1,
+		J:           1,
+	}
+	for i := 0; i < b.N; i++ {
+		gfi.BuildKVP()
+	}
+}
+
+func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
+	gfi := GetFeatureInfo{
+		XMLName: xml.Name{Local: `GetFeatureInfo`},
+		BaseRequest: BaseRequest{
+			Service: Service,
+			Version: Version},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: "EPSG:4326",
+		BoundingBox: ows.BoundingBox{
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Size:        Size{Width: 1024, Height: 512},
+		QueryLayers: []string{`CenterLine`},
+		InfoFormat:  sp(`application/json`),
+		I:           1,
+		J:           1,
+	}
+	for i := 0; i < b.N; i++ {
+		gfi.BuildXML()
+	}
+}

@@ -213,7 +213,7 @@ func (gf *GetFeature) BuildXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-// BuildQuery builds a new query string that will be proxied
+// BuildKVP builds a new query string that will be proxied
 func (gf *GetFeature) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	// base

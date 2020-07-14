@@ -481,3 +481,83 @@ func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
 		}
 	}
 }
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkGetMapBuildKVP(b *testing.B) {
+	gm := GetMap{
+		BaseRequest: BaseRequest{
+			Version: "1.3.0",
+			Attr: ows.XMLAttribute{
+				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
+				xml.Attr{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/sld GetMap.xsd"},
+			}},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			Version: "1.1.0",
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: "EPSG:4326",
+		BoundingBox: ows.BoundingBox{
+			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Output: Output{
+			Size:        Size{Width: 1024, Height: 512},
+			Format:      "image/jpeg",
+			Transparent: sp("false")},
+		Exceptions: sp("XML"),
+	}
+	for i := 0; i < b.N; i++ {
+		gm.BuildKVP()
+	}
+}
+
+func BenchmarkGetMapBuildXML(b *testing.B) {
+	gm := GetMap{
+		BaseRequest: BaseRequest{
+			Version: "1.3.0",
+			Attr: ows.XMLAttribute{
+				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
+				xml.Attr{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/sld GetMap.xsd"},
+			}},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			Version: "1.1.0",
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: "EPSG:4326",
+		BoundingBox: ows.BoundingBox{
+			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Output: Output{
+			Size:        Size{Width: 1024, Height: 512},
+			Format:      "image/jpeg",
+			Transparent: sp("false")},
+		Exceptions: sp("XML"),
+	}
+	for i := 0; i < b.N; i++ {
+		gm.BuildXML()
+	}
+}

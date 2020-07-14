@@ -45,6 +45,12 @@ import "github.com/pdok/ogc-specifications"
 go test ./... -covermode=atomic
 ```
 
+And for benchmarks:
+
+```go
+go test -bench=. ./...
+```
+
 ## Usage
 
 - [Simple BBOX](./examples/simple-bbox/main.go)

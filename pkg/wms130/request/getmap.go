@@ -223,7 +223,6 @@ func (gmkvp *GetMapKVP) BuildKVP() url.Values {
 	for i := 0; i < fields.NumField(); i++ {
 		field := fields.Field(i)
 		value := values.Field(i)
-		// fmt.Print("Type:", field.Type, ",", field.Name, "=", value, "\n")
 
 		switch value.Kind() {
 		case reflect.String:
@@ -236,6 +235,7 @@ func (gmkvp *GetMapKVP) BuildKVP() url.Values {
 			}
 		}
 	}
+
 	return query
 }
 
@@ -245,6 +245,7 @@ func (gm *GetMap) BuildKVP() url.Values {
 	gmkvp.ParseGetMap(gm)
 
 	query := gmkvp.BuildKVP()
+	// query := map[string][]string{}
 
 	return query
 }
