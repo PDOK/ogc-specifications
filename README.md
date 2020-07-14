@@ -7,14 +7,16 @@
 The package ogc-specifications is a implementation of the OGC Webservice Specifications as defined by the [OGC](https://www.ogc.org/).
 This package has support for the following OGC Webservice Specifications:
 
-| Spec | Request or Operation |
-| --- | --- |
-| WMS | GetCapabilities |
-| WMS | GetMap |
-| WMS | GetFeatureInfo |
-| WFS | GetCapabilities |
-| WFS | DescribeFeatureType |
-| WFS | GetFeature |
+| Spec | Version | Operation | Request | Reponse |
+| --- | --- | --- | --- | --- |
+| WMS | 1.3.0 | GetCapabilities | :heavy_check_mark:  | :grey_exclamation: |
+| WMS | 1.3.0 | GetMap | :heavy_check_mark: | |
+| WMS | 1.3.0 | GetFeatureInfo | :heavy_check_mark: | |
+| WFS | 2.0.0 | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
+| WFS | 2.0.0 | DescribeFeatureType | :heavy_check_mark: | |
+| WFS | 2.0.0 | GetFeature | :heavy_check_mark: | |
+| WMTS | 1.0.0 | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
+| WCS | 2.0.1 | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
 
 It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and query strings based on those structs.
 
@@ -23,6 +25,7 @@ It will provide the user with structs that can be used with in a developers appl
 This is still a 'work in progres' with the following major todo's:
 
 - [ ] Validation support
+- [ ] YAML parser
 - [ ] WMTS support
 - [ ] WCS support
 - [ ] OGC response support (at least for the metadata calls like DescribeFeatureType)
@@ -43,6 +46,12 @@ import "github.com/pdok/ogc-specifications"
 
 ```go
 go test ./... -covermode=atomic
+```
+
+And for benchmarks:
+
+```go
+go test -bench=. ./...
 ```
 
 ## Usage

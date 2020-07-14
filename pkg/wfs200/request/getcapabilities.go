@@ -1,4 +1,4 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"
@@ -9,24 +9,26 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
-//
+// Type and Version as constant
 const (
 	getcapabilities = `GetCapabilities`
 )
+
+// Contains the GetCapabilities struct and specific functions for building a GetCapabilities request
 
 // Type returns GetCapabilities
 func (gc *GetCapabilities) Type() string {
 	return getcapabilities
 }
 
-// ParseBody builds a GetCapabilities object based on the given body
-func (gc *GetCapabilities) ParseBody(body []byte) ows.Exception {
+// ParseXML builds a GetCapabilities object based on a XML document
+func (gc *GetCapabilities) ParseXML(doc []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
-	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.MissingParameterValue()
+	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
+		return ows.NoApplicableCode("Could not process XML, is it XML?")
 	}
-	if err := xml.Unmarshal(body, &gc); err != nil {
-		return ows.MissingParameterValue("REQUEST")
+	if err := xml.Unmarshal(doc, &gc); err != nil {
+		return ows.OperationNotSupported(err.Error()) //TODO Should be OperationParsingFailed
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -42,8 +44,8 @@ func (gc *GetCapabilities) ParseBody(body []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseQuery(query url.Values) ows.Exception {
+// ParseKVP builds a GetCapabilities object based on the available query parameters
+func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exception {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -59,8 +61,8 @@ func (gc *GetCapabilities) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (gc *GetCapabilities) BuildQuery() url.Values {
+// BuildKVP builds a new query string that will be proxied
+func (gc *GetCapabilities) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}
@@ -69,8 +71,8 @@ func (gc *GetCapabilities) BuildQuery() url.Values {
 	return querystring
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilities) BuildBody() []byte {
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+func (gc *GetCapabilities) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
@@ -78,8 +80,8 @@ func (gc *GetCapabilities) BuildBody() []byte {
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilities struct {
-	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities" validate:"required"`
-	Service string           `xml:"service,attr" yaml:"service" validate:"required,oneof=WMS wms"`
-	Version string           `xml:"version,attr" yaml:"version" validate:"eq=1.3.0"`
+	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string           `xml:"service,attr" yaml:"service" validate:"required,oneof=WFS wfs"`
+	Version string           `xml:"version,attr" yaml:"version" validate:"eq=2.0.0"`
 	Attr    ows.XMLAttribute `xml:",attr"`
 }

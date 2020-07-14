@@ -1,4 +1,4 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 //
@@ -37,11 +38,11 @@ func (gfi *GetFeatureInfo) Type() string {
 	return getfeatureinfo
 }
 
-// ParseBody builds a GetFeatureInfo object based on the given body
+// ParseXML builds a GetFeatureInfo object based on a XML document
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) ParseBody(body []byte) ows.Exception {
+func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return ows.MissingParameterValue()
@@ -63,8 +64,8 @@ func (gfi *GetFeatureInfo) ParseBody(body []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a GetFeatureInfo object based on the available query parameters
-func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
+// ParseKVP builds a GetFeatureInfo object based on the available query parameters
+func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
 
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -80,7 +81,7 @@ func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 	}
 
 	var br BaseRequest
-	if err := br.ParseQueryParameters(q); err != nil {
+	if err := br.ParseKVP(q); err != nil {
 		return err
 	}
 	gfi.BaseRequest = br
@@ -122,13 +123,13 @@ func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 			case I:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {
-					return InvalidPoint(query[I][0], query[J][0])
+					return exception.InvalidPoint(query[I][0], query[J][0])
 				}
 				gfi.I = i
 			case J:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {
-					return InvalidPoint(query[I][0], query[J][0])
+					return exception.InvalidPoint(query[I][0], query[J][0])
 				}
 				gfi.J = i
 			}
@@ -169,8 +170,8 @@ func (gfi *GetFeatureInfo) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (gfi *GetFeatureInfo) BuildQuery() url.Values {
+// BuildKVP builds a new query string that will be proxied
+func (gfi *GetFeatureInfo) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 
 	// base
@@ -181,13 +182,13 @@ func (gfi *GetFeatureInfo) BuildQuery() url.Values {
 	for _, k := range getFeatureInfoMandatoryParameters {
 		switch k {
 		case LAYERS:
-			querystring[LAYERS] = []string{gfi.StyledLayerDescriptor.getLayerQueryParameter()}
+			querystring[LAYERS] = []string{gfi.StyledLayerDescriptor.getLayerKVPValue()}
 		case STYLES:
-			querystring[STYLES] = []string{gfi.StyledLayerDescriptor.getStyleQueryParameter()}
+			querystring[STYLES] = []string{gfi.StyledLayerDescriptor.getStyleKVPValue()}
 		case CRS:
 			querystring[CRS] = []string{gfi.CRS}
 		case BBOX:
-			querystring[BBOX] = []string{gfi.BoundingBox.BuildQueryString()}
+			querystring[BBOX] = []string{gfi.BoundingBox.BuildKVP()}
 		case WIDTH:
 			querystring[WIDTH] = []string{strconv.Itoa(gfi.Size.Width)}
 		case HEIGHT:
@@ -221,11 +222,11 @@ func (gfi *GetFeatureInfo) BuildQuery() url.Values {
 	return querystring
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
 // Note: this GetFeatureInfo XML body is a interpretation and there isn't a
 // good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) BuildBody() []byte {
+func (gfi *GetFeatureInfo) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gfi, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
@@ -243,13 +244,13 @@ type GetFeatureInfo struct {
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor" validate:"required"`
 	CRS                   string                `xml:"CRS" yaml:"crs" validate:"required"`
 	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox" validate:"required"`
-	// We skip the OutPut struct, because these are not required parameters
+	// We skip the Output struct, because these are not required parameters
 	Size Size `xml:"Size" yaml:"size" validate:"required"`
 
 	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers" validate:"required"`
-	InfoFormat   *string  `xml:"InfoFormat" yaml:"infoformat"`
-	FeatureCount *int     `xml:"FeatureCount" yaml:"featurecount"`
 	I            int      `xml:"I" yaml:"i" validate:"required"`
 	J            int      `xml:"J" yaml:"j" validate:"required"`
+	InfoFormat   *string  `xml:"InfoFormat" yaml:"infoformat"`
+	FeatureCount *int     `xml:"FeatureCount" yaml:"featurecount"`
 	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`
 }

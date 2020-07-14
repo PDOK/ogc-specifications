@@ -1,4 +1,4 @@
-package wfs200
+package request
 
 import (
 	"encoding/xml"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
 func sp(s string) *string {
@@ -23,7 +24,7 @@ func TestGetFeatureType(t *testing.T) {
 	}
 }
 
-func TestBuildBody(t *testing.T) {
+func TestGetFeatureBuildXML(t *testing.T) {
 	var tests = []struct {
 		gf     GetFeature
 		result string
@@ -44,7 +45,7 @@ func TestBuildBody(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gf.BuildBody()
+		body := v.gf.BuildXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
@@ -54,7 +55,7 @@ func TestBuildBody(t *testing.T) {
 
 // TODO
 // Merge TestParseBodyGetFeature & TestParseQueryParameters GetFeature comporison into single func, like with WMS GetMap
-func TestParseBodyGetFeature(t *testing.T) {
+func TestGetFeatureParseXML(t *testing.T) {
 	var tests = []struct {
 		Body      []byte
 		Result    GetFeature
@@ -119,7 +120,7 @@ func TestParseBodyGetFeature(t *testing.T) {
 
 	for k, n := range tests {
 		var gf GetFeature
-		err := gf.ParseBody(n.Body)
+		err := gf.ParseXML(n.Body)
 		if err != nil {
 			if err.Error() != n.Exception.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
@@ -214,7 +215,7 @@ func TestProcesNamespaces(t *testing.T) {
 	}
 }
 
-func TestParseQueryParameters(t *testing.T) {
+func TestGetFeatureParseKVP(t *testing.T) {
 
 	var tests = []struct {
 		QueryParams url.Values
@@ -263,7 +264,7 @@ func TestParseQueryParameters(t *testing.T) {
 
 	for tid, q := range tests {
 		var gf GetFeature
-		if err := gf.ParseQuery(q.QueryParams); err != nil {
+		if err := gf.ParseKVP(q.QueryParams); err != nil {
 			if err != q.Exception {
 				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, q.Exception, err)
 			}
@@ -354,7 +355,7 @@ func TestParseQueryInnerXML(t *testing.T) {
 
 	for k, q := range tests {
 		var gf GetFeature
-		gf.ParseQuery(q.QueryParams)
+		gf.ParseKVP(q.QueryParams)
 
 		if q.Result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content != gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.Result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content, gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content)
@@ -399,16 +400,7 @@ func TestMergeResourceIDGroups(t *testing.T) {
 	}
 }
 
-func BenchmarkBuildQueryString(b *testing.B) {
-	gf := GetFeature{XMLName: xml.Name{Local: getfeature}, BaseRequest: BaseRequest{Service: Service, Version: Version}}
-
-	for i := 0; i < b.N; i++ {
-		//fmt.Println(i)
-		gf.BuildQuery()
-	}
-}
-
-func TestBuildQueryString(t *testing.T) {
+func TestGetFeatureBuildKVP(t *testing.T) {
 	var tests = []struct {
 		getfeature    GetFeature
 		expectedquery url.Values
@@ -424,7 +416,7 @@ func TestBuildQueryString(t *testing.T) {
 	}
 
 	for k, q := range tests {
-		result := q.getfeature.BuildQuery()
+		result := q.getfeature.BuildKVP()
 		if len(q.expectedquery) != len(result) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.expectedquery, result)
 		} else {
@@ -455,10 +447,10 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 		2: {Query: "", Expected: GEOBBOX{}},
 		3: {Query: "18.54;-72.3544;18.62;-72.2564", Expected: GEOBBOX{}},
 		// Needs a beter solution
-		4: {Query: "error,-72.3544,18.62,-72.2564", Exception: InvalidValue(`BBOX`)},
-		5: {Query: "18.54,error,18.62,-72.2564", Exception: InvalidValue(`BBOX`)},
-		6: {Query: "18.54,-72.3544,error,-72.2564", Exception: InvalidValue(`BBOX`)},
-		7: {Query: "18.54,-72.3544,18.62,error", Exception: InvalidValue(`BBOX`)},
+		4: {Query: "error,-72.3544,18.62,-72.2564", Exception: exception.InvalidValue(`BBOX`)},
+		5: {Query: "18.54,error,18.62,-72.2564", Exception: exception.InvalidValue(`BBOX`)},
+		6: {Query: "18.54,-72.3544,error,-72.2564", Exception: exception.InvalidValue(`BBOX`)},
+		7: {Query: "18.54,-72.3544,18.62,error", Exception: exception.InvalidValue(`BBOX`)},
 	}
 
 	for k, a := range tests {
@@ -498,5 +490,51 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 		if result != a.Expected {
 			t.Errorf("test: %d, expected: %s,\n got: %s", k, a.Expected, result)
 		}
+	}
+}
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkGetFeatureBuildKVP(b *testing.B) {
+	gf := GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{1, 1}, UpperCorner: ows.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
+	for i := 0; i < b.N; i++ {
+		gf.BuildKVP()
+	}
+}
+
+func BenchmarkGetFeatureBuildXML(b *testing.B) {
+	gf := GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{1, 1}, UpperCorner: ows.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
+	for i := 0; i < b.N; i++ {
+		gf.BuildXML()
+	}
+}
+
+func BenchmarkGetFeatureParseKVP(b *testing.B) {
+	kvp := map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}}
+
+	for i := 0; i < b.N; i++ {
+		gm := GetFeature{}
+		gm.ParseKVP(kvp)
+	}
+}
+
+func BenchmarkGetFeatureParseXML(b *testing.B) {
+	doc := []byte(`<?xml version="1.0" encoding="UTF-8"?>
+	<GetFeature outputFormat="application/gml+xml; version=3.2" count="3" startindex="0" service="WFS" version="2.0.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl">
+	 <Query typeNames="kadastralekaartv4:kadastralegrens" srsName="urn:ogc:def:crs:EPSG::28992">
+	  <fes:Filter>
+	   <fes:PropertyIsEqualTo matchCase="true">
+		<fes:ValueReference>id</fes:ValueReference>
+		<fes:Literal>29316bf0-b87f-4e8d-bf00-21f894bdf655</fes:Literal>
+	   </fes:PropertyIsEqualTo>
+	  </fes:Filter>
+	 </Query>
+	</GetFeature>`)
+
+	for i := 0; i < b.N; i++ {
+		gm := GetFeature{}
+		gm.ParseXML(doc)
 	}
 }

@@ -1,7 +1,13 @@
-package wfs200
+package response
 
 import (
 	"encoding/xml"
+	"regexp"
+)
+
+//
+const (
+	getcapabilities = `GetCapabilities`
 )
 
 //
@@ -12,23 +18,35 @@ const (
 
 // Contains the WFS200 struct
 
+// Type function needed for the interface
+func (gc *GetCapabilities) Type() string {
+	return getcapabilities
+}
+
 // Service function needed for the interface
-func (wfs200 *Wfs200) Service() string {
+func (gc *GetCapabilities) Service() string {
 	return Service
 }
 
 // Version function needed for the interface
-func (wfs200 *Wfs200) Version() string {
+func (gc *GetCapabilities) Version() string {
 	return Version
 }
 
 // Validate function of the wfs200 spec
-func (wfs200 *Wfs200) Validate() bool {
+func (gc *GetCapabilities) Validate() bool {
 	return false
 }
 
-// Wfs200 base struct
-type Wfs200 struct {
+// BuildXML builds a GetCapabilities response object
+func (gc *GetCapabilities) BuildXML() []byte {
+	si, _ := xml.MarshalIndent(gc, "", "")
+	re := regexp.MustCompile(`><.*>`)
+	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
+}
+
+// GetCapabilities base struct
+type GetCapabilities struct {
 	XMLName               xml.Name `xml:"wfs:WFS_Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`

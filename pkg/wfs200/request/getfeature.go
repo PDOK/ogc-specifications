@@ -1,4 +1,4 @@
-package wfs200
+package request
 
 import (
 	"encoding/xml"
@@ -10,6 +10,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
 // Contains the GetFeature struct and specific functions for building a GetFeature request
@@ -55,13 +56,13 @@ var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FI
 
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
-// ParseBody builds a GetCapabilities object based on the given body
-func (gf *GetFeature) ParseBody(body []byte) ows.Exception {
+// ParseXML builds a GetCapabilities object based on a XML document
+func (gf *GetFeature) ParseXML(doc []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
-	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
+	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return ows.NoApplicableCode("Could not process XML, is it XML?")
 	}
-	xml.Unmarshal(body, &gf) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
+	xml.Unmarshal(doc, &gf) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
 	var n []xml.Attr
 	for _, a := range xmlattributes {
 		switch strings.ToUpper(a.Name.Local) {
@@ -78,9 +79,9 @@ func (gf *GetFeature) ParseBody(body []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a GetCapabilities object based on the available query parameters
+// ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
-func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
+func (gf *GetFeature) ParseKVP(query url.Values) ows.Exception {
 
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -96,7 +97,7 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 	}
 
 	var br BaseRequest
-	if err := br.ParseQueryParameters(q); err != nil {
+	if err := br.ParseKVP(q); err != nil {
 		return err
 	}
 	gf.BaseRequest = br
@@ -205,15 +206,15 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
 // TODO: In the Filter>Query>... the content of the GeometryOperand (Point,Line,Polygon,...) is the raw xml (text)
-func (gf *GetFeature) BuildBody() []byte {
+func (gf *GetFeature) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gf, "", " ")
 	return append([]byte(xml.Header), si...)
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (gf *GetFeature) BuildQuery() url.Values {
+// BuildKVP builds a new query string that will be proxied
+func (gf *GetFeature) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	// base
 	querystring[REQUEST] = []string{gf.XMLName.Local}
@@ -656,16 +657,16 @@ func (gb *GEOBBOX) UnmarshalText(q string) ows.Exception {
 		var err error
 
 		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
-			return InvalidValue(BBOX)
+			return exception.InvalidValue(BBOX)
 		}
 		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
-			return InvalidValue(BBOX)
+			return exception.InvalidValue(BBOX)
 		}
 		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
-			return InvalidValue(BBOX)
+			return exception.InvalidValue(BBOX)
 		}
 		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
-			return InvalidValue(BBOX)
+			return exception.InvalidValue(BBOX)
 		}
 
 		gb.Envelope.LowerCorner = ows.Position{lx, ly}

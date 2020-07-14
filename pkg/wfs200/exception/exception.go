@@ -1,10 +1,16 @@
-package wfs200
+package exception
 
 import (
 	"encoding/xml"
 	"fmt"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+)
+
+//
+const (
+	Service = `WFS`
+	Version = `2.0.0`
 )
 
 // WFSExceptionReport struct

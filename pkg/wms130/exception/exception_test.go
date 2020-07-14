@@ -1,4 +1,4 @@
-package wms130
+package exception
 
 import (
 	"testing"

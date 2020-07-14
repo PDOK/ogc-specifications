@@ -1,9 +1,15 @@
-package wfs200
+package request
 
 import (
 	"net/url"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+)
+
+//
+const (
+	Service = `WFS`
+	Version = `2.0.0`
 )
 
 // WFS 2.0.0 Tokens
@@ -23,8 +29,8 @@ type BaseRequest struct {
 	Attr    ows.XMLAttribute `xml:",attr"`
 }
 
-// ParseQueryParameters builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) ParseQueryParameters(query url.Values) ows.Exception {
+// ParseKVP builds a BaseRequest Struct based on the given parameters
+func (b *BaseRequest) ParseKVP(query url.Values) ows.Exception {
 	if len(query[SERVICE]) > 0 {
 		// Service is optional, because it's implicit for a GetFeature/DescribeFeatureType request
 		b.Service = query[SERVICE][0]

@@ -1,4 +1,4 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"
@@ -15,7 +15,7 @@ func TestGetCapabilitiesType(t *testing.T) {
 	}
 }
 
-func TestParseBodyGetCapabilities(t *testing.T) {
+func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
 		Body   []byte
 		Result GetCapabilities
@@ -35,7 +35,7 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 
 	for k, n := range tests {
 		var gc GetCapabilities
-		err := gc.ParseBody(n.Body)
+		err := gc.ParseXML(n.Body)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -67,7 +67,7 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 	}
 }
 
-func TestParseQueryParametersGetCapabilities(t *testing.T) {
+func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query  url.Values
 		Result GetCapabilities
@@ -94,7 +94,7 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 
 	for k, n := range tests {
 		var gc GetCapabilities
-		err := gc.ParseQuery(n.Query)
+		err := gc.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -113,7 +113,7 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildQuery(t *testing.T) {
+func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetCapabilities
 		Excepted url.Values
@@ -128,7 +128,7 @@ func TestGetCapabilitiesBuildQuery(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildQuery()
+		url := n.Object.BuildKVP()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -148,7 +148,7 @@ func TestGetCapabilitiesBuildQuery(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildBody(t *testing.T) {
+func TestGetCapabilitiesBuildXML(t *testing.T) {
 	var tests = []struct {
 		gc     GetCapabilities
 		result string
@@ -159,10 +159,28 @@ func TestGetCapabilitiesBuildBody(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gc.BuildBody()
+		body := v.gc.BuildXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
 		}
+	}
+}
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkGetCapabilitiesBuildKVP(b *testing.B) {
+	gc := GetCapabilities{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
+	for i := 0; i < b.N; i++ {
+		gc.BuildKVP()
+	}
+}
+
+func BenchmarkGetCapabilitiesBuildXML(b *testing.B) {
+	gc := GetCapabilities{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
+	for i := 0; i < b.N; i++ {
+		gc.BuildXML()
 	}
 }

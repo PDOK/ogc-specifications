@@ -1,10 +1,16 @@
-package wms130
+package response
 
 import (
 	"encoding/xml"
+	"regexp"
 )
 
 // Contains the WMS130 struct
+
+//
+const (
+	getcapabilities = `GetCapabilities`
+)
 
 // Type and Version as constant
 const (
@@ -12,23 +18,35 @@ const (
 	Version string = `1.3.0`
 )
 
+// Type function needed for the interface
+func (gc *GetCapabilities) Type() string {
+	return getcapabilities
+}
+
 // Service function needed for the interface
-func (wms130 *Wms130) Service() string {
+func (gc *GetCapabilities) Service() string {
 	return Service
 }
 
 // Version function needed for the interface
-func (wms130 *Wms130) Version() string {
+func (gc *GetCapabilities) Version() string {
 	return Version
 }
 
 // Validate function of the wms130 spec
-func (wms130 *Wms130) Validate() bool {
+func (gc *GetCapabilities) Validate() bool {
 	return false
 }
 
-// Wms130 base struct
-type Wms130 struct {
+// BuildXML builds a GetCapabilities response object
+func (gc *GetCapabilities) BuildXML() []byte {
+	si, _ := xml.MarshalIndent(gc, "", "")
+	re := regexp.MustCompile(`><.*>`)
+	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
+}
+
+// GetCapabilities base struct
+type GetCapabilities struct {
 	XMLName    xml.Name `xml:"WMS_Capabilities"`
 	Namespaces `yaml:"namespaces"`
 	WMSService WMSService `xml:"Service" yaml:"service"`

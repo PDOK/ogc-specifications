@@ -1,4 +1,4 @@
-package wfs200
+package request
 
 import (
 	"encoding/xml"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
 func TestGetCapabilitiesType(t *testing.T) {
@@ -15,7 +16,7 @@ func TestGetCapabilitiesType(t *testing.T) {
 	}
 }
 
-func TestParseBodyGetCapabilities(t *testing.T) {
+func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
 		Body   []byte
 		Result GetCapabilities
@@ -35,11 +36,11 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
 					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: &WFSException{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
+		1: {Body: []byte("<Unknown/>"), Error: &exception.WFSException{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"}},
+		2: {Body: []byte("no XML document, just a string"), Error: &exception.WFSException{ExceptionText: "Could not process XML, is it XML?"}},
 		// document at all
-		3: {Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"}},
+		3: {Error: &exception.WFSException{ExceptionText: "Could not process XML, is it XML?"}},
 		// Duplicate attributes in XML message with the same value
 		4: {Body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
 			Result: GetCapabilities{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
@@ -52,7 +53,7 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 
 	for k, n := range tests {
 		var gc GetCapabilities
-		err := gc.ParseBody(n.Body)
+		err := gc.ParseXML(n.Body)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -84,7 +85,7 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 	}
 }
 
-func TestParseQueryParametersGetCapabilities(t *testing.T) {
+func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query  url.Values
 		Result GetCapabilities
@@ -106,12 +107,12 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 			Result: GetCapabilities{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "NO VERSION FOUND"}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			Error: &WFSException{ExceptionText: "Failed to parse the operation, found: "}},
+			Error: &exception.WFSException{ExceptionText: "Failed to parse the operation, found: "}},
 	}
 
 	for k, n := range tests {
 		var gc GetCapabilities
-		err := gc.ParseQuery(n.Query)
+		err := gc.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -130,7 +131,7 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildQuery(t *testing.T) {
+func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetCapabilities
 		Excepted url.Values
@@ -145,7 +146,7 @@ func TestGetCapabilitiesBuildQuery(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildQuery()
+		url := n.Object.BuildKVP()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -165,7 +166,7 @@ func TestGetCapabilitiesBuildQuery(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildBody(t *testing.T) {
+func TestGetCapabilitiesBuildXML(t *testing.T) {
 	var tests = []struct {
 		gc     GetCapabilities
 		result string
@@ -176,10 +177,28 @@ func TestGetCapabilitiesBuildBody(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gc.BuildBody()
+		body := v.gc.BuildXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
 		}
+	}
+}
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkGetCapabilitiesBuildKVP(b *testing.B) {
+	gc := GetCapabilities{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
+	for i := 0; i < b.N; i++ {
+		gc.BuildKVP()
+	}
+}
+
+func BenchmarkGetCapabilitiesBuildXML(b *testing.B) {
+	gc := GetCapabilities{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
+	for i := 0; i < b.N; i++ {
+		gc.BuildXML()
 	}
 }

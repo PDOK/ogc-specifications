@@ -1,4 +1,4 @@
-package wfs200
+package request
 
 import (
 	"encoding/xml"
@@ -22,13 +22,13 @@ func (dft *DescribeFeatureType) Type() string {
 	return describefeaturetype
 }
 
-// ParseBody builds a DescribeFeatureType object based on the given body
-func (dft *DescribeFeatureType) ParseBody(body []byte) ows.Exception {
+// ParseXML builds a DescribeFeatureType object based on a XML document
+func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
-	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
+	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return ows.NoApplicableCode("Could not process XML, is it XML?")
 	}
-	if err := xml.Unmarshal(body, &dft); err != nil {
+	if err := xml.Unmarshal(doc, &dft); err != nil {
 		return ows.OperationNotSupported(err.Error())
 	}
 	var n []xml.Attr
@@ -46,8 +46,8 @@ func (dft *DescribeFeatureType) ParseBody(body []byte) ows.Exception {
 	return nil
 }
 
-// ParseQuery builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
+// ParseKVP builds a DescribeFeatureType object based on the available query parameters
+func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exception {
 
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -58,7 +58,7 @@ func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
 	q := utils.KeysToUpper(query)
 
 	var br BaseRequest
-	if err := br.ParseQueryParameters(q); err != nil {
+	if err := br.ParseKVP(q); err != nil {
 		return err
 	}
 	dft.BaseRequest = br
@@ -79,8 +79,8 @@ func (dft *DescribeFeatureType) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildQuery builds a new query string that will be proxied
-func (dft *DescribeFeatureType) BuildQuery() url.Values {
+// BuildKVP builds a new query string that will be proxied
+func (dft *DescribeFeatureType) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{dft.XMLName.Local}
 	querystring[SERVICE] = []string{dft.BaseRequest.Service}
@@ -94,8 +94,8 @@ func (dft *DescribeFeatureType) BuildQuery() url.Values {
 	return querystring
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
-func (dft *DescribeFeatureType) BuildBody() []byte {
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+func (dft *DescribeFeatureType) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(dft, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

@@ -1,4 +1,4 @@
-package wfs200
+package request
 
 import (
 	"encoding/xml"
@@ -6,16 +6,17 @@ import (
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
-func TestDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeType(t *testing.T) {
 	dft := DescribeFeatureType{}
 	if dft.Type() != `DescribeFeatureType` {
 		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `DescribeFeatureType`, dft.Type())
 	}
 }
 
-func TestParseBodyDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	var tests = []struct {
 		Body   []byte
 		Result DescribeFeatureType
@@ -35,11 +36,11 @@ func TestParseBodyDescribeFeatureType(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
 					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: &WFSException{ExceptionText: "This service does not know the operation: expected element type <DescribeFeatureType> but have <Unknown>"}},
+		1: {Body: []byte("<Unknown/>"), Error: &exception.WFSException{ExceptionText: "This service does not know the operation: expected element type <DescribeFeatureType> but have <Unknown>"}},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"}},
+		2: {Body: []byte("no XML document, just a string"), Error: &exception.WFSException{ExceptionText: "Could not process XML, is it XML?"}},
 		// document at all
-		3: {Error: &WFSException{ExceptionText: "Could not process XML, is it XML?"}},
+		3: {Error: &exception.WFSException{ExceptionText: "Could not process XML, is it XML?"}},
 		// Duplicate attributes in XML message with the same value
 		4: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
 			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
@@ -56,7 +57,7 @@ func TestParseBodyDescribeFeatureType(t *testing.T) {
 
 	for k, n := range tests {
 		var dft DescribeFeatureType
-		err := dft.ParseBody(n.Body)
+		err := dft.ParseXML(n.Body)
 		if err != nil {
 			if n.Error != nil {
 				if err.Error() != n.Error.Error() {
@@ -98,7 +99,7 @@ func TestParseBodyDescribeFeatureType(t *testing.T) {
 	}
 }
 
-func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query     url.Values
 		Result    DescribeFeatureType
@@ -130,7 +131,7 @@ func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
 
 	for k, n := range tests {
 		var dft DescribeFeatureType
-		err := dft.ParseQuery(n.Query)
+		err := dft.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Exception.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
@@ -153,7 +154,7 @@ func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
 		}
 	}
 }
-func TestBuildQuery(t *testing.T) {
+func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 	var tests = []struct {
 		dft   DescribeFeatureType
 		query url.Values
@@ -169,7 +170,7 @@ func TestBuildQuery(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		values := v.dft.BuildQuery()
+		values := v.dft.BuildKVP()
 		c := false
 		for _, value := range values {
 			for _, q := range v.query {
@@ -185,7 +186,7 @@ func TestBuildQuery(t *testing.T) {
 	}
 }
 
-func TestBuildBodyDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 	var tests = []struct {
 		dft  DescribeFeatureType
 		body string
@@ -201,9 +202,37 @@ func TestBuildBodyDescribeFeatureType(t *testing.T) {
 		},
 	}
 	for k, v := range tests {
-		b := string(v.dft.BuildBody())
+		b := string(v.dft.BuildXML())
 		if b != v.body {
 			t.Errorf("test: %d, expected: %s ,\n got: %s", k, v.body, b)
 		}
+	}
+}
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
+	df := DescribeFeatureType{
+		XMLName:     xml.Name{Local: `DescribeFeatureType`},
+		BaseRequest: BaseRequest{Version: Version, Service: Service},
+		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
+			OutputFormat: sp(`application/json`),
+			TypeName:     sp(`example:example`)}}
+	for i := 0; i < b.N; i++ {
+		df.BuildKVP()
+	}
+}
+
+func BenchmarkDescribeFeatureTypeBuildXML(b *testing.B) {
+	df := DescribeFeatureType{
+		XMLName:     xml.Name{Local: `DescribeFeatureType`},
+		BaseRequest: BaseRequest{Version: Version, Service: Service},
+		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
+			OutputFormat: sp(`application/json`),
+			TypeName:     sp(`example:example`)}}
+	for i := 0; i < b.N; i++ {
+		df.BuildXML()
 	}
 }

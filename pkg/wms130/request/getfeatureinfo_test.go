@@ -1,11 +1,13 @@
-package wms130
+package request
 
 import (
 	"encoding/xml"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 func TestGetFeatureInfoType(t *testing.T) {
@@ -15,7 +17,7 @@ func TestGetFeatureInfoType(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoBuildQuery(t *testing.T) {
+func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetFeatureInfo
 		Excepted url.Values
@@ -66,7 +68,7 @@ func TestGetFeatureInfoBuildQuery(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildQuery()
+		url := n.Object.BuildKVP()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -86,7 +88,7 @@ func TestGetFeatureInfoBuildQuery(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoBuildBody(t *testing.T) {
+func TestGetFeatureInfoBuildXML(t *testing.T) {
 	var tests = []struct {
 		gfi    GetFeatureInfo
 		result string
@@ -145,22 +147,25 @@ func TestGetFeatureInfoBuildBody(t *testing.T) {
   <Height>512</Height>
  </Size>
  <QueryLayers>CenterLine</QueryLayers>
- <InfoFormat>application/json</InfoFormat>
  <I>1</I>
  <J>1</J>
+ <InfoFormat>application/json</InfoFormat>
 </GetFeatureInfo>`},
 	}
 
 	for k, v := range tests {
-		body := v.gfi.BuildBody()
+		body := v.gfi.BuildXML()
 
-		if string(body) != v.result {
-			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
+		x := strings.Replace(string(body), "\n", ``, -1)
+		y := strings.Replace(v.result, "\n", ``, -1)
+
+		if x != y {
+			t.Errorf("test: %d, Expected body: \n%s\nbut was not got: \n%s", k, x, y)
 		}
 	}
 }
 
-func TestGetFeatureInfoParseQuery(t *testing.T) {
+func TestGetFeatureInfoParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query    url.Values
 		Excepted GetFeatureInfo
@@ -209,12 +214,12 @@ func TestGetFeatureInfoParseQuery(t *testing.T) {
 		},
 		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(WIDTH, `not a number`)},
 		4: {Query: map[string][]string{HEIGHT: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(HEIGHT, `not a number`)},
-		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}}, Error: InvalidPoint(`not a number`, `1`)},
-		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}}, Error: InvalidPoint(`1`, `not a number`)},
+		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}}, Error: exception.InvalidPoint(`not a number`, `1`)},
+		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}}, Error: exception.InvalidPoint(`1`, `not a number`)},
 	}
 	for k, n := range tests {
 		var gfi GetFeatureInfo
-		err := gfi.ParseQuery(n.Query)
+		err := gfi.ParseKVP(n.Query)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -225,7 +230,7 @@ func TestGetFeatureInfoParseQuery(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoParseBody(t *testing.T) {
+func TestGetFeatureInfoParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
 		Excepted GetFeatureInfo
@@ -300,7 +305,7 @@ func TestGetFeatureInfoParseBody(t *testing.T) {
 	}
 	for k, n := range tests {
 		var gm GetFeatureInfo
-		err := gm.ParseBody(n.Body)
+		err := gm.ParseXML(n.Body)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -398,5 +403,65 @@ func compareGetFeatureInfoObject(result, expected GetFeatureInfo, t *testing.T, 
 		if *expected.InfoFormat != *result.InfoFormat {
 			t.Errorf("test InfoFormat: %d, expected: %v ,\n got: %v", k, *expected.InfoFormat, *result.InfoFormat)
 		}
+	}
+}
+
+// ----------
+// Benchmarks
+// ----------
+
+func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
+	gfi := GetFeatureInfo{
+		XMLName: xml.Name{Local: `GetFeatureInfo`},
+		BaseRequest: BaseRequest{
+			Service: Service,
+			Version: Version},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: "EPSG:4326",
+		BoundingBox: ows.BoundingBox{
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Size:        Size{Width: 1024, Height: 512},
+		QueryLayers: []string{`CenterLine`},
+		InfoFormat:  sp(`application/json`),
+		I:           1,
+		J:           1,
+	}
+	for i := 0; i < b.N; i++ {
+		gfi.BuildKVP()
+	}
+}
+
+func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
+	gfi := GetFeatureInfo{
+		XMLName: xml.Name{Local: `GetFeatureInfo`},
+		BaseRequest: BaseRequest{
+			Service: Service,
+			Version: Version},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: "EPSG:4326",
+		BoundingBox: ows.BoundingBox{
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Size:        Size{Width: 1024, Height: 512},
+		QueryLayers: []string{`CenterLine`},
+		InfoFormat:  sp(`application/json`),
+		I:           1,
+		J:           1,
+	}
+	for i := 0; i < b.N; i++ {
+		gfi.BuildXML()
 	}
 }
