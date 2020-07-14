@@ -4,27 +4,37 @@ import "encoding/xml"
 
 //
 const (
+	getcapabilities = `GetCapabilities`
+)
+
+//
+const (
 	Service = `WMTS`
 	Version = `1.0.0`
 )
 
+// Type function needed for the interface
+func (gc *GetCapabilities) Type() string {
+	return getcapabilities
+}
+
 // Service function needed for the interface
-func (wmts100 *Wmts100) Service() string {
+func (gc *GetCapabilities) Service() string {
 	return Service
 }
 
 // Version function needed for the interface
-func (wmts100 *Wmts100) Version() string {
+func (gc *GetCapabilities) Version() string {
 	return Version
 }
 
 // Validate function of the wfs200 spec
-func (wmts100 *Wmts100) Validate() bool {
+func (gc *GetCapabilities) Validate() bool {
 	return false
 }
 
-// Wmts100 base struct
-type Wmts100 struct {
+// GetCapabilities base struct
+type GetCapabilities struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`

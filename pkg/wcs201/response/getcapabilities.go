@@ -1,6 +1,14 @@
 package wcs201
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"regexp"
+)
+
+//
+const (
+	getcapabilities = `GetCapabilities`
+)
 
 //
 const (
@@ -10,23 +18,35 @@ const (
 
 // Contains the WFS200 struct
 
+// Type function needed for the interface
+func (gc *GetCapabilities) Type() string {
+	return getcapabilities
+}
+
 // Service function needed for the interface
-func (wcs201 *Wcs201) Service() string {
+func (gc *GetCapabilities) Service() string {
 	return Service
 }
 
 // Version function needed for the interface
-func (wcs201 *Wcs201) Version() string {
+func (gc *GetCapabilities) Version() string {
 	return Version
 }
 
 // Validate function of the wfs200 spec
-func (wcs201 *Wcs201) Validate() bool {
+func (gc *GetCapabilities) Validate() bool {
 	return false
 }
 
-// Wcs201 base struct
-type Wcs201 struct {
+// BuildXML builds a GetCapabilities response object
+func (gc *GetCapabilities) BuildXML() []byte {
+	si, _ := xml.MarshalIndent(gc, "", "")
+	re := regexp.MustCompile(`><.*>`)
+	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
+}
+
+// GetCapabilities base struct
+type GetCapabilities struct {
 	XMLName               xml.Name `xml:"wcs:Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
