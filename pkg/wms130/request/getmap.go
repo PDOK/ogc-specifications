@@ -145,6 +145,32 @@ func (gmkvp *GetMapKVP) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows
 	return sld, nil
 }
 
+// BuildKVP builds a url.Values query from a GetMapKVP struct
+func (gmkvp *GetMapKVP) BuildKVP() url.Values {
+	query := make(map[string][]string)
+
+	fields := reflect.TypeOf(*gmkvp)
+	values := reflect.ValueOf(*gmkvp)
+
+	for i := 0; i < fields.NumField(); i++ {
+		field := fields.Field(i)
+		value := values.Field(i)
+
+		switch value.Kind() {
+		case reflect.String:
+			v := value.String()
+			query[strings.ToUpper(field.Name)] = []string{v}
+		case reflect.Ptr:
+			v := value.Elem()
+			if v.IsValid() {
+				query[strings.ToUpper(field.Name)] = []string{fmt.Sprintf("%v", v)}
+			}
+		}
+	}
+
+	return query
+}
+
 // ParseGetMapKVP process the simple struct to a complex struct
 func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
 	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
@@ -211,32 +237,6 @@ func (gm *GetMap) ParseXML(body []byte) ows.Exception {
 	}
 	gm.BaseRequest.Attr = ows.StripDuplicateAttr(n)
 	return nil
-}
-
-// BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gmkvp *GetMapKVP) BuildKVP() url.Values {
-	query := make(map[string][]string)
-
-	fields := reflect.TypeOf(*gmkvp)
-	values := reflect.ValueOf(*gmkvp)
-
-	for i := 0; i < fields.NumField(); i++ {
-		field := fields.Field(i)
-		value := values.Field(i)
-
-		switch value.Kind() {
-		case reflect.String:
-			v := value.String()
-			query[strings.ToUpper(field.Name)] = []string{v}
-		case reflect.Ptr:
-			v := value.Elem()
-			if v.IsValid() {
-				query[strings.ToUpper(field.Name)] = []string{fmt.Sprintf("%v", v)}
-			}
-		}
-	}
-
-	return query
 }
 
 // BuildKVP builds a new query string that will be proxied
