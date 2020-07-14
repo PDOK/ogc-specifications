@@ -23,8 +23,8 @@ type BoundingBox struct {
 // Position type
 type Position [2]float64
 
-// BuildQueryString function for getting a KVP Query BBOX value
-func (b *BoundingBox) BuildQueryString() string {
+// BuildKVP function for getting a KVP Query BBOX value
+func (b *BoundingBox) BuildKVP() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 

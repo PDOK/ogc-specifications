@@ -15,7 +15,7 @@ func TestBoundingBoxBuildQueryString(t *testing.T) {
 		1: {boundingbox: BoundingBox{LowerCorner: [2]float64{-180.0, -90.0}, UpperCorner: [2]float64{180.0, 90.0}}, boundingboxstring: `-180.000000,-90.000000,180.000000,90.000000`},
 	}
 	for k, a := range tests {
-		str := a.boundingbox.BuildQueryString()
+		str := a.boundingbox.BuildKVP()
 		if str != a.boundingboxstring {
 			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.boundingboxstring, str)
 		}
