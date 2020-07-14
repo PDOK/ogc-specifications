@@ -1,6 +1,9 @@
 package reponse
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"regexp"
+)
 
 //
 const (
@@ -31,6 +34,13 @@ func (gc *GetCapabilities) Version() string {
 // Validate function of the wfs200 spec
 func (gc *GetCapabilities) Validate() bool {
 	return false
+}
+
+// BuildXML builds a GetCapabilities response object
+func (gc *GetCapabilities) BuildXML() []byte {
+	si, _ := xml.MarshalIndent(gc, "", "")
+	re := regexp.MustCompile(`><.*>`)
+	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // GetCapabilities base struct

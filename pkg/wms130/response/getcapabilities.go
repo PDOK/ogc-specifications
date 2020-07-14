@@ -2,6 +2,7 @@ package response
 
 import (
 	"encoding/xml"
+	"regexp"
 )
 
 // Contains the WMS130 struct
@@ -35,6 +36,13 @@ func (gc *GetCapabilities) Version() string {
 // Validate function of the wms130 spec
 func (gc *GetCapabilities) Validate() bool {
 	return false
+}
+
+// BuildXML builds a GetCapabilities response object
+func (gc *GetCapabilities) BuildXML() []byte {
+	si, _ := xml.MarshalIndent(gc, "", "")
+	re := regexp.MustCompile(`><.*>`)
+	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // GetCapabilities base struct
