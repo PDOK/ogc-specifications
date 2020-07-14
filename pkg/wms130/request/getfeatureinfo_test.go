@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/xml"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
@@ -146,17 +147,20 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
   <Height>512</Height>
  </Size>
  <QueryLayers>CenterLine</QueryLayers>
- <InfoFormat>application/json</InfoFormat>
  <I>1</I>
  <J>1</J>
+ <InfoFormat>application/json</InfoFormat>
 </GetFeatureInfo>`},
 	}
 
 	for k, v := range tests {
 		body := v.gfi.BuildXML()
 
-		if string(body) != v.result {
-			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
+		x := strings.Replace(string(body), "\n", ``, -1)
+		y := strings.Replace(v.result, "\n", ``, -1)
+
+		if x != y {
+			t.Errorf("test: %d, Expected body: \n%s\nbut was not got: \n%s", k, x, y)
 		}
 	}
 }
