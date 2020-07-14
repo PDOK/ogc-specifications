@@ -182,9 +182,9 @@ func (gfi *GetFeatureInfo) BuildKVP() url.Values {
 	for _, k := range getFeatureInfoMandatoryParameters {
 		switch k {
 		case LAYERS:
-			querystring[LAYERS] = []string{gfi.StyledLayerDescriptor.getLayerQueryParameter()}
+			querystring[LAYERS] = []string{gfi.StyledLayerDescriptor.getLayerKVPValue()}
 		case STYLES:
-			querystring[STYLES] = []string{gfi.StyledLayerDescriptor.getStyleQueryParameter()}
+			querystring[STYLES] = []string{gfi.StyledLayerDescriptor.getStyleKVPValue()}
 		case CRS:
 			querystring[CRS] = []string{gfi.CRS}
 		case BBOX:

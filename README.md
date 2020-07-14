@@ -25,6 +25,7 @@ It will provide the user with structs that can be used with in a developers appl
 This is still a 'work in progres' with the following major todo's:
 
 - [ ] Validation support
+- [ ] YAML parser
 - [ ] WMTS support
 - [ ] WCS support
 - [ ] OGC response support (at least for the metadata calls like DescribeFeatureType)

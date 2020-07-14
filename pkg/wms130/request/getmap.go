@@ -87,8 +87,8 @@ func (gmkvp *GetMapKVP) ParseGetMap(gm *GetMap) ows.Exception {
 	gmkvp.Request = getmap
 	gmkvp.Version = Version
 	gmkvp.Service = Service
-	gmkvp.Layers = gm.StyledLayerDescriptor.getLayerQueryParameter()
-	gmkvp.Styles = gm.StyledLayerDescriptor.getStyleQueryParameter()
+	gmkvp.Layers = gm.StyledLayerDescriptor.getLayerKVPValue()
+	gmkvp.Styles = gm.StyledLayerDescriptor.getStyleKVPValue()
 	gmkvp.CRS = gm.CRS
 	gmkvp.Bbox = gm.BoundingBox.BuildKVP()
 	gmkvp.Width = strconv.Itoa(gm.Output.Size.Width)
@@ -331,7 +331,7 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 
 // TODO maybe 'merge' both func in a single one with 2 outputs
 // so their are 'insync' ...?
-func (sld *StyledLayerDescriptor) getLayerQueryParameter() string {
+func (sld *StyledLayerDescriptor) getLayerKVPValue() string {
 	queryvalue := ""
 	for p, l := range sld.NamedLayer {
 		queryvalue = queryvalue + l.Name
@@ -342,7 +342,7 @@ func (sld *StyledLayerDescriptor) getLayerQueryParameter() string {
 	return queryvalue
 }
 
-func (sld *StyledLayerDescriptor) getStyleQueryParameter() string {
+func (sld *StyledLayerDescriptor) getStyleKVPValue() string {
 	queryvalue := ""
 	for p, l := range sld.NamedLayer {
 		if l.Name != "" {

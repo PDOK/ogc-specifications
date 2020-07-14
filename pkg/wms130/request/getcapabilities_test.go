@@ -15,7 +15,7 @@ func TestGetCapabilitiesType(t *testing.T) {
 	}
 }
 
-func TestParseBodyGetCapabilities(t *testing.T) {
+func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
 		Body   []byte
 		Result GetCapabilities
@@ -67,7 +67,7 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 	}
 }
 
-func TestParseQueryParametersGetCapabilities(t *testing.T) {
+func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query  url.Values
 		Result GetCapabilities
@@ -113,7 +113,7 @@ func TestParseQueryParametersGetCapabilities(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildQuery(t *testing.T) {
+func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetCapabilities
 		Excepted url.Values
@@ -148,7 +148,7 @@ func TestGetCapabilitiesBuildQuery(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildBody(t *testing.T) {
+func TestGetCapabilitiesBuildXML(t *testing.T) {
 	var tests = []struct {
 		gc     GetCapabilities
 		result string

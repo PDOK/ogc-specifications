@@ -24,7 +24,7 @@ func TestGetFeatureType(t *testing.T) {
 	}
 }
 
-func TestBuildBody(t *testing.T) {
+func TestGetFeatureBuildXML(t *testing.T) {
 	var tests = []struct {
 		gf     GetFeature
 		result string
@@ -55,7 +55,7 @@ func TestBuildBody(t *testing.T) {
 
 // TODO
 // Merge TestParseBodyGetFeature & TestParseQueryParameters GetFeature comporison into single func, like with WMS GetMap
-func TestParseBodyGetFeature(t *testing.T) {
+func TestGetFeatureParseXML(t *testing.T) {
 	var tests = []struct {
 		Body      []byte
 		Result    GetFeature
@@ -215,7 +215,7 @@ func TestProcesNamespaces(t *testing.T) {
 	}
 }
 
-func TestParseQueryParameters(t *testing.T) {
+func TestGetFeatureParseKVP(t *testing.T) {
 
 	var tests = []struct {
 		QueryParams url.Values
@@ -400,7 +400,7 @@ func TestMergeResourceIDGroups(t *testing.T) {
 	}
 }
 
-func TestBuildQueryString(t *testing.T) {
+func TestGetFeatureBuildKVP(t *testing.T) {
 	var tests = []struct {
 		getfeature    GetFeature
 		expectedquery url.Values
@@ -508,5 +508,33 @@ func BenchmarkGetFeatureBuildXML(b *testing.B) {
 	gf := GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{1, 1}, UpperCorner: ows.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
 		gf.BuildXML()
+	}
+}
+
+func BenchmarkGetFeatureParseKVP(b *testing.B) {
+	kvp := map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}}
+
+	for i := 0; i < b.N; i++ {
+		gm := GetFeature{}
+		gm.ParseKVP(kvp)
+	}
+}
+
+func BenchmarkGetFeatureParseXML(b *testing.B) {
+	doc := []byte(`<?xml version="1.0" encoding="UTF-8"?>
+	<GetFeature outputFormat="application/gml+xml; version=3.2" count="3" startindex="0" service="WFS" version="2.0.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl">
+	 <Query typeNames="kadastralekaartv4:kadastralegrens" srsName="urn:ogc:def:crs:EPSG::28992">
+	  <fes:Filter>
+	   <fes:PropertyIsEqualTo matchCase="true">
+		<fes:ValueReference>id</fes:ValueReference>
+		<fes:Literal>29316bf0-b87f-4e8d-bf00-21f894bdf655</fes:Literal>
+	   </fes:PropertyIsEqualTo>
+	  </fes:Filter>
+	 </Query>
+	</GetFeature>`)
+
+	for i := 0; i < b.N; i++ {
+		gm := GetFeature{}
+		gm.ParseXML(doc)
 	}
 }

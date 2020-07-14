@@ -16,7 +16,7 @@ func TestGetFeatureInfoType(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoBuildQuery(t *testing.T) {
+func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetFeatureInfo
 		Excepted url.Values
@@ -87,7 +87,7 @@ func TestGetFeatureInfoBuildQuery(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoBuildBody(t *testing.T) {
+func TestGetFeatureInfoBuildXML(t *testing.T) {
 	var tests = []struct {
 		gfi    GetFeatureInfo
 		result string
@@ -161,7 +161,7 @@ func TestGetFeatureInfoBuildBody(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoParseQuery(t *testing.T) {
+func TestGetFeatureInfoParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query    url.Values
 		Excepted GetFeatureInfo
@@ -226,7 +226,7 @@ func TestGetFeatureInfoParseQuery(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoParseBody(t *testing.T) {
+func TestGetFeatureInfoParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
 		Excepted GetFeatureInfo

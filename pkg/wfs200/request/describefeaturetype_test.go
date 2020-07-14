@@ -9,14 +9,14 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
-func TestDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeType(t *testing.T) {
 	dft := DescribeFeatureType{}
 	if dft.Type() != `DescribeFeatureType` {
 		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `DescribeFeatureType`, dft.Type())
 	}
 }
 
-func TestParseBodyDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	var tests = []struct {
 		Body   []byte
 		Result DescribeFeatureType
@@ -99,7 +99,7 @@ func TestParseBodyDescribeFeatureType(t *testing.T) {
 	}
 }
 
-func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query     url.Values
 		Result    DescribeFeatureType
@@ -154,7 +154,7 @@ func TestParseQueryParametersDescribeFeatureType(t *testing.T) {
 		}
 	}
 }
-func TestBuildQuery(t *testing.T) {
+func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 	var tests = []struct {
 		dft   DescribeFeatureType
 		query url.Values
@@ -186,7 +186,7 @@ func TestBuildQuery(t *testing.T) {
 	}
 }
 
-func TestBuildBodyDescribeFeatureType(t *testing.T) {
+func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 	var tests = []struct {
 		dft  DescribeFeatureType
 		body string

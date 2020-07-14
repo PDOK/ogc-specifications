@@ -88,7 +88,7 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 	}
 }
 
-func TestGetMapParseBody(t *testing.T) {
+func TestGetMapParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
 		Excepted GetMap
@@ -181,7 +181,7 @@ func TestGetMapParseBody(t *testing.T) {
 	}
 }
 
-func TestGetLayerQueryParameter(t *testing.T) {
+func TestGetLayerKVPValue(t *testing.T) {
 	var tests = []struct {
 		StyledLayerDescriptor StyledLayerDescriptor
 		Excepted              string
@@ -200,14 +200,14 @@ func TestGetLayerQueryParameter(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		result := n.StyledLayerDescriptor.getLayerQueryParameter()
+		result := n.StyledLayerDescriptor.getLayerKVPValue()
 		if n.Excepted != result {
 			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.Excepted, result)
 		}
 	}
 }
 
-func TestGetStyleQueryParameter(t *testing.T) {
+func TestGetStyleKVPValue(t *testing.T) {
 	var tests = []struct {
 		StyledLayerDescriptor StyledLayerDescriptor
 		Excepted              string
@@ -235,14 +235,14 @@ func TestGetStyleQueryParameter(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		result := n.StyledLayerDescriptor.getStyleQueryParameter()
+		result := n.StyledLayerDescriptor.getStyleKVPValue()
 		if n.Excepted != result {
 			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.Excepted, result)
 		}
 	}
 }
 
-func TestGetMapParseQuery(t *testing.T) {
+func TestGetMapParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query     url.Values
 		Excepted  GetMap
@@ -302,7 +302,7 @@ func TestGetMapParseQuery(t *testing.T) {
 	}
 }
 
-func TestBuildQuery(t *testing.T) {
+func TestGetMapBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetMap
 		Excepted url.Values
@@ -388,7 +388,7 @@ func TestBuildQuery(t *testing.T) {
 	}
 }
 
-func TestBuildBody(t *testing.T) {
+func TestGetMapBuildXML(t *testing.T) {
 	var tests = []struct {
 		gm     GetMap
 		result string
@@ -559,5 +559,70 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 	}
 	for i := 0; i < b.N; i++ {
 		gm.BuildXML()
+	}
+}
+
+func BenchmarkGetMapParseKVP(b *testing.B) {
+	kvp := map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
+		LAYERS:      {`Rivers,Roads,Houses`},
+		STYLES:      {`CenterLine,CenterLine,Outline`},
+		CRS:         {`EPSG:4326`},
+		BBOX:        {`-180.0,-90.0,180.0,90.0`},
+		WIDTH:       {`1024`},
+		HEIGHT:      {`512`},
+		FORMAT:      {`image/jpeg`},
+		TRANSPARENT: {`FALSE`},
+		EXCEPTIONS:  {`XML`},
+		BGCOLOR:     {`0x7F7F7F`},
+	}
+
+	for i := 0; i < b.N; i++ {
+		gm := GetMap{}
+		gm.ParseKVP(kvp)
+	}
+}
+
+func BenchmarkGetMapParseXML(b *testing.B) {
+	doc := []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
+	xmlns:se="http://www.opengis.net/se" xmlns:wms="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld GetMap.xsd" version="1.3.0">
+	<StyledLayerDescriptor version="1.1.0">
+		<NamedLayer>
+			<se:Name>Rivers</se:Name>
+			<NamedStyle>
+				<se:Name>CenterLine</se:Name>
+			</NamedStyle>
+		</NamedLayer>
+		<NamedLayer>
+			<se:Name>Roads</se:Name>
+			<NamedStyle>
+				<se:Name>CenterLine</se:Name>
+			</NamedStyle>
+		</NamedLayer>
+		<NamedLayer>
+			<se:Name>Houses</se:Name>
+			<NamedStyle>
+				<se:Name>Outline</se:Name>
+			</NamedStyle>
+		</NamedLayer>
+	</StyledLayerDescriptor>
+	<CRS>EPSG:4326</CRS>
+	<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">					
+		<ows:LowerCorner>-180.0 -90.0</ows:LowerCorner>
+		<ows:UpperCorner>180.0 90.0</ows:UpperCorner>
+	</BoundingBox>
+	<Output>
+		<Size>
+			<Width>1024</Width>
+			<Height>512</Height>
+		</Size>
+		<wms:Format>image/jpeg</wms:Format>
+		<Transparent>false</Transparent>
+	</Output>
+	<Exceptions>XML</Exceptions>
+</GetMap>`)
+
+	for i := 0; i < b.N; i++ {
+		gm := GetMap{}
+		gm.ParseXML(doc)
 	}
 }
