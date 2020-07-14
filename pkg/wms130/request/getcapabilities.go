@@ -19,8 +19,8 @@ func (gc *GetCapabilities) Type() string {
 	return getcapabilities
 }
 
-// ParseBody builds a GetCapabilities object based on the given body
-func (gc *GetCapabilities) ParseBody(body []byte) ows.Exception {
+// ParseXML builds a GetCapabilities object based on a XML document
+func (gc *GetCapabilities) ParseXML(body []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return ows.MissingParameterValue()
@@ -69,8 +69,8 @@ func (gc *GetCapabilities) BuildQuery() url.Values {
 	return querystring
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilities) BuildBody() []byte {
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+func (gc *GetCapabilities) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

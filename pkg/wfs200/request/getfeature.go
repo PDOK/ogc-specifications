@@ -56,13 +56,13 @@ var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FI
 
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
-// ParseBody builds a GetCapabilities object based on the given body
-func (gf *GetFeature) ParseBody(body []byte) ows.Exception {
+// ParseXML builds a GetCapabilities object based on a XML document
+func (gf *GetFeature) ParseXML(doc []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
-	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
+	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return ows.NoApplicableCode("Could not process XML, is it XML?")
 	}
-	xml.Unmarshal(body, &gf) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
+	xml.Unmarshal(doc, &gf) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
 	var n []xml.Attr
 	for _, a := range xmlattributes {
 		switch strings.ToUpper(a.Name.Local) {
@@ -206,9 +206,9 @@ func (gf *GetFeature) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
 // TODO: In the Filter>Query>... the content of the GeometryOperand (Point,Line,Polygon,...) is the raw xml (text)
-func (gf *GetFeature) BuildBody() []byte {
+func (gf *GetFeature) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gf, "", " ")
 	return append([]byte(xml.Header), si...)
 }

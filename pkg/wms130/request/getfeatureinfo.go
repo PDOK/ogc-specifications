@@ -38,11 +38,11 @@ func (gfi *GetFeatureInfo) Type() string {
 	return getfeatureinfo
 }
 
-// ParseBody builds a GetFeatureInfo object based on the given body
+// ParseXML builds a GetFeatureInfo object based on a XML document
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) ParseBody(body []byte) ows.Exception {
+func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return ows.MissingParameterValue()
@@ -222,11 +222,11 @@ func (gfi *GetFeatureInfo) BuildQuery() url.Values {
 	return querystring
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
 // Note: this GetFeatureInfo XML body is a interpretation and there isn't a
 // good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) BuildBody() []byte {
+func (gfi *GetFeatureInfo) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gfi, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

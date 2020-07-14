@@ -5,9 +5,9 @@ import "net/url"
 // OperationRequest interface
 type OperationRequest interface {
 	Type() string
-	ParseBody([]byte) Exception
+	ParseXML([]byte) Exception
 	ParseQuery(url.Values) Exception
 	BuildQuery() url.Values
-	BuildBody() []byte
+	BuildXML() []byte
 	Validate() bool
 }

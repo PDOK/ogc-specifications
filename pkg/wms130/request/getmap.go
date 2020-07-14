@@ -164,8 +164,8 @@ func (gm *GetMap) ParseQuery(query url.Values) ows.Exception {
 	return nil
 }
 
-// ParseBody builds a GetMap object based on the given body
-func (gm *GetMap) ParseBody(body []byte) ows.Exception {
+// ParseXML builds a GetMap object based on a XML document
+func (gm *GetMap) ParseXML(body []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return ows.MissingParameterValue()
@@ -220,8 +220,8 @@ func (gm *GetMap) BuildQuery() url.Values {
 	return query
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
-func (gm *GetMap) BuildBody() []byte {
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+func (gm *GetMap) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gm, "", " ")
 	return append([]byte(xml.Header), si...)
 }

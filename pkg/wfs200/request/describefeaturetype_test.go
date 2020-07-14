@@ -57,7 +57,7 @@ func TestParseBodyDescribeFeatureType(t *testing.T) {
 
 	for k, n := range tests {
 		var dft DescribeFeatureType
-		err := dft.ParseBody(n.Body)
+		err := dft.ParseXML(n.Body)
 		if err != nil {
 			if n.Error != nil {
 				if err.Error() != n.Error.Error() {
@@ -202,7 +202,7 @@ func TestBuildBodyDescribeFeatureType(t *testing.T) {
 		},
 	}
 	for k, v := range tests {
-		b := string(v.dft.BuildBody())
+		b := string(v.dft.BuildXML())
 		if b != v.body {
 			t.Errorf("test: %d, expected: %s ,\n got: %s", k, v.body, b)
 		}

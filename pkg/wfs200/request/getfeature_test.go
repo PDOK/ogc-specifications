@@ -45,7 +45,7 @@ func TestBuildBody(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gf.BuildBody()
+		body := v.gf.BuildXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
@@ -120,7 +120,7 @@ func TestParseBodyGetFeature(t *testing.T) {
 
 	for k, n := range tests {
 		var gf GetFeature
-		err := gf.ParseBody(n.Body)
+		err := gf.ParseXML(n.Body)
 		if err != nil {
 			if err.Error() != n.Exception.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)

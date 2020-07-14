@@ -22,13 +22,13 @@ func (dft *DescribeFeatureType) Type() string {
 	return describefeaturetype
 }
 
-// ParseBody builds a DescribeFeatureType object based on the given body
-func (dft *DescribeFeatureType) ParseBody(body []byte) ows.Exception {
+// ParseXML builds a DescribeFeatureType object based on a XML document
+func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
-	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
+	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return ows.NoApplicableCode("Could not process XML, is it XML?")
 	}
-	if err := xml.Unmarshal(body, &dft); err != nil {
+	if err := xml.Unmarshal(doc, &dft); err != nil {
 		return ows.OperationNotSupported(err.Error())
 	}
 	var n []xml.Attr
@@ -94,8 +94,8 @@ func (dft *DescribeFeatureType) BuildQuery() url.Values {
 	return querystring
 }
 
-// BuildBody builds a 'new' XML document 'based' on the 'original' XML document
-func (dft *DescribeFeatureType) BuildBody() []byte {
+// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+func (dft *DescribeFeatureType) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(dft, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

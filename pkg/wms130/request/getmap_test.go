@@ -170,7 +170,7 @@ func TestGetMapParseBody(t *testing.T) {
 	}
 	for k, n := range tests {
 		var gm GetMap
-		err := gm.ParseBody(n.Body)
+		err := gm.ParseXML(n.Body)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -413,7 +413,7 @@ func TestBuildBody(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gm.BuildBody()
+		body := v.gm.BuildXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))

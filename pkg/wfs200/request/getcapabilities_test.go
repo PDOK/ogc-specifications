@@ -53,7 +53,7 @@ func TestParseBodyGetCapabilities(t *testing.T) {
 
 	for k, n := range tests {
 		var gc GetCapabilities
-		err := gc.ParseBody(n.Body)
+		err := gc.ParseXML(n.Body)
 		if err != nil {
 			if err.Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -177,7 +177,7 @@ func TestGetCapabilitiesBuildBody(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gc.BuildBody()
+		body := v.gc.BuildXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
