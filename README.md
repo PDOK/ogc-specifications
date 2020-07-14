@@ -15,6 +15,8 @@ This package has support for the following OGC Webservice Specifications:
 | WFS | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
 | WFS | DescribeFeatureType | :heavy_check_mark: | |
 | WFS | GetFeature | :heavy_check_mark: | |
+| WMTS | GetCapabilities | | :grey_exclamation: |
+| WCS | GetCapabilities | | :grey_exclamation: |
 
 It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and query strings based on those structs.
 
