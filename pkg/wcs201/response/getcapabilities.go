@@ -3,6 +3,8 @@ package wcs201
 import (
 	"encoding/xml"
 	"regexp"
+
+	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
 //
@@ -34,8 +36,8 @@ func (gc *GetCapabilities) Version() string {
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilities) Validate() bool {
-	return false
+func (gc *GetCapabilities) Validate() ows.Exception {
+	return nil
 }
 
 // BuildXML builds a GetCapabilities response object

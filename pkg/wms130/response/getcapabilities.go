@@ -3,6 +3,8 @@ package response
 import (
 	"encoding/xml"
 	"regexp"
+
+	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
 // Contains the WMS130 struct
@@ -34,8 +36,8 @@ func (gc *GetCapabilities) Version() string {
 }
 
 // Validate function of the wms130 spec
-func (gc *GetCapabilities) Validate() bool {
-	return false
+func (gc *GetCapabilities) Validate() ows.Exception {
+	return nil
 }
 
 // BuildXML builds a GetCapabilities response object

@@ -5,7 +5,7 @@ type OperationResponse interface {
 	Type() string
 	Service() string
 	Version() string
-	Validate() bool
+	Validate() Exception
 
 	// ParseXML([]byte) Exception
 	ParseYAML([]byte) Exception
