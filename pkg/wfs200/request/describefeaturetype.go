@@ -22,6 +22,11 @@ func (dft *DescribeFeatureType) Type() string {
 	return describefeaturetype
 }
 
+// Validate returns GetCapabilities
+func (dft *DescribeFeatureType) Validate() ows.Exception {
+	return nil
+}
+
 // ParseXML builds a DescribeFeatureType object based on a XML document
 func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute

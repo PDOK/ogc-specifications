@@ -38,6 +38,11 @@ func (gfi *GetFeatureInfo) Type() string {
 	return getfeatureinfo
 }
 
+// Validate returns GetFeatureInfo
+func (gfi *GetFeatureInfo) Validate() ows.Exception {
+	return nil
+}
+
 // ParseXML builds a GetFeatureInfo object based on a XML document
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base

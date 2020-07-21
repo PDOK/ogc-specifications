@@ -21,6 +21,11 @@ func (gc *GetCapabilities) Type() string {
 	return getcapabilities
 }
 
+// Validate returns GetCapabilities
+func (gc *GetCapabilities) Validate() ows.Exception {
+	return nil
+}
+
 // ParseXML builds a GetCapabilities object based on a XML document
 func (gc *GetCapabilities) ParseXML(doc []byte) ows.Exception {
 	var xmlattributes ows.XMLAttribute
