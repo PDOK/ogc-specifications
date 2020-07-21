@@ -41,6 +41,11 @@ func (gm *GetMap) Type() string {
 	return getmap
 }
 
+// Validate returns GetMap
+func (gm *GetMap) Validate() ows.Exception {
+	return nil
+}
+
 //GetMapKVP struct
 type GetMapKVP struct {
 	// Table 8 - The Parameters of a GetMap request
@@ -201,7 +206,7 @@ func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
 // ParseKVP builds a GetMap object based on the available query parameters
 func (gm *GetMap) ParseKVP(query url.Values) ows.Exception {
 	if len(query) == 0 {
-		// When there are no query value we know that at least
+		// When there are no query values we know that at least
 		// the manadorty VERSION parameter is missing.
 		return ows.MissingParameterValue(VERSION)
 	}

@@ -5,7 +5,7 @@ import "net/url"
 // OperationRequest interface
 type OperationRequest interface {
 	Type() string
-	Validate() bool
+	Validate() Exception
 
 	ParseXML([]byte) Exception
 	ParseKVP(url.Values) Exception

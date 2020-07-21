@@ -47,6 +47,11 @@ func (gf *GetFeature) Type() string {
 	return getfeature
 }
 
+// Validate returns GetFeature
+func (gf *GetFeature) Validate() ows.Exception {
+	return nil
+}
+
 // WFS tables as map[string]bool, where the key (string) is the TOKEN and the bool if its a mandatory (true) or optional (false) attribute
 var table5 = map[string]bool{STARTINDEX: false, COUNT: false, OUTPUTFORMAT: false, RESULTTYPE: false}
 

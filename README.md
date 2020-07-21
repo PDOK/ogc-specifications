@@ -54,6 +54,14 @@ And for benchmarks:
 go test -bench=. ./...
 ```
 
+And generate CPU & MEM profiles:
+
+```go
+go test -cpuprofile cpu.prof -memprofile mem.prof -bench=.  ./...
+```
+
+For visualisation use [pprof](https://github.com/google/pprof)
+
 ## Usage
 
 - [Simple BBOX](./examples/simple-bbox/main.go)
