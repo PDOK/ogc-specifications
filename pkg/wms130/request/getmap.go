@@ -335,29 +335,39 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 // TODO maybe 'merge' both func in a single one with 2 outputs
 // so their are 'insync' ...?
 func (sld *StyledLayerDescriptor) getLayerKVPValue() string {
-	queryvalue := ""
-	for p, l := range sld.NamedLayer {
-		queryvalue = queryvalue + l.Name
-		if p < len(sld.NamedLayer)-1 {
-			queryvalue = queryvalue + ","
-		}
-	}
-	return queryvalue
+	return strings.Join(sld.GetNamedLayers(), ",")
 }
 
 func (sld *StyledLayerDescriptor) getStyleKVPValue() string {
-	queryvalue := ""
-	for p, l := range sld.NamedLayer {
+	return strings.Join(sld.GetNamedStyles(), ",")
+}
+
+// GetNamedLayers return an array of the Layer names
+func (sld *StyledLayerDescriptor) GetNamedLayers() []string {
+
+	layers := []string{}
+	for _, l := range sld.NamedLayer {
+		layers = append(layers, l.Name)
+	}
+
+	return layers
+}
+
+// GetNamedStyles return an array of the Layer names
+func (sld *StyledLayerDescriptor) GetNamedStyles() []string {
+
+	styles := []string{}
+	for _, l := range sld.NamedLayer {
 		if l.Name != "" {
 			if l.NamedStyle != nil {
-				queryvalue = queryvalue + l.NamedStyle.Name
-			}
-			if p < len(sld.NamedLayer)-1 {
-				queryvalue = queryvalue + ","
+				styles = append(styles, l.NamedStyle.Name)
+			} else {
+				styles = append(styles, "")
 			}
 		}
 	}
-	return queryvalue
+
+	return styles
 }
 
 // GetMap struct with the needed parameters/attributes needed for making a GetMap request
@@ -391,7 +401,7 @@ type Size struct {
 
 // StyledLayerDescriptor struct
 type StyledLayerDescriptor struct {
-	Version    string       `xml:"version,attr" yaml:"version" validate:"required"`
+	Version    string       `xml:"version,attr" yaml:"version" validate:"required,eq=1.1.0"`
 	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedlayer" validate:"required"`
 }
 

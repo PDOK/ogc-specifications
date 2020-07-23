@@ -3,6 +3,9 @@ module github.com/pdok/ogc-specifications
 go 1.13
 
 require (
+	github.com/go-playground/locales v0.13.0
+	github.com/go-playground/universal-translator v0.17.0
+	github.com/go-playground/validator/v10 v10.3.0
 	github.com/google/pprof v0.0.0-20200708004538-1a94d8640e99 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20200715173712-053cf528c12f // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
