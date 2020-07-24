@@ -132,11 +132,11 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
 				}
 				gfi.I = i
 			case J:
-				i, err := strconv.Atoi(query[k][0])
+				j, err := strconv.Atoi(query[k][0])
 				if err != nil {
 					return exception.InvalidPoint(query[I][0], query[J][0])
 				}
-				gfi.J = i
+				gfi.J = j
 			}
 		}
 	}
@@ -201,9 +201,9 @@ func (gfi *GetFeatureInfo) BuildKVP() url.Values {
 		case QUERYLAYERS:
 			querystring[QUERYLAYERS] = []string{strings.Join(gfi.QueryLayers, ",")}
 		case I:
-			querystring[J] = []string{strconv.Itoa(gfi.I)}
+			querystring[I] = []string{strconv.Itoa(gfi.I)}
 		case J:
-			querystring[I] = []string{strconv.Itoa(gfi.J)}
+			querystring[J] = []string{strconv.Itoa(gfi.J)}
 		}
 	}
 
@@ -235,7 +235,6 @@ func (gfi *GetFeatureInfo) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gfi, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
-	// return []byte(xml.Header + string(si))
 }
 
 // GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request
