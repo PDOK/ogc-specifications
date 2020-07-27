@@ -11,7 +11,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/request"
-	"github.com/pdok/ogc-specifications/pkg/wms130/response"
 )
 
 func sp(s string) *string {
@@ -30,14 +29,11 @@ func TestValidation(t *testing.T) {
 	registerValidations(v)
 	registerTranslations(v, &trans)
 
-	getcapabilities := response.GetCapabilities{
-		WMSService: response.WMSService{Name: "RiversRoadsAndHouses"},
-		Capability: capabilities.Capability{
-			Layer: []capabilities.Layer{
-				{Name: sp(`Rivers`), CRS: []*string{sp(`EPSG:4326`)}},
-				{Name: sp(`Roads`), CRS: []*string{sp(`EPSG:4326`)}},
-				{Name: sp(`Houses`), CRS: []*string{sp(`EPSG:4326`)}},
-			},
+	capabilities := capabilities.Capability{
+		Layer: []capabilities.Layer{
+			{Name: sp(`Rivers`), CRS: []*string{sp(`EPSG:4326`)}},
+			{Name: sp(`Roads`), CRS: []*string{sp(`EPSG:4326`)}},
+			{Name: sp(`Houses`), CRS: []*string{sp(`EPSG:4326`)}},
 		},
 	}
 
@@ -74,7 +70,7 @@ func TestValidation(t *testing.T) {
 
 	for k, n := range tests {
 
-		wr := GetMapWrapper{getcapabilities: &getcapabilities, getmap: &n.Object}
+		wr := GetMapWrapper{capabilities: &capabilities, getmap: &n.Object}
 
 		err := v.Struct(wr)
 		if err != nil {

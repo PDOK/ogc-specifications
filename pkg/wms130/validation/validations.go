@@ -34,7 +34,7 @@ func GetMapValidation(sl validator.StructLevel) {
 	// layer
 	for _, sldname := range wr.getmap.StyledLayerDescriptor.GetNamedLayers() {
 		known := false
-		for _, l := range wr.getcapabilities.Capability.Layer {
+		for _, l := range wr.capabilities.Layer {
 			if *l.Name == sldname {
 				known = true
 			}
