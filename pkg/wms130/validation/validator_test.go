@@ -9,6 +9,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/request"
 	"github.com/pdok/ogc-specifications/pkg/wms130/response"
 )
@@ -31,8 +32,8 @@ func TestValidation(t *testing.T) {
 
 	getcapabilities := response.GetCapabilities{
 		WMSService: response.WMSService{Name: "RiversRoadsAndHouses"},
-		Capability: response.Capability{
-			Layer: []response.Layer{
+		Capability: capabilities.Capability{
+			Layer: []capabilities.Layer{
 				{Name: sp(`Rivers`), CRS: []*string{sp(`EPSG:4326`)}},
 				{Name: sp(`Roads`), CRS: []*string{sp(`EPSG:4326`)}},
 				{Name: sp(`Houses`), CRS: []*string{sp(`EPSG:4326`)}},
