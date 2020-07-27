@@ -43,6 +43,38 @@ type Layer struct {
 	Layer                   []*Layer                 `xml:"Layer" yaml:"layer"`
 }
 
+// GetLayerNames returns the available layers as []string
+func (c *Capability) GetLayerNames() []string {
+	var layers []string
+
+	for _, l := range c.Layer {
+		layers = append(layers, *l.Name)
+		if l.Layer != nil {
+			for _, n := range l.Layer {
+				u := n.GetLayerNames()
+				layers = append(layers, u...)
+			}
+		}
+	}
+
+	return layers
+}
+
+// GetLayerNames returns the available layers as []string
+func (l *Layer) GetLayerNames() []string {
+	var layers []string
+
+	layers = append(layers, *l.Name)
+	if l.Layer != nil {
+		for _, n := range l.Layer {
+			u := n.GetLayerNames()
+			layers = append(layers, u...)
+		}
+	}
+
+	return layers
+}
+
 // RequestType containing the formats and DCPTypes available
 type RequestType struct {
 	Format  []string `xml:"Format" yaml:"format"`

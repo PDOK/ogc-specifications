@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 	"gopkg.in/yaml.v2"
 )
@@ -259,39 +260,6 @@ func (gm *GetMap) BuildXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-// func buildBoundingBox(boundingbox string) (ows.BoundingBox, ows.Exception) {
-// 	result := strings.Split(boundingbox, ",")
-// 	var lx, ly, ux, uy float64
-// 	var err error
-
-// 	if len(result) < 4 {
-// 		return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-// 	}
-
-// 	if len(result) == 4 || len(result) == 5 {
-// 		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
-// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-// 		}
-// 		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
-// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-// 		}
-// 		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
-// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-// 		}
-// 		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
-// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-// 		}
-// 	}
-
-// 	if len(result) == 5 {
-// 		return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
-// 			UpperCorner: [2]float64{ux, uy}, Crs: result[4]}, nil
-// 	}
-
-// 	return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
-// 		UpperCorner: [2]float64{ux, uy}}, nil
-// }
-
 func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, ows.Exception) {
 	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
 	// 1. cnt(STYLE) == 0 -> Added LAYERS
@@ -403,6 +371,28 @@ type Size struct {
 type StyledLayerDescriptor struct {
 	Version    string       `xml:"version,attr" yaml:"version" validate:"required,eq=1.1.0"`
 	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedlayer" validate:"required"`
+}
+
+// Validate the StyledLayerDescriptor
+func (sld StyledLayerDescriptor) Validate(capabilities *capabilities.Capability) ows.Exception {
+	var unknown []string
+	for _, l := range sld.GetNamedLayers() {
+		found := false
+		for _, c := range capabilities.GetLayerNames() {
+			if l == c {
+				found = true
+			}
+		}
+		if !found {
+			unknown = append(unknown, l)
+		}
+	}
+
+	if len(unknown) > 0 {
+		return exception.LayerNotDefined(unknown...)
+	}
+
+	return nil
 }
 
 // NamedLayer struct

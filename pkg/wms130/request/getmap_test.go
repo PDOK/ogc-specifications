@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
@@ -58,6 +59,42 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestValidateStyledLayerDescriptor(t *testing.T) {
+	var tests = []struct {
+		capabilities *capabilities.Capability
+		sld          StyledLayerDescriptor
+		exception    ows.Exception
+	}{
+		0: {
+			capabilities: &capabilities.Capability{
+				Layer: []capabilities.Layer{
+					{Name: sp(`layer1`)},
+					{Name: sp(`layer2`)},
+				},
+			},
+			sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
+		},
+		1: {
+			capabilities: &capabilities.Capability{
+				Layer: []capabilities.Layer{
+					{Name: sp(`layer2`)},
+					{Name: sp(`layer3`)},
+				},
+			},
+			sld:       StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
+			exception: exception.LayerNotDefined(`layer1`),
+		},
+	}
+
+	for k, test := range tests {
+		err := test.sld.Validate(test.capabilities)
+		if test.exception != err {
+			t.Errorf("test exception: %d, expected: %s ,\n got: %s", k, test.exception.Error(), err.Error())
+		}
+
 	}
 }
 
