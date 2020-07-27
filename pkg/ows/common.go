@@ -3,6 +3,8 @@ package ows
 import (
 	"encoding/xml"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 // BoundingBox struct
@@ -28,7 +30,42 @@ func (b *BoundingBox) BuildKVP() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
-// KeywordList in struct for repeatablity
+//Build builds a BoundingBox
+func (b *BoundingBox) Build(boundingbox string) Exception {
+	result := strings.Split(boundingbox, ",")
+	var lx, ly, ux, uy float64
+	var err error
+
+	if len(result) < 4 {
+		return InvalidParameterValue(boundingbox, `boundingbox`)
+	}
+
+	if len(result) == 4 || len(result) == 5 {
+		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+	}
+
+	b.LowerCorner = [2]float64{lx, ly}
+	b.UpperCorner = [2]float64{ux, uy}
+
+	if len(result) == 5 {
+		b.Crs = result[4]
+	}
+
+	return nil
+}
+
+// Keywords in struct for repeatablity
 type Keywords struct {
 	Keyword []string `xml:"Keyword" yaml:"keyword"`
 }

@@ -186,8 +186,8 @@ func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
 
 	gm.CRS = gmkvp.CRS
 
-	bbox, err := buildBoundingBox(gmkvp.Bbox)
-	if err != nil {
+	var bbox ows.BoundingBox
+	if err := bbox.Build(gmkvp.Bbox); err != nil {
 		return err
 	}
 	gm.BoundingBox = bbox
@@ -259,38 +259,38 @@ func (gm *GetMap) BuildXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func buildBoundingBox(boundingbox string) (ows.BoundingBox, ows.Exception) {
-	result := strings.Split(boundingbox, ",")
-	var lx, ly, ux, uy float64
-	var err error
+// func buildBoundingBox(boundingbox string) (ows.BoundingBox, ows.Exception) {
+// 	result := strings.Split(boundingbox, ",")
+// 	var lx, ly, ux, uy float64
+// 	var err error
 
-	if len(result) < 4 {
-		return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-	}
+// 	if len(result) < 4 {
+// 		return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+// 	}
 
-	if len(result) == 4 || len(result) == 5 {
-		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
-			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-		}
-		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
-			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-		}
-		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
-			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-		}
-		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
-			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
-		}
-	}
+// 	if len(result) == 4 || len(result) == 5 {
+// 		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
+// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+// 		}
+// 		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
+// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+// 		}
+// 		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
+// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+// 		}
+// 		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
+// 			return ows.BoundingBox{}, ows.InvalidParameterValue(boundingbox, BBOX)
+// 		}
+// 	}
 
-	if len(result) == 5 {
-		return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
-			UpperCorner: [2]float64{ux, uy}, Crs: result[4]}, nil
-	}
+// 	if len(result) == 5 {
+// 		return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
+// 			UpperCorner: [2]float64{ux, uy}, Crs: result[4]}, nil
+// 	}
 
-	return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
-		UpperCorner: [2]float64{ux, uy}}, nil
-}
+// 	return ows.BoundingBox{LowerCorner: [2]float64{lx, ly},
+// 		UpperCorner: [2]float64{ux, uy}}, nil
+// }
 
 func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, ows.Exception) {
 	// Because the LAYERS & STYLES parameters are intertwined we process as follows:

@@ -24,33 +24,6 @@ func TestGetMapType(t *testing.T) {
 	}
 }
 
-func TestBuildBoundingBox(t *testing.T) {
-	var tests = []struct {
-		boundingbox string
-		bbox        ows.BoundingBox
-		Exception   ows.Exception
-	}{
-		0: {boundingbox: "0,0,100,100", bbox: ows.BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{100, 100}}},
-		1: {boundingbox: "0,0,-100,-100", bbox: ows.BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{-100, -100}}}, // while this isn't correct, this will be 'addressed' in the validation step
-		2: {boundingbox: "0,0,100", Exception: ows.InvalidParameterValue(`0,0,100`, BBOX)},
-		3: {boundingbox: ",,,", Exception: ows.InvalidParameterValue(`,,,`, BBOX)},
-		4: {boundingbox: ",,,100", Exception: ows.InvalidParameterValue(`,,,100`, BBOX)},
-		5: {boundingbox: "number,,,100", Exception: ows.InvalidParameterValue(`number,,,100`, BBOX)},
-	}
-
-	for k, test := range tests {
-		if bbox, err := buildBoundingBox(test.boundingbox); err != nil {
-			if err != test.Exception {
-				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.Exception, err)
-			}
-		} else {
-			if bbox != test.bbox {
-				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.bbox, bbox)
-			}
-		}
-	}
-}
-
 func TestBuildStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
 		layers []string
@@ -249,7 +222,7 @@ func TestGetMapParseKVP(t *testing.T) {
 		Exception ows.Exception
 	}{
 		0: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version}},
-			Exception: ows.InvalidParameterValue(``, BBOX),
+			Exception: ows.InvalidParameterValue(``, `boundingbox`),
 		},
 		1: {Query: url.Values{},
 			Exception: ows.MissingParameterValue(VERSION)},

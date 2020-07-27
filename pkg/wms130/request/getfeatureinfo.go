@@ -105,8 +105,7 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
 				gfi.CRS = query[k][0]
 			case BBOX:
 				var bbox ows.BoundingBox
-				var err ows.Exception
-				if bbox, err = buildBoundingBox(query[k][0]); err != nil {
+				if err := bbox.Build(query[k][0]); err != nil {
 					return err
 				}
 				gfi.BoundingBox = bbox
