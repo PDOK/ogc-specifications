@@ -89,11 +89,6 @@ type ServiceIdentification struct {
 	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accesscontraints"`
 }
 
-// // Keywords in struct for repeatablity
-// type Keywords struct {
-// 	Keyword []string `xml:"ows:Keyword" yaml:"keyword"`
-// }
-
 // ServiceProvider struct containing the provider/organization information should only be fill by the "template" configuration wfs200.yaml
 type ServiceProvider struct {
 	XMLName      xml.Name `xml:"ows:ServiceProvider"`

@@ -55,11 +55,6 @@ type Identifier struct {
 	Value     string `xml:",chardata" yaml:"value"`
 }
 
-// // KeywordList in struct for repeatablity
-// type KeywordList struct {
-// 	Keyword []string `xml:"Keyword" yaml:"keyword"`
-// }
-
 // MetadataURL in struct for repeatablity
 type MetadataURL struct {
 	Type           *string        `xml:"type,attr" yaml:"type"`
@@ -92,19 +87,19 @@ type ExtendedCapabilities struct {
 
 // EXGeographicBoundingBox in struct for repeatablity
 type EXGeographicBoundingBox struct {
-	WestBoundLongitude string `xml:"westBoundLongitude" yaml:"westboundlongitude"`
-	EastBoundLongitude string `xml:"eastBoundLongitude" yaml:"eastboundlongitude"`
-	SouthBoundLatitude string `xml:"southBoundLatitude" yaml:"southboundlatitude"`
-	NorthBoundLatitude string `xml:"northBoundLatitude" yaml:"northboundlatitude"`
+	WestBoundLongitude float64 `xml:"westBoundLongitude" yaml:"westboundlongitude"`
+	EastBoundLongitude float64 `xml:"eastBoundLongitude" yaml:"eastboundlongitude"`
+	SouthBoundLatitude float64 `xml:"southBoundLatitude" yaml:"southboundlatitude"`
+	NorthBoundLatitude float64 `xml:"northBoundLatitude" yaml:"northboundlatitude"`
 }
 
 // BoundingBox in struct for repeatablity
 type BoundingBox struct {
-	CRS  string `xml:"CRS,attr" yaml:"crs"`
-	Minx string `xml:"minx,attr" yaml:"minx"`
-	Miny string `xml:"miny,attr" yaml:"miny"`
-	Maxx string `xml:"maxx,attr" yaml:"maxx"`
-	Maxy string `xml:"maxy,attr" yaml:"maxy"`
+	CRS  string  `xml:"CRS,attr" yaml:"crs"`
+	Minx float64 `xml:"minx,attr" yaml:"minx"`
+	Miny float64 `xml:"miny,attr" yaml:"miny"`
+	Maxx float64 `xml:"maxx,attr" yaml:"maxx"`
+	Maxy float64 `xml:"maxy,attr" yaml:"maxy"`
 }
 
 // Style in struct for repeatablity
@@ -112,8 +107,8 @@ type Style struct {
 	Name      string `xml:"Name" yaml:"name"`
 	Title     string `xml:"Title" yaml:"title"`
 	LegendURL struct {
-		Width          string         `xml:"width,attr" yaml:"width"`
-		Height         string         `xml:"height,attr" yaml:"height"`
+		Width          int            `xml:"width,attr" yaml:"width"`
+		Height         int            `xml:"height,attr" yaml:"height"`
 		Format         string         `xml:"Format" yaml:"format"`
 		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
 	} `xml:"LegendURL" yaml:"legendurl"`

@@ -97,12 +97,8 @@ type FeatureType struct {
 	OutputFormats struct {
 		Format []string `xml:"wfs:Format" yaml:"format"`
 	} `xml:"wfs:OutputFormats" yaml:"outputformats"`
-	WGS84BoundingBox struct {
-		Dimensions  string `xml:"dimensions,attr" yaml:"dimensions"`
-		LowerCorner string `xml:"ows:LowerCorner" yaml:"lowercorner"`
-		UpperCorner string `xml:"ows:UpperCorner" yaml:"uppercorner"`
-	} `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
-	MetadataURL struct {
+	WGS84BoundingBox ows.BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	MetadataURL      struct {
 		Href string `xml:"xlink:href,attr" yaml:"href"`
 	} `xml:"wfs:MetadataURL" yaml:"metadataurl"`
 }
@@ -118,7 +114,7 @@ type FilterCapabilities struct {
 	} `xml:"fes:Conformance" yaml:"conformance"`
 	IDCapabilities struct {
 		ResourceIdentifier struct {
-			Name string `xml:"name,attr" yaml:"name" `
+			Name string `xml:"name,attr" yaml:"name"`
 		} `xml:"fes:ResourceIdentifier" yaml:"resourceidentifier"`
 	} `xml:"fes:Id_Capabilities" yaml:"idcapabilities"`
 	ScalarCapabilities struct {

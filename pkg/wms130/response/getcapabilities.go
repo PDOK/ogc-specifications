@@ -99,6 +99,6 @@ type WMSService struct {
 	} `xml:"ContactInformation"`
 	Fees              string `xml:"Fees" yaml:"fees"`
 	AccessConstraints string `xml:"AccessConstraints" yaml:"accessconstraints"`
-	MaxWidth          string `xml:"MaxWidth" yaml:"maxwidth"`
-	MaxHeight         string `xml:"MaxHeight" yaml:"maxheight"`
+	MaxWidth          int    `xml:"MaxWidth" yaml:"maxwidth"`
+	MaxHeight         int    `xml:"MaxHeight" yaml:"maxheight"`
 }
