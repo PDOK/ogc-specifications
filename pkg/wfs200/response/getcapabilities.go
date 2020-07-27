@@ -76,12 +76,10 @@ type Namespaces struct {
 
 // ServiceIdentification struct should only be fill by the "template" configuration wfs200.yaml
 type ServiceIdentification struct {
-	XMLName  xml.Name `xml:"ows:ServiceIdentification"`
-	Title    string   `xml:"ows:Title" yaml:"title"`
-	Abstract string   `xml:"ows:Abstract" yaml:"abstract"`
-	Keywords []struct {
-		Keyword []string `xml:"ows:Keyword" yaml:"keyword"`
-	} `xml:"ows:Keywords" yaml:"keywords"`
+	XMLName     xml.Name      `xml:"ows:ServiceIdentification"`
+	Title       string        `xml:"ows:Title" yaml:"title"`
+	Abstract    string        `xml:"ows:Abstract" yaml:"abstract"`
+	Keywords    *ows.Keywords `xml:"ows:Keywords" yaml:"keywords"`
 	ServiceType struct {
 		Text      string `xml:",chardata" yaml:"text"`
 		CodeSpace string `xml:"codeSpace,attr" yaml:"codespace"`

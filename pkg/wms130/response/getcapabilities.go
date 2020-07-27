@@ -70,12 +70,10 @@ type Namespaces struct {
 
 // WMSService struct containing the base service information filled from the template
 type WMSService struct {
-	Name        string `xml:"Name" yaml:"name"`
-	Title       string `xml:"Title" yaml:"title"`
-	Abstract    string `xml:"Abstract" yaml:"abstract"`
-	KeywordList struct {
-		Keyword []string `xml:"Keyword" yaml:"keyword"`
-	} `xml:"KeywordList" yaml:"keywordlist"`
+	Name           string        `xml:"Name" yaml:"name"`
+	Title          string        `xml:"Title" yaml:"title"`
+	Abstract       string        `xml:"Abstract" yaml:"abstract"`
+	KeywordList    *ows.Keywords `xml:"KeywordList" yaml:"keywordlist"`
 	OnlineResource struct {
 		Xlink *string `xml:"xmlns:xlink,attr" yaml:"xlink"`
 		Type  *string `xml:"xlink:type,attr" yaml:"type"`

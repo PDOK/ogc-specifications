@@ -1,6 +1,10 @@
 package capabilities
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+
+	"github.com/pdok/ogc-specifications/pkg/ows"
+)
 
 // Method in separated struct so to use it as a Pointer
 type Method struct {
@@ -84,14 +88,12 @@ type FeatureTypeList struct {
 
 // FeatureType struct for the WFS 2.0.0
 type FeatureType struct {
-	Name     string `xml:"wfs:Name" yaml:"name"`
-	Title    string `xml:"wfs:Title" yaml:"title"`
-	Abstract string `xml:"wfs:Abstract" yaml:"abstract"`
-	Keywords []*struct {
-		Keyword []string `xml:"ows:Keyword" yaml:"keyword"`
-	} `xml:"ows:Keywords" yaml:"keywords"`
-	DefaultCRS    *string   `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
-	OtherCRS      *[]string `xml:"wfs:OtherCRS" yaml:"othercrs"`
+	Name          string        `xml:"wfs:Name" yaml:"name"`
+	Title         string        `xml:"wfs:Title" yaml:"title"`
+	Abstract      string        `xml:"wfs:Abstract" yaml:"abstract"`
+	Keywords      *ows.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	DefaultCRS    *string       `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
+	OtherCRS      *[]string     `xml:"wfs:OtherCRS" yaml:"othercrs"`
 	OutputFormats struct {
 		Format []string `xml:"wfs:Format" yaml:"format"`
 	} `xml:"wfs:OutputFormats" yaml:"outputformats"`

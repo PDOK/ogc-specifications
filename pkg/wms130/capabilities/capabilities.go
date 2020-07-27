@@ -1,5 +1,7 @@
 package capabilities
 
+import "github.com/pdok/ogc-specifications/pkg/ows"
+
 // Capability base struct
 type Capability struct {
 	Request              Request               `xml:"Request" yaml:"request"`
@@ -30,7 +32,7 @@ type Layer struct {
 	Name                    *string                  `xml:"Name" yaml:"name"`
 	Title                   string                   `xml:"Title" yaml:"title"`
 	Abstract                string                   `xml:"Abstract" yaml:"abstract"`
-	KeywordList             *KeywordList             `xml:"KeywordList" yaml:"keywordlist"`
+	KeywordList             *ows.Keywords            `xml:"KeywordList" yaml:"keywordlist"`
 	CRS                     []*string                `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
 	BoundingBox             []*BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
@@ -53,10 +55,10 @@ type Identifier struct {
 	Value     string `xml:",chardata" yaml:"value"`
 }
 
-// KeywordList in struct for repeatablity
-type KeywordList struct {
-	Keyword []string `xml:"Keyword" yaml:"keyword"`
-}
+// // KeywordList in struct for repeatablity
+// type KeywordList struct {
+// 	Keyword []string `xml:"Keyword" yaml:"keyword"`
+// }
 
 // MetadataURL in struct for repeatablity
 type MetadataURL struct {

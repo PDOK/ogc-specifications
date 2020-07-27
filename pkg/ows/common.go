@@ -28,6 +28,11 @@ func (b *BoundingBox) BuildKVP() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
+// KeywordList in struct for repeatablity
+type Keywords struct {
+	Keyword []string `xml:"Keyword" yaml:"keyword"`
+}
+
 // StripDuplicateAttr removes the duplicate Attributes from a []Attribute
 func StripDuplicateAttr(attr []xml.Attr) []xml.Attr {
 	attributemap := make(map[xml.Name]string)
