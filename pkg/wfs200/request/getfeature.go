@@ -10,6 +10,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
@@ -48,7 +49,7 @@ func (gf *GetFeature) Type() string {
 }
 
 // Validate returns GetFeature
-func (gf *GetFeature) Validate() ows.Exceptions {
+func (gf *GetFeature) Validate(capabilites capabilities.Capability) ows.Exceptions {
 	return nil
 }
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 
 	"regexp"
 	"strings"
@@ -23,7 +24,7 @@ func (dft *DescribeFeatureType) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureType) Validate() ows.Exceptions {
+func (dft *DescribeFeatureType) Validate(capabilites capabilities.Capability) ows.Exceptions {
 	return nil
 }
 

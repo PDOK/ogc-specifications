@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wcs201/capabilities"
 )
 
 //
@@ -33,7 +34,7 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate() ows.Exceptions {
+func (gc *GetCapabilities) Validate(capabilites capabilities.Contents) ows.Exceptions {
 	return nil
 }
 
