@@ -61,7 +61,7 @@ func (c *Capability) GetLayerNames() []string {
 		layers = append(layers, *l.Name)
 		if l.Layer != nil {
 			for _, n := range l.Layer {
-				u := n.GetLayerNames()
+				u := n.getLayerNames()
 				layers = append(layers, u...)
 			}
 		}
@@ -71,13 +71,13 @@ func (c *Capability) GetLayerNames() []string {
 }
 
 // GetLayerNames returns the available layers as []string
-func (l *Layer) GetLayerNames() []string {
+func (l *Layer) getLayerNames() []string {
 	var layers []string
 
 	layers = append(layers, *l.Name)
 	if l.Layer != nil {
 		for _, n := range l.Layer {
-			u := n.GetLayerNames()
+			u := n.getLayerNames()
 			layers = append(layers, u...)
 		}
 	}
