@@ -35,7 +35,7 @@ func (gc *GetCapabilities) Version() string {
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilities) Validate() ows.Exception {
+func (gc *GetCapabilities) Validate() ows.Exceptions {
 	return nil
 }
 

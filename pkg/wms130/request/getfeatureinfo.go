@@ -39,7 +39,7 @@ func (gfi *GetFeatureInfo) Type() string {
 }
 
 // Validate returns GetFeatureInfo
-func (gfi *GetFeatureInfo) Validate() ows.Exception {
+func (gfi *GetFeatureInfo) Validate() ows.Exceptions {
 	return nil
 }
 

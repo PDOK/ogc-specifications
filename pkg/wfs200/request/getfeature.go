@@ -48,7 +48,7 @@ func (gf *GetFeature) Type() string {
 }
 
 // Validate returns GetFeature
-func (gf *GetFeature) Validate() ows.Exception {
+func (gf *GetFeature) Validate() ows.Exceptions {
 	return nil
 }
 

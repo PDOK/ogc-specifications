@@ -5,7 +5,7 @@ import "net/url"
 // OperationRequest interface
 type OperationRequest interface {
 	Type() string
-	Validate() Exception
+	Validate() Exceptions
 
 	ParseXML([]byte) Exception
 	ParseKVP(url.Values) Exception
@@ -13,6 +13,6 @@ type OperationRequest interface {
 	BuildKVP() url.Values
 
 	// TODO YAML support
-	// ParseYAML([]byte) Exception
+	// ParseYAML([]byte) Exceptions
 	// BuildYAML() []byte
 }

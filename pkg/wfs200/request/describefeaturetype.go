@@ -23,7 +23,7 @@ func (dft *DescribeFeatureType) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureType) Validate() ows.Exception {
+func (dft *DescribeFeatureType) Validate() ows.Exceptions {
 	return nil
 }
 

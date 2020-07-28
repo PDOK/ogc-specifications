@@ -43,7 +43,7 @@ func (gm *GetMap) Type() string {
 }
 
 // Validate returns GetMap
-func (gm *GetMap) Validate() ows.Exception {
+func (gm *GetMap) Validate() ows.Exceptions {
 	return nil
 }
 
