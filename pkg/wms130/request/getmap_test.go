@@ -66,7 +66,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
 		capabilities capabilities.Capability
 		sld          StyledLayerDescriptor
-		exception    ows.Exception
+		exceptions   []ows.Exception
 	}{
 		0: {
 			capabilities: capabilities.Capability{
@@ -84,17 +84,26 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 					{Name: sp(`layer3`)},
 				},
 			},
-			sld:       StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
-			exception: exception.LayerNotDefined(`layer1`),
+			sld:        StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
+			exceptions: []ows.Exception{exception.LayerNotDefined(`layer1`)},
 		},
 	}
 
 	for k, test := range tests {
-		err := test.sld.Validate(test.capabilities)
-		if test.exception != err {
-			t.Errorf("test exception: %d, expected: %s ,\n got: %s", k, test.exception.Error(), err.Error())
+		errs := test.sld.Validate(test.capabilities)
+		if len(errs) > 0 {
+			for _, err := range errs {
+				found := false
+				for _, exception := range test.exceptions {
+					if err == exception {
+						found = true
+					}
+				}
+				if !found {
+					t.Errorf("test exception: %d, expected one of: %s ,\n got: %s", k, test.exceptions, err.Error())
+				}
+			}
 		}
-
 	}
 }
 

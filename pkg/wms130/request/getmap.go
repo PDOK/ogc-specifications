@@ -46,7 +46,7 @@ func (gm *GetMap) Type() string {
 func (gm *GetMap) Validate(c capabilities.Capability) ows.Exceptions {
 	var exceptions ows.Exceptions
 
-	gm.StyledLayerDescriptor.Validate(c)
+	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(c)...)
 
 	return exceptions
 }
@@ -378,7 +378,7 @@ type StyledLayerDescriptor struct {
 }
 
 // Validate the StyledLayerDescriptor
-func (sld *StyledLayerDescriptor) Validate(capabilities capabilities.Capability) ows.Exception {
+func (sld *StyledLayerDescriptor) Validate(capabilities capabilities.Capability) ows.Exceptions {
 	var unknown []string
 	for _, l := range sld.GetNamedLayers() {
 		found := false
@@ -392,8 +392,13 @@ func (sld *StyledLayerDescriptor) Validate(capabilities capabilities.Capability)
 		}
 	}
 
+	var exceptions ows.Exceptions
 	if len(unknown) > 0 {
-		return exception.LayerNotDefined(unknown...)
+
+		for _, l := range unknown {
+			exceptions = append(exceptions, exception.LayerNotDefined(l))
+		}
+		return exceptions
 	}
 
 	return nil
