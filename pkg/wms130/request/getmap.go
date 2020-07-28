@@ -43,8 +43,12 @@ func (gm *GetMap) Type() string {
 }
 
 // Validate returns GetMap
-func (gm *GetMap) Validate(capabilites capabilities.Capability) ows.Exceptions {
-	return nil
+func (gm *GetMap) Validate(c capabilities.Capability) ows.Exceptions {
+	var exceptions ows.Exceptions
+
+	gm.StyledLayerDescriptor.Validate(c)
+
+	return exceptions
 }
 
 //GetMapKVP struct

@@ -40,7 +40,7 @@ func (gfi *GetFeatureInfo) Type() string {
 }
 
 // Validate returns GetFeatureInfo
-func (gfi *GetFeatureInfo) Validate(capabilites capabilities.Capability) ows.Exceptions {
+func (gfi *GetFeatureInfo) Validate(c capabilities.Capability) ows.Exceptions {
 	return nil
 }
 
