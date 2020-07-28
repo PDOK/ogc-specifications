@@ -374,7 +374,7 @@ type StyledLayerDescriptor struct {
 }
 
 // Validate the StyledLayerDescriptor
-func (sld StyledLayerDescriptor) Validate(capabilities *capabilities.Capability) ows.Exception {
+func (sld *StyledLayerDescriptor) Validate(capabilities capabilities.Capability) ows.Exception {
 	var unknown []string
 	for _, l := range sld.GetNamedLayers() {
 		found := false

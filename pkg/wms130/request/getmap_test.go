@@ -64,12 +64,12 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 
 func TestValidateStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
-		capabilities *capabilities.Capability
+		capabilities capabilities.Capability
 		sld          StyledLayerDescriptor
 		exception    ows.Exception
 	}{
 		0: {
-			capabilities: &capabilities.Capability{
+			capabilities: capabilities.Capability{
 				Layer: []capabilities.Layer{
 					{Name: sp(`layer1`)},
 					{Name: sp(`layer2`)},
@@ -78,7 +78,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 			sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
 		},
 		1: {
-			capabilities: &capabilities.Capability{
+			capabilities: capabilities.Capability{
 				Layer: []capabilities.Layer{
 					{Name: sp(`layer2`)},
 					{Name: sp(`layer3`)},
