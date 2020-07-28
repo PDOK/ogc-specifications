@@ -2,6 +2,16 @@ package capabilities
 
 import "github.com/pdok/ogc-specifications/pkg/ows"
 
+// ParseXML func
+func (c *Capability) ParseXML(doc []byte) error {
+	return nil
+}
+
+// ParseYML func
+func (c *Capability) ParseYML(doc []byte) error {
+	return nil
+}
+
 // Capability base struct
 type Capability struct {
 	Request              Request               `xml:"Request" yaml:"request"`

@@ -1,5 +1,15 @@
 package capabilities
 
+// ParseXML func
+func (c *Contents) ParseXML(doc []byte) error {
+	return nil
+}
+
+// ParseYML func
+func (c *Contents) ParseYML(doc []byte) error {
+	return nil
+}
+
 // Contents struct for the WMTS 1.0.0
 type Contents struct {
 	Layer         []Layer         `xml:"Layer" yaml:"layer"`

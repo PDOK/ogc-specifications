@@ -6,6 +6,23 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
+// ParseXML func
+func (c *Capability) ParseXML(doc []byte) error {
+	return nil
+}
+
+// ParseYML func
+func (c *Capability) ParseYML(doc []byte) error {
+	return nil
+}
+
+// Capability struct
+type Capability struct {
+	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
+	FeatureTypeList    FeatureTypeList    `xml:"wfs:FeatureTypeList" yaml:"featuretypelist"`
+	FilterCapabilities FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filtercapabilities"`
+}
+
 // Method in separated struct so to use it as a Pointer
 type Method struct {
 	Type string `xml:"xlink:type,attr" yaml:"type"`

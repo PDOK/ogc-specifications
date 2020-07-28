@@ -1,5 +1,22 @@
 package capabilities
 
+// ParseXML func
+func (c *Capability) ParseXML(doc []byte) error {
+	return nil
+}
+
+// ParseYML func
+func (c *Capability) ParseYML(doc []byte) error {
+	return nil
+}
+
+// Capability struct
+type Capability struct {
+	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
+	ServiceMetadata    ServiceMetadata    `xml:"wcs:ServiceMetadata" yaml:"servicemetadata"`
+	Contents           Contents           `xml:"wcs:Contents" yaml:"contents"`
+}
+
 // OperationsMetadata struct for the WCS 2.0.1
 type OperationsMetadata struct {
 	Operation            []Operation           `xml:"ows:Operation" yaml:"operation"`

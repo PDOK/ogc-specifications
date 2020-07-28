@@ -52,11 +52,9 @@ func (gc *GetCapabilities) BuildXML() []byte {
 type GetCapabilities struct {
 	XMLName               xml.Name `xml:"wfs:WFS_Capabilities"`
 	Namespaces            `yaml:"namespaces"`
-	ServiceIdentification ServiceIdentification           `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	ServiceProvider       ServiceProvider                 `xml:"ows:ServiceProvider" yaml:"serviceprovider"`
-	OperationsMetadata    capabilities.OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
-	FeatureTypeList       capabilities.FeatureTypeList    `xml:"wfs:FeatureTypeList" yaml:"featuretypelist"`
-	FilterCapabilities    capabilities.FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filtercapabilities"`
+	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
+	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceprovider"`
+	capabilities.Capability
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
