@@ -72,20 +72,20 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 			capabilities: capabilities.Capability{
 				Layer: []capabilities.Layer{
 					{Name: sp(`layer1`)},
-					{Name: sp(`layer2`)},
+					{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
 				},
 			},
-			sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
+			sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: ``}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styleone`}}}},
 		},
 		1: {
 			capabilities: capabilities.Capability{
 				Layer: []capabilities.Layer{
-					{Name: sp(`layer2`)},
+					{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
 					{Name: sp(`layer3`)},
 				},
 			},
-			sld:        StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
-			exceptions: []ows.Exception{exception.LayerNotDefined(`layer1`)},
+			sld:        StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styletwo`}}}},
+			exceptions: []ows.Exception{exception.LayerNotDefined(`layer1`), exception.StyleNotDefined(`styletwo`, `layer2`)},
 		},
 	}
 

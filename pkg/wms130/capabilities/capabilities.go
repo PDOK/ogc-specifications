@@ -53,6 +53,45 @@ type Layer struct {
 	Layer                   []*Layer                 `xml:"Layer" yaml:"layer"`
 }
 
+// StyleDefined checks if the style that is defined is available for the requested layer
+func (c *Capability) StyleDefined(layername, stylename string) bool {
+	defined := false
+	for _, layer := range c.Layer {
+		defined = layer.styleDefined(layername, stylename)
+		if defined {
+			return defined
+		}
+	}
+
+	return defined
+}
+
+// styleDefined checks if the style is defined
+func (l *Layer) styleDefined(layername, stylename string) bool {
+	if *l.Name == layername {
+		if l.Style != nil {
+			for _, sld := range l.Style {
+				if sld.Name == stylename {
+					return true
+				}
+			}
+		}
+	}
+
+	// Not found top level, so we go deeper
+	defined := false
+	if l.Layer != nil {
+		for _, nestedlayer := range l.Layer {
+			defined = nestedlayer.styleDefined(layername, stylename)
+			if defined {
+				return defined
+			}
+		}
+	}
+
+	return defined
+}
+
 // GetLayerNames returns the available layers as []string
 func (c *Capability) GetLayerNames() []string {
 	var layers []string
@@ -70,7 +109,7 @@ func (c *Capability) GetLayerNames() []string {
 	return layers
 }
 
-// GetLayerNames returns the available layers as []string
+// getLayerNames returns the available layers as []string
 func (l *Layer) getLayerNames() []string {
 	var layers []string
 
@@ -91,26 +130,26 @@ type RequestType struct {
 	DCPType DCPType  `xml:"DCPType" yaml:"dcptype"`
 }
 
-// Identifier in struct for repeatablity
+// Identifier in struct for repeatability
 type Identifier struct {
 	Authority string `xml:"authority,attr" yaml:"authority"`
 	Value     string `xml:",chardata" yaml:"value"`
 }
 
-// MetadataURL in struct for repeatablity
+// MetadataURL in struct for repeatability
 type MetadataURL struct {
 	Type           *string        `xml:"type,attr" yaml:"type"`
 	Format         *string        `xml:"Format" yaml:"format"`
 	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
 }
 
-// AuthorityURL in struct for repeatablity
+// AuthorityURL in struct for repeatability
 type AuthorityURL struct {
 	Name           string         `xml:"name,attr" yaml:"name"`
 	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
 }
 
-// ExtendedCapabilities containing the inspire extendedcapbilities, when available
+// ExtendedCapabilities containing the inspire extendedcapabilities, when available
 type ExtendedCapabilities struct {
 	MetadataURL struct {
 		Type      string `xml:"xsi:type,attr" yaml:"type"`
@@ -127,7 +166,7 @@ type ExtendedCapabilities struct {
 	} `xml:"inspire_common:ResponseLanguage" yaml:"responselanguage"`
 }
 
-// EXGeographicBoundingBox in struct for repeatablity
+// EXGeographicBoundingBox in struct for repeatability
 type EXGeographicBoundingBox struct {
 	WestBoundLongitude float64 `xml:"westBoundLongitude" yaml:"westboundlongitude"`
 	EastBoundLongitude float64 `xml:"eastBoundLongitude" yaml:"eastboundlongitude"`
@@ -135,7 +174,7 @@ type EXGeographicBoundingBox struct {
 	NorthBoundLatitude float64 `xml:"northBoundLatitude" yaml:"northboundlatitude"`
 }
 
-// BoundingBox in struct for repeatablity
+// BoundingBox in struct for repeatability
 type BoundingBox struct {
 	CRS  string  `xml:"CRS,attr" yaml:"crs"`
 	Minx float64 `xml:"minx,attr" yaml:"minx"`
@@ -144,7 +183,7 @@ type BoundingBox struct {
 	Maxy float64 `xml:"maxy,attr" yaml:"maxy"`
 }
 
-// Style in struct for repeatablity
+// Style in struct for repeatability
 type Style struct {
 	Name      string `xml:"Name" yaml:"name"`
 	Title     string `xml:"Title" yaml:"title"`
@@ -156,7 +195,7 @@ type Style struct {
 	} `xml:"LegendURL" yaml:"legendurl"`
 }
 
-// DCPType in struct for repeatablity
+// DCPType in struct for repeatability
 type DCPType struct {
 	HTTP struct {
 		Get  *Method `xml:"Get" yaml:"get"`
@@ -164,12 +203,12 @@ type DCPType struct {
 	} `xml:"HTTP" yaml:"http"`
 }
 
-// Method in struct for repeatablity
+// Method in struct for repeatability
 type Method struct {
 	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
 }
 
-// OnlineResource in struct for repeatablity
+// OnlineResource in struct for repeatability
 type OnlineResource struct {
 	Xlink *string `xml:"xmlns:xlink,attr" yaml:"xlink"`
 	Type  *string `xml:"xlink:type,attr" yaml:"type"`

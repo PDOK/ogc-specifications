@@ -92,7 +92,13 @@ func LayerNotDefined(s ...string) WMSException {
 }
 
 // StyleNotDefined exception
-func StyleNotDefined() WMSException {
+func StyleNotDefined(s ...string) WMSException {
+	if len(s) == 2 {
+		return WMSException{
+			ExceptionText: fmt.Sprintf("The style: %s is not known by the server for the layer: %s", s[0], s[1]),
+			ExceptionCode: `StyleNotDefined`,
+		}
+	}
 	return WMSException{
 		ExceptionText: `There is a one-to-one correspondence between the values in the LAYERS parameter and the values in the STYLES parameter. 
 	Expecting an empty string for the STYLES like STYLES= or comma-separated list STYLES=,,, or using keyword default STYLES=default,default,...`,

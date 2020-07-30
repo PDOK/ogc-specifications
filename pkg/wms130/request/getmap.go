@@ -135,7 +135,7 @@ func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
 	return output, nil
 }
 
-// BuildStyledLayerDescriptor buils a StyledLayerDescriptor struct from the KVP information
+// BuildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the KVP information
 func (gmkvp *GetMapKVP) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
 	var layers, styles []string
 	if gmkvp.Layers != `` {
@@ -270,8 +270,8 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
 	// 3. cnt(LAYERS) == cnt(STYLES) -> merge LAYERS STYLES
 	// 4. cnt(LAYERS) != cnt(STYLES) -> raise error Style not defined/Styles do not correspond with layers
-	//    normally when 4 would occure this could be done in the validate step... but,..
-	//    with the serialisation -> struct it would become a valid object (yes!?.. YES!)
+	//    normally when 4 would occur this could be done in the validate step... but,..
+	//    with the serialization -> struct it would become a valid object (yes!?.. YES!)
 	//    That is because POST xml and GET KVP handle this 'different' (at least not in the same way...)
 	//    When 3 is hit the validation at the Validation step wil resolve this
 
@@ -305,7 +305,7 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 }
 
 // TODO maybe 'merge' both func in a single one with 2 outputs
-// so their are 'insync' ...?
+// so their are 'in sync' ...?
 func (sld *StyledLayerDescriptor) getLayerKVPValue() string {
 	return strings.Join(sld.GetNamedLayers(), ",")
 }
@@ -316,7 +316,6 @@ func (sld *StyledLayerDescriptor) getStyleKVPValue() string {
 
 // GetNamedLayers return an array of the Layer names
 func (sld *StyledLayerDescriptor) GetNamedLayers() []string {
-
 	layers := []string{}
 	for _, l := range sld.NamedLayer {
 		layers = append(layers, l.Name)
@@ -352,7 +351,7 @@ type GetMap struct {
 	Output                Output                `xml:"Output" yaml:"output" validate:"required"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
-	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elavation"`
+	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
 	// Time                  *string               `xml:"Time" yaml:"time"`
 }
 
@@ -377,26 +376,45 @@ type StyledLayerDescriptor struct {
 }
 
 // Validate the StyledLayerDescriptor
-func (sld *StyledLayerDescriptor) Validate(capabilities capabilities.Capability) ows.Exceptions {
-	var unknown []string
-	for _, l := range sld.GetNamedLayers() {
+func (sld *StyledLayerDescriptor) Validate(c capabilities.Capability) ows.Exceptions {
+	var unknownLayers []string
+	var unknownStyles []struct{ layer, style string }
+
+	for _, namedLayer := range sld.NamedLayer {
 		found := false
-		for _, c := range capabilities.GetLayerNames() {
-			if l == c {
+		for _, c := range c.GetLayerNames() {
+			if namedLayer.Name == c {
 				found = true
 			}
 		}
 		if !found {
-			unknown = append(unknown, l)
+			unknownLayers = append(unknownLayers, namedLayer.Name)
+		}
+
+		if namedLayer.NamedStyle != nil {
+			if namedLayer.NamedStyle.Name != `` {
+				if !c.StyleDefined(namedLayer.Name, namedLayer.NamedStyle.Name) {
+					unknownStyles = append(unknownStyles, struct{ layer, style string }{namedLayer.Name, namedLayer.NamedStyle.Name})
+				}
+			}
 		}
 	}
 
 	var exceptions ows.Exceptions
-	if len(unknown) > 0 {
-
-		for _, l := range unknown {
+	if len(unknownLayers) > 0 {
+		for _, l := range unknownLayers {
 			exceptions = append(exceptions, exception.LayerNotDefined(l))
 		}
+	}
+
+	if len(unknownStyles) > 0 {
+		for _, sld := range unknownStyles {
+			exceptions = append(exceptions, exception.StyleNotDefined(sld.style, sld.layer))
+		}
+
+	}
+
+	if len(exceptions) > 0 {
 		return exceptions
 	}
 
