@@ -113,7 +113,7 @@ func TestGetMapParseXML(t *testing.T) {
 		Excepted GetMap
 		Error    ows.Exception
 	}{
-		// GetMap schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
+		// GetMap http://schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
 		0: {Body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
 		xmlns:se="http://www.opengis.net/se" xmlns:wms="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld GetMap.xsd" version="1.3.0">
 		<StyledLayerDescriptor version="1.1.0">

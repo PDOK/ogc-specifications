@@ -72,7 +72,6 @@ func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exception {
 
 // ParseKVP builds a GetFeatureInfo object based on the available query parameters
 func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
-
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.

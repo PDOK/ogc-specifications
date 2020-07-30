@@ -27,7 +27,7 @@ func (c Contents) GetTilematrixsets() map[string]bool {
 	return tilematrixsets
 }
 
-// Layer in struct for repeatablity
+// Layer in struct for repeatability
 type Layer struct {
 	Title            string `xml:"ows:Title" yaml:"title"`
 	Abstract         string `xml:"ows:Abstract" yaml:"abstract"`
@@ -48,19 +48,19 @@ type Layer struct {
 	} `xml:"ResourceURL" yaml:"resourceurl"`
 }
 
-// TileMatrixSetLink in struct for repeatablity
+// TileMatrixSetLink in struct for repeatability
 type TileMatrixSetLink struct {
 	TileMatrixSet string `xml:"TileMatrixSet" yaml:"tilematrixset"`
 }
 
-// TileMatrixSet in struct for repeatablity
+// TileMatrixSet in struct for repeatability
 type TileMatrixSet struct {
 	Identifier   string       `xml:"ows:Identifier" yaml:"identifier"`
 	SupportedCRS string       `xml:"ows:SupportedCRS" yaml:"supportedcrs"`
 	TileMatrix   []TileMatrix `xml:"TileMatrix" yaml:"tilematrix"`
 }
 
-// TileMatrix in struct for repeatablity
+// TileMatrix in struct for repeatability
 type TileMatrix struct {
 	Identifier       string `xml:"ows:Identifier" yaml:"identifier"`
 	ScaleDenominator string `xml:"ScaleDenominator" yaml:"scaledenominator"`

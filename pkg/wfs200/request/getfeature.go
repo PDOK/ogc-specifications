@@ -88,7 +88,6 @@ func (gf *GetFeature) ParseXML(doc []byte) ows.Exception {
 // ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
 func (gf *GetFeature) ParseKVP(query url.Values) ows.Exception {
-
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
@@ -489,7 +488,7 @@ type GeometryOperand struct {
 
 // Geometry struct for GeometryOperand geometries
 type Geometry struct {
-	SrsName string `xml:"srsName,attr" yaml:"srname"`
+	SrsName string `xml:"srsName,attr" yaml:"srsname"`
 	Content string `xml:",innerxml"`
 }
 

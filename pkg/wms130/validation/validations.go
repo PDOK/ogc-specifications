@@ -13,7 +13,6 @@ func registerValidations(v *validator.Validate) {
 
 // BboxValidator implements validator.CustomTypeFunc
 func BboxValidator(sl validator.StructLevel) {
-
 	bbox := sl.Current().Interface().(ows.BoundingBox)
 
 	if bbox.LowerCorner[0] >= bbox.UpperCorner[0] {
@@ -28,7 +27,6 @@ func BboxValidator(sl validator.StructLevel) {
 
 // GetMapValidation structlevel
 func GetMapValidation(sl validator.StructLevel) {
-
 	wr := sl.Current().Interface().(GetMapWrapper)
 
 	// layer

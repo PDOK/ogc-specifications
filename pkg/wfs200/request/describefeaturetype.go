@@ -54,7 +54,6 @@ func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
 func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exception {
-
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.

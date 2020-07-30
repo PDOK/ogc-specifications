@@ -76,7 +76,7 @@ type ServiceIdentification struct {
 	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
 }
 
-// ServiceMetadataURL in struct for repeatablity
+// ServiceMetadataURL in struct for repeatability
 type ServiceMetadataURL struct {
 	Href string `xml:"xlink:href,attr" yaml:"href"`
 }

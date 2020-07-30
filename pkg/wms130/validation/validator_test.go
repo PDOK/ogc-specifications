@@ -18,7 +18,6 @@ func sp(s string) *string {
 }
 
 func TestValidation(t *testing.T) {
-
 	en := en.New()
 	uni := ut.New(en, en)
 	trans, _ := uni.GetTranslator("en")

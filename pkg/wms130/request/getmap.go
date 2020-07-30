@@ -327,7 +327,6 @@ func (sld *StyledLayerDescriptor) GetNamedLayers() []string {
 
 // GetNamedStyles return an array of the Layer names
 func (sld *StyledLayerDescriptor) GetNamedStyles() []string {
-
 	styles := []string{}
 	for _, l := range sld.NamedLayer {
 		if l.Name != "" {
@@ -343,7 +342,7 @@ func (sld *StyledLayerDescriptor) GetNamedStyles() []string {
 }
 
 // GetMap struct with the needed parameters/attributes needed for making a GetMap request
-// Struct based on http://schemas.opengis.net/sld/1.1//example_getmap.xml
+// Struct based on http://schemas.opengis.net/sld/1.1/example_getmap.xml
 type GetMap struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap" validate:"required"`
 	BaseRequest

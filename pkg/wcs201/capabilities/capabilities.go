@@ -23,7 +23,7 @@ type OperationsMetadata struct {
 	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedcapabilities"`
 }
 
-// Operation in struct for repeatablity
+// Operation in struct for repeatability
 type Operation struct {
 	Name string `xml:"name,attr" yaml:"name"`
 	DCP  struct {
@@ -84,12 +84,12 @@ type ServiceMetadata struct {
 	} `xml:"wcs:Extension"`
 }
 
-// Contents in struct for repeatablity
+// Contents in struct for repeatability
 type Contents struct {
 	CoverageSummary []CoverageSummary `xml:"wcs:CoverageSummary"`
 }
 
-// CoverageSummary in struct for repeatablity
+// CoverageSummary in struct for repeatability
 type CoverageSummary struct {
 	CoverageID      string `xml:"wcs:CoverageId"`
 	CoverageSubtype string `xml:"wcs:CoverageSubtype"`

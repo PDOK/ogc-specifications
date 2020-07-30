@@ -14,7 +14,7 @@ const (
 )
 
 // WMSServiceExceptionReport struct
-// TODO exception restucturing
+// TODO exception restructuring
 type WMSServiceExceptionReport struct {
 	XMLName          xml.Name        `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
 	Version          string          `xml:"version,attr" yaml:"version"`
@@ -117,7 +117,7 @@ func LayerNotQueryable(s ...string) WMSException {
 // InvalidPoint exception
 // i and j are strings so we can none int values in the exception
 func InvalidPoint(i, j string) WMSException {
-	// TODO provide giving WIDTH and HEIGTH values in Exception response
+	// TODO provide giving WIDTH and HEIGHT values in Exception response
 	return WMSException{
 		ExceptionText: fmt.Sprintf("The parameters I and J are invalid, given: %s, %s", i, j),
 		ExceptionCode: `InvalidPoint`,

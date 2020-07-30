@@ -33,7 +33,7 @@ func (gc *GetCapabilities) Type() string {
 	return getcapabilities
 }
 
-// Validate returns GetCapabilities
+// Validate validates the GetCapabilities struct
 func (gc *GetCapabilities) Validate(c capabilities.Capability) ows.Exceptions {
 	return nil
 }
