@@ -59,8 +59,9 @@ func (e WMSException) Locator() string {
 }
 
 // InvalidFormat exception
-func InvalidFormat() WMSException {
+func InvalidFormat(unknownformat string) WMSException {
 	return WMSException{
+		ExceptionText: fmt.Sprintf("The format: %s, is a invalid image format", unknownformat),
 		ExceptionCode: `InvalidFormat`,
 	}
 }
@@ -121,7 +122,7 @@ func LayerNotQueryable(s ...string) WMSException {
 }
 
 // InvalidPoint exception
-// i and j are strings so we can none int values in the exception
+// i and j are strings so we can return none integer values in the exception
 func InvalidPoint(i, j string) WMSException {
 	// TODO provide giving WIDTH and HEIGHT values in Exception response
 	return WMSException{

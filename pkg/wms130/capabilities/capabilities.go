@@ -12,12 +12,25 @@ func (c *Capability) ParseYML(doc []byte) error {
 	return nil
 }
 
-// Capability base struct
+// Capability struct needed for keeping all constraints and capabilities together
 type Capability struct {
+	WMSCapabilities
+	OptionalConstraints
+}
+
+// WMSCapabilities base struct
+type WMSCapabilities struct {
 	Request              Request               `xml:"Request" yaml:"request"`
 	Exception            Exception             `xml:"Exception" yaml:"exception"`
 	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedcapabilities"`
 	Layer                []Layer               `xml:"Layer" yaml:"layer"`
+}
+
+// OptionalConstraints struct
+type OptionalConstraints struct {
+	LayerLimit int `xml:"LayerLimit" yaml:"layerlimit"`
+	MaxWidth   int `xml:"MaxWidth" yaml:"maxwidth"`
+	MaxHeight  int `xml:"MaxHeight" yaml:"maxheight"`
 }
 
 // Request struct with the different operations, should be filled from the template
@@ -28,6 +41,8 @@ type Request struct {
 }
 
 // Exception struct containing the different available exceptions, should be filled from the template
+// default: XML
+// other commonly used: BLANK, INIMAGE and JSON
 type Exception struct {
 	Format []string `xml:"Format" yaml:"format"`
 }

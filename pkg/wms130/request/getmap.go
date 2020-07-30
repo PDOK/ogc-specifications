@@ -47,6 +47,7 @@ func (gm *GetMap) Validate(c capabilities.Capability) ows.Exceptions {
 	var exceptions ows.Exceptions
 
 	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(c)...)
+	exceptions = append(exceptions, gm.Output.Validate(c)...)
 
 	return exceptions
 }
@@ -104,11 +105,21 @@ func (gmkvp *GetMapKVP) ParseGetMap(gm *GetMap) ows.Exception {
 	gmkvp.Width = strconv.Itoa(gm.Output.Size.Width)
 	gmkvp.Height = strconv.Itoa(gm.Output.Size.Height)
 	gmkvp.Format = gm.Output.Format
-	gmkvp.Transparent = gm.Output.Transparent
-	gmkvp.BGColor = gm.Output.BGcolor
+
+	if gm.Output.Transparent != nil {
+		t := *gm.Output.Transparent
+		tp := strconv.FormatBool(t)
+		gmkvp.Transparent = &tp
+	}
+
+	if gm.Output.BGcolor != nil {
+		gmkvp.BGColor = gm.Output.BGcolor
+	}
+
 	// TODO: something with Time & Elevation
 	// gmkvp.Time = gm.Time
 	// gmkvp.Elevation = gm.Elevation
+
 	gmkvp.Exceptions = gm.Exceptions
 
 	return nil
@@ -129,7 +140,9 @@ func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
 
 	output.Size = Size{Height: h, Width: w}
 	output.Format = gmkvp.Format
-	output.Transparent = gmkvp.Transparent
+	if b, err := strconv.ParseBool(*gmkvp.Transparent); err == nil {
+		output.Transparent = &b
+	}
 	output.BGcolor = gmkvp.BGColor
 
 	return output, nil
@@ -355,11 +368,37 @@ type GetMap struct {
 	// Time                  *string               `xml:"Time" yaml:"time"`
 }
 
+// Validate validates the output parameters
+func (output *Output) Validate(c capabilities.Capability) ows.Exceptions {
+	var exceptions ows.Exceptions
+	if output.Size.Width > c.MaxWidth {
+		exceptions = append(exceptions, ows.NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
+	}
+	if output.Size.Height > c.MaxHeight {
+		exceptions = append(exceptions, ows.NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
+	}
+
+	for _, format := range c.WMSCapabilities.Request.GetMap.Format {
+		found := false
+		if format == output.Format {
+			found = true
+		}
+		if !found {
+			exceptions = append(exceptions, exception.InvalidFormat(output.Format))
+		}
+	}
+
+	// Transparent is a bool so when it is parsed around in the application it is already valid
+	// TODO: BGColor -> https://stackoverflow.com/questions/54197913/parse-hex-string-to-image-color
+
+	return nil
+}
+
 // Output struct
 type Output struct {
 	Size        Size    `xml:"Size" yaml:"size" validate:"required"`
 	Format      string  `xml:"Format" yaml:"format" validate:"required"`
-	Transparent *string `xml:"Transparent" yaml:"transparent"`
+	Transparent *bool   `xml:"Transparent" yaml:"transparent"`
 	BGcolor     *string `xml:"BGcolor" yaml:"bgcolor"`
 }
 
@@ -411,7 +450,6 @@ func (sld *StyledLayerDescriptor) Validate(c capabilities.Capability) ows.Except
 		for _, sld := range unknownStyles {
 			exceptions = append(exceptions, exception.StyleNotDefined(sld.style, sld.layer))
 		}
-
 	}
 
 	if len(exceptions) > 0 {

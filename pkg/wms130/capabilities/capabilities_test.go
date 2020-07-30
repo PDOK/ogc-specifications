@@ -9,21 +9,23 @@ func sp(s string) *string {
 }
 
 var capabilities = Capability{
-	Layer: []Layer{
-		{Name: sp(`depthOneLayerOne`),
-			Layer: []*Layer{
-				{Name: sp(`depthTwoLayerThree`), Style: []*Style{{Name: `StyleOne`}, {Name: `StyleTwo`}}},
-				{Name: sp(`depthTwoLayerFour`),
-					Layer: []*Layer{
-						{Name: sp(`depthThreeLayerSix`)},
-						{Name: sp(`depthThreeLayerSeven`), Style: []*Style{{Name: `StyleThree`}}},
+	WMSCapabilities: WMSCapabilities{
+		Layer: []Layer{
+			{Name: sp(`depthOneLayerOne`),
+				Layer: []*Layer{
+					{Name: sp(`depthTwoLayerThree`), Style: []*Style{{Name: `StyleOne`}, {Name: `StyleTwo`}}},
+					{Name: sp(`depthTwoLayerFour`),
+						Layer: []*Layer{
+							{Name: sp(`depthThreeLayerSix`)},
+							{Name: sp(`depthThreeLayerSeven`), Style: []*Style{{Name: `StyleThree`}}},
+						},
 					},
 				},
 			},
-		},
-		{Name: sp(`depthOneLayerTwo`),
-			Layer: []*Layer{
-				{Name: sp(`depthTwoLayerFive`), Style: []*Style{{Name: `StyleFour`}, {Name: `StyleFive`}}}},
+			{Name: sp(`depthOneLayerTwo`),
+				Layer: []*Layer{
+					{Name: sp(`depthTwoLayerFive`), Style: []*Style{{Name: `StyleFour`}, {Name: `StyleFive`}}}},
+			},
 		},
 	},
 }

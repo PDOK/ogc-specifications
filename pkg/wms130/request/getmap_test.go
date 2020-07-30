@@ -18,6 +18,10 @@ func ip(i int) *int {
 	return &i
 }
 
+func bp(b bool) *bool {
+	return &b
+}
+
 func TestGetMapType(t *testing.T) {
 	dft := GetMap{}
 	if dft.Type() != `GetMap` {
@@ -70,18 +74,22 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 	}{
 		0: {
 			capabilities: capabilities.Capability{
-				Layer: []capabilities.Layer{
-					{Name: sp(`layer1`)},
-					{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
+				WMSCapabilities: capabilities.WMSCapabilities{
+					Layer: []capabilities.Layer{
+						{Name: sp(`layer1`)},
+						{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
+					},
 				},
 			},
 			sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: ``}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styleone`}}}},
 		},
 		1: {
 			capabilities: capabilities.Capability{
-				Layer: []capabilities.Layer{
-					{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
-					{Name: sp(`layer3`)},
+				WMSCapabilities: capabilities.WMSCapabilities{
+					Layer: []capabilities.Layer{
+						{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
+						{Name: sp(`layer3`)},
+					},
 				},
 			},
 			sld:        StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styletwo`}}}},
@@ -180,7 +188,7 @@ func TestGetMapParseXML(t *testing.T) {
 				Output: Output{
 					Size:        Size{Width: 1024, Height: 512},
 					Format:      "image/jpeg",
-					Transparent: sp("false")},
+					Transparent: bp(false)},
 				Exceptions: sp("XML"),
 			},
 		},
@@ -303,7 +311,7 @@ func TestGetMapParseKVP(t *testing.T) {
 				Output: Output{
 					Size:        Size{Width: 1024, Height: 512},
 					Format:      "image/jpeg",
-					Transparent: sp("false"),
+					Transparent: bp(false),
 					BGcolor:     sp(`0x7F7F7F`)},
 				Exceptions: sp("XML"),
 			}},
@@ -347,7 +355,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			Output: Output{
 				Size:        Size{Width: 1024, Height: 512},
 				Format:      "image/jpeg",
-				Transparent: sp("false")},
+				Transparent: bp(false)},
 			Exceptions: sp("XML"),
 		}, Excepted: map[string][]string{
 			LAYERS:      {`Rivers,Roads,Houses`},
@@ -535,7 +543,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 		Output: Output{
 			Size:        Size{Width: 1024, Height: 512},
 			Format:      "image/jpeg",
-			Transparent: sp("false")},
+			Transparent: bp(false)},
 		Exceptions: sp("XML"),
 	}
 	for i := 0; i < b.N; i++ {
@@ -573,7 +581,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 		Output: Output{
 			Size:        Size{Width: 1024, Height: 512},
 			Format:      "image/jpeg",
-			Transparent: sp("false")},
+			Transparent: bp(false)},
 		Exceptions: sp("XML"),
 	}
 	for i := 0; i < b.N; i++ {
