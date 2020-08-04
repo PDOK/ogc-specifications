@@ -238,21 +238,21 @@ func (gfi *GetFeatureInfo) BuildXML() []byte {
 
 // GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request
 type GetFeatureInfo struct {
-	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getfeatureinfo" validate:"required"`
+	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
 	BaseRequest
 
 	// <map_request_copy>
 	// These are the 'minimum' required GetMap parameters
 	// needed in a GetFeatureInfo request
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor" validate:"required"`
-	CRS                   string                `xml:"CRS" yaml:"crs" validate:"required"`
-	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox" validate:"required"`
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
+	CRS                   string                `xml:"CRS" yaml:"crs"`
+	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox"`
 	// We skip the Output struct, because these are not required parameters
-	Size Size `xml:"Size" yaml:"size" validate:"required"`
+	Size Size `xml:"Size" yaml:"size"`
 
-	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers" validate:"required"`
-	I            int      `xml:"I" yaml:"i" validate:"required"`
-	J            int      `xml:"J" yaml:"j" validate:"required"`
+	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers"`
+	I            int      `xml:"I" yaml:"i"`
+	J            int      `xml:"J" yaml:"j"`
 	InfoFormat   *string  `xml:"InfoFormat" yaml:"infoformat"`
 	FeatureCount *int     `xml:"FeatureCount" yaml:"featurecount"`
 	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`

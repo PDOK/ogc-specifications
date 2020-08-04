@@ -97,8 +97,8 @@ func (gc *GetCapabilities) BuildXML() []byte {
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilities struct {
-	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities" validate:"required"`
-	Service string           `xml:"service,attr" yaml:"service" validate:"required,oneof=WMTS wmts"`
-	Version string           `xml:"version,attr" yaml:"version" validate:"eq=1.0.0"`
+	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string           `xml:"service,attr" yaml:"service"`
+	Version string           `xml:"version,attr" yaml:"version"`
 	Attr    ows.XMLAttribute `xml:",attr"`
 }
