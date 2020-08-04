@@ -4,10 +4,10 @@
 [![GitHub release](https://img.shields.io/github/release/PDOK/ogc-specifications.svg)](https://github.com/PDOK/ogc-specifications/releases)
 [![Go Report Card](https://goreportcard.com/badge/PDOK/ogc-specifications)](https://goreportcard.com/report/PDOK/ogc-specifications)
 
-The package ogc-specifications is a implementation of the OGC Webservice Specifications as defined by the [OGC](https://www.ogc.org/).
-This package has support for the following OGC Webservice Specifications:
+The package ogc-specifications is a implementation of the OGC Web Service Specifications as defined by the [OGC](https://www.ogc.org/).
+This package has support for the following OGC Web Service Specifications:
 
-| Spec | Version | Operation | Request | Reponse |
+| Spec | Version | Operation | Request | Response |
 | --- | --- | --- | --- | --- |
 | WMS | 1.3.0 | GetCapabilities | :heavy_check_mark:  | :grey_exclamation: |
 | WMS | 1.3.0 | GetMap | :heavy_check_mark: | |
@@ -18,11 +18,11 @@ This package has support for the following OGC Webservice Specifications:
 | WMTS | 1.0.0 | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
 | WCS | 2.0.1 | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
 
-It will provide the user with structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Webservice. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and query strings based on those structs.
+It will provide the user with OperationRequest, OperationResponse and Capabilities structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Web Service. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and KVP query strings based on those structs.
 
 ## Notice
 
-This is still a 'work in progres' with the following major todo's:
+This is still a 'work-in-progress' with the following major to do's:
 
 - [ ] Validation support
 - [ ] YAML parser
@@ -60,7 +60,7 @@ And generate CPU & MEM profiles:
 go test -cpuprofile cpu.prof -memprofile mem.prof -bench=.  ./...
 ```
 
-For visualisation use [pprof](https://github.com/google/pprof)
+For visualization use [pprof](https://github.com/google/pprof)
 
 ## Usage
 
