@@ -4,14 +4,11 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/url"
-	"reflect"
-	"strconv"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
-	"gopkg.in/yaml.v2"
 )
 
 //
@@ -50,146 +47,6 @@ func (gm *GetMap) Validate(c capabilities.Capability) ows.Exceptions {
 	exceptions = append(exceptions, gm.Output.Validate(c)...)
 
 	return exceptions
-}
-
-//GetMapKVP struct
-type GetMapKVP struct {
-	// Table 8 - The Parameters of a GetMap request
-	Request     string  `yaml:"request,omitempty"`
-	Version     string  `yaml:"version,omitempty"`
-	Service     string  `yaml:"service,omitempty"`
-	Layers      string  `yaml:"layers,omitempty"`
-	Styles      string  `yaml:"styles,omitempty"`
-	CRS         string  `yaml:"crs,omitempty"`
-	Bbox        string  `yaml:"bbox,omitempty"`
-	Width       string  `yaml:"width,omitempty"`
-	Height      string  `yaml:"height,omitempty"`
-	Format      string  `yaml:"format,omitempty"`
-	Transparent *string `yaml:"transparent,omitempty"`
-	BGColor     *string `yaml:"bgcolor,omitempty"`
-	// TODO: something with Time & Elevation
-	// Time        *string `yaml:"time,omitempty"`
-	// Elevation   *string `yaml:"elevation,omitempty"`
-	Exceptions *string `yaml:"exceptions,omitempty"`
-}
-
-// ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exception {
-	flatten := map[string]string{}
-	for k, v := range query {
-		if len(v) > 1 {
-			// When there is more then one value
-			// return a InvalidParameterValue Exception
-			return ows.InvalidParameterValue(k, strings.Join(v, ","))
-		}
-		flatten[strings.ToLower(k)] = v[0]
-	}
-
-	y, _ := yaml.Marshal(&flatten)
-	if err := yaml.Unmarshal(y, &gmkvp); err != nil {
-		return ows.NoApplicableCode(`Could not read query parameters`)
-	}
-
-	return nil
-}
-
-// ParseGetMap builds a GetMapKVP object based on a GetMap struct
-func (gmkvp *GetMapKVP) ParseGetMap(gm *GetMap) ows.Exception {
-	gmkvp.Request = getmap
-	gmkvp.Version = Version
-	gmkvp.Service = Service
-	gmkvp.Layers = gm.StyledLayerDescriptor.getLayerKVPValue()
-	gmkvp.Styles = gm.StyledLayerDescriptor.getStyleKVPValue()
-	gmkvp.CRS = gm.CRS
-	gmkvp.Bbox = gm.BoundingBox.BuildKVP()
-	gmkvp.Width = strconv.Itoa(gm.Output.Size.Width)
-	gmkvp.Height = strconv.Itoa(gm.Output.Size.Height)
-	gmkvp.Format = gm.Output.Format
-
-	if gm.Output.Transparent != nil {
-		t := *gm.Output.Transparent
-		tp := strconv.FormatBool(t)
-		gmkvp.Transparent = &tp
-	}
-
-	if gm.Output.BGcolor != nil {
-		gmkvp.BGColor = gm.Output.BGcolor
-	}
-
-	// TODO: something with Time & Elevation
-	// gmkvp.Time = gm.Time
-	// gmkvp.Elevation = gm.Elevation
-
-	gmkvp.Exceptions = gm.Exceptions
-
-	return nil
-}
-
-// BuildOutput builds a Output struct from the KVP information
-func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
-	output := Output{}
-
-	h, err := strconv.Atoi(gmkvp.Height)
-	if err != nil {
-		return output, ows.InvalidParameterValue(HEIGHT, gmkvp.Height)
-	}
-	w, err := strconv.Atoi(gmkvp.Width)
-	if err != nil {
-		return output, ows.InvalidParameterValue(WIDTH, gmkvp.Width)
-	}
-
-	output.Size = Size{Height: h, Width: w}
-	output.Format = gmkvp.Format
-	if b, err := strconv.ParseBool(*gmkvp.Transparent); err == nil {
-		output.Transparent = &b
-	}
-	output.BGcolor = gmkvp.BGColor
-
-	return output, nil
-}
-
-// BuildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the KVP information
-func (gmkvp *GetMapKVP) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
-	var layers, styles []string
-	if gmkvp.Layers != `` {
-		layers = strings.Split(gmkvp.Layers, ",")
-	}
-	if gmkvp.Styles != `` {
-		styles = strings.Split(gmkvp.Styles, ",")
-	}
-
-	sld, err := buildStyledLayerDescriptor(layers, styles)
-	if err != nil {
-		return sld, err
-	}
-
-	return sld, nil
-}
-
-// BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gmkvp *GetMapKVP) BuildKVP() url.Values {
-	query := make(map[string][]string)
-
-	fields := reflect.TypeOf(*gmkvp)
-	values := reflect.ValueOf(*gmkvp)
-
-	for i := 0; i < fields.NumField(); i++ {
-		field := fields.Field(i)
-		value := values.Field(i)
-
-		switch value.Kind() {
-		case reflect.String:
-			v := value.String()
-			query[strings.ToUpper(field.Name)] = []string{v}
-		case reflect.Ptr:
-			v := value.Elem()
-			if v.IsValid() {
-				query[strings.ToUpper(field.Name)] = []string{fmt.Sprintf("%v", v)}
-			}
-		}
-	}
-
-	return query
 }
 
 // ParseGetMapKVP process the simple struct to a complex struct
