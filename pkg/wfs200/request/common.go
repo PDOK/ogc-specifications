@@ -30,7 +30,7 @@ type BaseRequest struct {
 }
 
 // ParseKVP builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) ParseKVP(query url.Values) ows.Exception {
+func (b *BaseRequest) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query[SERVICE]) > 0 {
 		// Service is optional, because it's implicit for a GetFeature/DescribeFeatureType request
 		b.Service = query[SERVICE][0]
@@ -39,7 +39,7 @@ func (b *BaseRequest) ParseKVP(query url.Values) ows.Exception {
 		b.Version = query[VERSION][0]
 	} else {
 		// Version is mandatory
-		return ows.MissingParameterValue(VERSION)
+		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
 	}
 	return nil
 }

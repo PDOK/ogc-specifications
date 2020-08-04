@@ -53,11 +53,11 @@ func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 }
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exception {
+func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return ows.MissingParameterValue(VERSION)
+		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)

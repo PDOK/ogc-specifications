@@ -48,13 +48,13 @@ func (gfi *GetFeatureInfo) Validate(c capabilities.Capability) ows.Exceptions {
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exception {
+func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exceptions {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.MissingParameterValue()
+		return ows.Exceptions{ows.MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gfi); err != nil {
-		return ows.MissingParameterValue("REQUEST")
+		return ows.Exceptions{ows.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -71,11 +71,11 @@ func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exception {
 }
 
 // ParseKVP builds a GetFeatureInfo object based on the available query parameters
-func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
+func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return ows.MissingParameterValue(VERSION)
+		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)
@@ -106,20 +106,20 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
 			case BBOX:
 				var bbox ows.BoundingBox
 				if err := bbox.Build(query[k][0]); err != nil {
-					return err
+					return ows.Exceptions{err}
 				}
 				gfi.BoundingBox = bbox
 			case WIDTH:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {
-					return ows.MissingParameterValue(WIDTH, query[k][0])
+					return ows.Exceptions{ows.MissingParameterValue(WIDTH, query[k][0])}
 				}
 				gfi.Size.Width = i
 			case HEIGHT:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {
 					// TODO: ignore or a exception
-					return ows.MissingParameterValue(HEIGHT, query[k][0])
+					return ows.Exceptions{ows.MissingParameterValue(HEIGHT, query[k][0])}
 				}
 				gfi.Size.Height = i
 			case QUERYLAYERS:
@@ -127,13 +127,13 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
 			case I:
 				i, err := strconv.Atoi(query[k][0])
 				if err != nil {
-					return exception.InvalidPoint(query[I][0], query[J][0])
+					return ows.Exceptions{exception.InvalidPoint(query[I][0], query[J][0])}
 				}
 				gfi.I = i
 			case J:
 				j, err := strconv.Atoi(query[k][0])
 				if err != nil {
-					return exception.InvalidPoint(query[I][0], query[J][0])
+					return ows.Exceptions{exception.InvalidPoint(query[I][0], query[J][0])}
 				}
 				gfi.J = j
 			}
@@ -144,7 +144,7 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exception {
 	if err == nil {
 		gfi.StyledLayerDescriptor = sld
 	} else {
-		return err
+		return ows.Exceptions{err}
 	}
 
 	// GetFeatureInfo optional parameters

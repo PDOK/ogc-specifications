@@ -79,11 +79,11 @@ func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
 }
 
 // ParseKVP builds a GetMap object based on the available query parameters
-func (gm *GetMap) ParseKVP(query url.Values) ows.Exception {
+func (gm *GetMap) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
 		// the manadorty VERSION parameter is missing.
-		return ows.MissingParameterValue(VERSION)
+		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
 	}
 
 	gmkvp := GetMapKVP{}
@@ -92,17 +92,17 @@ func (gm *GetMap) ParseKVP(query url.Values) ows.Exception {
 	}
 
 	if err := gm.ParseGetMapKVP(gmkvp); err != nil {
-		return err
+		return ows.Exceptions{err}
 	}
 
 	return nil
 }
 
 // ParseXML builds a GetMap object based on a XML document
-func (gm *GetMap) ParseXML(body []byte) ows.Exception {
+func (gm *GetMap) ParseXML(body []byte) ows.Exceptions {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.MissingParameterValue()
+		return ows.Exceptions{ows.MissingParameterValue()}
 	}
 	xml.Unmarshal(body, &gm) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
 	var n []xml.Attr

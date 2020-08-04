@@ -7,8 +7,8 @@ type OperationRequest interface {
 	Type() string
 	Validate(Capability) Exceptions
 
-	ParseXML([]byte) Exception
-	ParseKVP(url.Values) Exception
+	ParseXML([]byte) Exceptions
+	ParseKVP(url.Values) Exceptions
 	BuildXML() []byte
 	BuildKVP() url.Values
 

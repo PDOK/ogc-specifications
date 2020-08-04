@@ -265,7 +265,7 @@ func TestGetFeatureParseKVP(t *testing.T) {
 	for tid, q := range tests {
 		var gf GetFeature
 		if err := gf.ParseKVP(q.QueryParams); err != nil {
-			if err != q.Exception {
+			if err[0] != q.Exception {
 				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, q.Exception, err)
 			}
 		} else {

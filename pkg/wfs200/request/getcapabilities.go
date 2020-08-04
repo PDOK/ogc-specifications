@@ -51,7 +51,7 @@ func (gc *GetCapabilities) ParseXML(doc []byte) ows.Exception {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exception {
+func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:

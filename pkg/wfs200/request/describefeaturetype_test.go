@@ -103,14 +103,14 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query     url.Values
 		Result    DescribeFeatureType
-		Exception ows.Exception
+		Exception ows.Exceptions
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {Query: map[string][]string{"SERVICE": {Service}, "Request": {describefeaturetype}, "version": {"2.0.0"}},
 			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
 		// Missing mandatory SERVICE attribute
 		1: {Query: map[string][]string{"Request": {describefeaturetype}},
-			Exception: ows.MissingParameterValue(VERSION)},
+			Exception: ows.Exceptions{ows.MissingParameterValue(VERSION)}},
 		// Missing optional VERSION attribute
 		2: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "Version": {"2.0.0"}},
 			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: Version}}},
@@ -125,7 +125,7 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: Service, Version: Version}}},
 		6: {Query: map[string][]string{},
-			Exception: ows.MissingParameterValue(VERSION),
+			Exception: ows.Exceptions{ows.MissingParameterValue(VERSION)},
 		},
 	}
 
@@ -133,7 +133,7 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 		var dft DescribeFeatureType
 		err := dft.ParseKVP(n.Query)
 		if err != nil {
-			if err.Error() != n.Exception.Error() {
+			if err[0].Error() != n.Exception[0].Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
 			}
 		} else {

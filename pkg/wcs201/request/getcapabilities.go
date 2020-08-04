@@ -39,13 +39,13 @@ func (gc *GetCapabilities) Validate(c capabilities.Capability) ows.Exceptions {
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) ows.Exception {
+func (gc *GetCapabilities) ParseXML(body []byte) ows.Exceptions {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.MissingParameterValue()
+		return ows.Exceptions{ows.MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return ows.MissingParameterValue("REQUEST")
+		return ows.Exceptions{ows.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -62,7 +62,7 @@ func (gc *GetCapabilities) ParseXML(body []byte) ows.Exception {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exception {
+func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:

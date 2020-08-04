@@ -7,6 +7,6 @@ type OperationKVPRequest interface {
 	Type() string
 	Validate(Capability) Exceptions
 
-	ParseKVP(url.Values) Exception
+	ParseKVP(url.Values) Exceptions
 	BuildKVP() url.Values
 }

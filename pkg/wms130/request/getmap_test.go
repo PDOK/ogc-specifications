@@ -199,7 +199,7 @@ func TestGetMapParseXML(t *testing.T) {
 		var gm GetMap
 		err := gm.ParseXML(n.Body)
 		if err != nil {
-			if err.Error() != n.Error.Error() {
+			if err[0].Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
 			}
 		} else {
@@ -320,7 +320,7 @@ func TestGetMapParseKVP(t *testing.T) {
 		var gm GetMap
 		err := gm.ParseKVP(n.Query)
 		if err != nil {
-			if err.Error() != n.Exception.Error() {
+			if err[0].Error() != n.Exception.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
 			}
 		} else {

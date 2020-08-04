@@ -40,7 +40,7 @@ type GetMapKVPOptional struct {
 }
 
 // ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exception {
+func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
 	var exceptions ows.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {

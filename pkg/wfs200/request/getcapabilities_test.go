@@ -114,7 +114,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 		var gc GetCapabilities
 		err := gc.ParseKVP(n.Query)
 		if err != nil {
-			if err.Error() != n.Error.Error() {
+			if err[0].Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
 			}
 		} else {

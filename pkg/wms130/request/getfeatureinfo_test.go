@@ -221,7 +221,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 		var gfi GetFeatureInfo
 		err := gfi.ParseKVP(n.Query)
 		if err != nil {
-			if err.Error() != n.Error.Error() {
+			if err[0].Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
 			}
 		} else {
@@ -307,7 +307,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 		var gm GetFeatureInfo
 		err := gm.ParseXML(n.Body)
 		if err != nil {
-			if err.Error() != n.Error.Error() {
+			if err[0].Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
 			}
 		} else {
