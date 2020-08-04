@@ -19,6 +19,12 @@ const (
 	VERSION = `VERSION`
 )
 
+// BaseRequestKVP struct
+type BaseRequestKVP struct {
+	Version string `yaml:"version,omitempty"`
+	Request string `yaml:"request,omitempty"`
+}
+
 // BaseRequest based on the SLD 1.1 spec 'containing' example implementation of a POST WMS 1.3.0 request
 // http://schemas.opengis.net/sld/1.1//example_getmap.xml
 // Note: not usable for GetCapabilities request regarding deviation of Optional/Mandatory parameters SERVICE and VERSION

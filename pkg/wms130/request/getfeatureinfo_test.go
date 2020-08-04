@@ -171,7 +171,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 		Excepted GetFeatureInfo
 		Error    ows.Exception
 	}{
-		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Excepted: GetFeatureInfo{XMLName: xml.Name{Local: getfeatureinfo}, BaseRequest: BaseRequest{Version: Version, Service: Service}}},
+		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Error: ows.InvalidParameterValue("", `boundingbox`)},
 		1: {Query: url.Values{}, Error: ows.MissingParameterValue(VERSION)},
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:       {`Rivers,Roads,Houses`},
@@ -212,10 +212,10 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 				InfoFormat:   sp(`application/json`),
 			},
 		},
-		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(WIDTH, `not a number`)},
-		4: {Query: map[string][]string{HEIGHT: {`not a number`}, VERSION: {Version}}, Error: ows.MissingParameterValue(HEIGHT, `not a number`)},
-		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}}, Error: exception.InvalidPoint(`not a number`, `1`)},
-		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}}, Error: exception.InvalidPoint(`1`, `not a number`)},
+		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: ows.MissingParameterValue(WIDTH, `not a number`)},
+		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: ows.MissingParameterValue(HEIGHT, `not a number`)},
+		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: exception.InvalidPoint(`not a number`, `1`)},
+		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: exception.InvalidPoint(`1`, `not a number`)},
 	}
 	for k, n := range tests {
 		var gfi GetFeatureInfo

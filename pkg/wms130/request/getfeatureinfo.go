@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
-	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
@@ -70,6 +69,66 @@ func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exceptions {
 	return nil
 }
 
+// ParseGetFeatureInfoKVP process the simple struct to a complex struct
+func (gfi *GetFeatureInfo) ParseGetFeatureInfoKVP(gfikvp GetFeatureInfoKVP) ows.Exceptions {
+
+	// Base
+	gfi.BaseRequest.Build(gfikvp.Service, gfikvp.Version)
+
+	sld, ex := gfikvp.BuildStyledLayerDescriptor()
+	if ex != nil {
+		return ows.Exceptions{ex}
+	}
+	gfi.StyledLayerDescriptor = sld
+
+	gfi.CRS = gfikvp.CRS
+
+	var bbox ows.BoundingBox
+	if err := bbox.Build(gfikvp.Bbox); err != nil {
+		return ows.Exceptions{err}
+	}
+	gfi.BoundingBox = bbox
+
+	gfi.CRS = gfikvp.CRS
+
+	w, err := strconv.Atoi(gfikvp.Width)
+	if err != nil {
+		return ows.Exceptions{ows.MissingParameterValue(WIDTH, gfikvp.Width)}
+	}
+	gfi.Size.Width = w
+
+	h, err := strconv.Atoi(gfikvp.Height)
+	if err != nil {
+		return ows.Exceptions{ows.MissingParameterValue(WIDTH, gfikvp.Height)}
+	}
+	gfi.Size.Height = h
+
+	gfi.QueryLayers = strings.Split(gfikvp.QueryLayers, ",")
+
+	i, err := strconv.Atoi(gfikvp.I)
+	if err != nil {
+		return ows.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
+	}
+	gfi.I = i
+
+	j, err := strconv.Atoi(gfikvp.J)
+	if err != nil {
+		return ows.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
+	}
+	gfi.J = j
+
+	fc, err := strconv.Atoi(*gfikvp.FeatureCount)
+	if err != nil {
+		// TODO: ignore or a exception
+	}
+
+	gfi.FeatureCount = &fc
+	gfi.InfoFormat = &gfikvp.InfoFormat
+	gfi.Exceptions = gfikvp.Exceptions
+
+	return nil
+}
+
 // ParseKVP builds a GetFeatureInfo object based on the available query parameters
 func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query) == 0 {
@@ -78,97 +137,13 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
 		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
 	}
 
-	q := utils.KeysToUpper(query)
-
-	// Base
-	if len(q[REQUEST]) > 0 {
-		gfi.XMLName.Local = q[REQUEST][0]
-	}
-
-	var br BaseRequest
-	if err := br.ParseKVP(q); err != nil {
+	gfikvp := GetFeatureInfoKVP{}
+	if err := gfikvp.ParseKVP(query); err != nil {
 		return err
 	}
-	gfi.BaseRequest = br
 
-	var styles, layers []string
-
-	// GetFeatureInfo mandatory parameters
-	for _, k := range getFeatureInfoMandatoryParameters {
-		if len(query[k]) > 0 {
-			switch k {
-			case LAYERS:
-				layers = strings.Split(query[k][0], ",")
-			case STYLES:
-				styles = strings.Split(query[k][0], ",")
-			case CRS:
-				gfi.CRS = query[k][0]
-			case BBOX:
-				var bbox ows.BoundingBox
-				if err := bbox.Build(query[k][0]); err != nil {
-					return ows.Exceptions{err}
-				}
-				gfi.BoundingBox = bbox
-			case WIDTH:
-				i, err := strconv.Atoi(query[k][0])
-				if err != nil {
-					return ows.Exceptions{ows.MissingParameterValue(WIDTH, query[k][0])}
-				}
-				gfi.Size.Width = i
-			case HEIGHT:
-				i, err := strconv.Atoi(query[k][0])
-				if err != nil {
-					// TODO: ignore or a exception
-					return ows.Exceptions{ows.MissingParameterValue(HEIGHT, query[k][0])}
-				}
-				gfi.Size.Height = i
-			case QUERYLAYERS:
-				gfi.QueryLayers = strings.Split(query[k][0], ",")
-			case I:
-				i, err := strconv.Atoi(query[k][0])
-				if err != nil {
-					return ows.Exceptions{exception.InvalidPoint(query[I][0], query[J][0])}
-				}
-				gfi.I = i
-			case J:
-				j, err := strconv.Atoi(query[k][0])
-				if err != nil {
-					return ows.Exceptions{exception.InvalidPoint(query[I][0], query[J][0])}
-				}
-				gfi.J = j
-			}
-		}
-	}
-
-	sld, err := buildStyledLayerDescriptor(layers, styles)
-	if err == nil {
-		gfi.StyledLayerDescriptor = sld
-	} else {
-		return ows.Exceptions{err}
-	}
-
-	// GetFeatureInfo optional parameters
-	for _, k := range getFeatureInfoOptionalParameters {
-		if len(query[k]) > 0 {
-			switch k {
-			case INFOFORMAT:
-				gfi.InfoFormat = &query[k][0]
-			case FEATURECOUNT:
-				i, err := strconv.Atoi(query[k][0])
-				if err != nil {
-					// TODO: ignore or a exception
-				}
-				gfi.FeatureCount = &i
-			case EXCEPTIONS:
-				gfi.Exceptions = &query[k][0]
-				// case TIME:
-				// No Time implementation (for now...)
-				// Time format in ccyy-mm-ddThh:mm:ss.sssZ but also need support for time ranges
-				// see: OGC 06-042 (WMS 1.3.0 spec)
-				// case ELEVATION:
-				// skip for now, same 'issue' as with the TIME
-			}
-		}
+	if err := gfi.ParseGetFeatureInfoKVP(gfikvp); err != nil {
+		return err
 	}
 
 	return nil

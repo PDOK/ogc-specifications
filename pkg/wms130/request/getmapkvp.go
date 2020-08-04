@@ -12,21 +12,25 @@ import (
 type GetMapKVP struct {
 	// Table 8 - The Parameters of a GetMap request
 	Service string `yaml:"service,omitempty"`
+	BaseRequestKVP
 	GetMapKVPMandatory
 	GetMapKVPOptional
 }
 
+// StyledLayer struct
+type StyledLayer struct {
+	Layers string `yaml:"layers,omitempty"`
+	Styles string `yaml:"styles,omitempty"`
+}
+
 // GetMapKVPMandatory struct containing the mandatory WMS request KVP
 type GetMapKVPMandatory struct {
-	Version string `yaml:"version,omitempty"`
-	Request string `yaml:"request,omitempty"`
-	Layers  string `yaml:"layers,omitempty"`
-	Styles  string `yaml:"styles,omitempty"`
-	CRS     string `yaml:"crs,omitempty"`
-	Bbox    string `yaml:"bbox,omitempty"`
-	Width   string `yaml:"width,omitempty"`
-	Height  string `yaml:"height,omitempty"`
-	Format  string `yaml:"format,omitempty"`
+	StyledLayer
+	CRS    string `yaml:"crs,omitempty"`
+	Bbox   string `yaml:"bbox,omitempty"`
+	Width  string `yaml:"width,omitempty"`
+	Height string `yaml:"height,omitempty"`
+	Format string `yaml:"format,omitempty"`
 }
 
 // GetMapKVPOptional struct containing the optional WMS request KVP
@@ -50,9 +54,9 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
 			case SERVICE:
 				gmkvp.Service = v[0]
 			case VERSION:
-				gmkvp.GetMapKVPMandatory.Version = v[0]
+				gmkvp.BaseRequestKVP.Version = v[0]
 			case REQUEST:
-				gmkvp.GetMapKVPMandatory.Request = v[0]
+				gmkvp.BaseRequestKVP.Request = v[0]
 			case LAYERS:
 				gmkvp.GetMapKVPMandatory.Layers = v[0]
 			case STYLES:
@@ -78,6 +82,10 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
 				gmkvp.GetMapKVPOptional.Exceptions = &vp
 			}
 		}
+	}
+
+	if len(exceptions) > 0 {
+		return exceptions
 	}
 
 	return nil
@@ -139,13 +147,13 @@ func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
 }
 
 // BuildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the KVP information
-func (gmkvp *GetMapKVP) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
+func (sl *StyledLayer) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
 	var layers, styles []string
-	if gmkvp.Layers != `` {
-		layers = strings.Split(gmkvp.Layers, ",")
+	if sl.Layers != `` {
+		layers = strings.Split(sl.Layers, ",")
 	}
-	if gmkvp.Styles != `` {
-		styles = strings.Split(gmkvp.Styles, ",")
+	if sl.Styles != `` {
+		styles = strings.Split(sl.Styles, ",")
 	}
 
 	sld, err := buildStyledLayerDescriptor(layers, styles)
