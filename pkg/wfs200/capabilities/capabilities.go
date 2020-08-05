@@ -47,7 +47,7 @@ type OperationsMetadata struct {
 type Constraint struct {
 	Text          string         `xml:",chardata"`
 	Name          string         `xml:"name,attr" yaml:"name"`
-	NoValues      *string        `xml:"ows:NoValues" yaml:"novalue"`
+	NoValues      *string        `xml:"ows:NoValues" yaml:"novalues"`
 	DefaultValue  *string        `xml:"ows:DefaultValue" yaml:"defaultvalue"`
 	AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedvalues"`
 }
