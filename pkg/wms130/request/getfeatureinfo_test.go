@@ -353,10 +353,10 @@ func compareGetFeatureInfoObject(result, expected GetFeatureInfo, t *testing.T, 
 	}
 	if len(expected.StyledLayerDescriptor.NamedLayer) == len(result.StyledLayerDescriptor.NamedLayer) {
 		c := false
-		for _, sldnl := range expected.StyledLayerDescriptor.NamedLayer {
+		for _, sldnamedlayer := range expected.StyledLayerDescriptor.NamedLayer {
 			for _, result := range result.StyledLayerDescriptor.NamedLayer {
-				if result.Name == sldnl.Name {
-					if *&result.NamedStyle.Name == *&sldnl.NamedStyle.Name {
+				if result.Name == sldnamedlayer.Name {
+					if *&result.NamedStyle.Name == *&sldnamedlayer.NamedStyle.Name {
 						c = true
 					}
 				}

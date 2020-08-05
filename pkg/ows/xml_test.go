@@ -30,9 +30,9 @@ func TestUnMarshalXMLAttribute(t *testing.T) {
 			t.Errorf("test: %d, expected: %s,\n got: %s", k, a.expected, xmlattr)
 		} else {
 			c := false
-			for _, exceptedattr := range a.expected {
+			for _, exceptedAttr := range a.expected {
 				for _, result := range xmlattr {
-					if exceptedattr == result {
+					if exceptedAttr == result {
 						c = true
 					}
 				}

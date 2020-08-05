@@ -65,7 +65,7 @@ func (b *BoundingBox) Build(boundingbox string) Exception {
 	return nil
 }
 
-// Keywords in struct for repeatablity
+// Keywords in struct for repeatability
 type Keywords struct {
 	Keyword []string `xml:"Keyword" yaml:"keyword"`
 }

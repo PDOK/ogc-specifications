@@ -66,9 +66,9 @@ func TestStripDuplicateAttr(t *testing.T) {
 			t.Errorf("test: %d, expected: %s,\n got: %s", k, a.expected, stripped)
 		} else {
 			c := false
-			for _, exceptedattr := range a.expected {
+			for _, exceptedAttr := range a.expected {
 				for _, result := range stripped {
-					if exceptedattr == result {
+					if exceptedAttr == result {
 						c = true
 					}
 				}
