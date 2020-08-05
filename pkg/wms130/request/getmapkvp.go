@@ -91,8 +91,8 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
 	return nil
 }
 
-// ParseGetMap builds a GetMapKVP object based on a GetMap struct
-func (gmkvp *GetMapKVP) ParseGetMap(gm *GetMap) ows.Exception {
+// ParseOperationsRequest builds a GetMapKVP object based on a GetMap struct
+func (gmkvp *GetMapKVP) ParseOperationsRequest(gm *GetMap) ows.Exceptions {
 	gmkvp.Request = getmap
 	gmkvp.Version = Version
 	gmkvp.Service = Service

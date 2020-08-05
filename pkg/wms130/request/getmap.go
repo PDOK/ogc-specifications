@@ -40,11 +40,13 @@ func (gm *GetMap) Type() string {
 }
 
 // Validate returns GetMap
-func (gm *GetMap) Validate(c capabilities.Capability) ows.Exceptions {
+func (gm *GetMap) Validate(c ows.Capability) ows.Exceptions {
 	var exceptions ows.Exceptions
 
-	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(c)...)
-	exceptions = append(exceptions, gm.Output.Validate(c)...)
+	getmapcap := c.(capabilities.Capability)
+
+	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(getmapcap)...)
+	exceptions = append(exceptions, gm.Output.Validate(getmapcap)...)
 
 	return exceptions
 }
@@ -120,12 +122,10 @@ func (gm *GetMap) ParseXML(body []byte) ows.Exceptions {
 // BuildKVP builds a new query string that will be proxied
 func (gm *GetMap) BuildKVP() url.Values {
 	gmkvp := GetMapKVP{}
-	gmkvp.ParseGetMap(gm)
+	gmkvp.ParseOperationsRequest(gm)
 
-	query := gmkvp.BuildKVP()
-	// query := map[string][]string{}
-
-	return query
+	kvp := gmkvp.BuildKVP()
+	return kvp
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document

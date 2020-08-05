@@ -2,6 +2,7 @@ package request
 
 import (
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
@@ -97,7 +98,10 @@ func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
 	query[BBOX] = []string{gfikvp.Bbox}
 	query[WIDTH] = []string{gfikvp.Width}
 	query[HEIGHT] = []string{gfikvp.Height}
-	query[FORMAT] = []string{gfikvp.Format}
+
+	if gfikvp.Format != `` {
+		query[FORMAT] = []string{gfikvp.Format}
+	}
 
 	query[QUERYLAYERS] = []string{gfikvp.QueryLayers}
 	query[INFOFORMAT] = []string{gfikvp.InfoFormat}
@@ -112,4 +116,33 @@ func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
 	}
 
 	return query
+}
+
+// ParseOperationsRequest builds a GetFeatureInfoKVP object based on a GetFeatureInfo struct
+func (gfikvp *GetFeatureInfoKVP) ParseOperationsRequest(gfi *GetFeatureInfo) ows.Exceptions {
+	gfikvp.Request = getfeatureinfo
+	gfikvp.Version = Version
+	gfikvp.Service = Service
+	gfikvp.Layers = gfi.StyledLayerDescriptor.getLayerKVPValue()
+	gfikvp.Styles = gfi.StyledLayerDescriptor.getStyleKVPValue()
+	gfikvp.CRS = gfi.CRS
+	gfikvp.Bbox = gfi.BoundingBox.BuildKVP()
+	gfikvp.Width = strconv.Itoa(gfi.Size.Width)
+	gfikvp.Height = strconv.Itoa(gfi.Size.Height)
+
+	gfikvp.QueryLayers = strings.Join(gfi.QueryLayers, ",")
+	gfikvp.InfoFormat = *gfi.InfoFormat
+	gfikvp.I = strconv.Itoa(gfi.I)
+	gfikvp.J = strconv.Itoa(gfi.J)
+
+	gfikvp.Format = gfi.Format
+
+	if gfi.FeatureCount != nil {
+		fcp := strconv.Itoa(*gfi.FeatureCount)
+		gfikvp.FeatureCount = &fcp
+	}
+
+	gfikvp.Exceptions = gfi.Exceptions
+
+	return nil
 }

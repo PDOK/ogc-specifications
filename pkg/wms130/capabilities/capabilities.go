@@ -3,12 +3,12 @@ package capabilities
 import "github.com/pdok/ogc-specifications/pkg/ows"
 
 // ParseXML func
-func (c *Capability) ParseXML(doc []byte) error {
+func (c Capability) ParseXML(doc []byte) error {
 	return nil
 }
 
-// ParseYML func
-func (c *Capability) ParseYML(doc []byte) error {
+// ParseYAMl func
+func (c Capability) ParseYAMl(doc []byte) error {
 	return nil
 }
 

@@ -26,12 +26,12 @@ const (
 	FEATURECOUNT = `FEATURE_COUNT`
 )
 
-var getFeatureInfoMandatoryParameters, getFeatureInfoOptionalParameters []string
+// var getFeatureInfoMandatoryParameters, getFeatureInfoOptionalParameters []string
 
-func init() {
-	getFeatureInfoMandatoryParameters = []string{LAYERS, STYLES, CRS, BBOX, WIDTH, HEIGHT, FORMAT, QUERYLAYERS, I, J}
-	getFeatureInfoOptionalParameters = []string{TRANSPARENT, BGCOLOR, EXCEPTIONS, INFOFORMAT, FEATURECOUNT}
-}
+// func init() {
+// 	getFeatureInfoMandatoryParameters = []string{LAYERS, STYLES, CRS, BBOX, WIDTH, HEIGHT, FORMAT, QUERYLAYERS, I, J}
+// 	getFeatureInfoOptionalParameters = []string{TRANSPARENT, BGCOLOR, EXCEPTIONS, INFOFORMAT, FEATURECOUNT}
+// }
 
 // Type returns GetFeatureInfo
 func (gfi *GetFeatureInfo) Type() string {
@@ -151,54 +151,11 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
 
 // BuildKVP builds a new query string that will be proxied
 func (gfi *GetFeatureInfo) BuildKVP() url.Values {
-	querystring := make(map[string][]string)
+	gfikvp := GetFeatureInfoKVP{}
+	gfikvp.ParseOperationsRequest(gfi)
 
-	// base
-	querystring[REQUEST] = []string{gfi.XMLName.Local}
-	querystring[SERVICE] = []string{gfi.BaseRequest.Service}
-	querystring[VERSION] = []string{gfi.BaseRequest.Version}
-
-	for _, k := range getFeatureInfoMandatoryParameters {
-		switch k {
-		case LAYERS:
-			querystring[LAYERS] = []string{gfi.StyledLayerDescriptor.getLayerKVPValue()}
-		case STYLES:
-			querystring[STYLES] = []string{gfi.StyledLayerDescriptor.getStyleKVPValue()}
-		case CRS:
-			querystring[CRS] = []string{gfi.CRS}
-		case BBOX:
-			querystring[BBOX] = []string{gfi.BoundingBox.BuildKVP()}
-		case WIDTH:
-			querystring[WIDTH] = []string{strconv.Itoa(gfi.Size.Width)}
-		case HEIGHT:
-			querystring[HEIGHT] = []string{strconv.Itoa(gfi.Size.Height)}
-		case QUERYLAYERS:
-			querystring[QUERYLAYERS] = []string{strings.Join(gfi.QueryLayers, ",")}
-		case I:
-			querystring[I] = []string{strconv.Itoa(gfi.I)}
-		case J:
-			querystring[J] = []string{strconv.Itoa(gfi.J)}
-		}
-	}
-
-	for _, k := range getFeatureInfoOptionalParameters {
-		switch k {
-		case INFOFORMAT:
-			if gfi.InfoFormat != nil {
-				querystring[INFOFORMAT] = []string{*gfi.InfoFormat}
-			}
-		case FEATURECOUNT:
-			if gfi.FeatureCount != nil {
-				querystring[FEATURECOUNT] = []string{strconv.Itoa(*gfi.FeatureCount)}
-			}
-		case EXCEPTIONS:
-			if gfi.Exceptions != nil {
-				querystring[EXCEPTIONS] = []string{*gfi.Exceptions}
-			}
-		}
-	}
-
-	return querystring
+	kvp := gfikvp.BuildKVP()
+	return kvp
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
@@ -219,16 +176,17 @@ type GetFeatureInfo struct {
 	// <map_request_copy>
 	// These are the 'minimum' required GetMap parameters
 	// needed in a GetFeatureInfo request
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"` //TODO layers is need styles is not!
 	CRS                   string                `xml:"CRS" yaml:"crs"`
 	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox"`
 	// We skip the Output struct, because these are not required parameters
-	Size Size `xml:"Size" yaml:"size"`
+	Size   Size   `xml:"Size" yaml:"size"`
+	Format string `xml:"Format,omitempty" yaml:"format,omitempty"`
 
 	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers"`
 	I            int      `xml:"I" yaml:"i"`
 	J            int      `xml:"J" yaml:"j"`
 	InfoFormat   *string  `xml:"InfoFormat" yaml:"infoformat"`
-	FeatureCount *int     `xml:"FeatureCount" yaml:"featurecount"`
+	FeatureCount *int     `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty"`
 	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`
 }
