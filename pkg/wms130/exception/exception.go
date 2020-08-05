@@ -126,7 +126,7 @@ func LayerNotQueryable(s ...string) WMSException {
 func InvalidPoint(i, j string) WMSException {
 	// TODO provide giving WIDTH and HEIGHT values in Exception response
 	return WMSException{
-		ExceptionText: fmt.Sprintf("The parameters I and J are invalid, given: %s, %s", i, j),
+		ExceptionText: fmt.Sprintf("The parameters I and J are invalid, given: %s for I and %s for J", i, j),
 		ExceptionCode: `InvalidPoint`,
 	}
 }

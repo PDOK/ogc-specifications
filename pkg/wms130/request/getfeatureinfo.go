@@ -99,7 +99,7 @@ func (gfi *GetFeatureInfo) ParseGetFeatureInfoKVP(gfikvp GetFeatureInfoKVP) ows.
 
 	h, err := strconv.Atoi(gfikvp.Height)
 	if err != nil {
-		return ows.Exceptions{ows.MissingParameterValue(WIDTH, gfikvp.Height)}
+		return ows.Exceptions{ows.MissingParameterValue(HEIGHT, gfikvp.Height)}
 	}
 	gfi.Size.Height = h
 

@@ -167,12 +167,12 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 
 func TestGetFeatureInfoParseKVP(t *testing.T) {
 	var tests = []struct {
-		Query    url.Values
-		Excepted GetFeatureInfo
-		Error    ows.Exception
+		Query      url.Values
+		Excepted   GetFeatureInfo
+		Exceptions ows.Exceptions
 	}{
-		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Error: ows.InvalidParameterValue("", `boundingbox`)},
-		1: {Query: url.Values{}, Error: ows.MissingParameterValue(VERSION)},
+		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: ows.Exceptions{ows.InvalidParameterValue("", `boundingbox`)}},
+		1: {Query: url.Values{}, Exceptions: ows.Exceptions{ows.MissingParameterValue(VERSION)}},
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:       {`Rivers,Roads,Houses`},
 			STYLES:       {`CenterLine,,Outline`},
@@ -212,20 +212,34 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 				InfoFormat:   sp(`application/json`),
 			},
 		},
-		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: ows.MissingParameterValue(WIDTH, `not a number`)},
-		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: ows.MissingParameterValue(HEIGHT, `not a number`)},
-		5: {Query: map[string][]string{I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: exception.InvalidPoint(`not a number`, `1`)},
-		6: {Query: map[string][]string{J: {`not a number`}, I: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Error: exception.InvalidPoint(`1`, `not a number`)},
+		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{ows.MissingParameterValue(WIDTH, `not a number`)}},
+		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{ows.MissingParameterValue(HEIGHT, `not a number`)}},
+		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{exception.InvalidPoint(`not a number`, `1`)}},
+		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{exception.InvalidPoint(`1`, `not a number`)}},
+		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{exception.InvalidPoint(`this in not a number`, `this is also not a number`)}},
 	}
-	for k, n := range tests {
+
+	for k, test := range tests {
 		var gfi GetFeatureInfo
-		err := gfi.ParseKVP(n.Query)
-		if err != nil {
-			if err[0].Error() != n.Error.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+		errs := gfi.ParseKVP(test.Query)
+		if errs != nil {
+			if len(errs) != len(test.Exceptions) {
+				t.Errorf("test: %d, expected: %d exceptions,\n got: %d exceptions", k, len(test.Exceptions), len(errs))
+			} else {
+				for _, exception := range errs {
+					found := false
+					for _, expectedeexception := range test.Exceptions {
+						if expectedeexception == exception {
+							found = true
+						}
+					}
+					if !found {
+						t.Errorf("test: %d, expected one of: %s,\n got: %s", k, test.Exceptions, exception)
+					}
+				}
 			}
 		} else {
-			compareGetFeatureInfoObject(gfi, n.Excepted, t, k)
+			compareGetFeatureInfoObject(gfi, test.Excepted, t, k)
 		}
 	}
 }
