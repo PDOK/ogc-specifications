@@ -39,7 +39,7 @@ go get github.com/pdok/ogc-specifications
 ```
 
 ```import
-import "github.com/pdok/ogc-specifications"
+import ows "github.com/pdok/ogc-specifications/pkg/ows"
 ```
 
 ## Test
