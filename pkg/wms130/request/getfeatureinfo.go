@@ -26,13 +26,6 @@ const (
 	FEATURECOUNT = `FEATURE_COUNT`
 )
 
-// var getFeatureInfoMandatoryParameters, getFeatureInfoOptionalParameters []string
-
-// func init() {
-// 	getFeatureInfoMandatoryParameters = []string{LAYERS, STYLES, CRS, BBOX, WIDTH, HEIGHT, FORMAT, QUERYLAYERS, I, J}
-// 	getFeatureInfoOptionalParameters = []string{TRANSPARENT, BGCOLOR, EXCEPTIONS, INFOFORMAT, FEATURECOUNT}
-// }
-
 // Type returns GetFeatureInfo
 func (gfi *GetFeatureInfo) Type() string {
 	return getfeatureinfo
