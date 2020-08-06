@@ -24,7 +24,7 @@ func (dft *DescribeFeatureType) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureType) Validate(c capabilities.Capability) ows.Exceptions {
+func (dft *DescribeFeatureType) Validate(c capabilities.Capabilities) ows.Exceptions {
 	return nil
 }
 

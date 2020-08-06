@@ -36,10 +36,10 @@ func (gfi *GetFeatureInfo) Type() string {
 }
 
 // Validate returns GetFeatureInfo
-func (gfi *GetFeatureInfo) Validate(c ows.Capability) ows.Exceptions {
+func (gfi *GetFeatureInfo) Validate(c ows.Capabilities) ows.Exceptions {
 	var exceptions ows.Exceptions
 
-	wmsCapabilities := c.(capabilities.Capability)
+	wmsCapabilities := c.(capabilities.Capabilities)
 
 	exceptions = append(exceptions, gfi.StyledLayerDescriptor.Validate(wmsCapabilities)...)
 	// exceptions = append(exceptions, gfi.Output.Validate(wmsCapabilities)...)

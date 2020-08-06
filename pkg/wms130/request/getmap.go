@@ -44,10 +44,10 @@ func (gm *GetMap) Type() string {
 }
 
 // Validate returns GetMap
-func (gm *GetMap) Validate(c ows.Capability) ows.Exceptions {
+func (gm *GetMap) Validate(c ows.Capabilities) ows.Exceptions {
 	var exceptions ows.Exceptions
 
-	wmsCapabilities := c.(capabilities.Capability)
+	wmsCapabilities := c.(capabilities.Capabilities)
 
 	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(wmsCapabilities)...)
 	exceptions = append(exceptions, gm.Output.Validate(wmsCapabilities)...)
@@ -246,7 +246,7 @@ type GetMap struct {
 }
 
 // Validate validates the output parameters
-func (output *Output) Validate(c capabilities.Capability) ows.Exceptions {
+func (output *Output) Validate(c capabilities.Capabilities) ows.Exceptions {
 	var exceptions ows.Exceptions
 	if output.Size.Width > c.MaxWidth {
 		exceptions = append(exceptions, ows.NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
@@ -292,7 +292,7 @@ type StyledLayerDescriptor struct {
 }
 
 // Validate the StyledLayerDescriptor
-func (sld *StyledLayerDescriptor) Validate(c capabilities.Capability) ows.Exceptions {
+func (sld *StyledLayerDescriptor) Validate(c capabilities.Capabilities) ows.Exceptions {
 	var unknownLayers []string
 	var unknownStyles []struct{ layer, style string }
 

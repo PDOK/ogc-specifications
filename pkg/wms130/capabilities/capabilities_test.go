@@ -8,7 +8,7 @@ func sp(s string) *string {
 	return &s
 }
 
-var capabilities = Capability{
+var capabilities = Capabilities{
 	WMSCapabilities: WMSCapabilities{
 		Layer: []Layer{
 			{Name: sp(`depthOneLayerOne`),

@@ -23,7 +23,7 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate(c capabilities.Capability) ows.Exceptions {
+func (gc *GetCapabilities) Validate(c capabilities.Capabilities) ows.Exceptions {
 	return nil
 }
 

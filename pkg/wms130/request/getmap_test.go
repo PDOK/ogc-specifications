@@ -68,12 +68,12 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 
 func TestValidateStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
-		capabilities capabilities.Capability
+		capabilities capabilities.Capabilities
 		sld          StyledLayerDescriptor
 		exceptions   ows.Exceptions
 	}{
 		0: {
-			capabilities: capabilities.Capability{
+			capabilities: capabilities.Capabilities{
 				WMSCapabilities: capabilities.WMSCapabilities{
 					Layer: []capabilities.Layer{
 						{Name: sp(`layer1`)},
@@ -84,7 +84,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 			sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: ``}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styleone`}}}},
 		},
 		1: {
-			capabilities: capabilities.Capability{
+			capabilities: capabilities.Capabilities{
 				WMSCapabilities: capabilities.WMSCapabilities{
 					Layer: []capabilities.Layer{
 						{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},

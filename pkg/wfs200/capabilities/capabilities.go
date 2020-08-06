@@ -7,17 +7,17 @@ import (
 )
 
 // ParseXML func
-func (c *Capability) ParseXML(doc []byte) error {
+func (c *Capabilities) ParseXML(doc []byte) error {
 	return nil
 }
 
 // ParseYAMl func
-func (c *Capability) ParseYAMl(doc []byte) error {
+func (c *Capabilities) ParseYAMl(doc []byte) error {
 	return nil
 }
 
-// Capability struct
-type Capability struct {
+// Capabilities struct
+type Capabilities struct {
 	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
 	FeatureTypeList    FeatureTypeList    `xml:"wfs:FeatureTypeList" yaml:"featuretypelist"`
 	FilterCapabilities FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filtercapabilities"`

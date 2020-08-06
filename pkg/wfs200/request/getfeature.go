@@ -48,9 +48,9 @@ func (gf *GetFeature) Type() string {
 }
 
 // Validate returns GetFeature
-func (gf *GetFeature) Validate(c ows.Capability) ows.Exceptions {
+func (gf *GetFeature) Validate(c ows.Capabilities) ows.Exceptions {
 
-	//getfeaturecap := c.(capabilities.Capability)
+	//getfeaturecap := c.(capabilities.Capabilities)
 	return nil
 }
 

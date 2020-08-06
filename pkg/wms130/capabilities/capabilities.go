@@ -3,17 +3,17 @@ package capabilities
 import "github.com/pdok/ogc-specifications/pkg/ows"
 
 // ParseXML func
-func (c Capability) ParseXML(doc []byte) error {
+func (c Capabilities) ParseXML(doc []byte) error {
 	return nil
 }
 
 // ParseYAMl func
-func (c Capability) ParseYAMl(doc []byte) error {
+func (c Capabilities) ParseYAMl(doc []byte) error {
 	return nil
 }
 
-// Capability struct needed for keeping all constraints and capabilities together
-type Capability struct {
+// Capabilities struct needed for keeping all constraints and capabilities together
+type Capabilities struct {
 	WMSCapabilities
 	OptionalConstraints
 }
@@ -69,7 +69,7 @@ type Layer struct {
 }
 
 // StyleDefined checks if the style that is defined is available for the requested layer
-func (c *Capability) StyleDefined(layername, stylename string) bool {
+func (c *Capabilities) StyleDefined(layername, stylename string) bool {
 	defined := false
 	for _, layer := range c.Layer {
 		defined = layer.styleDefined(layername, stylename)
@@ -108,7 +108,7 @@ func (l *Layer) styleDefined(layername, stylename string) bool {
 }
 
 // GetLayerNames returns the available layers as []string
-func (c *Capability) GetLayerNames() []string {
+func (c *Capabilities) GetLayerNames() []string {
 	var layers []string
 
 	for _, l := range c.Layer {

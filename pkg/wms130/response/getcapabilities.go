@@ -50,10 +50,10 @@ func (gc *GetCapabilities) BuildXML() []byte {
 
 // GetCapabilities base struct
 type GetCapabilities struct {
-	XMLName    xml.Name `xml:"WMS_Capabilities"`
-	Namespaces `yaml:"namespaces"`
-	WMSService WMSService              `xml:"Service" yaml:"service"`
-	Capability capabilities.Capability `xml:"Capability" yaml:"capability"`
+	XMLName      xml.Name `xml:"WMS_Capabilities"`
+	Namespaces   `yaml:"namespaces"`
+	WMSService   WMSService                `xml:"Service" yaml:"service"`
+	Capabilities capabilities.Capabilities `xml:"Capability" yaml:"capability"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
