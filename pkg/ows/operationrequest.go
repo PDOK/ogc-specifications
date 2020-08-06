@@ -11,6 +11,7 @@ type OperationRequest interface {
 	ParseKVP(url.Values) Exceptions
 	BuildXML() []byte
 	BuildKVP() url.Values
+	ParseOperationRequestKVP(OperationRequestKVP) Exceptions
 
 	// TODO YAML support
 	// ParseYAML([]byte) Exceptions

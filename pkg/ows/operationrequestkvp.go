@@ -5,11 +5,11 @@ import (
 )
 
 // OperationRequestKVP interface
+// This interface is a layer in front of a OperationRequest struct
+// to translate KVP to OperationRequest structs and generating
+// OperationRequestKVP struct from OperationRequests
 type OperationRequestKVP interface {
-	Type() string
-	Validate(Capability) Exceptions
-
 	ParseKVP(url.Values) Exceptions
-	ParseOperationsRequest(OperationRequest) Exceptions
+	ParseOperationRequest(OperationRequest) Exceptions
 	BuildKVP() url.Values
 }

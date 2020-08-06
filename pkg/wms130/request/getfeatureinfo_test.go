@@ -19,9 +19,9 @@ func TestGetFeatureInfoType(t *testing.T) {
 
 func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	var tests = []struct {
-		Object   GetFeatureInfo
-		Excepted url.Values
-		Error    ows.Exception
+		Object    GetFeatureInfo
+		Excepted  url.Values
+		Exception ows.Exception
 	}{
 		0: {Object: GetFeatureInfo{
 			XMLName: xml.Name{Local: `GetFeatureInfo`},
@@ -172,7 +172,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 		Exceptions ows.Exceptions
 	}{
 		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: ows.Exceptions{ows.InvalidParameterValue("", `boundingbox`)}},
-		1: {Query: url.Values{}, Exceptions: ows.Exceptions{ows.MissingParameterValue(VERSION)}},
+		1: {Query: url.Values{}, Exceptions: ows.Exceptions{ows.MissingParameterValue(VERSION), ows.MissingParameterValue(REQUEST)}},
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:       {`Rivers,Roads,Houses`},
 			STYLES:       {`CenterLine,,Outline`},

@@ -12,7 +12,7 @@ const (
 	Version string = `1.3.0`
 )
 
-// WMS 1.3.0 Tokens
+// WMS 1.3.0 Keys
 const (
 	SERVICE = `SERVICE`
 	REQUEST = `REQUEST`

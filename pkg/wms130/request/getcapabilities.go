@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
-	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 )
 
 //
@@ -21,8 +20,9 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate(c capabilities.Capability) ows.Exceptions {
-	return nil
+func (gc *GetCapabilities) Validate(c ows.Capability) ows.Exceptions {
+	var exceptions ows.Exceptions
+	return exceptions
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
@@ -50,29 +50,40 @@ func (gc *GetCapabilities) ParseXML(body []byte) ows.Exceptions {
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
 func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
-	for k, v := range query {
-		switch strings.ToUpper(k) {
-		case REQUEST:
-			if strings.ToUpper(v[0]) == strings.ToUpper(getcapabilities) {
-				gc.XMLName.Local = getcapabilities
-			}
-		case SERVICE:
-			gc.Service = strings.ToUpper(v[0])
-		case VERSION:
-			gc.Version = strings.ToUpper(v[0])
-		}
+	if len(query) == 0 {
+		// When there are no query value we know that at least
+		// the manadorty SERVICE and REQUEST parameter is missing.
+		return ows.Exceptions{ows.MissingParameterValue(SERVICE), ows.MissingParameterValue(REQUEST)}
 	}
+
+	gckvp := GetCapabilitiesKVP{}
+	if err := gckvp.ParseKVP(query); err != nil {
+		return err
+	}
+
+	if err := gc.ParseOperationRequestKVP(&gckvp); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ParseOperationRequestKVP process the simple struct to a complex struct
+func (gc *GetCapabilities) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Exceptions {
+	gckvp := orkvp.(*GetCapabilitiesKVP)
+
+	gc.XMLName.Local = gckvp.Request
+	gc.BaseRequest.Build(gckvp.Service, gckvp.Version)
 	return nil
 }
 
 // BuildKVP builds a new query string that will be proxied
 func (gc *GetCapabilities) BuildKVP() url.Values {
-	querystring := make(map[string][]string)
-	querystring[REQUEST] = []string{gc.XMLName.Local}
-	querystring[SERVICE] = []string{gc.Service}
-	querystring[VERSION] = []string{gc.Version}
+	gckvp := GetCapabilitiesKVP{}
+	gckvp.ParseOperationRequest(gc)
 
-	return querystring
+	kvp := gckvp.BuildKVP()
+	return kvp
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
@@ -84,8 +95,6 @@ func (gc *GetCapabilities) BuildXML() []byte {
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilities struct {
-	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string           `xml:"service,attr" yaml:"service"`
-	Version string           `xml:"version,attr" yaml:"version"`
-	Attr    ows.XMLAttribute `xml:",attr"`
+	XMLName xml.Name `xml:"GetCapabilities" yaml:"getcapabilities"`
+	BaseRequest
 }

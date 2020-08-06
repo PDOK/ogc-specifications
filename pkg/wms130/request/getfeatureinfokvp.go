@@ -39,9 +39,9 @@ func (gfikvp *GetFeatureInfoKVP) ParseKVP(query url.Values) ows.Exceptions {
 		if len(v) != 1 {
 			exceptions = append(exceptions, ows.InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
-			switch k {
+			switch strings.ToUpper(k) {
 			case SERVICE:
-				gfikvp.Service = v[0]
+				gfikvp.Service = strings.ToUpper(v[0])
 			case VERSION:
 				gfikvp.BaseRequestKVP.Version = v[0]
 			case REQUEST:
@@ -118,8 +118,10 @@ func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
 	return query
 }
 
-// ParseOperationsRequest builds a GetFeatureInfoKVP object based on a GetFeatureInfo struct
-func (gfikvp *GetFeatureInfoKVP) ParseOperationsRequest(gfi *GetFeatureInfo) ows.Exceptions {
+// ParseOperationRequest builds a GetFeatureInfoKVP object based on a GetFeatureInfo struct
+func (gfikvp *GetFeatureInfoKVP) ParseOperationRequest(or ows.OperationRequest) ows.Exceptions {
+	gfi := or.(*GetFeatureInfo)
+
 	gfikvp.Request = getfeatureinfo
 	gfikvp.Version = Version
 	gfikvp.Service = Service

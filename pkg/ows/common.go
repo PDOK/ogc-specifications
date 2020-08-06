@@ -35,8 +35,8 @@ func (b *BoundingBox) BuildKVP() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
-//Build builds a BoundingBox
-func (b *BoundingBox) Build(boundingbox string) Exception {
+//ParseString builds a BoundingBox based on a string
+func (b *BoundingBox) ParseString(boundingbox string) Exception {
 	result := strings.Split(boundingbox, ",")
 	var lx, ly, ux, uy float64
 	var err error

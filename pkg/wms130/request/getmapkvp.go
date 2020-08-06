@@ -50,9 +50,9 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
 		if len(v) != 1 {
 			exceptions = append(exceptions, ows.InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
-			switch k {
+			switch strings.ToUpper(k) {
 			case SERVICE:
-				gmkvp.Service = v[0]
+				gmkvp.Service = strings.ToUpper(v[0])
 			case VERSION:
 				gmkvp.BaseRequestKVP.Version = v[0]
 			case REQUEST:
@@ -91,8 +91,10 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
 	return nil
 }
 
-// ParseOperationsRequest builds a GetMapKVP object based on a GetMap struct
-func (gmkvp *GetMapKVP) ParseOperationsRequest(gm *GetMap) ows.Exceptions {
+// ParseOperationRequest builds a GetMapKVP object based on a GetMap struct
+func (gmkvp *GetMapKVP) ParseOperationRequest(or ows.OperationRequest) ows.Exceptions {
+	gm := or.(*GetMap)
+
 	gmkvp.Request = getmap
 	gmkvp.Version = Version
 	gmkvp.Service = Service

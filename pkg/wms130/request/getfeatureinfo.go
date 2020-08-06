@@ -12,16 +12,20 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
-//
+// GetFeatureInfo
 const (
 	getfeatureinfo = `GetFeatureInfo`
+)
 
-	// Mandatory
+// Mandatory GetFeatureInfo Keys
+const (
 	QUERYLAYERS = `QUERY_LAYERS`
 	I           = `I`
 	J           = `J`
+)
 
-	// Optional
+// Optional GetFeatureInfo Keys
+const (
 	INFOFORMAT   = `INFO_FORMAT`
 	FEATURECOUNT = `FEATURE_COUNT`
 )
@@ -69,10 +73,11 @@ func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exceptions {
 	return nil
 }
 
-// ParseGetFeatureInfoKVP process the simple struct to a complex struct
-func (gfi *GetFeatureInfo) ParseGetFeatureInfoKVP(gfikvp GetFeatureInfoKVP) ows.Exceptions {
+// ParseOperationRequestKVP process the simple struct to a complex struct
+func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Exceptions {
+	gfikvp := orkvp.(*GetFeatureInfoKVP)
 
-	// Base
+	gfi.XMLName.Local = getfeatureinfo
 	gfi.BaseRequest.Build(gfikvp.Service, gfikvp.Version)
 
 	sld, ex := gfikvp.BuildStyledLayerDescriptor()
@@ -84,7 +89,7 @@ func (gfi *GetFeatureInfo) ParseGetFeatureInfoKVP(gfikvp GetFeatureInfoKVP) ows.
 	gfi.CRS = gfikvp.CRS
 
 	var bbox ows.BoundingBox
-	if err := bbox.Build(gfikvp.Bbox); err != nil {
+	if err := bbox.ParseString(gfikvp.Bbox); err != nil {
 		return ows.Exceptions{err}
 	}
 	gfi.BoundingBox = bbox
@@ -133,8 +138,8 @@ func (gfi *GetFeatureInfo) ParseGetFeatureInfoKVP(gfikvp GetFeatureInfoKVP) ows.
 func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
-		// the manadorty VERSION parameter is missing.
-		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
+		// the manadorty VERSION and REQUEST parameter is missing.
+		return ows.Exceptions{ows.MissingParameterValue(VERSION), ows.MissingParameterValue(REQUEST)}
 	}
 
 	gfikvp := GetFeatureInfoKVP{}
@@ -142,7 +147,7 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
 		return err
 	}
 
-	if err := gfi.ParseGetFeatureInfoKVP(gfikvp); err != nil {
+	if err := gfi.ParseOperationRequestKVP(&gfikvp); err != nil {
 		return err
 	}
 
@@ -152,7 +157,7 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
 // BuildKVP builds a new query string that will be proxied
 func (gfi *GetFeatureInfo) BuildKVP() url.Values {
 	gfikvp := GetFeatureInfoKVP{}
-	gfikvp.ParseOperationsRequest(gfi)
+	gfikvp.ParseOperationRequest(gfi)
 
 	kvp := gfikvp.BuildKVP()
 	return kvp

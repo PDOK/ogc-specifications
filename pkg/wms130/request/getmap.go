@@ -11,11 +11,13 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
-//
+// GetMap
 const (
 	getmap = `GetMap`
+)
 
-	// Mandatory
+// Mandatory GetMap Keys
+const (
 	LAYERS = `LAYERS`
 	STYLES = `STYLES`
 	CRS    = `CRS`
@@ -23,8 +25,10 @@ const (
 	WIDTH  = `WIDTH`
 	HEIGHT = `HEIGHT`
 	FORMAT = `FORMAT`
+)
 
-	//Optional
+// Optional GetMap Keys
+const (
 	TRANSPARENT = `TRANSPARENT`
 	BGCOLOR     = `BGCOLOR`
 	EXCEPTIONS  = `EXCEPTIONS` // defaults to XML
@@ -62,36 +66,32 @@ func CheckCRS(crs string, definedCrs []string) ows.Exception {
 	return exception.InvalidCRS(crs)
 }
 
-// ParseGetMapKVP process the simple struct to a complex struct
-func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
+// ParseOperationRequestKVP process the simple struct to a complex struct
+func (gm *GetMap) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Exceptions {
+	gmkvp := orkvp.(*GetMapKVP)
+
+	gm.XMLName.Local = getmap
 	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
 
 	sld, err := gmkvp.BuildStyledLayerDescriptor()
 	if err != nil {
-		return err
+		return ows.Exceptions{err}
 	}
 	gm.StyledLayerDescriptor = sld
-
-	// if !strings.Contains(gmkvp.CRS, `EPSG`) {
-	// 	return exception.InvalidCRS(gmkvp.CRS)
-	// }
-
-	// regex := regexp.MustCompile(`[0-9]+`)
-	// code := regex.FindString((gmkvp.CRS))
 
 	var crs ows.CRS
 	crs.ParseString(gmkvp.CRS)
 	gm.CRS = crs
 
 	var bbox ows.BoundingBox
-	if err := bbox.Build(gmkvp.Bbox); err != nil {
-		return err
+	if err := bbox.ParseString(gmkvp.Bbox); err != nil {
+		return ows.Exceptions{err}
 	}
 	gm.BoundingBox = bbox
 
 	output, err := gmkvp.BuildOutput()
 	if err != nil {
-		return err
+		return ows.Exceptions{err}
 	}
 	gm.Output = output
 
@@ -104,8 +104,8 @@ func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
 func (gm *GetMap) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
-		// the manadorty VERSION parameter is missing.
-		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
+		// the manadorty VERSION and REQUEST parameter is missing.
+		return ows.Exceptions{ows.MissingParameterValue(VERSION), ows.MissingParameterValue(REQUEST)}
 	}
 
 	gmkvp := GetMapKVP{}
@@ -113,8 +113,8 @@ func (gm *GetMap) ParseKVP(query url.Values) ows.Exceptions {
 		return err
 	}
 
-	if err := gm.ParseGetMapKVP(gmkvp); err != nil {
-		return ows.Exceptions{err}
+	if err := gm.ParseOperationRequestKVP(&gmkvp); err != nil {
+		return err
 	}
 
 	return nil
@@ -142,7 +142,7 @@ func (gm *GetMap) ParseXML(body []byte) ows.Exceptions {
 // BuildKVP builds a new query string that will be proxied
 func (gm *GetMap) BuildKVP() url.Values {
 	gmkvp := GetMapKVP{}
-	gmkvp.ParseOperationsRequest(gm)
+	gmkvp.ParseOperationRequest(gm)
 
 	kvp := gmkvp.BuildKVP()
 	return kvp
@@ -242,7 +242,7 @@ type GetMap struct {
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
 	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
-	// Time                  *string               `xml:"Time" yaml:"time"`
+	// Time                  *string               `xml:"Time" yaml:"time"`BuildKVP
 }
 
 // Validate validates the output parameters

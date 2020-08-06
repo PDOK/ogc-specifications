@@ -38,7 +38,7 @@ func TestBuildBoundingBox(t *testing.T) {
 
 	for k, test := range tests {
 		var bbox BoundingBox
-		if err := bbox.Build(test.boundingbox); err != nil {
+		if err := bbox.ParseString(test.boundingbox); err != nil {
 			if err != test.Exception {
 				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.Exception, err)
 			}
