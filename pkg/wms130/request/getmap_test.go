@@ -179,7 +179,7 @@ func TestGetMapParseXML(t *testing.T) {
 						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
-				CRS: "EPSG:4326",
+				CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
 				BoundingBox: ows.BoundingBox{
 					Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 					LowerCorner: [2]float64{-180.0, -90.0},
@@ -275,7 +275,7 @@ func TestGetMapParseKVP(t *testing.T) {
 		Excepted  GetMap
 		Exception ows.Exception
 	}{
-		0: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version}},
+		0: {Query: map[string][]string{REQUEST: {getmap}, CRS: {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
 			Exception: ows.InvalidParameterValue(``, `boundingbox`),
 		},
 		1: {Query: url.Values{},
@@ -303,7 +303,7 @@ func TestGetMapParseKVP(t *testing.T) {
 						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
-				CRS: "EPSG:4326",
+				CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
 				BoundingBox: ows.BoundingBox{
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
@@ -347,7 +347,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 					{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
-			CRS: "EPSG:4326",
+			CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
 			BoundingBox: ows.BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
@@ -372,7 +372,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			SERVICE:     {`WMS`},
 		}},
 		1: {Object: GetMap{
-			CRS: "EPSG:4326",
+			CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
 			BoundingBox: ows.BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
@@ -534,7 +534,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: "EPSG:4326",
+		CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
 		BoundingBox: ows.BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
@@ -572,7 +572,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: "EPSG:4326",
+		CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
 		BoundingBox: ows.BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},

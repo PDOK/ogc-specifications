@@ -43,12 +43,23 @@ func (gm *GetMap) Type() string {
 func (gm *GetMap) Validate(c ows.Capability) ows.Exceptions {
 	var exceptions ows.Exceptions
 
-	getmapcap := c.(capabilities.Capability)
+	wmsCapabilities := c.(capabilities.Capability)
 
-	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(getmapcap)...)
-	exceptions = append(exceptions, gm.Output.Validate(getmapcap)...)
+	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(wmsCapabilities)...)
+	exceptions = append(exceptions, gm.Output.Validate(wmsCapabilities)...)
 
 	return exceptions
+}
+
+// CheckCRS against a given list of CRS
+func CheckCRS(crs string, definedCrs []string) ows.Exception {
+	for _, defined := range definedCrs {
+		if defined == crs {
+			return nil
+		}
+	}
+
+	return exception.InvalidCRS(crs)
 }
 
 // ParseGetMapKVP process the simple struct to a complex struct
@@ -61,7 +72,16 @@ func (gm *GetMap) ParseGetMapKVP(gmkvp GetMapKVP) ows.Exception {
 	}
 	gm.StyledLayerDescriptor = sld
 
-	gm.CRS = gmkvp.CRS
+	// if !strings.Contains(gmkvp.CRS, `EPSG`) {
+	// 	return exception.InvalidCRS(gmkvp.CRS)
+	// }
+
+	// regex := regexp.MustCompile(`[0-9]+`)
+	// code := regex.FindString((gmkvp.CRS))
+
+	var crs ows.CRS
+	crs.ParseString(gmkvp.CRS)
+	gm.CRS = crs
 
 	var bbox ows.BoundingBox
 	if err := bbox.Build(gmkvp.Bbox); err != nil {
@@ -216,7 +236,7 @@ type GetMap struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
 	BaseRequest
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
-	CRS                   string                `xml:"CRS" yaml:"crs"`
+	CRS                   ows.CRS               `xml:"CRS" yaml:"crs"`
 	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox"`
 	Output                Output                `xml:"Output" yaml:"output"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`

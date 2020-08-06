@@ -32,8 +32,15 @@ func (gfi *GetFeatureInfo) Type() string {
 }
 
 // Validate returns GetFeatureInfo
-func (gfi *GetFeatureInfo) Validate(c capabilities.Capability) ows.Exceptions {
-	return nil
+func (gfi *GetFeatureInfo) Validate(c ows.Capability) ows.Exceptions {
+	var exceptions ows.Exceptions
+
+	wmsCapabilities := c.(capabilities.Capability)
+
+	exceptions = append(exceptions, gfi.StyledLayerDescriptor.Validate(wmsCapabilities)...)
+	// exceptions = append(exceptions, gfi.Output.Validate(wmsCapabilities)...)
+
+	return exceptions
 }
 
 // ParseXML builds a GetFeatureInfo object based on a XML document
