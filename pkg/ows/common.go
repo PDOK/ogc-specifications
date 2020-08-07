@@ -92,17 +92,17 @@ func StripDuplicateAttr(attr []xml.Attr) []xml.Attr {
 // CRS struct with namespace/authority/registry and code
 type CRS struct {
 	Namespace string //TODO maybe AuthorityType is a better name...?
-	Code      string
+	Code      int
 }
 
 // String of the EPSGCode
 func (c *CRS) String() string {
-	return c.Namespace + `:` + c.Code
+	return c.Namespace + `:` + strconv.Itoa(c.Code)
 }
 
 // Identifier returns the EPSG
 func (c *CRS) Identifier() string {
-	return codeSpace + c.Code
+	return codeSpace + strconv.Itoa(c.Code)
 }
 
 // ParseString build CRS struct from input string
@@ -115,6 +115,9 @@ func (c *CRS) parseString(s string) {
 	code := regex.FindStringSubmatch(s)
 	if len(code) == 3 { // code[0] is the full match, the other the parts
 		c.Namespace = code[1]
-		c.Code = code[2]
+
+		// the regex already checks if it [0-9]
+		i, _ := strconv.Atoi(code[2])
+		c.Code = i
 	}
 }

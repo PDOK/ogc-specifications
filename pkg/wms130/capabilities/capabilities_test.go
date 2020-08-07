@@ -2,6 +2,9 @@ package capabilities
 
 import (
 	"testing"
+
+	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 func sp(s string) *string {
@@ -61,6 +64,32 @@ func TestStyleDefined(t *testing.T) {
 		d := capabilities.StyleDefined(test.layer, test.style)
 		if test.defined != d {
 			t.Errorf("test: %d, expected: %t \ngot: %t", k, test.defined, d)
+		}
+	}
+}
+
+func TestGetLayer(t *testing.T) {
+	var tests = []struct {
+		layername string
+		exception ows.Exception
+	}{
+		0: {layername: `depthTwoLayerThree`},
+		1: {layername: `depthThreeLayerSeven`},
+		2: {layername: `unknownLayer`, exception: exception.LayerNotDefined(`unknownLayer`)},
+	}
+
+	for k, test := range tests {
+		layerfound, exception := capabilities.GetLayer(test.layername)
+		if exception != nil {
+			if test.exception != nil {
+				if test.exception.Code() != exception.Code() {
+					t.Errorf("test: %d, expected: %s \ngot: %v", k, test.layername, capabilities.GetLayerNames())
+				}
+			}
+		} else {
+			if *layerfound.Name != test.layername {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, capabilities.GetLayerNames(), *layerfound.Name)
+			}
 		}
 	}
 }

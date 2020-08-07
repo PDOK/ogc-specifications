@@ -67,8 +67,8 @@ func (p *Position) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 // MarshalXML Position
 func (c *CRS) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	var s = ``
-	if c.Namespace != `` && c.Code != `` {
-		s = fmt.Sprintf("%s:%s", c.Namespace, c.Code)
+	if c.Namespace != `` {
+		s = fmt.Sprintf("%s:%d", c.Namespace, c.Code)
 	}
 
 	return e.EncodeElement(s, start)

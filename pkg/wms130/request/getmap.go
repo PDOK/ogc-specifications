@@ -52,18 +52,25 @@ func (gm *GetMap) Validate(c ows.Capabilities) ows.Exceptions {
 	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(wmsCapabilities)...)
 	exceptions = append(exceptions, gm.Output.Validate(wmsCapabilities)...)
 
+	for _, sld := range gm.StyledLayerDescriptor.NamedLayer {
+		layer, exception := wmsCapabilities.GetLayer(sld.Name)
+		if exception != nil {
+			exceptions = append(exceptions, exception)
+		}
+		exceptions = append(exceptions, checkCRS(gm.CRS, layer.CRS))
+	}
+
 	return exceptions
 }
 
-// CheckCRS against a given list of CRS
-func CheckCRS(crs string, definedCrs []string) ows.Exception {
+// checkCRS against a given list of CRS
+func checkCRS(crs ows.CRS, definedCrs []ows.CRS) ows.Exception {
 	for _, defined := range definedCrs {
 		if defined == crs {
 			return nil
 		}
 	}
-
-	return exception.InvalidCRS(crs)
+	return exception.InvalidCRS(crs.String())
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
@@ -73,7 +80,7 @@ func (gm *GetMap) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Ex
 	gm.XMLName.Local = getmap
 	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
 
-	sld, err := gmkvp.BuildStyledLayerDescriptor()
+	sld, err := gmkvp.buildStyledLayerDescriptor()
 	if err != nil {
 		return ows.Exceptions{err}
 	}
@@ -89,7 +96,7 @@ func (gm *GetMap) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Ex
 	}
 	gm.BoundingBox = bbox
 
-	output, err := gmkvp.BuildOutput()
+	output, err := gmkvp.buildOutput()
 	if err != nil {
 		return ows.Exceptions{err}
 	}
@@ -197,25 +204,24 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 // TODO maybe 'merge' both func in a single one with 2 outputs
 // so their are 'in sync' ...?
 func (sld *StyledLayerDescriptor) getLayerKVPValue() string {
-	return strings.Join(sld.GetNamedLayers(), ",")
+	return strings.Join(sld.getNamedLayers(), ",")
 }
 
 func (sld *StyledLayerDescriptor) getStyleKVPValue() string {
-	return strings.Join(sld.GetNamedStyles(), ",")
+	return strings.Join(sld.getNamedStyles(), ",")
 }
 
 // GetNamedLayers return an array of the Layer names
-func (sld *StyledLayerDescriptor) GetNamedLayers() []string {
+func (sld *StyledLayerDescriptor) getNamedLayers() []string {
 	layers := []string{}
 	for _, l := range sld.NamedLayer {
 		layers = append(layers, l.Name)
 	}
-
 	return layers
 }
 
 // GetNamedStyles return an array of the Layer names
-func (sld *StyledLayerDescriptor) GetNamedStyles() []string {
+func (sld *StyledLayerDescriptor) getNamedStyles() []string {
 	styles := []string{}
 	for _, l := range sld.NamedLayer {
 		if l.Name != "" {
@@ -226,7 +232,6 @@ func (sld *StyledLayerDescriptor) GetNamedStyles() []string {
 			}
 		}
 	}
-
 	return styles
 }
 

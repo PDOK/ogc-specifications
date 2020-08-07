@@ -126,7 +126,7 @@ func (gmkvp *GetMapKVP) ParseOperationRequest(or ows.OperationRequest) ows.Excep
 }
 
 // BuildOutput builds a Output struct from the KVP information
-func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
+func (gmkvp *GetMapKVP) buildOutput() (Output, ows.Exception) {
 	output := Output{}
 
 	h, err := strconv.Atoi(gmkvp.Height)
@@ -149,7 +149,7 @@ func (gmkvp *GetMapKVP) BuildOutput() (Output, ows.Exception) {
 }
 
 // BuildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the KVP information
-func (sl *StyledLayer) BuildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
+func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
 	var layers, styles []string
 	if sl.Layers != `` {
 		layers = strings.Split(sl.Layers, ",")

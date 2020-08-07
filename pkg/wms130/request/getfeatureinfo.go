@@ -80,7 +80,7 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp ows.OperationRequestKV
 	gfi.XMLName.Local = getfeatureinfo
 	gfi.BaseRequest.Build(gfikvp.Service, gfikvp.Version)
 
-	sld, ex := gfikvp.BuildStyledLayerDescriptor()
+	sld, ex := gfikvp.buildStyledLayerDescriptor()
 	if ex != nil {
 		return ows.Exceptions{ex}
 	}

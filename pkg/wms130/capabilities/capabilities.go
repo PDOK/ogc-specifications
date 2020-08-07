@@ -1,14 +1,29 @@
 package capabilities
 
-import "github.com/pdok/ogc-specifications/pkg/ows"
+import (
+	"encoding/xml"
+	"log"
+
+	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
+	"gopkg.in/yaml.v2"
+)
 
 // ParseXML func
 func (c Capabilities) ParseXML(doc []byte) error {
+	if err := xml.Unmarshal(doc, &c); err != nil {
+		log.Fatalf("error: %v", err)
+		return err
+	}
 	return nil
 }
 
 // ParseYAMl func
 func (c Capabilities) ParseYAMl(doc []byte) error {
+	if err := yaml.Unmarshal(doc, &c); err != nil {
+		log.Fatalf("error: %v", err)
+		return err
+	}
 	return nil
 }
 
@@ -58,7 +73,7 @@ type Layer struct {
 	Title                   string                   `xml:"Title" yaml:"title"`
 	Abstract                string                   `xml:"Abstract" yaml:"abstract"`
 	KeywordList             *ows.Keywords            `xml:"KeywordList" yaml:"keywordlist"`
-	CRS                     []*string                `xml:"CRS" yaml:"crs"`
+	CRS                     []ows.CRS                `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
 	BoundingBox             []*BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
 	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
@@ -137,6 +152,57 @@ func (l *Layer) getLayerNames() []string {
 	}
 
 	return layers
+}
+
+func (l *Layer) findLayer(layername string) *Layer {
+	if *l.Name == layername {
+		return l
+	}
+	if l.Layer != nil {
+		for _, n := range l.Layer {
+			u := n.findLayer(layername)
+			if u != nil {
+				if *u.Name == layername {
+					return u
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// GetLayer returns the Layer Capabilities from the Capabilities document.
+// when the requested Layer is not found a exception is thrown.
+func (c *Capabilities) GetLayer(layername string) (Layer, ows.Exception) {
+	var layer Layer
+
+	found := false
+	for _, l := range c.GetLayerNames() {
+		if l == layername {
+			found = true
+		}
+	}
+
+	if !found {
+		return layer, exception.LayerNotDefined(layername)
+	}
+
+	for _, l := range c.Layer {
+		if *l.Name == layername {
+			layer = l
+			break
+		}
+		if l.Layer != nil {
+			for _, n := range l.Layer {
+				u := n.findLayer(layername)
+				if u != nil {
+					return *u, nil
+				}
+			}
+		}
+	}
+
+	return layer, nil
 }
 
 // RequestType containing the formats and DCPTypes available

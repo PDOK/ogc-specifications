@@ -179,7 +179,7 @@ func TestGetMapParseXML(t *testing.T) {
 						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
-				CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
+				CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
 				BoundingBox: ows.BoundingBox{
 					Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 					LowerCorner: [2]float64{-180.0, -90.0},
@@ -303,7 +303,7 @@ func TestGetMapParseKVP(t *testing.T) {
 						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
-				CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
+				CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
 				BoundingBox: ows.BoundingBox{
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
@@ -347,7 +347,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 					{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
-			CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
+			CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
 			BoundingBox: ows.BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
@@ -372,7 +372,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			SERVICE:     {`WMS`},
 		}},
 		1: {Object: GetMap{
-			CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
+			CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
 			BoundingBox: ows.BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
@@ -449,6 +449,63 @@ func TestGetMapBuildXML(t *testing.T) {
 
 }
 
+func TestGetNamedStyles(t *testing.T) {
+	var tests = []struct {
+		sld    StyledLayerDescriptor
+		styles []string
+	}{
+		0: {sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: "style1"}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: "style2"}}}},
+			styles: []string{"style1", "style2"}},
+		1: {sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}},
+			styles: []string{"", ""}},
+		2: {sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: "style1"}}, {Name: "layer2"}, {Name: "layer3", NamedStyle: &NamedStyle{Name: "style3"}}}},
+			styles: []string{"style1", "", "style3"}},
+	}
+
+	for k, test := range tests {
+		styleslist := test.sld.getNamedStyles()
+		if len(styleslist) != len(test.styles) {
+			t.Errorf("test: %d, Expected %s but was not \n got: %s", k, test.styles, styleslist)
+		} else {
+			for _, style := range styleslist {
+				found := false
+				for _, expected := range test.styles {
+					if expected == style {
+						found = true
+					}
+				}
+				if !found {
+					t.Errorf("test: %d, Expected %s but was not \n got: %s", k, test.styles, style)
+				}
+			}
+		}
+	}
+}
+
+func TestCheckCRS(t *testing.T) {
+	definedCrs := []ows.CRS{{Namespace: `CRS`, Code: 84}, {Namespace: `EPSG`, Code: 4326}, {Namespace: `EPSG`, Code: 3857}}
+	var tests = []struct {
+		crs       ows.CRS
+		exception ows.Exception
+	}{
+		0: {crs: ows.CRS{Namespace: `CRS`, Code: 84}},
+		1: {crs: ows.CRS{Namespace: `UNKNOWN`}, exception: exception.InvalidCRS(`UNKNOWN`)},
+	}
+
+	for k, test := range tests {
+		exception := checkCRS(test.crs, definedCrs)
+		if exception != nil {
+			if test.exception != nil {
+				if exception.Code() != test.exception.Code() {
+					t.Errorf("test: %d, Expected one of %s but was not \n got: %s", k, test.exception.Code(), exception.Code())
+				}
+			} else {
+				t.Errorf("test: %d, Expected one of %v but was not \n got: %s", k, definedCrs, test.crs.String())
+			}
+		}
+	}
+}
+
 func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)
@@ -510,6 +567,59 @@ func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
 }
 
 // ----------
+// Validation
+// ----------
+
+func TestGetMapValidate(t *testing.T) {
+	capabilities := capabilities.Capabilities{}
+
+	var tests = []struct {
+		gm         GetMap
+		exceptions ows.Exceptions
+	}{
+		0: {gm: GetMap{
+			BaseRequest: BaseRequest{
+				Version: "1.3.0",
+				Attr: ows.XMLAttribute{
+					xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
+					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
+					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
+					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
+					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
+					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
+					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
+					xml.Attr{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/sld GetMap.xsd"},
+				}},
+			StyledLayerDescriptor: StyledLayerDescriptor{
+				Version: "1.1.0",
+				NamedLayer: []NamedLayer{
+					{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+					{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+				}},
+			CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
+			BoundingBox: ows.BoundingBox{
+				Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
+				LowerCorner: [2]float64{-180.0, -90.0},
+				UpperCorner: [2]float64{180.0, 90.0},
+			},
+			Output: Output{
+				Size:        Size{Width: 1024, Height: 512},
+				Format:      "image/jpeg",
+				Transparent: bp(false)},
+			Exceptions: sp("XML"),
+		}},
+	}
+
+	for k, test := range tests {
+		exceptions := test.gm.Validate(capabilities)
+		if exceptions != nil {
+			t.Errorf("test CRS: %d, expected: %v+ ,\n got: %v+", k, exceptions, test.exceptions)
+		}
+	}
+}
+
+// ----------
 // Benchmarks
 // ----------
 
@@ -534,7 +644,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
+		CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
 		BoundingBox: ows.BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
@@ -572,7 +682,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: ows.CRS{Namespace: "EPSG", Code: "4326"},
+		CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
 		BoundingBox: ows.BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
@@ -651,5 +761,46 @@ func BenchmarkGetMapParseXML(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		gm := GetMap{}
 		gm.ParseXML(doc)
+	}
+}
+
+func BenchmarkGetMapValidate(b *testing.B) {
+	capabilities := capabilities.Capabilities{}
+
+	gm := GetMap{
+		BaseRequest: BaseRequest{
+			Version: "1.3.0",
+			Attr: ows.XMLAttribute{
+				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
+				xml.Attr{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/sld GetMap.xsd"},
+			}},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			Version: "1.1.0",
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
+		BoundingBox: ows.BoundingBox{
+			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Output: Output{
+			Size:        Size{Width: 1024, Height: 512},
+			Format:      "image/jpeg",
+			Transparent: bp(false)},
+		Exceptions: sp("XML"),
+	}
+
+	for i := 0; i < b.N; i++ {
+		gm.Validate(capabilities)
 	}
 }
