@@ -571,7 +571,58 @@ func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
 // ----------
 
 func TestGetMapValidate(t *testing.T) {
-	capabilities := capabilities.Capabilities{}
+	capabilities := capabilities.Capabilities{
+		WMSCapabilities: capabilities.WMSCapabilities{
+			Request: capabilities.Request{
+				GetMap: capabilities.RequestType{
+					Format:  []string{`image/jpeg`},
+					DCPType: capabilities.DCPType{},
+				},
+			},
+			Layer: []capabilities.Layer{
+				{
+					Queryable: ip(1),
+					Title:     `Rivers, Roads and Houses`,
+					CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+					Layer: []*capabilities.Layer{
+						{
+							Queryable: ip(1),
+							Name:      sp(`Rivers`),
+							Title:     `Rivers`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `CenterLine`,
+								},
+							},
+						},
+						{
+							Queryable: ip(1),
+							Name:      sp(`Roads`),
+							Title:     `Roads`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `CenterLine`,
+								},
+							},
+						},
+						{
+							Queryable: ip(1),
+							Name:      sp(`Houses`),
+							Title:     `Houses`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `Outline`,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 
 	var tests = []struct {
 		gm         GetMap
@@ -612,9 +663,9 @@ func TestGetMapValidate(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		exceptions := test.gm.Validate(capabilities)
-		if exceptions != nil {
-			t.Errorf("test CRS: %d, expected: %v+ ,\n got: %v+", k, exceptions, test.exceptions)
+		getmapexceptions := test.gm.Validate(capabilities)
+		if getmapexceptions != nil {
+			t.Errorf("test Validation: %d, expected: %v+ ,\n got: %v+", k, test.exceptions, getmapexceptions)
 		}
 	}
 }

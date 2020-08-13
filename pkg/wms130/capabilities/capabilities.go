@@ -64,7 +64,7 @@ type Exception struct {
 
 // Layer contains the WMS 1.3.0 layer configuration
 type Layer struct {
-	Queryable *string `xml:"queryable,attr" yaml:"queryable"`
+	Queryable *int `xml:"queryable,attr" yaml:"queryable"`
 	// layer has a full/complete map coverage
 	Opaque *string `xml:"opaque,attr" yaml:"opaque"`
 	// no cascaded attr in Layer element, because we don't do cascaded services e.g. wms services "proxying" and/or combining other wms services
@@ -98,7 +98,7 @@ func (c *Capabilities) StyleDefined(layername, stylename string) bool {
 
 // styleDefined checks if the style is defined
 func (l *Layer) styleDefined(layername, stylename string) bool {
-	if *l.Name == layername {
+	if l.Name != nil && *l.Name == layername {
 		if l.Style != nil {
 			for _, sld := range l.Style {
 				if sld.Name == stylename {
@@ -127,7 +127,9 @@ func (c *Capabilities) GetLayerNames() []string {
 	var layers []string
 
 	for _, l := range c.Layer {
-		layers = append(layers, *l.Name)
+		if l.Name != nil {
+			layers = append(layers, *l.Name)
+		}
 		if l.Layer != nil {
 			for _, n := range l.Layer {
 				u := n.getLayerNames()
@@ -188,7 +190,7 @@ func (c *Capabilities) GetLayer(layername string) (Layer, ows.Exception) {
 	}
 
 	for _, l := range c.Layer {
-		if *l.Name == layername {
+		if l.Name != nil && *l.Name == layername {
 			layer = l
 			break
 		}

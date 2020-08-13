@@ -57,7 +57,9 @@ func (gm *GetMap) Validate(c ows.Capabilities) ows.Exceptions {
 		if exception != nil {
 			exceptions = append(exceptions, exception)
 		}
-		exceptions = append(exceptions, checkCRS(gm.CRS, layer.CRS))
+		if exception := checkCRS(gm.CRS, layer.CRS); exception != nil {
+			exceptions = append(exceptions, exception)
+		}
 	}
 
 	return exceptions

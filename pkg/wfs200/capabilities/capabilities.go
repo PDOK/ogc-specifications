@@ -109,8 +109,8 @@ type FeatureType struct {
 	Title         string        `xml:"wfs:Title" yaml:"title"`
 	Abstract      string        `xml:"wfs:Abstract" yaml:"abstract"`
 	Keywords      *ows.Keywords `xml:"ows:Keywords" yaml:"keywords"`
-	DefaultCRS    *string       `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
-	OtherCRS      *[]string     `xml:"wfs:OtherCRS" yaml:"othercrs"`
+	DefaultCRS    *ows.CRS      `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
+	OtherCRS      *[]ows.CRS    `xml:"wfs:OtherCRS" yaml:"othercrs"`
 	OutputFormats struct {
 		Format []string `xml:"wfs:Format" yaml:"format"`
 	} `xml:"wfs:OutputFormats" yaml:"outputformats"`
