@@ -855,3 +855,95 @@ func BenchmarkGetMapValidate(b *testing.B) {
 		gm.Validate(capabilities)
 	}
 }
+
+func BenchmarkGetMapParseValidate(b *testing.B) {
+	capabilities := capabilities.Capabilities{
+		WMSCapabilities: capabilities.WMSCapabilities{
+			Request: capabilities.Request{
+				GetMap: capabilities.RequestType{
+					Format:  []string{`image/jpeg`},
+					DCPType: capabilities.DCPType{},
+				},
+			},
+			Layer: []capabilities.Layer{
+				{
+					Queryable: ip(1),
+					Title:     `Rivers, Roads and Houses`,
+					CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+					Layer: []*capabilities.Layer{
+						{
+							Queryable: ip(1),
+							Name:      sp(`Rivers`),
+							Title:     `Rivers`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `CenterLine`,
+								},
+							},
+						},
+						{
+							Queryable: ip(1),
+							Name:      sp(`Roads`),
+							Title:     `Roads`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `CenterLine`,
+								},
+							},
+						},
+						{
+							Queryable: ip(1),
+							Name:      sp(`Houses`),
+							Title:     `Houses`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `Outline`,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	var gm = GetMap{
+		BaseRequest: BaseRequest{
+			Version: "1.3.0",
+			Attr: ows.XMLAttribute{
+				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
+				xml.Attr{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/sld GetMap.xsd"},
+			}},
+		StyledLayerDescriptor: StyledLayerDescriptor{
+			Version: "1.1.0",
+			NamedLayer: []NamedLayer{
+				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+			}},
+		CRS: ows.CRS{Namespace: "EPSG", Code: 4326},
+		BoundingBox: ows.BoundingBox{
+			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
+			LowerCorner: [2]float64{-180.0, -90.0},
+			UpperCorner: [2]float64{180.0, 90.0},
+		},
+		Output: Output{
+			Size:        Size{Width: 1024, Height: 512},
+			Format:      "image/jpeg",
+			Transparent: bp(false)},
+		Exceptions: sp("XML"),
+	}
+
+	for i := 0; i < b.N; i++ {
+		gm.Validate(capabilities)
+	}
+}
