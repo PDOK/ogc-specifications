@@ -74,6 +74,12 @@ func InvalidCRS(s ...string) WMSException {
 			ExceptionCode: `InvalidCRS`,
 		}
 	}
+	if len(s) == 2 {
+		return WMSException{
+			ExceptionText: fmt.Sprintf("The CRS: %s is not known by the layer: %s", s[0], s[1]),
+			ExceptionCode: `InvalidCRS`,
+		}
+	}
 	return WMSException{
 		ExceptionCode: `InvalidCRS`,
 	}

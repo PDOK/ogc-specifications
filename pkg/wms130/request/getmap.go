@@ -53,12 +53,12 @@ func (gm *GetMap) Validate(c ows.Capabilities) ows.Exceptions {
 	exceptions = append(exceptions, gm.Output.Validate(wmsCapabilities)...)
 
 	for _, sld := range gm.StyledLayerDescriptor.NamedLayer {
-		layer, exception := wmsCapabilities.GetLayer(sld.Name)
-		if exception != nil {
-			exceptions = append(exceptions, exception)
+		layer, layerexception := wmsCapabilities.GetLayer(sld.Name)
+		if layerexception != nil {
+			exceptions = append(exceptions, layerexception)
 		}
-		if exception := checkCRS(gm.CRS, layer.CRS); exception != nil {
-			exceptions = append(exceptions, exception)
+		if CRSException := checkCRS(gm.CRS, layer.CRS); CRSException != nil {
+			exceptions = append(exceptions, exception.InvalidCRS(gm.CRS.String(), *layer.Name))
 		}
 	}
 
