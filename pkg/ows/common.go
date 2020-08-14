@@ -8,8 +8,10 @@ import (
 	"strings"
 )
 
+//
 const (
 	codeSpace = `urn:ogc:def:crs:EPSG::`
+	EPSG      = `EPSG`
 )
 
 // BoundingBox struct
@@ -114,7 +116,12 @@ func (c *CRS) parseString(s string) {
 	regex := regexp.MustCompile(`(^.*):([0-9]+)`)
 	code := regex.FindStringSubmatch(s)
 	if len(code) == 3 { // code[0] is the full match, the other the parts
-		c.Namespace = code[1]
+		f := strings.Index(code[1], EPSG)
+		if f > -1 {
+			c.Namespace = EPSG
+		} else {
+			c.Namespace = code[1]
+		}
 
 		// the regex already checks if it [0-9]
 		i, _ := strconv.Atoi(code[2])

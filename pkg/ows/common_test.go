@@ -14,10 +14,10 @@ func TestBoundingBoxBuildQueryString(t *testing.T) {
 		0: {boundingbox: BoundingBox{}, boundingboxstring: `0.000000,0.000000,0.000000,0.000000`},
 		1: {boundingbox: BoundingBox{LowerCorner: [2]float64{-180.0, -90.0}, UpperCorner: [2]float64{180.0, 90.0}}, boundingboxstring: `-180.000000,-90.000000,180.000000,90.000000`},
 	}
-	for k, a := range tests {
-		str := a.boundingbox.BuildKVP()
-		if str != a.boundingboxstring {
-			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.boundingboxstring, str)
+	for k, test := range tests {
+		str := test.boundingbox.BuildKVP()
+		if str != test.boundingboxstring {
+			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.boundingboxstring, str)
 		}
 	}
 }
@@ -60,23 +60,43 @@ func TestStripDuplicateAttr(t *testing.T) {
 			expected: []xml.Attr{{Name: xml.Name{Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"}}},
 	}
 
-	for k, a := range tests {
-		stripped := StripDuplicateAttr(a.attributes)
-		if len(a.expected) != len(stripped) {
-			t.Errorf("test: %d, expected: %s,\n got: %s", k, a.expected, stripped)
+	for k, test := range tests {
+		stripped := StripDuplicateAttr(test.attributes)
+		if len(test.expected) != len(stripped) {
+			t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, stripped)
 		} else {
 			c := false
-			for _, exceptedAttr := range a.expected {
+			for _, exceptedAttr := range test.expected {
 				for _, result := range stripped {
 					if exceptedAttr == result {
 						c = true
 					}
 				}
 				if !c {
-					t.Errorf("test: %d, expected: %s,\n got: %s", k, a.expected, stripped)
+					t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, stripped)
 				}
 				c = false
 			}
+		}
+	}
+}
+
+func TestCRSParseString(t *testing.T) {
+	var tests = []struct {
+		input       string
+		expectedCRS CRS
+	}{
+		0: {}, // Empty input == empty struct
+		1: {input: `urn:ogc:def:crs:EPSG::4326`, expectedCRS: CRS{Code: 4326, Namespace: `EPSG`}},
+		2: {input: `EPSG:4326`, expectedCRS: CRS{Code: 4326, Namespace: `EPSG`}},
+	}
+
+	for k, test := range tests {
+		var crs CRS
+		crs.parseString(test.input)
+
+		if crs.Code != test.expectedCRS.Code || crs.Namespace != test.expectedCRS.Namespace {
+			t.Errorf("test: %d, expected: %v,\n got: %v", k, test.expectedCRS, crs)
 		}
 	}
 }
