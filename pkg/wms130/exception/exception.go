@@ -14,7 +14,7 @@ const (
 )
 
 // WMSServiceExceptionReport struct
-// TODO exception restucturing
+// TODO exception restructuring
 type WMSServiceExceptionReport struct {
 	XMLName          xml.Name        `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
 	Version          string          `xml:"version,attr" yaml:"version"`
@@ -38,9 +38,9 @@ func (r WMSServiceExceptionReport) Report(errors []ows.Exception) []byte {
 
 // WMSException grouping the error message variables together
 type WMSException struct {
-	ExceptionText string `xml:",chardata"  yaml:"exception"`
-	ExceptionCode string `xml:"code,attr"  yaml:"code"`
-	LocatorCode   string `xml:"locator,attr,omitempty"  yaml:"locator,omitempty"`
+	ExceptionText string `xml:",chardata" yaml:"exception"`
+	ExceptionCode string `xml:"code,attr" yaml:"code"`
+	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locator,omitempty"`
 }
 
 // Error returns available ExceptionText
@@ -59,8 +59,9 @@ func (e WMSException) Locator() string {
 }
 
 // InvalidFormat exception
-func InvalidFormat() WMSException {
+func InvalidFormat(unknownformat string) WMSException {
 	return WMSException{
+		ExceptionText: fmt.Sprintf("The format: %s, is a invalid image format", unknownformat),
 		ExceptionCode: `InvalidFormat`,
 	}
 }
@@ -70,6 +71,12 @@ func InvalidCRS(s ...string) WMSException {
 	if len(s) == 1 {
 		return WMSException{
 			ExceptionText: fmt.Sprintf("CRS is not known by this service: %s", s[0]),
+			ExceptionCode: `InvalidCRS`,
+		}
+	}
+	if len(s) == 2 {
+		return WMSException{
+			ExceptionText: fmt.Sprintf("The CRS: %s is not known by the layer: %s", s[0], s[1]),
 			ExceptionCode: `InvalidCRS`,
 		}
 	}
@@ -92,7 +99,13 @@ func LayerNotDefined(s ...string) WMSException {
 }
 
 // StyleNotDefined exception
-func StyleNotDefined() WMSException {
+func StyleNotDefined(s ...string) WMSException {
+	if len(s) == 2 {
+		return WMSException{
+			ExceptionText: fmt.Sprintf("The style: %s is not known by the server for the layer: %s", s[0], s[1]),
+			ExceptionCode: `StyleNotDefined`,
+		}
+	}
 	return WMSException{
 		ExceptionText: `There is a one-to-one correspondence between the values in the LAYERS parameter and the values in the STYLES parameter. 
 	Expecting an empty string for the STYLES like STYLES= or comma-separated list STYLES=,,, or using keyword default STYLES=default,default,...`,
@@ -115,11 +128,11 @@ func LayerNotQueryable(s ...string) WMSException {
 }
 
 // InvalidPoint exception
-// i and j are strings so we can none int values in the exception
+// i and j are strings so we can return none integer values in the exception
 func InvalidPoint(i, j string) WMSException {
-	// TODO provide giving WIDTH and HEIGTH values in Exception response
+	// TODO provide giving WIDTH and HEIGHT values in Exception response
 	return WMSException{
-		ExceptionText: fmt.Sprintf("The parameters I and J are invalid, given: %s, %s", i, j),
+		ExceptionText: fmt.Sprintf("The parameters I and J are invalid, given: %s for I and %s for J", i, j),
 		ExceptionCode: `InvalidPoint`,
 	}
 }

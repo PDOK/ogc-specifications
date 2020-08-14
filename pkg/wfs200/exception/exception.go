@@ -14,7 +14,7 @@ const (
 )
 
 // WFSExceptionReport struct
-// TODO exception restucturing
+// TODO exception restructuring
 type WFSExceptionReport struct {
 	XMLName        xml.Name        `xml:"ExceptionReport" yaml:"exceptionreport"`
 	Ows            string          `xml:"xmlns:ows,attr,omitempty"`

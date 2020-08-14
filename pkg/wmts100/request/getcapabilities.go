@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wcs201/capabilities"
 )
 
 //
@@ -33,18 +34,18 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate() ows.Exception {
+func (gc *GetCapabilities) Validate(c capabilities.Contents) ows.Exceptions {
 	return nil
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) ows.Exception {
+func (gc *GetCapabilities) ParseXML(body []byte) ows.Exceptions {
 	var xmlattributes ows.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.MissingParameterValue()
+		return ows.Exceptions{ows.MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return ows.MissingParameterValue("REQUEST")
+		return ows.Exceptions{ows.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -61,7 +62,7 @@ func (gc *GetCapabilities) ParseXML(body []byte) ows.Exception {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exception {
+func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -96,8 +97,8 @@ func (gc *GetCapabilities) BuildXML() []byte {
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilities struct {
-	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities" validate:"required"`
-	Service string           `xml:"service,attr" yaml:"service" validate:"required,oneof=WMTS wmts"`
-	Version string           `xml:"version,attr" yaml:"version" validate:"eq=1.0.0"`
+	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string           `xml:"service,attr" yaml:"service"`
+	Version string           `xml:"version,attr" yaml:"version"`
 	Attr    ows.XMLAttribute `xml:",attr"`
 }

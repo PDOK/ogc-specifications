@@ -5,10 +5,10 @@ type OperationResponse interface {
 	Type() string
 	Service() string
 	Version() string
-	Validate() Exception
+	Validate() Exceptions //TODO No sure about this one
 
-	// ParseXML([]byte) Exception
-	ParseYAML([]byte) Exception
+	// ParseXML([]byte) Exceptions
+	ParseYAML([]byte) Exception //TODO Maybe just return error
 	BuildXML() []byte
 	BuildYAML() []byte
 }

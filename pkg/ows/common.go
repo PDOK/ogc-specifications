@@ -3,6 +3,15 @@ package ows
 import (
 	"encoding/xml"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+)
+
+//
+const (
+	codeSpace = `urn:ogc:def:crs:EPSG::`
+	EPSG      = `EPSG`
 )
 
 // BoundingBox struct
@@ -28,6 +37,46 @@ func (b *BoundingBox) BuildKVP() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
+//ParseString builds a BoundingBox based on a string
+func (b *BoundingBox) ParseString(boundingbox string) Exception {
+	result := strings.Split(boundingbox, ",")
+	var lx, ly, ux, uy float64
+	var err error
+
+	if len(result) < 4 {
+		return InvalidParameterValue(boundingbox, `boundingbox`)
+	}
+
+	if len(result) == 4 || len(result) == 5 {
+		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
+			return InvalidParameterValue(boundingbox, `boundingbox`)
+		}
+	}
+
+	b.LowerCorner = [2]float64{lx, ly}
+	b.UpperCorner = [2]float64{ux, uy}
+
+	if len(result) == 5 {
+		b.Crs = result[4]
+	}
+
+	return nil
+}
+
+// Keywords in struct for repeatability
+type Keywords struct {
+	Keyword []string `xml:"Keyword" yaml:"keyword"`
+}
+
 // StripDuplicateAttr removes the duplicate Attributes from a []Attribute
 func StripDuplicateAttr(attr []xml.Attr) []xml.Attr {
 	attributemap := make(map[xml.Name]string)
@@ -40,4 +89,42 @@ func StripDuplicateAttr(attr []xml.Attr) []xml.Attr {
 		strippedAttr = append(strippedAttr, xml.Attr{Name: k, Value: v})
 	}
 	return strippedAttr
+}
+
+// CRS struct with namespace/authority/registry and code
+type CRS struct {
+	Namespace string //TODO maybe AuthorityType is a better name...?
+	Code      int
+}
+
+// String of the EPSGCode
+func (c *CRS) String() string {
+	return c.Namespace + `:` + strconv.Itoa(c.Code)
+}
+
+// Identifier returns the EPSG
+func (c *CRS) Identifier() string {
+	return codeSpace + strconv.Itoa(c.Code)
+}
+
+// ParseString build CRS struct from input string
+func (c *CRS) ParseString(s string) {
+	c.parseString(s)
+}
+
+func (c *CRS) parseString(s string) {
+	regex := regexp.MustCompile(`(^.*):([0-9]+)`)
+	code := regex.FindStringSubmatch(s)
+	if len(code) == 3 { // code[0] is the full match, the other the parts
+		f := strings.Index(code[1], EPSG)
+		if f > -1 {
+			c.Namespace = EPSG
+		} else {
+			c.Namespace = code[1]
+		}
+
+		// the regex already checks if it [0-9]
+		i, _ := strconv.Atoi(code[2])
+		c.Code = i
+	}
 }

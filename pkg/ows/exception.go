@@ -11,18 +11,21 @@ const (
 
 // ExceptionReport interface
 type ExceptionReport interface {
-	Report([]Exception) []byte
+	Report(Exceptions) []byte
 }
+
+// Exceptions is a array of Exceptions
+type Exceptions []Exception
 
 // OWSExceptionReport struct
 type OWSExceptionReport struct {
-	XMLName        xml.Name    `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
-	Ows            string      `xml:"xmlns:ows,attr,omitempty"`
-	Xsi            string      `xml:"xmlns:xsi,attr,omitempty"`
-	SchemaLocation string      `xml:"xsi:schemaLocation,attr,omitempty"`
-	Version        string      `xml:"version,attr" yaml:"version"`
-	Language       string      `xml:"xml:lang,attr,omitempty" yaml:"lang,omitempty"`
-	Exception      []Exception `xml:"Exception"`
+	XMLName        xml.Name   `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
+	Ows            string     `xml:"xmlns:ows,attr,omitempty"`
+	Xsi            string     `xml:"xmlns:xsi,attr,omitempty"`
+	SchemaLocation string     `xml:"xsi:schemaLocation,attr,omitempty"`
+	Version        string     `xml:"version,attr" yaml:"version"`
+	Language       string     `xml:"xml:lang,attr,omitempty" yaml:"lang,omitempty"`
+	Exception      Exceptions `xml:"Exception"`
 }
 
 // Report returns OWSExceptionReport

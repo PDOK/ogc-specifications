@@ -6,6 +6,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 
 	"regexp"
 	"strings"
@@ -23,7 +24,7 @@ func (dft *DescribeFeatureType) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureType) Validate() ows.Exception {
+func (dft *DescribeFeatureType) Validate(c capabilities.Capabilities) ows.Exceptions {
 	return nil
 }
 
@@ -52,12 +53,11 @@ func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 }
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exception {
-
+func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return ows.MissingParameterValue(VERSION)
+		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)

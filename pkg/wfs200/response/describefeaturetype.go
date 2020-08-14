@@ -2,6 +2,8 @@ package response
 
 import "encoding/xml"
 
+// Schema struct
+// TODO
 type Schema struct {
 	XMLName                     xml.Name `xml:"schema"`
 	Text                        string   `xml:",chardata"`

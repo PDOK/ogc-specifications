@@ -18,7 +18,8 @@ func TestWFSException(t *testing.T) {
 			exceptionCode: "",
 			locatorCode:   "",
 		},
-		1: {exception: InvalidFormat(),
+		1: {exception: InvalidFormat(`unknownimage`),
+			exceptionText: "The format: unknownimage, is a invalid image format",
 			exceptionCode: "InvalidFormat",
 		},
 		2: {exception: InvalidCRS(),
@@ -37,7 +38,7 @@ func TestWFSException(t *testing.T) {
 		},
 		6: {exception: InvalidPoint("0", "0"),
 			exceptionCode: "InvalidPoint",
-			exceptionText: "The parameters I and J are invalid, given: 0, 0",
+			exceptionText: "The parameters I and J are invalid, given: 0 for I and 0 for J",
 		},
 		7: {exception: CurrentUpdateSequence(),
 			exceptionCode: "CurrentUpdateSequence",
@@ -92,7 +93,7 @@ func TestReport(t *testing.T) {
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <ServiceExceptionReport version="1.3.0" xmlns="http://www.opengis.net/ogc" xsi="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd">
  <ServiceException code="LayerNotQueryable" locator="unknown:layer">Layer: unknown:layer, can not be queried</ServiceException>
- <ServiceException code="InvalidPoint">The parameters I and J are invalid, given: 0, 0</ServiceException>
+ <ServiceException code="InvalidPoint">The parameters I and J are invalid, given: 0 for I and 0 for J</ServiceException>
 </ServiceExceptionReport>`)},
 	}
 

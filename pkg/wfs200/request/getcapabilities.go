@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 )
 
 // Type and Version as constant
@@ -22,7 +23,7 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate() ows.Exception {
+func (gc *GetCapabilities) Validate(c capabilities.Capabilities) ows.Exceptions {
 	return nil
 }
 
@@ -50,7 +51,7 @@ func (gc *GetCapabilities) ParseXML(doc []byte) ows.Exception {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exception {
+func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -86,7 +87,7 @@ func (gc *GetCapabilities) BuildXML() []byte {
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilities struct {
 	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string           `xml:"service,attr" yaml:"service" validate:"required,oneof=WFS wfs"`
-	Version string           `xml:"version,attr" yaml:"version" validate:"eq=2.0.0"`
+	Service string           `xml:"service,attr" yaml:"service"`
+	Version string           `xml:"version,attr" yaml:"version"`
 	Attr    ows.XMLAttribute `xml:",attr"`
 }
