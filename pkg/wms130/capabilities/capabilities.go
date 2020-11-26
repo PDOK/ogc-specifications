@@ -43,9 +43,9 @@ type WMSCapabilities struct {
 
 // OptionalConstraints struct
 type OptionalConstraints struct {
-	LayerLimit int `xml:"LayerLimit" yaml:"layerlimit"`
-	MaxWidth   int `xml:"MaxWidth" yaml:"maxwidth"`
-	MaxHeight  int `xml:"MaxHeight" yaml:"maxheight"`
+	LayerLimit int `xml:"LayerLimit,omitempty" yaml:"layerlimit,omitempty"`
+	MaxWidth   int `xml:"MaxWidth,omitempty" yaml:"maxwidth,omitempty"`
+	MaxHeight  int `xml:"MaxHeight,omitempty" yaml:"maxheight,omitempty"`
 }
 
 // Request struct with the different operations, should be filled from the template
