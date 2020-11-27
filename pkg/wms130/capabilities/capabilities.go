@@ -56,8 +56,8 @@ type Request struct {
 }
 
 // Exception struct containing the different available exceptions, should be filled from the template
-// Default: XML
-// Other commonly used: BLANK, INIMAGE and JSON
+// default: XML
+// other commonly used: BLANK, INIMAGE and JSON
 type Exception struct {
 	Format []string `xml:"Format" yaml:"format"`
 }
