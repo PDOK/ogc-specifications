@@ -815,8 +815,60 @@ func BenchmarkGetMapParseXML(b *testing.B) {
 	}
 }
 
+// TODO look at the test and the structure
 func BenchmarkGetMapValidate(b *testing.B) {
-	capabilities := capabilities.Capabilities{}
+	capabilities := capabilities.Capabilities{
+		WMSCapabilities: capabilities.WMSCapabilities{
+			Request: capabilities.Request{
+				GetMap: capabilities.RequestType{
+					Format:  []string{`image/jpeg`},
+					DCPType: capabilities.DCPType{},
+				},
+			},
+			Layer: []capabilities.Layer{
+				{
+					Queryable: ip(1),
+					Title:     `Rivers, Roads and Houses`,
+					CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+					Layer: []*capabilities.Layer{
+						{
+							Queryable: ip(1),
+							Name:      sp(`Rivers`),
+							Title:     `Rivers`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `CenterLine`,
+								},
+							},
+						},
+						{
+							Queryable: ip(1),
+							Name:      sp(`Roads`),
+							Title:     `Roads`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `CenterLine`,
+								},
+							},
+						},
+						{
+							Queryable: ip(1),
+							Name:      sp(`Houses`),
+							Title:     `Houses`,
+							CRS:       []ows.CRS{{Code: 4326, Namespace: `EPSG`}},
+							Style: []*capabilities.Style{
+								{
+									Name: `Outline`,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 
 	gm := GetMap{
 		BaseRequest: BaseRequest{
