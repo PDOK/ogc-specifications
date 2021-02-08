@@ -38,7 +38,7 @@ type Layer struct {
 	Identifier string `xml:"ows:Identifier" yaml:"identifier"`
 	Style      struct {
 		Identifier string `xml:"ows:Identifier" yaml:"identifier"`
-		LegendURL  *LegendUrl `xml:"LegendURL,omitempty" yaml:"legendurl,omitempty"`
+		LegendURL  *LegendUrl `xml:"LegendURL" yaml:"legendurl"`
 	} `xml:"Style" yaml:"style"`
 	Format            string              `xml:"Format" yaml:"format"`
 	TileMatrixSetLink []TileMatrixSetLink `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
