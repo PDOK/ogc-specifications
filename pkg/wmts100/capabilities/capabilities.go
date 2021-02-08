@@ -38,6 +38,7 @@ type Layer struct {
 	Identifier string `xml:"ows:Identifier" yaml:"identifier"`
 	Style      struct {
 		Identifier string `xml:"ows:Identifier" yaml:"identifier"`
+		LegendURL  *LegendUrl `xml:"LegendURL,omitempty" yaml:"legendurl,omitempty"`
 	} `xml:"Style" yaml:"style"`
 	Format            string              `xml:"Format" yaml:"format"`
 	TileMatrixSetLink []TileMatrixSetLink `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
@@ -69,4 +70,10 @@ type TileMatrix struct {
 	TileHeight       string `xml:"TileHeight" yaml:"tileheight"`
 	MatrixWidth      string `xml:"MatrixWidth" yaml:"matrixwidth"`
 	MatrixHeight     string `xml:"MatrixHeight" yaml:"matrixheight"`
+}
+
+// LegendUrl in struct for optionality
+type LegendUrl struct {
+	Format string `xml:"format,attr,omitempty" yaml:"format,omitempty"`
+	Href   string `xml:"href,attr,omitempty" yaml:"href,omitempty"`
 }

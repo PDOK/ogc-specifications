@@ -16,3 +16,6 @@
 # vendor/
 
 .vscode/*
+
+# Intellij files
+.idea/
