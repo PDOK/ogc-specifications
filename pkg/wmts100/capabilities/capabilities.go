@@ -1,5 +1,7 @@
 package capabilities
 
+import "github.com/pdok/ogc-specifications/pkg/ows"
+
 // ParseXML func
 func (c *Contents) ParseXML(doc []byte) error {
 	return nil
@@ -29,16 +31,12 @@ func (c Contents) GetTilematrixsets() map[string]bool {
 
 // Layer in struct for repeatability
 type Layer struct {
-	Title            string `xml:"ows:Title" yaml:"title"`
-	Abstract         string `xml:"ows:Abstract" yaml:"abstract"`
-	WGS84BoundingBox struct {
-		LowerCorner string `xml:"ows:LowerCorner" yaml:"lowercorner"`
-		UpperCorner string `xml:"ows:UpperCorner" yaml:"uppercorner"`
-	} `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
-	Identifier string `xml:"ows:Identifier" yaml:"identifier"`
-	Style      struct {
-		Identifier string `xml:"ows:Identifier" yaml:"identifier"`
-	} `xml:"Style" yaml:"style"`
+	Title             string              `xml:"ows:Title" yaml:"title"`
+	Abstract          string              `xml:"ows:Abstract" yaml:"abstract"`
+	WGS84BoundingBox  ows.BoundingBox     `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	Identifier        string              `xml:"ows:Identifier" yaml:"identifier"`
+	Metadata          Metadata            `xml:"Metadata" yaml:"metadata"`
+	Style             []Style             `xml:"Style" yaml:"style"`
 	Format            string              `xml:"Format" yaml:"format"`
 	TileMatrixSetLink []TileMatrixSetLink `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
 	ResourceURL       struct {
@@ -46,6 +44,21 @@ type Layer struct {
 		ResourceType string `xml:"resourceType,attr" yaml:"resourcetype"`
 		Template     string `xml:"template,attr" yaml:"template"`
 	} `xml:"ResourceURL" yaml:"resourceurl"`
+}
+
+// Metadata  in struct for repeatability
+type Metadata struct {
+	Href string `xml:"xlink:href,attr" yaml:"href"`
+}
+
+// Style in struct for repeatability
+type Style struct {
+	Identifier string        `xml:"ows:Identifier" yaml:"identifier"`
+	Title      *string       `xml:"ows:Title,omitempty" yaml:"title"`
+	Abstract   *string       `xml:"ows:Abstract,omitempty" yaml:"abstract"`
+	Keywords   *ows.Keywords `xml:"Keywords,omitempty" yaml:"keywords"`
+	LegendURL  []*LegendURL  `xml:"LegendURL,omitempty" yaml:"legendurl"`
+	IsDefault  *bool         `xml:"isDefault,attr,omitempty" yaml:"isdefault"`
 }
 
 // TileMatrixSetLink in struct for repeatability
@@ -69,4 +82,10 @@ type TileMatrix struct {
 	TileHeight       string `xml:"TileHeight" yaml:"tileheight"`
 	MatrixWidth      string `xml:"MatrixWidth" yaml:"matrixwidth"`
 	MatrixHeight     string `xml:"MatrixHeight" yaml:"matrixheight"`
+}
+
+// LegendURL in struct for optionality
+type LegendURL struct {
+	Format string `xml:"format,attr,omitempty" yaml:"format,omitempty"`
+	Href   string `xml:"xlink:href,attr,omitempty" yaml:"href,omitempty"`
 }
