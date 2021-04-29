@@ -133,16 +133,14 @@ func (gfikvp *GetFeatureInfoKVP) ParseOperationRequest(or common.OperationReques
 	gfikvp.Height = strconv.Itoa(gfi.Size.Height)
 
 	gfikvp.QueryLayers = strings.Join(gfi.QueryLayers, ",")
-	gfikvp.InfoFormat = *gfi.InfoFormat
+	gfikvp.InfoFormat = gfi.InfoFormat
 	gfikvp.I = strconv.Itoa(gfi.I)
 	gfikvp.J = strconv.Itoa(gfi.J)
 
 	gfikvp.Format = gfi.Format
 
-	if gfi.FeatureCount != nil {
-		fcp := strconv.Itoa(*gfi.FeatureCount)
-		gfikvp.FeatureCount = &fcp
-	}
+	fcp := strconv.Itoa(gfi.FeatureCount)
+	gfikvp.FeatureCount = &fcp
 
 	gfikvp.Exceptions = gfi.Exceptions
 

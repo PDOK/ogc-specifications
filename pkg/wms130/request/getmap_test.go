@@ -2,9 +2,10 @@ package request
 
 import (
 	"encoding/xml"
-	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"testing"
+
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
@@ -622,6 +623,7 @@ func TestGetMapValidate(t *testing.T) {
 				},
 			},
 		},
+		OptionalConstraints: capabilities.OptionalConstraints{LayerLimit: 1, MaxWidth: 2048, MaxHeight: 2048},
 	}
 
 	var tests = []struct {

@@ -3,9 +3,10 @@ package request
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"strings"
+
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
@@ -254,7 +255,7 @@ type GetMap struct {
 
 // Validate validates the output parameters
 func (output *Output) Validate(c capabilities.Capabilities) common.Exceptions {
-	var exceptions common.Exceptions
+	exceptions := common.Exceptions{}
 	if output.Size.Width > c.MaxWidth {
 		exceptions = append(exceptions, common.NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
 	}
@@ -270,6 +271,10 @@ func (output *Output) Validate(c capabilities.Capabilities) common.Exceptions {
 		if !found {
 			exceptions = append(exceptions, wms130.InvalidFormat(output.Format))
 		}
+	}
+
+	if exceptions != nil {
+		return exceptions
 	}
 
 	// Transparent is a bool so when it is parsed around in the application it is already valid

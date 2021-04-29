@@ -71,7 +71,7 @@ func (dft *DescribeFeatureType) ParseKVP(query url.Values) common.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
-			if strings.ToUpper(v[0]) == strings.ToUpper(describefeaturetype) {
+			if strings.EqualFold(v[0], describefeaturetype) {
 				dft.XMLName.Local = describefeaturetype
 			}
 		case TYPENAME:

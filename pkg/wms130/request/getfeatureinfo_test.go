@@ -2,10 +2,11 @@ package request
 
 import (
 	"encoding/xml"
-	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
@@ -43,8 +44,8 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 			QueryLayers:  []string{`CenterLine`},
 			I:            1,
 			J:            1,
-			InfoFormat:   sp(`application/json`),
-			FeatureCount: ip(8),
+			InfoFormat:   `application/json`,
+			FeatureCount: 8,
 			Exceptions:   sp(`xml`),
 		},
 			Excepted: map[string][]string{
@@ -111,7 +112,7 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 			},
 			Size:        Size{Width: 1024, Height: 512},
 			QueryLayers: []string{`CenterLine`},
-			InfoFormat:  sp(`application/json`),
+			InfoFormat:  `application/json`,
 			I:           1,
 			J:           1,
 		},
@@ -208,8 +209,8 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 				QueryLayers:  []string{`Rivers`},
 				I:            101,
 				J:            101,
-				FeatureCount: ip(8),
-				InfoFormat:   sp(`application/json`),
+				FeatureCount: 8,
+				InfoFormat:   `application/json`,
 			},
 		},
 		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{common.MissingParameterValue(WIDTH, `not a number`)}},
@@ -407,16 +408,12 @@ func compareGetFeatureInfoObject(result, expected GetFeatureInfo, t *testing.T, 
 		}
 	}
 
-	if expected.FeatureCount != nil {
-		if *expected.FeatureCount != *result.FeatureCount {
-			t.Errorf("test FeatureCount: %d, expected: %v ,\n got: %v", k, *expected.FeatureCount, *result.FeatureCount)
-		}
+	if expected.FeatureCount != result.FeatureCount {
+		t.Errorf("test FeatureCount: %d, expected: %v ,\n got: %v", k, expected.FeatureCount, result.FeatureCount)
 	}
 
-	if expected.InfoFormat != nil {
-		if *expected.InfoFormat != *result.InfoFormat {
-			t.Errorf("test InfoFormat: %d, expected: %v ,\n got: %v", k, *expected.InfoFormat, *result.InfoFormat)
-		}
+	if expected.InfoFormat != result.InfoFormat {
+		t.Errorf("test InfoFormat: %d, expected: %v ,\n got: %v", k, expected.InfoFormat, result.InfoFormat)
 	}
 }
 
@@ -443,7 +440,7 @@ func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
 		},
 		Size:        Size{Width: 1024, Height: 512},
 		QueryLayers: []string{`CenterLine`},
-		InfoFormat:  sp(`application/json`),
+		InfoFormat:  `application/json`,
 		I:           1,
 		J:           1,
 	}
@@ -471,7 +468,7 @@ func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
 		},
 		Size:        Size{Width: 1024, Height: 512},
 		QueryLayers: []string{`CenterLine`},
-		InfoFormat:  sp(`application/json`),
+		InfoFormat:  `application/json`,
 		I:           1,
 		J:           1,
 	}

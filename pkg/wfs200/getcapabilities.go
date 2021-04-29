@@ -55,7 +55,7 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
-			if strings.ToUpper(v[0]) == strings.ToUpper(getcapabilities) {
+			if strings.EqualFold(v[0], getcapabilities) {
 				gc.XMLName.Local = getcapabilities
 			}
 		case SERVICE:

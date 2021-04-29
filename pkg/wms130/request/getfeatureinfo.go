@@ -2,11 +2,12 @@ package request
 
 import (
 	"encoding/xml"
-	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
@@ -44,8 +45,8 @@ type GetFeatureInfo struct {
 	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers"`
 	I            int      `xml:"I" yaml:"i"`
 	J            int      `xml:"J" yaml:"j"`
-	InfoFormat   string   `xml:"InfoFormat" yaml:"infoformat"`                                   // default text/plain
-	FeatureCount int      `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty" default:1` // default 1
+	InfoFormat   string   `xml:"InfoFormat" yaml:"infoformat" default:"text/plain"`                // default text/plain
+	FeatureCount int      `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty" default:"1"` // default 1
 	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`
 }
 
@@ -144,6 +145,7 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp common.OperationReques
 	fc, err := strconv.Atoi(*gfikvp.FeatureCount)
 	if err != nil {
 		// TODO: ignore or a exception
+		return common.Exceptions{common.NoApplicableCode("Unknown FeatureCount value")}
 	}
 
 	gfi.FeatureCount = fc

@@ -242,9 +242,7 @@ func (gf *GetFeature) BuildKVP() url.Values {
 func mergeResourceIDGroups(rids ...[]ResourceID) []ResourceID {
 	var mergedRids []ResourceID
 	for _, grp := range rids {
-		for _, rid := range grp {
-			mergedRids = append(mergedRids, rid)
-		}
+		mergedRids = append(mergedRids, grp...)
 	}
 	return mergedRids
 }
