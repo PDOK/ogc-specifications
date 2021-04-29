@@ -123,7 +123,7 @@ func TestGetMapParseXML(t *testing.T) {
 		Error    common.Exception
 	}{
 		// GetMap http://schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
-		0: {Body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:common="http://www.opengis.net/common" 
+		0: {Body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
 		xmlns:se="http://www.opengis.net/se" xmlns:wms="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld GetMap.xsd" version="1.3.0">
 		<StyledLayerDescriptor version="1.1.0">
 			<NamedLayer>
@@ -147,8 +147,8 @@ func TestGetMapParseXML(t *testing.T) {
 		</StyledLayerDescriptor>
 		<CRS>EPSG:4326</CRS>
 		<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">					
-			<common:LowerCorner>-180.0 -90.0</common:LowerCorner>
-			<common:UpperCorner>180.0 90.0</common:UpperCorner>
+			<ows:LowerCorner>-180.0 -90.0</ows:LowerCorner>
+			<ows:UpperCorner>180.0 90.0</ows:UpperCorner>
 		</BoundingBox>
 		<Output>
 			<Size>
@@ -167,7 +167,7 @@ func TestGetMapParseXML(t *testing.T) {
 						xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
-						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "common"}, Value: "http://www.opengis.net/common"},
+						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
@@ -533,7 +533,7 @@ func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
 		for _, expected := range expected.StyledLayerDescriptor.NamedLayer {
 			for _, result := range result.StyledLayerDescriptor.NamedLayer {
 				if result.Name == expected.Name {
-					if *&result.NamedStyle.Name == *&expected.NamedStyle.Name {
+					if result.NamedStyle.Name == expected.NamedStyle.Name {
 						c = true
 					}
 				}
@@ -637,7 +637,7 @@ func TestGetMapValidate(t *testing.T) {
 					xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
-					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "common"}, Value: "http://www.opengis.net/common"},
+					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
@@ -684,7 +684,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
-				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "common"}, Value: "http://www.opengis.net/common"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
@@ -722,7 +722,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
-				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "common"}, Value: "http://www.opengis.net/common"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
@@ -773,7 +773,7 @@ func BenchmarkGetMapParseKVP(b *testing.B) {
 }
 
 func BenchmarkGetMapParseXML(b *testing.B) {
-	doc := []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:common="http://www.opengis.net/common" 
+	doc := []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
 	xmlns:se="http://www.opengis.net/se" xmlns:wms="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld GetMap.xsd" version="1.3.0">
 	<StyledLayerDescriptor version="1.1.0">
 		<NamedLayer>
@@ -797,8 +797,8 @@ func BenchmarkGetMapParseXML(b *testing.B) {
 	</StyledLayerDescriptor>
 	<CRS>EPSG:4326</CRS>
 	<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">					
-		<common:LowerCorner>-180.0 -90.0</common:LowerCorner>
-		<common:UpperCorner>180.0 90.0</common:UpperCorner>
+		<ows:LowerCorner>-180.0 -90.0</ows:LowerCorner>
+		<ows:UpperCorner>180.0 90.0</ows:UpperCorner>
 	</BoundingBox>
 	<Output>
 		<Size>
@@ -879,7 +879,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
-				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "common"}, Value: "http://www.opengis.net/common"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
@@ -971,7 +971,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
-				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "common"}, Value: "http://www.opengis.net/common"},
+				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},

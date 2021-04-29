@@ -71,7 +71,7 @@ func TestReport(t *testing.T) {
 	}{
 		0: {exceptions: Exceptions{exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<ExceptionReport xmlns:common="http://www.opengis.net/common/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
+<ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
  <Exception exceptionCode=""></Exception>
 </ExceptionReport>`)},
 		1: {exceptions: Exceptions{
@@ -79,7 +79,7 @@ func TestReport(t *testing.T) {
 			DuplicateStoredQueryIDValue(),
 		},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<ExceptionReport xmlns:common="http://www.opengis.net/common/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
+<ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
  <Exception exceptionCode="CannotLockAllFeatures"></Exception>
  <Exception exceptionCode="DuplicateStoredQueryIDValue"></Exception>
 </ExceptionReport>`)},

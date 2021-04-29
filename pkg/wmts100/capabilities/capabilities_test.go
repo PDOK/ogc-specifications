@@ -51,8 +51,8 @@ var contentsWithLegend = Contents{
 
 func TestBuildStyleWithLegend(t *testing.T) {
 	expected := `<Style isDefault="true">
-  <common:Identifier>default</common:Identifier>
-  <common:Title>default</common:Title>
+  <ows:Identifier>default</ows:Identifier>
+  <ows:Title>default</ows:Title>
   <LegendURL format="image/png" xlink:href="http://www.maps.bob/etopo2/legend.png"></LegendURL>
 </Style>`
 	output, _ := xml.MarshalIndent(contentsWithLegend.Layer[0].Style, "", "  ")
@@ -91,8 +91,8 @@ var contentsWithoutLegend = Contents{
 
 func TestBuildStyleWithoutLegend(t *testing.T) {
 	expected := `<Style isDefault="true">
-  <common:Identifier>default</common:Identifier>
-  <common:Title>default</common:Title>
+  <ows:Identifier>default</ows:Identifier>
+  <ows:Title>default</ows:Title>
 </Style>`
 	output, _ := xml.MarshalIndent(contentsWithoutLegend.Layer[0].Style, "", "  ")
 	if string(output) != expected {

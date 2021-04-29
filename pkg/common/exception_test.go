@@ -82,18 +82,18 @@ func TestOWSReport(t *testing.T) {
 	}{
 		0: {exceptions: Exceptions{exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<common:ExceptionReport xmlns:common="http://www.opengis.net/common/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd" version="1.0.0" xml:lang="en">
- <common:Exception exceptionCode=""></common:Exception>
-</common:ExceptionReport>`)},
+<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="1.0.0" xml:lang="en">
+ <ows:Exception exceptionCode=""></ows:Exception>
+</ows:ExceptionReport>`)},
 		1: {exceptions: Exceptions{
 			OperationNotSupported(`WKS`),
 			VersionNegotiationFailed(`0.0.1`),
 		},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<common:ExceptionReport xmlns:common="http://www.opengis.net/common/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd" version="1.0.0" xml:lang="en">
- <common:Exception exceptionCode="OperationNotSupported" locator="WKS">This service does not know the operation: WKS</common:Exception>
- <common:Exception exceptionCode="VersionNegotiationFailed" locator="VERSION">0.0.1 is an invalid version number</common:Exception>
-</common:ExceptionReport>`)},
+<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="1.0.0" xml:lang="en">
+ <ows:Exception exceptionCode="OperationNotSupported" locator="WKS">This service does not know the operation: WKS</ows:Exception>
+ <ows:Exception exceptionCode="VersionNegotiationFailed" locator="VERSION">0.0.1 is an invalid version number</ows:Exception>
+</ows:ExceptionReport>`)},
 	}
 
 	for k, a := range tests {

@@ -12,15 +12,15 @@ func (c *Capabilities) ParseYAMl(doc []byte) error {
 
 // Capabilities struct
 type Capabilities struct {
-	OperationsMetadata OperationsMetadata `xml:"common:OperationsMetadata" yaml:"operationsmetadata"`
+	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
 	ServiceMetadata    ServiceMetadata    `xml:"wcs:ServiceMetadata" yaml:"servicemetadata"`
 	Contents           Contents           `xml:"wcs:Contents" yaml:"contents"`
 }
 
 // OperationsMetadata struct for the WCS 2.0.1
 type OperationsMetadata struct {
-	Operation            []Operation           `xml:"common:Operation" yaml:"operation"`
-	ExtendedCapabilities *ExtendedCapabilities `xml:"common:ExtendedCapabilities" yaml:"extendedcapabilities"`
+	Operation            []Operation           `xml:"ows:Operation" yaml:"operation"`
+	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedcapabilities"`
 }
 
 // Operation in struct for repeatability
@@ -31,10 +31,10 @@ type Operation struct {
 			Get struct {
 				Type string `xml:"xlink:type,attr" yaml:"type"`
 				Href string `xml:"xlink:href,attr" yaml:"href"`
-			} `xml:"common:Get" yaml:"get"`
-			Post *Post `xml:"common:Post" yaml:"post"`
-		} `xml:"common:HTTP"  yaml:"http"`
-	} `xml:"common:DCP" yaml:"dcp"`
+			} `xml:"ows:Get" yaml:"get"`
+			Post *Post `xml:"ows:Post" yaml:"post"`
+		} `xml:"ows:HTTP"  yaml:"http"`
+	} `xml:"ows:DCP" yaml:"dcp"`
 }
 
 // Post in separated struct so to use it as a Pointer
@@ -44,9 +44,9 @@ type Post struct {
 	Constraint struct {
 		Name          string `xml:"name,attr" yaml:"name"`
 		AllowedValues struct {
-			Value []string `xml:"common:Value" yaml:"value"`
-		} `xml:"common:AllowedValues" yaml:"allowedvalues"`
-	} `xml:"common:Constraint" yaml:"constraint"`
+			Value []string `xml:"ows:Value" yaml:"value"`
+		} `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+	} `xml:"ows:Constraint" yaml:"constraint"`
 }
 
 // ExtendedCapabilities struct for the WCS 2.0.1

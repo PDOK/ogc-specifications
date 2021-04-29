@@ -50,30 +50,30 @@ func (gc *GetCapabilities) BuildXML() []byte {
 type GetCapabilities struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`
-	ServiceIdentification ServiceIdentification `xml:"common:ServiceIdentification" yaml:"serviceidentification"`
+	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
 	Contents              capabilities.Contents `xml:"Contents" yaml:"contents"`
 	ServiceMetadataURL    ServiceMetadataURL    `xml:"ServiceMetadataURL" yaml:"servicemetadataurl"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
 type Namespaces struct {
-	Xmlns          string `xml:"xmlns,attr" yaml:"xmlns"`         //http://www.opengis.net/wmts/1.0
-	XmlnsOws       string `xml:"xmlns:common,attr" yaml:"common"` //http://www.opengis.net/ows/1.1
-	XmlnsXlink     string `xml:"xmlns:xlink,attr" yaml:"xlink"`   //http://www.w3.org/1999/xlink
-	XmlnsXSI       string `xml:"xmlns:xsi,attr" yaml:"xsi"`       //http://www.w3.org/2001/XMLSchema-instance
-	XmlnsGml       string `xml:"xmlns:gml,attr" yaml:"gml"`       //http://www.opengis.net/gml
+	Xmlns          string `xml:"xmlns,attr" yaml:"xmlns"`       //http://www.opengis.net/wmts/1.0
+	XmlnsOws       string `xml:"xmlns:ows,attr" yaml:"common"`  //http://www.opengis.net/ows/1.1
+	XmlnsXlink     string `xml:"xmlns:xlink,attr" yaml:"xlink"` //http://www.w3.org/1999/xlink
+	XmlnsXSI       string `xml:"xmlns:xsi,attr" yaml:"xsi"`     //http://www.w3.org/2001/XMLSchema-instance
+	XmlnsGml       string `xml:"xmlns:gml,attr" yaml:"gml"`     //http://www.opengis.net/gml
 	Version        string `xml:"version,attr" yaml:"version"`
 	SchemaLocation string `xml:"xsi:schemaLocation,attr" yaml:"schemalocation"`
 }
 
 // ServiceIdentification struct should only be fill by the "template" configuration wmts100.yaml
 type ServiceIdentification struct {
-	Title              string `xml:"common:Title" yaml:"title"`
-	Abstract           string `xml:"common:Abstract" yaml:"abstract"`
-	ServiceType        string `xml:"common:ServiceType" yaml:"servicetype"`
-	ServiceTypeVersion string `xml:"common:ServiceTypeVersion" yaml:"servicetypeversion"`
-	Fees               string `xml:"common:Fees" yaml:"fees"`
-	AccessConstraints  string `xml:"common:AccessConstraints" yaml:"accessconstraints"`
+	Title              string `xml:"ows:Title" yaml:"title"`
+	Abstract           string `xml:"ows:Abstract" yaml:"abstract"`
+	ServiceType        string `xml:"ows:ServiceType" yaml:"servicetype"`
+	ServiceTypeVersion string `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
+	Fees               string `xml:"ows:Fees" yaml:"fees"`
+	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
 }
 
 // ServiceMetadataURL in struct for repeatability

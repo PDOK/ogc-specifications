@@ -15,7 +15,7 @@ type Exception interface {
 }
 
 type exception struct {
-	XMLName       xml.Name `xml:"common:Exception"`
+	XMLName       xml.Name `xml:"ows:Exception"`
 	ExceptionText string   `xml:",chardata" yaml:"exception"`
 	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptioncode"`
 	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locationcode"`
@@ -24,8 +24,8 @@ type exception struct {
 type Exceptions []Exception
 
 type ExceptionReport struct {
-	XMLName        xml.Name   `xml:"common:ExceptionReport" yaml:"exceptionreport"`
-	Ows            string     `xml:"xmlns:common,attr,omitempty"`
+	XMLName        xml.Name   `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
+	Ows            string     `xml:"xmlns:ows,attr,omitempty"`
 	Xsi            string     `xml:"xmlns:xsi,attr,omitempty"`
 	SchemaLocation string     `xml:"xsi:schemaLocation,attr,omitempty"`
 	Version        string     `xml:"version,attr" yaml:"version"`
@@ -36,8 +36,8 @@ type ExceptionReport struct {
 func (e Exceptions) ToReport() ExceptionReport {
 	// TODO validate all exceptions are of type common.exception
 	r := ExceptionReport{}
-	r.SchemaLocation = `http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd`
-	r.Ows = `http://www.opengis.net/common/1.1`
+	r.SchemaLocation = `http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd`
+	r.Ows = `http://www.opengis.net/ows/1.1`
 	r.Xsi = `http://www.w3.org/2001/XMLSchema-instance`
 	r.Version = version
 	r.Language = `en`
