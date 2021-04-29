@@ -15,20 +15,39 @@ import (
 // GetFeatureInfo
 const (
 	getfeatureinfo = `GetFeatureInfo`
-)
 
-// Mandatory GetFeatureInfo Keys
-const (
+	// Mandatory
 	QUERYLAYERS = `QUERY_LAYERS`
 	I           = `I`
 	J           = `J`
-)
 
-// Optional GetFeatureInfo Keys
-const (
+	// Optional GetFeatureInfo Keys
 	INFOFORMAT   = `INFO_FORMAT`
 	FEATURECOUNT = `FEATURE_COUNT`
 )
+
+// GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request
+type GetFeatureInfo struct {
+	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
+	BaseRequest
+
+	// <map_request_copy>
+	// These are the 'minimum' required GetMap parameters
+	// needed in a GetFeatureInfo request
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"` //TODO layers is need styles is not!
+	CRS                   string                `xml:"CRS" yaml:"crs"`
+	BoundingBox           common.BoundingBox    `xml:"BoundingBox" yaml:"boundingbox"`
+	// We skip the Output struct, because these are not required parameters
+	Size   Size   `xml:"Size" yaml:"size"`
+	Format string `xml:"Format,omitempty" yaml:"format,omitempty"`
+
+	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers"`
+	I            int      `xml:"I" yaml:"i"`
+	J            int      `xml:"J" yaml:"j"`
+	InfoFormat   string   `xml:"InfoFormat" yaml:"infoformat"`                                   // default text/plain
+	FeatureCount int      `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty" default:1` // default 1
+	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`
+}
 
 // Type returns GetFeatureInfo
 func (gfi *GetFeatureInfo) Type() string {
@@ -127,8 +146,8 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp common.OperationReques
 		// TODO: ignore or a exception
 	}
 
-	gfi.FeatureCount = &fc
-	gfi.InfoFormat = &gfikvp.InfoFormat
+	gfi.FeatureCount = fc
+	gfi.InfoFormat = gfikvp.InfoFormat
 	gfi.Exceptions = gfikvp.Exceptions
 
 	return nil
@@ -171,27 +190,4 @@ func (gfi *GetFeatureInfo) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gfi, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
-}
-
-// GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request
-type GetFeatureInfo struct {
-	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
-	BaseRequest
-
-	// <map_request_copy>
-	// These are the 'minimum' required GetMap parameters
-	// needed in a GetFeatureInfo request
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"` //TODO layers is need styles is not!
-	CRS                   string                `xml:"CRS" yaml:"crs"`
-	BoundingBox           common.BoundingBox    `xml:"BoundingBox" yaml:"boundingbox"`
-	// We skip the Output struct, because these are not required parameters
-	Size   Size   `xml:"Size" yaml:"size"`
-	Format string `xml:"Format,omitempty" yaml:"format,omitempty"`
-
-	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers"`
-	I            int      `xml:"I" yaml:"i"`
-	J            int      `xml:"J" yaml:"j"`
-	InfoFormat   *string  `xml:"InfoFormat" yaml:"infoformat"`
-	FeatureCount *int     `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty"`
-	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`
 }
