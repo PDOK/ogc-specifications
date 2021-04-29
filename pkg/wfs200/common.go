@@ -21,6 +21,12 @@ const (
 	OUTPUTFORMAT = `OUTPUTFORMAT`
 )
 
+// BaseRequestKVP struct
+type BaseRequestKVP struct {
+	Version string `yaml:"version,omitempty"`
+	Request string `yaml:"request,omitempty"`
+}
+
 // BaseRequest based on Table 5 WFS2.0.0 spec
 // Note: not usable for GetCapabilities request regarding deviation of Optional/Mandatory parameters SERVICE and VERSION
 type BaseRequest struct {

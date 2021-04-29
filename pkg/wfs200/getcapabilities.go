@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 )
 
 // Type and Version as constant
@@ -23,18 +22,19 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate(c capabilities.Capabilities) common.Exceptions {
-	return nil
+func (gc *GetCapabilities) Validate(c common.Capabilities) common.Exceptions {
+	var exceptions common.Exceptions
+	return exceptions
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(doc []byte) common.Exception {
+func (gc *GetCapabilities) ParseXML(doc []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.NoApplicableCode("Could not process XML, is it XML?")
+		return common.Exceptions{common.NoApplicableCode("Could not process XML, is it XML?")}
 	}
 	if err := xml.Unmarshal(doc, &gc); err != nil {
-		return common.OperationNotSupported(err.Error()) //TODO Should be OperationParsingFailed
+		return common.Exceptions{common.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -64,6 +64,17 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 			gc.Version = strings.ToUpper(v[0])
 		}
 	}
+	return nil
+}
+
+// ParseOperationRequestKVP process the simple struct to a complex struct
+func (gc *GetCapabilities) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
+	gckvp := orkvp.(*GetCapabilitiesKVP)
+
+	gc.XMLName.Local = gckvp.Request
+	gc.Service = gckvp.Service
+	gc.Version = gckvp.Version
+
 	return nil
 }
 
