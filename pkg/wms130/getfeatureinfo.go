@@ -1,4 +1,4 @@
-package request
+package wms130
 
 import (
 	"encoding/xml"
@@ -7,10 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/wms130"
-
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 )
 
 // GetFeatureInfo
@@ -59,7 +56,7 @@ func (gfi *GetFeatureInfo) Type() string {
 func (gfi *GetFeatureInfo) Validate(c common.Capabilities) common.Exceptions {
 	var exceptions common.Exceptions
 
-	wmsCapabilities := c.(capabilities.Capabilities)
+	wmsCapabilities := c.(Capabilities)
 
 	exceptions = append(exceptions, gfi.StyledLayerDescriptor.Validate(wmsCapabilities)...)
 	// exceptions = append(exceptions, gfi.Output.Validate(wmsCapabilities)...)
@@ -132,13 +129,13 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp common.OperationReques
 
 	i, err := strconv.Atoi(gfikvp.I)
 	if err != nil {
-		return common.Exceptions{wms130.InvalidPoint(gfikvp.I, gfikvp.J)}
+		return common.Exceptions{InvalidPoint(gfikvp.I, gfikvp.J)}
 	}
 	gfi.I = i
 
 	j, err := strconv.Atoi(gfikvp.J)
 	if err != nil {
-		return common.Exceptions{wms130.InvalidPoint(gfikvp.I, gfikvp.J)}
+		return common.Exceptions{InvalidPoint(gfikvp.I, gfikvp.J)}
 	}
 	gfi.J = j
 

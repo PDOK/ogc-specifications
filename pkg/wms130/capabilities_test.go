@@ -1,15 +1,10 @@
-package capabilities
+package wms130
 
 import (
-	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
-
-func sp(s string) *string {
-	return &s
-}
 
 var capabilities = Capabilities{
 	WMSCapabilities: WMSCapabilities{
@@ -75,7 +70,7 @@ func TestGetLayer(t *testing.T) {
 	}{
 		0: {layername: `depthTwoLayerThree`},
 		1: {layername: `depthThreeLayerSeven`},
-		2: {layername: `unknownLayer`, exception: wms130.LayerNotDefined(`unknownLayer`)},
+		2: {layername: `unknownLayer`, exception: LayerNotDefined(`unknownLayer`)},
 	}
 
 	for k, test := range tests {

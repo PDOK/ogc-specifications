@@ -1,8 +1,7 @@
-package capabilities
+package wms130
 
 import (
 	"encoding/xml"
-	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"log"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
@@ -36,7 +35,7 @@ type Capabilities struct {
 // WMSCapabilities base struct
 type WMSCapabilities struct {
 	Request              Request               `xml:"Request" yaml:"request"`
-	Exception            Exception             `xml:"Exception" yaml:"exception"`
+	Exception            ExceptionType         `xml:"Exception" yaml:"exception"`
 	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedcapabilities"`
 	Layer                []Layer               `xml:"Layer" yaml:"layer"`
 }
@@ -58,7 +57,7 @@ type Request struct {
 // Exception struct containing the different available exceptions, should be filled from the template
 // default: XML
 // other commonly used: BLANK, INIMAGE and JSON
-type Exception struct {
+type ExceptionType struct {
 	Format []string `xml:"Format" yaml:"format"`
 }
 
@@ -186,7 +185,7 @@ func (c *Capabilities) GetLayer(layername string) (Layer, common.Exception) {
 	}
 
 	if !found {
-		return layer, wms130.LayerNotDefined(layername)
+		return layer, LayerNotDefined(layername)
 	}
 
 	for _, l := range c.Layer {

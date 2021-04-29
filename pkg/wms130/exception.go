@@ -2,12 +2,8 @@ package wms130
 
 import (
 	"encoding/xml"
-	"github.com/pdok/ogc-specifications/pkg/common"
-)
 
-const (
-	Service = `WMS`
-	Version = `1.3.0`
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 type Exception common.Exception

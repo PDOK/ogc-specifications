@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 )
 
 // Contains the WMS130 struct
@@ -52,8 +52,8 @@ func (gc *GetCapabilities) BuildXML() []byte {
 type GetCapabilities struct {
 	XMLName      xml.Name `xml:"WMS_Capabilities"`
 	Namespaces   `yaml:"namespaces"`
-	WMSService   WMSService                `xml:"Service" yaml:"service"`
-	Capabilities capabilities.Capabilities `xml:"Capability" yaml:"capability"`
+	WMSService   WMSService          `xml:"Service" yaml:"service"`
+	Capabilities wms130.Capabilities `xml:"Capability" yaml:"capability"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
@@ -99,5 +99,5 @@ type WMSService struct {
 	} `xml:"ContactInformation"`
 	Fees              string `xml:"Fees" yaml:"fees"`
 	AccessConstraints string `xml:"AccessConstraints" yaml:"accessconstraints"`
-	capabilities.OptionalConstraints
+	wms130.OptionalConstraints
 }

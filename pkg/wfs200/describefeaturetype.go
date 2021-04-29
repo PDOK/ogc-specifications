@@ -6,7 +6,6 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
-	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 
 	"regexp"
 	"strings"
@@ -24,7 +23,7 @@ func (dft *DescribeFeatureType) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureType) Validate(c capabilities.Capabilities) common.Exceptions {
+func (dft *DescribeFeatureType) Validate(c Capabilities) common.Exceptions {
 	return nil
 }
 

@@ -1,4 +1,4 @@
-package capabilities
+package wfs200
 
 import (
 	"encoding/xml"

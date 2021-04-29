@@ -1,16 +1,14 @@
-package request
+package wms130
 
 import (
 	"encoding/xml"
 	"net/url"
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/wms130"
-
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 )
 
+// TODO move helper func
 func sp(s string) *string {
 	return &s
 }
@@ -38,8 +36,8 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 		Error  common.Exception
 	}{
 		0: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: "style1"}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: "style2"}}}}},
-		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Error: wms130.StyleNotDefined()},
-		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Error: wms130.StyleNotDefined()},
+		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Error: StyleNotDefined()},
+		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Error: StyleNotDefined()},
 		3: {layers: []string{"layer1", "layer2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}}},
 	}
 
@@ -69,32 +67,32 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 
 func TestValidateStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
-		capabilities capabilities.Capabilities
+		capabilities Capabilities
 		sld          StyledLayerDescriptor
 		exceptions   common.Exceptions
 	}{
 		0: {
-			capabilities: capabilities.Capabilities{
-				WMSCapabilities: capabilities.WMSCapabilities{
-					Layer: []capabilities.Layer{
+			capabilities: Capabilities{
+				WMSCapabilities: WMSCapabilities{
+					Layer: []Layer{
 						{Name: sp(`layer1`)},
-						{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
+						{Name: sp(`layer2`), Style: []*Style{{Name: `styleone`}}},
 					},
 				},
 			},
 			sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: ``}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styleone`}}}},
 		},
 		1: {
-			capabilities: capabilities.Capabilities{
-				WMSCapabilities: capabilities.WMSCapabilities{
-					Layer: []capabilities.Layer{
-						{Name: sp(`layer2`), Style: []*capabilities.Style{{Name: `styleone`}}},
+			capabilities: Capabilities{
+				WMSCapabilities: WMSCapabilities{
+					Layer: []Layer{
+						{Name: sp(`layer2`), Style: []*Style{{Name: `styleone`}}},
 						{Name: sp(`layer3`)},
 					},
 				},
 			},
 			sld:        StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styletwo`}}}},
-			exceptions: common.Exceptions{wms130.LayerNotDefined(`layer1`), wms130.StyleNotDefined(`styletwo`, `layer2`)},
+			exceptions: common.Exceptions{LayerNotDefined(`layer1`), StyleNotDefined(`styletwo`, `layer2`)},
 		},
 	}
 
@@ -490,7 +488,7 @@ func TestCheckCRS(t *testing.T) {
 		exception common.Exception
 	}{
 		0: {crs: common.CRS{Namespace: `CRS`, Code: 84}},
-		1: {crs: common.CRS{Namespace: `UNKNOWN`}, exception: wms130.InvalidCRS(`UNKNOWN`)},
+		1: {crs: common.CRS{Namespace: `UNKNOWN`}, exception: InvalidCRS(`UNKNOWN`)},
 	}
 
 	for k, test := range tests {
@@ -572,26 +570,26 @@ func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
 // ----------
 
 func TestGetMapValidate(t *testing.T) {
-	capabilities := capabilities.Capabilities{
-		WMSCapabilities: capabilities.WMSCapabilities{
-			Request: capabilities.Request{
-				GetMap: capabilities.RequestType{
+	capabilities := Capabilities{
+		WMSCapabilities: WMSCapabilities{
+			Request: Request{
+				GetMap: RequestType{
 					Format:  []string{`image/jpeg`},
-					DCPType: capabilities.DCPType{},
+					DCPType: DCPType{},
 				},
 			},
-			Layer: []capabilities.Layer{
+			Layer: []Layer{
 				{
 					Queryable: ip(1),
 					Title:     `Rivers, Roads and Houses`,
 					CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-					Layer: []*capabilities.Layer{
+					Layer: []*Layer{
 						{
 							Queryable: ip(1),
 							Name:      sp(`Rivers`),
 							Title:     `Rivers`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `CenterLine`,
 								},
@@ -602,7 +600,7 @@ func TestGetMapValidate(t *testing.T) {
 							Name:      sp(`Roads`),
 							Title:     `Roads`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `CenterLine`,
 								},
@@ -613,7 +611,7 @@ func TestGetMapValidate(t *testing.T) {
 							Name:      sp(`Houses`),
 							Title:     `Houses`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `Outline`,
 								},
@@ -623,7 +621,7 @@ func TestGetMapValidate(t *testing.T) {
 				},
 			},
 		},
-		OptionalConstraints: capabilities.OptionalConstraints{LayerLimit: 1, MaxWidth: 2048, MaxHeight: 2048},
+		OptionalConstraints: OptionalConstraints{LayerLimit: 1, MaxWidth: 2048, MaxHeight: 2048},
 	}
 
 	var tests = []struct {
@@ -819,26 +817,26 @@ func BenchmarkGetMapParseXML(b *testing.B) {
 
 // TODO look at the test and the structure
 func BenchmarkGetMapValidate(b *testing.B) {
-	capabilities := capabilities.Capabilities{
-		WMSCapabilities: capabilities.WMSCapabilities{
-			Request: capabilities.Request{
-				GetMap: capabilities.RequestType{
+	capabilities := Capabilities{
+		WMSCapabilities: WMSCapabilities{
+			Request: Request{
+				GetMap: RequestType{
 					Format:  []string{`image/jpeg`},
-					DCPType: capabilities.DCPType{},
+					DCPType: DCPType{},
 				},
 			},
-			Layer: []capabilities.Layer{
+			Layer: []Layer{
 				{
 					Queryable: ip(1),
 					Title:     `Rivers, Roads and Houses`,
 					CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-					Layer: []*capabilities.Layer{
+					Layer: []*Layer{
 						{
 							Queryable: ip(1),
 							Name:      sp(`Rivers`),
 							Title:     `Rivers`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `CenterLine`,
 								},
@@ -849,7 +847,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 							Name:      sp(`Roads`),
 							Title:     `Roads`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `CenterLine`,
 								},
@@ -860,7 +858,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 							Name:      sp(`Houses`),
 							Title:     `Houses`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `Outline`,
 								},
@@ -911,26 +909,26 @@ func BenchmarkGetMapValidate(b *testing.B) {
 }
 
 func BenchmarkGetMapParseValidate(b *testing.B) {
-	capabilities := capabilities.Capabilities{
-		WMSCapabilities: capabilities.WMSCapabilities{
-			Request: capabilities.Request{
-				GetMap: capabilities.RequestType{
+	capabilities := Capabilities{
+		WMSCapabilities: WMSCapabilities{
+			Request: Request{
+				GetMap: RequestType{
 					Format:  []string{`image/jpeg`},
-					DCPType: capabilities.DCPType{},
+					DCPType: DCPType{},
 				},
 			},
-			Layer: []capabilities.Layer{
+			Layer: []Layer{
 				{
 					Queryable: ip(1),
 					Title:     `Rivers, Roads and Houses`,
 					CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-					Layer: []*capabilities.Layer{
+					Layer: []*Layer{
 						{
 							Queryable: ip(1),
 							Name:      sp(`Rivers`),
 							Title:     `Rivers`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `CenterLine`,
 								},
@@ -941,7 +939,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 							Name:      sp(`Roads`),
 							Title:     `Roads`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `CenterLine`,
 								},
@@ -952,7 +950,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 							Name:      sp(`Houses`),
 							Title:     `Houses`,
 							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
-							Style: []*capabilities.Style{
+							Style: []*Style{
 								{
 									Name: `Outline`,
 								},

@@ -1,4 +1,4 @@
-package request
+package wms130
 
 import (
 	"encoding/xml"
@@ -6,10 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/wms130"
-
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 )
 
 // GetMap
@@ -48,7 +45,7 @@ func (gm *GetMap) Type() string {
 func (gm *GetMap) Validate(c common.Capabilities) common.Exceptions {
 	var exceptions common.Exceptions
 
-	wmsCapabilities := c.(capabilities.Capabilities)
+	wmsCapabilities := c.(Capabilities)
 
 	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(wmsCapabilities)...)
 	exceptions = append(exceptions, gm.Output.Validate(wmsCapabilities)...)
@@ -59,7 +56,7 @@ func (gm *GetMap) Validate(c common.Capabilities) common.Exceptions {
 			exceptions = append(exceptions, layerexception)
 		}
 		if CRSException := checkCRS(gm.CRS, layer.CRS); CRSException != nil {
-			exceptions = append(exceptions, wms130.InvalidCRS(gm.CRS.String(), *layer.Name))
+			exceptions = append(exceptions, InvalidCRS(gm.CRS.String(), *layer.Name))
 		}
 	}
 
@@ -73,7 +70,7 @@ func checkCRS(crs common.CRS, definedCrs []common.CRS) common.Exception {
 			return nil
 		}
 	}
-	return wms130.InvalidCRS(crs.String())
+	return InvalidCRS(crs.String())
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
@@ -198,7 +195,7 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 		return sld, nil
 		// 4.
 	} else if len(layers) != len(styles) {
-		return StyledLayerDescriptor{}, wms130.StyleNotDefined()
+		return StyledLayerDescriptor{}, StyleNotDefined()
 	}
 
 	return StyledLayerDescriptor{}, nil
@@ -254,7 +251,7 @@ type GetMap struct {
 }
 
 // Validate validates the output parameters
-func (output *Output) Validate(c capabilities.Capabilities) common.Exceptions {
+func (output *Output) Validate(c Capabilities) common.Exceptions {
 	exceptions := common.Exceptions{}
 	if output.Size.Width > c.MaxWidth {
 		exceptions = append(exceptions, common.NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
@@ -269,7 +266,7 @@ func (output *Output) Validate(c capabilities.Capabilities) common.Exceptions {
 			found = true
 		}
 		if !found {
-			exceptions = append(exceptions, wms130.InvalidFormat(output.Format))
+			exceptions = append(exceptions, InvalidFormat(output.Format))
 		}
 	}
 
@@ -304,7 +301,7 @@ type StyledLayerDescriptor struct {
 }
 
 // Validate the StyledLayerDescriptor
-func (sld *StyledLayerDescriptor) Validate(c capabilities.Capabilities) common.Exceptions {
+func (sld *StyledLayerDescriptor) Validate(c Capabilities) common.Exceptions {
 	var unknownLayers []string
 	var unknownStyles []struct{ layer, style string }
 
@@ -331,13 +328,13 @@ func (sld *StyledLayerDescriptor) Validate(c capabilities.Capabilities) common.E
 	var exceptions common.Exceptions
 	if len(unknownLayers) > 0 {
 		for _, l := range unknownLayers {
-			exceptions = append(exceptions, wms130.LayerNotDefined(l))
+			exceptions = append(exceptions, LayerNotDefined(l))
 		}
 	}
 
 	if len(unknownStyles) > 0 {
 		for _, sld := range unknownStyles {
-			exceptions = append(exceptions, wms130.StyleNotDefined(sld.style, sld.layer))
+			exceptions = append(exceptions, StyleNotDefined(sld.style, sld.layer))
 		}
 	}
 
