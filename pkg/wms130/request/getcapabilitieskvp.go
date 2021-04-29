@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 //GetCapabilitiesKVP struct
@@ -15,11 +15,11 @@ type GetCapabilitiesKVP struct {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gckvp *GetCapabilitiesKVP) ParseKVP(query url.Values) ows.Exceptions {
-	var exceptions ows.Exceptions
+func (gckvp *GetCapabilitiesKVP) ParseKVP(query url.Values) common.Exceptions {
+	var exceptions common.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
-			exceptions = append(exceptions, ows.InvalidParameterValue(k, strings.Join(v, ",")))
+			exceptions = append(exceptions, common.InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
@@ -44,7 +44,7 @@ func (gckvp *GetCapabilitiesKVP) ParseKVP(query url.Values) ows.Exceptions {
 // Mandatory:  REQUEST=GetCapabilities
 //             SERVICE=WMS
 // Optional:   VERSION=1.3.0
-func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or ows.OperationRequest) ows.Exceptions {
+func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
 	gc := or.(*GetCapabilities)
 
 	gckvp.Request = getcapabilities

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 //GetFeatureInfoKVP struct
@@ -33,11 +33,11 @@ type GetFeatureInfoKVPOptional struct {
 }
 
 // ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gfikvp *GetFeatureInfoKVP) ParseKVP(query url.Values) ows.Exceptions {
-	var exceptions ows.Exceptions
+func (gfikvp *GetFeatureInfoKVP) ParseKVP(query url.Values) common.Exceptions {
+	var exceptions common.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
-			exceptions = append(exceptions, ows.InvalidParameterValue(k, strings.Join(v, ",")))
+			exceptions = append(exceptions, common.InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
@@ -119,7 +119,7 @@ func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
 }
 
 // ParseOperationRequest builds a GetFeatureInfoKVP object based on a GetFeatureInfo struct
-func (gfikvp *GetFeatureInfoKVP) ParseOperationRequest(or ows.OperationRequest) ows.Exceptions {
+func (gfikvp *GetFeatureInfoKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
 	gfi := or.(*GetFeatureInfo)
 
 	gfikvp.Request = getfeatureinfo

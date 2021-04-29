@@ -3,7 +3,7 @@ package capabilities
 import (
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
@@ -71,7 +71,7 @@ func TestStyleDefined(t *testing.T) {
 func TestGetLayer(t *testing.T) {
 	var tests = []struct {
 		layername string
-		exception ows.Exception
+		exception common.Exception
 	}{
 		0: {layername: `depthTwoLayerThree`},
 		1: {layername: `depthThreeLayerSeven`},

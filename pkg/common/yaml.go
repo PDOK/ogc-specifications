@@ -1,4 +1,4 @@
-package ows
+package common
 
 // UnmarshalYAML CRS
 func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {

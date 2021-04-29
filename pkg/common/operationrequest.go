@@ -1,4 +1,4 @@
-package ows
+package common
 
 import "net/url"
 

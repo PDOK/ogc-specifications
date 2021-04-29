@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	ows "github.com/pdok/ogc-specifications/pkg/ows"
+	ows "github.com/pdok/ogc-specifications/pkg/common"
 )
 
 func main() {

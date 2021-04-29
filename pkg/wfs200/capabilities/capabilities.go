@@ -3,7 +3,7 @@ package capabilities
 import (
 	"encoding/xml"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // ParseXML func
@@ -18,7 +18,7 @@ func (c *Capabilities) ParseYAMl(doc []byte) error {
 
 // Capabilities struct
 type Capabilities struct {
-	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
+	OperationsMetadata OperationsMetadata `xml:"common:OperationsMetadata" yaml:"operationsmetadata"`
 	FeatureTypeList    FeatureTypeList    `xml:"wfs:FeatureTypeList" yaml:"featuretypelist"`
 	FilterCapabilities FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filtercapabilities"`
 }
@@ -31,25 +31,25 @@ type Method struct {
 
 // OperationsMetadata struct for the WFS 2.0.0
 type OperationsMetadata struct {
-	XMLName   xml.Name    `xml:"ows:OperationsMetadata"`
-	Operation []Operation `xml:"ows:Operation"`
+	XMLName   xml.Name    `xml:"common:OperationsMetadata"`
+	Operation []Operation `xml:"common:Operation"`
 	Parameter struct {
 		Name          string `xml:"name,attr" yaml:"name"`
 		AllowedValues struct {
-			Value []string `xml:"ows:Value" yaml:"value"`
-		} `xml:"ows:AllowedValues" yaml:"allowedvalues"`
-	} `xml:"ows:Parameter" yaml:"parameter"`
-	Constraint           []Constraint          `xml:"ows:Constraint" yaml:"constraint"`
-	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedcapabilities"`
+			Value []string `xml:"common:Value" yaml:"value"`
+		} `xml:"common:AllowedValues" yaml:"allowedvalues"`
+	} `xml:"common:Parameter" yaml:"parameter"`
+	Constraint           []Constraint          `xml:"common:Constraint" yaml:"constraint"`
+	ExtendedCapabilities *ExtendedCapabilities `xml:"common:ExtendedCapabilities" yaml:"extendedcapabilities"`
 }
 
 // Constraint struct for the WFS 2.0.0
 type Constraint struct {
 	Text          string         `xml:",chardata"`
 	Name          string         `xml:"name,attr" yaml:"name"`
-	NoValues      *string        `xml:"ows:NoValues" yaml:"novalues"`
-	DefaultValue  *string        `xml:"ows:DefaultValue" yaml:"defaultvalue"`
-	AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+	NoValues      *string        `xml:"common:NoValues" yaml:"novalues"`
+	DefaultValue  *string        `xml:"common:DefaultValue" yaml:"defaultvalue"`
+	AllowedValues *AllowedValues `xml:"common:AllowedValues" yaml:"allowedvalues"`
 }
 
 // Operation struct for the WFS 2.0.0
@@ -57,21 +57,21 @@ type Operation struct {
 	Name string `xml:"name,attr"`
 	DCP  struct {
 		HTTP struct {
-			Get  *Method `xml:"ows:Get,omitempty" yaml:"get,omitempty"`
-			Post *Method `xml:"ows:Post,omitempty" yaml:"post,omitempty"`
-		} `xml:"ows:HTTP" yaml:"http"`
-	} `xml:"ows:DCP" yaml:"dcp"`
+			Get  *Method `xml:"common:Get,omitempty" yaml:"get,omitempty"`
+			Post *Method `xml:"common:Post,omitempty" yaml:"post,omitempty"`
+		} `xml:"common:HTTP" yaml:"http"`
+	} `xml:"common:DCP" yaml:"dcp"`
 	Parameter []struct {
 		Name          string `xml:"name,attr"`
 		AllowedValues struct {
-			Value []string `xml:"ows:Value"`
-		} `xml:"ows:AllowedValues"`
-	} `xml:"ows:Parameter"`
+			Value []string `xml:"common:Value"`
+		} `xml:"common:AllowedValues"`
+	} `xml:"common:Parameter"`
 }
 
 // AllowedValues struct so it can be used as a pointer
 type AllowedValues struct {
-	Value []string `xml:"ows:Value" yaml:"value"`
+	Value []string `xml:"common:Value" yaml:"value"`
 }
 
 // ExtendedCapabilities struct for the WFS 2.0.0
@@ -105,16 +105,16 @@ type FeatureTypeList struct {
 
 // FeatureType struct for the WFS 2.0.0
 type FeatureType struct {
-	Name          string        `xml:"wfs:Name" yaml:"name"`
-	Title         string        `xml:"wfs:Title" yaml:"title"`
-	Abstract      string        `xml:"wfs:Abstract" yaml:"abstract"`
-	Keywords      *ows.Keywords `xml:"ows:Keywords" yaml:"keywords"`
-	DefaultCRS    *ows.CRS      `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
-	OtherCRS      *[]ows.CRS    `xml:"wfs:OtherCRS" yaml:"othercrs"`
+	Name          string           `xml:"wfs:Name" yaml:"name"`
+	Title         string           `xml:"wfs:Title" yaml:"title"`
+	Abstract      string           `xml:"wfs:Abstract" yaml:"abstract"`
+	Keywords      *common.Keywords `xml:"common:Keywords" yaml:"keywords"`
+	DefaultCRS    *common.CRS      `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
+	OtherCRS      *[]common.CRS    `xml:"wfs:OtherCRS" yaml:"othercrs"`
 	OutputFormats struct {
 		Format []string `xml:"wfs:Format" yaml:"format"`
 	} `xml:"wfs:OutputFormats" yaml:"outputformats"`
-	WGS84BoundingBox ows.BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	WGS84BoundingBox common.BoundingBox `xml:"common:WGS84BoundingBox" yaml:"wgs84boundingbox"`
 	MetadataURL      struct {
 		Href string `xml:"xlink:href,attr" yaml:"href"`
 	} `xml:"wfs:MetadataURL" yaml:"metadataurl"`
@@ -125,8 +125,8 @@ type FilterCapabilities struct {
 	Conformance struct {
 		Constraint []struct {
 			Name         string `xml:"name,attr" yaml:"name"`
-			NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
-			DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultvalue"`
+			NoValues     string `xml:"common:NoValues" yaml:"novalues"`
+			DefaultValue string `xml:"common:DefaultValue" yaml:"defaultvalue"`
 		} `xml:"fes:Constraint" yaml:"constraint"`
 	} `xml:"fes:Conformance" yaml:"conformance"`
 	IDCapabilities struct {

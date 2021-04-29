@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
@@ -48,7 +48,7 @@ func (gf *GetFeature) Type() string {
 }
 
 // Validate returns GetFeature
-func (gf *GetFeature) Validate(c ows.Capabilities) ows.Exceptions {
+func (gf *GetFeature) Validate(c common.Capabilities) common.Exceptions {
 
 	//getfeaturecap := c.(capabilities.Capabilities)
 	return nil
@@ -64,10 +64,10 @@ var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FI
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gf *GetFeature) ParseXML(doc []byte) ows.Exception {
-	var xmlattributes ows.XMLAttribute
+func (gf *GetFeature) ParseXML(doc []byte) common.Exception {
+	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return ows.NoApplicableCode("Could not process XML, is it XML?")
+		return common.NoApplicableCode("Could not process XML, is it XML?")
 	}
 	xml.Unmarshal(doc, &gf) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
 	var n []xml.Attr
@@ -82,17 +82,17 @@ func (gf *GetFeature) ParseXML(doc []byte) ows.Exception {
 			n = append(n, a)
 		}
 	}
-	gf.BaseRequest.Attr = ows.StripDuplicateAttr(n)
+	gf.BaseRequest.Attr = common.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
-func (gf *GetFeature) ParseKVP(query url.Values) ows.Exceptions {
+func (gf *GetFeature) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
+		return common.Exceptions{common.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)
@@ -550,8 +550,8 @@ type Box struct {
 
 // Envelope struct for GeometryOperand
 type Envelope struct {
-	LowerCorner ows.Position `xml:"lowerCorner" yaml:"lowercorner"`
-	UpperCorner ows.Position `xml:"upperCorner" yaml:"uppercorner"`
+	LowerCorner common.Position `xml:"lowerCorner" yaml:"lowercorner"`
+	UpperCorner common.Position `xml:"upperCorner" yaml:"uppercorner"`
 }
 
 // SpatialOperator struct for Filter
@@ -654,7 +654,7 @@ type GEOBBOX struct {
 }
 
 // UnmarshalText a string to a GEOBBOX object
-func (gb *GEOBBOX) UnmarshalText(q string) ows.Exception {
+func (gb *GEOBBOX) UnmarshalText(q string) common.Exception {
 	regex := regexp.MustCompile(`,`)
 	result := regex.Split(q, -1)
 	if len(result) == 4 || len(result) == 5 {
@@ -675,8 +675,8 @@ func (gb *GEOBBOX) UnmarshalText(q string) ows.Exception {
 			return exception.InvalidValue(BBOX)
 		}
 
-		gb.Envelope.LowerCorner = ows.Position{lx, ly}
-		gb.Envelope.UpperCorner = ows.Position{ux, uy}
+		gb.Envelope.LowerCorner = common.Position{lx, ly}
+		gb.Envelope.UpperCorner = common.Position{ux, uy}
 	}
 	if len(result) == 5 {
 		gb.SrsName = &result[4]

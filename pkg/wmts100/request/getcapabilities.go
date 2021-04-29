@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wcs201/capabilities"
 )
 
@@ -34,18 +34,18 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate(c capabilities.Contents) ows.Exceptions {
+func (gc *GetCapabilities) Validate(c capabilities.Contents) common.Exceptions {
 	return nil
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) ows.Exceptions {
-	var xmlattributes ows.XMLAttribute
+func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
+	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.Exceptions{ows.MissingParameterValue()}
+		return common.Exceptions{common.MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return ows.Exceptions{ows.MissingParameterValue("REQUEST")}
+		return common.Exceptions{common.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -57,12 +57,12 @@ func (gc *GetCapabilities) ParseXML(body []byte) ows.Exceptions {
 		}
 	}
 
-	gc.Attr = ows.StripDuplicateAttr(n)
+	gc.Attr = common.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
+func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -97,8 +97,8 @@ func (gc *GetCapabilities) BuildXML() []byte {
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilities struct {
-	XMLName xml.Name         `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string           `xml:"service,attr" yaml:"service"`
-	Version string           `xml:"version,attr" yaml:"version"`
-	Attr    ows.XMLAttribute `xml:",attr"`
+	XMLName xml.Name            `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string              `xml:"service,attr" yaml:"service"`
+	Version string              `xml:"version,attr" yaml:"version"`
+	Attr    common.XMLAttribute `xml:",attr"`
 }

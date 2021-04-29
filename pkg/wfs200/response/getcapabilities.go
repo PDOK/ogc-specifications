@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"regexp"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 )
 
@@ -37,7 +37,7 @@ func (gc *GetCapabilities) Version() string {
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilities) Validate() ows.Exceptions {
+func (gc *GetCapabilities) Validate() common.Exceptions {
 	return nil
 }
 
@@ -52,8 +52,8 @@ func (gc *GetCapabilities) BuildXML() []byte {
 type GetCapabilities struct {
 	XMLName               xml.Name `xml:"wfs:WFS_Capabilities"`
 	Namespaces            `yaml:"namespaces"`
-	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceprovider"`
+	ServiceIdentification ServiceIdentification `xml:"common:ServiceIdentification" yaml:"serviceidentification"`
+	ServiceProvider       ServiceProvider       `xml:"common:ServiceProvider" yaml:"serviceprovider"`
 	capabilities.Capabilities
 }
 
@@ -61,7 +61,7 @@ type GetCapabilities struct {
 type Namespaces struct {
 	XmlnsGML           string `xml:"xmlns:gml,attr" yaml:"gml"`                                          //http://www.opengis.net/gml/3.2
 	XmlnsWFS           string `xml:"xmlns:wfs,attr" yaml:"wfs"`                                          //http://www.opengis.net/wfs/2.0
-	XmlnsOWS           string `xml:"xmlns:ows,attr" yaml:"ows"`                                          //http://www.opengis.net/ows/1.1
+	XmlnsOWS           string `xml:"xmlns:common,attr" yaml:"common"`                                    //http://www.opengis.net/ows/1.1
 	XmlnsXlink         string `xml:"xmlns:xlink,attr" yaml:"xlink"`                                      //http://www.w3.org/1999/xlink
 	XmlnsXSI           string `xml:"xmlns:xsi,attr" yaml:"xsi"`                                          //http://www.w3.org/2001/XMLSchema-instance
 	XmlnsFes           string `xml:"xmlns:fes,attr" yaml:"fes"`                                          //http://www.opengis.net/fes/2.0
@@ -74,51 +74,51 @@ type Namespaces struct {
 
 // ServiceIdentification struct should only be fill by the "template" configuration wfs200.yaml
 type ServiceIdentification struct {
-	XMLName     xml.Name      `xml:"ows:ServiceIdentification"`
-	Title       string        `xml:"ows:Title" yaml:"title"`
-	Abstract    string        `xml:"ows:Abstract" yaml:"abstract"`
-	Keywords    *ows.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	XMLName     xml.Name         `xml:"common:ServiceIdentification"`
+	Title       string           `xml:"common:Title" yaml:"title"`
+	Abstract    string           `xml:"common:Abstract" yaml:"abstract"`
+	Keywords    *common.Keywords `xml:"common:Keywords" yaml:"keywords"`
 	ServiceType struct {
 		Text      string `xml:",chardata" yaml:"text"`
 		CodeSpace string `xml:"codeSpace,attr" yaml:"codespace"`
-	} `xml:"ows:ServiceType"`
-	ServiceTypeVersion string `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
-	Fees               string `xml:"ows:Fees" yaml:"fees"`
-	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accesscontraints"`
+	} `xml:"common:ServiceType"`
+	ServiceTypeVersion string `xml:"common:ServiceTypeVersion" yaml:"servicetypeversion"`
+	Fees               string `xml:"common:Fees" yaml:"fees"`
+	AccessConstraints  string `xml:"common:AccessConstraints" yaml:"accesscontraints"`
 }
 
 // ServiceProvider struct containing the provider/organization information should only be fill by the "template" configuration wfs200.yaml
 type ServiceProvider struct {
-	XMLName      xml.Name `xml:"ows:ServiceProvider"`
-	ProviderName string   `xml:"ows:ProviderName" yaml:"providername"`
+	XMLName      xml.Name `xml:"common:ServiceProvider"`
+	ProviderName string   `xml:"common:ProviderName" yaml:"providername"`
 	ProviderSite struct {
 		Type string `xml:"xlink:type,attr" yaml:"type"`
 		Href string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"ows:ProviderSite" yaml:"providersite"`
+	} `xml:"common:ProviderSite" yaml:"providersite"`
 	ServiceContact struct {
-		IndividualName string `xml:"ows:IndividualName" yaml:"individualname"`
-		PositionName   string `xml:"ows:PositionName" yaml:"positionname"`
+		IndividualName string `xml:"common:IndividualName" yaml:"individualname"`
+		PositionName   string `xml:"common:PositionName" yaml:"positionname"`
 		ContactInfo    struct {
 			Text  string `xml:",chardata"`
 			Phone struct {
-				Voice     string `xml:"ows:Voice" yaml:"voice"`
-				Facsimile string `xml:"ows:Facsimile" yaml:"facsmile"`
-			} `xml:"ows:Phone" yaml:"phone"`
+				Voice     string `xml:"common:Voice" yaml:"voice"`
+				Facsimile string `xml:"common:Facsimile" yaml:"facsmile"`
+			} `xml:"common:Phone" yaml:"phone"`
 			Address struct {
-				DeliveryPoint         string `xml:"ows:DeliveryPoint" yaml:"deliverypoint"`
-				City                  string `xml:"ows:City" yaml:"city"`
-				AdministrativeArea    string `xml:"ows:AdministrativeArea" yaml:"administrativearea"`
-				PostalCode            string `xml:"ows:PostalCode" yaml:"postalcode"`
-				Country               string `xml:"ows:Country" yaml:"country"`
-				ElectronicMailAddress string `xml:"ows:ElectronicMailAddress" yaml:"electronicmailaddress"`
-			} `xml:"ows:Address" yaml:"address"`
+				DeliveryPoint         string `xml:"common:DeliveryPoint" yaml:"deliverypoint"`
+				City                  string `xml:"common:City" yaml:"city"`
+				AdministrativeArea    string `xml:"common:AdministrativeArea" yaml:"administrativearea"`
+				PostalCode            string `xml:"common:PostalCode" yaml:"postalcode"`
+				Country               string `xml:"common:Country" yaml:"country"`
+				ElectronicMailAddress string `xml:"common:ElectronicMailAddress" yaml:"electronicmailaddress"`
+			} `xml:"common:Address" yaml:"address"`
 			OnlineResource struct {
 				Type string `xml:"xlink:type,attr" yaml:"type"`
 				Href string `xml:"xlink:href,attr" yaml:"href"`
-			} `xml:"ows:OnlineResource" yaml:"onlineresource"`
-			HoursOfService      string `xml:"ows:HoursOfService" yaml:"hoursofservice"`
-			ContactInstructions string `xml:"ows:ContactInstructions" yaml:"contactinstructions"`
-		} `xml:"ows:ContactInfo" yaml:"contactinfo"`
-		Role string `xml:"ows:Role" yaml:"role"`
-	} `xml:"ows:ServiceContact" yaml:"servicecontact"`
+			} `xml:"common:OnlineResource" yaml:"onlineresource"`
+			HoursOfService      string `xml:"common:HoursOfService" yaml:"hoursofservice"`
+			ContactInstructions string `xml:"common:ContactInstructions" yaml:"contactinstructions"`
+		} `xml:"common:ContactInfo" yaml:"contactinfo"`
+		Role string `xml:"common:Role" yaml:"role"`
+	} `xml:"common:ServiceContact" yaml:"servicecontact"`
 }

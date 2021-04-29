@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 func TestGetCapabilitiesType(t *testing.T) {
@@ -25,11 +25,11 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 		0: {Body: []byte(`<GetCapabilities service="wms" version="1.3.0" xmlns="http://www.opengis.net/wms"/>`),
 			Result: GetCapabilities{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: "wms", Version: "1.3.0", Attr: []xml.Attr{{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/wms"}}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: ows.MissingParameterValue("REQUEST")},
+		1: {Body: []byte("<Unknown/>"), Error: common.MissingParameterValue("REQUEST")},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: ows.MissingParameterValue()},
+		2: {Body: []byte("no XML document, just a string"), Error: common.MissingParameterValue()},
 		// document at all
-		3: {Error: ows.MissingParameterValue()},
+		3: {Error: common.MissingParameterValue()},
 	}
 
 	for k, n := range tests {
@@ -70,7 +70,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query      url.Values
 		Result     GetCapabilities
-		Exceptions ows.Exceptions
+		Exceptions common.Exceptions
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {Query: map[string][]string{"SERVICE": {"wms"}, "Request": {"GetCapabilities"}, "version": {"1.3.0"}},
@@ -88,7 +88,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 			Result: GetCapabilities{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: Service, Version: "no version found"}}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			Exceptions: ows.Exceptions{ows.MissingParameterValue(REQUEST), ows.MissingParameterValue(SERVICE)}},
+			Exceptions: common.Exceptions{common.MissingParameterValue(REQUEST), common.MissingParameterValue(SERVICE)}},
 	}
 
 	for k, test := range tests {
@@ -124,7 +124,7 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetCapabilities
 		Excepted url.Values
-		Error    ows.Exception
+		Error    common.Exception
 	}{
 		0: {Object: GetCapabilities{BaseRequest: BaseRequest{Service: Service, Version: Version}, XMLName: xml.Name{Local: `GetCapabilities`}},
 			Excepted: map[string][]string{

@@ -1,4 +1,4 @@
-package ows
+package common
 
 import (
 	"encoding/xml"

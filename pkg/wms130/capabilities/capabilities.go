@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"log"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 	"gopkg.in/yaml.v2"
 )
@@ -72,8 +72,8 @@ type Layer struct {
 	Name                    *string                  `xml:"Name" yaml:"name"`
 	Title                   string                   `xml:"Title" yaml:"title"`
 	Abstract                string                   `xml:"Abstract" yaml:"abstract"`
-	KeywordList             *ows.Keywords            `xml:"KeywordList" yaml:"keywordlist"`
-	CRS                     []ows.CRS                `xml:"CRS" yaml:"crs"`
+	KeywordList             *common.Keywords         `xml:"KeywordList" yaml:"keywordlist"`
+	CRS                     []common.CRS             `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
 	BoundingBox             []*BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
 	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
@@ -175,7 +175,7 @@ func (l *Layer) findLayer(layername string) *Layer {
 
 // GetLayer returns the Layer Capabilities from the Capabilities document.
 // when the requested Layer is not found a exception is thrown.
-func (c *Capabilities) GetLayer(layername string) (Layer, ows.Exception) {
+func (c *Capabilities) GetLayer(layername string) (Layer, common.Exception) {
 	var layer Layer
 
 	found := false

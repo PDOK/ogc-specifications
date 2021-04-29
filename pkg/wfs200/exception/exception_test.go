@@ -2,13 +2,11 @@ package exception
 
 import (
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/ows"
 )
 
 func TestWFSException(t *testing.T) {
 	var tests = []struct {
-		exception     ows.Exception
+		exception     WFSException
 		exceptionText string
 		exceptionCode string
 		locatorCode   string
@@ -67,29 +65,28 @@ func TestWFSException(t *testing.T) {
 
 func TestReport(t *testing.T) {
 	var tests = []struct {
-		exceptions []ows.Exception
+		exceptions WFSExceptions
 		result     []byte
 		err        error
 	}{
-		0: {exceptions: []ows.Exception{WFSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
+		0: {exceptions: WFSExceptions{WFSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
+<ExceptionReport xmlns:common="http://www.opengis.net/common/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
  <Exception exceptionCode=""></Exception>
 </ExceptionReport>`)},
-		1: {exceptions: []ows.Exception{
+		1: {exceptions: WFSExceptions{
 			CannotLockAllFeatures(),
 			DuplicateStoredQueryIDValue(),
 		},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-<ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
+<ExceptionReport xmlns:common="http://www.opengis.net/common/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
  <Exception exceptionCode="CannotLockAllFeatures"></Exception>
  <Exception exceptionCode="DuplicateStoredQueryIDValue"></Exception>
 </ExceptionReport>`)},
 	}
 
 	for k, a := range tests {
-		report := WFSExceptionReport{}
-		r := report.Report(a.exceptions)
+		r := a.exceptions.ToReport().ToBytes()
 
 		if string(r) != string(a.result) {
 			t.Errorf("test: %d, expected: %s\n got: %s", k, a.result, r)

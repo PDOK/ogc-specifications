@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
@@ -21,7 +21,7 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object    GetFeatureInfo
 		Excepted  url.Values
-		Exception ows.Exception
+		Exception common.Exception
 	}{
 		0: {Object: GetFeatureInfo{
 			XMLName: xml.Name{Local: `GetFeatureInfo`},
@@ -35,7 +35,7 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
 			CRS: "EPSG:4326",
-			BoundingBox: ows.BoundingBox{
+			BoundingBox: common.BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
 			},
@@ -105,7 +105,7 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
 			CRS: "EPSG:4326",
-			BoundingBox: ows.BoundingBox{
+			BoundingBox: common.BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
 			},
@@ -169,10 +169,10 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query      url.Values
 		Excepted   GetFeatureInfo
-		Exceptions ows.Exceptions
+		Exceptions common.Exceptions
 	}{
-		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: ows.Exceptions{ows.InvalidParameterValue("", `boundingbox`)}},
-		1: {Query: url.Values{}, Exceptions: ows.Exceptions{ows.MissingParameterValue(VERSION), ows.MissingParameterValue(REQUEST)}},
+		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: common.Exceptions{common.InvalidParameterValue("", `boundingbox`)}},
+		1: {Query: url.Values{}, Exceptions: common.Exceptions{common.MissingParameterValue(VERSION), common.MissingParameterValue(REQUEST)}},
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:       {`Rivers,Roads,Houses`},
 			STYLES:       {`CenterLine,,Outline`},
@@ -199,7 +199,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
 				CRS: "EPSG:4326",
-				BoundingBox: ows.BoundingBox{
+				BoundingBox: common.BoundingBox{
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
 				},
@@ -212,11 +212,11 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 				InfoFormat:   sp(`application/json`),
 			},
 		},
-		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{ows.MissingParameterValue(WIDTH, `not a number`)}},
-		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{ows.MissingParameterValue(HEIGHT, `not a number`)}},
-		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{exception.InvalidPoint(`not a number`, `1`)}},
-		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{exception.InvalidPoint(`1`, `not a number`)}},
-		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: ows.Exceptions{exception.InvalidPoint(`this in not a number`, `this is also not a number`)}},
+		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{common.MissingParameterValue(WIDTH, `not a number`)}},
+		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{common.MissingParameterValue(HEIGHT, `not a number`)}},
+		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{exception.InvalidPoint(`not a number`, `1`)}},
+		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{exception.InvalidPoint(`1`, `not a number`)}},
+		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{exception.InvalidPoint(`this in not a number`, `this is also not a number`)}},
 	}
 
 	for k, test := range tests {
@@ -248,10 +248,10 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
 		Excepted GetFeatureInfo
-		Error    ows.Exception
+		Error    common.Exception
 	}{
 		// GetFeatureInfo example request
-		0: {Body: []byte(`<GetFeatureInfo xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
+		0: {Body: []byte(`<GetFeatureInfo xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:common="http://www.opengis.net/common" 
 		xmlns:se="http://www.opengis.net/se" xmlns:wms="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld GetFeatureInfo.xsd" version="1.3.0">
 		<StyledLayerDescriptor version="1.1.0">
 			<NamedLayer>
@@ -275,8 +275,8 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 		</StyledLayerDescriptor>
 		<CRS>EPSG:4326</CRS>
 		<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326">					
-			<ows:LowerCorner>-180.0 -90.0</ows:LowerCorner>
-			<ows:UpperCorner>180.0 90.0</ows:UpperCorner>
+			<common:LowerCorner>-180.0 -90.0</common:LowerCorner>
+			<common:UpperCorner>180.0 90.0</common:UpperCorner>
 		</BoundingBox>
 		<Size>
 				<Width>1024</Width>
@@ -287,11 +287,11 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 			Excepted: GetFeatureInfo{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
-					Attr: ows.XMLAttribute{
+					Attr: common.XMLAttribute{
 						xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
-						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows"},
+						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "common"}, Value: "http://www.opengis.net/common"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "se"}, Value: "http://www.opengis.net/se"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "wms"}, Value: "http://www.opengis.net/wms"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "xsi"}, Value: "http://www.w3.org/2001/XMLSchema-instance"},
@@ -305,7 +305,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
 				CRS: "EPSG:4326",
-				BoundingBox: ows.BoundingBox{
+				BoundingBox: common.BoundingBox{
 					Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
@@ -314,8 +314,8 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 				Exceptions: sp("XML"),
 			},
 		},
-		1: {Body: []byte(``), Error: ows.MissingParameterValue()},
-		2: {Body: []byte(`<UnknownTag/>`), Error: ows.MissingParameterValue("REQUEST")},
+		1: {Body: []byte(``), Error: common.MissingParameterValue()},
+		2: {Body: []byte(`<UnknownTag/>`), Error: common.MissingParameterValue("REQUEST")},
 	}
 	for k, n := range tests {
 		var gm GetFeatureInfo
@@ -437,7 +437,7 @@ func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: "EPSG:4326",
-		BoundingBox: ows.BoundingBox{
+		BoundingBox: common.BoundingBox{
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},
 		},
@@ -465,7 +465,7 @@ func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: "EPSG:4326",
-		BoundingBox: ows.BoundingBox{
+		BoundingBox: common.BoundingBox{
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},
 		},

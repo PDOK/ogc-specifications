@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"net/url"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wfs200/capabilities"
 
@@ -24,18 +24,18 @@ func (dft *DescribeFeatureType) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureType) Validate(c capabilities.Capabilities) ows.Exceptions {
+func (dft *DescribeFeatureType) Validate(c capabilities.Capabilities) common.Exceptions {
 	return nil
 }
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
-func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
-	var xmlattributes ows.XMLAttribute
+func (dft *DescribeFeatureType) ParseXML(doc []byte) common.Exception {
+	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return ows.NoApplicableCode("Could not process XML, is it XML?")
+		return common.NoApplicableCode("Could not process XML, is it XML?")
 	}
 	if err := xml.Unmarshal(doc, &dft); err != nil {
-		return ows.OperationNotSupported(err.Error())
+		return common.OperationNotSupported(err.Error())
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -48,16 +48,16 @@ func (dft *DescribeFeatureType) ParseXML(doc []byte) ows.Exception {
 		}
 	}
 
-	dft.Attr = ows.StripDuplicateAttr(n)
+	dft.Attr = common.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureType) ParseKVP(query url.Values) ows.Exceptions {
+func (dft *DescribeFeatureType) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return ows.Exceptions{ows.MissingParameterValue(VERSION)}
+		return common.Exceptions{common.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)

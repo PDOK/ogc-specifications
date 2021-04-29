@@ -1,6 +1,6 @@
 package capabilities
 
-import "github.com/pdok/ogc-specifications/pkg/ows"
+import "github.com/pdok/ogc-specifications/pkg/common"
 
 // ParseXML func
 func (c *Contents) ParseXML(doc []byte) error {
@@ -31,10 +31,10 @@ func (c Contents) GetTilematrixsets() map[string]bool {
 
 // Layer in struct for repeatability
 type Layer struct {
-	Title             string              `xml:"ows:Title" yaml:"title"`
-	Abstract          string              `xml:"ows:Abstract" yaml:"abstract"`
-	WGS84BoundingBox  ows.BoundingBox     `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
-	Identifier        string              `xml:"ows:Identifier" yaml:"identifier"`
+	Title             string              `xml:"common:Title" yaml:"title"`
+	Abstract          string              `xml:"common:Abstract" yaml:"abstract"`
+	WGS84BoundingBox  common.BoundingBox  `xml:"common:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	Identifier        string              `xml:"common:Identifier" yaml:"identifier"`
 	Metadata          Metadata            `xml:"Metadata" yaml:"metadata"`
 	Style             []Style             `xml:"Style" yaml:"style"`
 	Format            string              `xml:"Format" yaml:"format"`
@@ -53,12 +53,12 @@ type Metadata struct {
 
 // Style in struct for repeatability
 type Style struct {
-	Identifier string        `xml:"ows:Identifier" yaml:"identifier"`
-	Title      *string       `xml:"ows:Title,omitempty" yaml:"title"`
-	Abstract   *string       `xml:"ows:Abstract,omitempty" yaml:"abstract"`
-	Keywords   *ows.Keywords `xml:"Keywords,omitempty" yaml:"keywords"`
-	LegendURL  []*LegendURL  `xml:"LegendURL,omitempty" yaml:"legendurl"`
-	IsDefault  *bool         `xml:"isDefault,attr,omitempty" yaml:"isdefault"`
+	Identifier string           `xml:"common:Identifier" yaml:"identifier"`
+	Title      *string          `xml:"common:Title,omitempty" yaml:"title"`
+	Abstract   *string          `xml:"common:Abstract,omitempty" yaml:"abstract"`
+	Keywords   *common.Keywords `xml:"Keywords,omitempty" yaml:"keywords"`
+	LegendURL  []*LegendURL     `xml:"LegendURL,omitempty" yaml:"legendurl"`
+	IsDefault  *bool            `xml:"isDefault,attr,omitempty" yaml:"isdefault"`
 }
 
 // TileMatrixSetLink in struct for repeatability
@@ -68,14 +68,14 @@ type TileMatrixSetLink struct {
 
 // TileMatrixSet in struct for repeatability
 type TileMatrixSet struct {
-	Identifier   string       `xml:"ows:Identifier" yaml:"identifier"`
-	SupportedCRS string       `xml:"ows:SupportedCRS" yaml:"supportedcrs"`
+	Identifier   string       `xml:"common:Identifier" yaml:"identifier"`
+	SupportedCRS string       `xml:"common:SupportedCRS" yaml:"supportedcrs"`
 	TileMatrix   []TileMatrix `xml:"TileMatrix" yaml:"tilematrix"`
 }
 
 // TileMatrix in struct for repeatability
 type TileMatrix struct {
-	Identifier       string `xml:"ows:Identifier" yaml:"identifier"`
+	Identifier       string `xml:"common:Identifier" yaml:"identifier"`
 	ScaleDenominator string `xml:"ScaleDenominator" yaml:"scaledenominator"`
 	TopLeftCorner    string `xml:"TopLeftCorner" yaml:"topleftcorner"`
 	TileWidth        string `xml:"TileWidth" yaml:"tilewidth"`

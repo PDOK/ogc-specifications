@@ -3,12 +3,12 @@ package exception
 import (
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 func TestWFSException(t *testing.T) {
 	var tests = []struct {
-		exception     ows.Exception
+		exception     common.Exception
 		exceptionText string
 		exceptionCode string
 		locatorCode   string
@@ -77,16 +77,16 @@ func TestWFSException(t *testing.T) {
 
 func TestReport(t *testing.T) {
 	var tests = []struct {
-		exceptions []ows.Exception
+		exceptions WMSExceptions
 		result     []byte
 		err        error
 	}{
-		0: {exceptions: []ows.Exception{WMSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
+		0: {exceptions: WMSExceptions{WMSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <ServiceExceptionReport version="1.3.0" xmlns="http://www.opengis.net/ogc" xsi="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd">
  <ServiceException code=""></ServiceException>
 </ServiceExceptionReport>`)},
-		1: {exceptions: []ows.Exception{
+		1: {exceptions: WMSExceptions{
 			LayerNotQueryable(`unknown:layer`),
 			InvalidPoint("0", "0"),
 		},
@@ -98,8 +98,7 @@ func TestReport(t *testing.T) {
 	}
 
 	for k, a := range tests {
-		report := WMSServiceExceptionReport{}
-		r := report.Report(a.exceptions)
+		r := a.exceptions.ToReport().ToBytes()
 
 		if string(r) != string(a.result) {
 			t.Errorf("test: %d, expected: %s\n got: %s", k, a.result, r)

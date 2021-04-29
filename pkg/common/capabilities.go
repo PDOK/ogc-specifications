@@ -1,4 +1,4 @@
-package ows
+package common
 
 // Capabilities interface
 // return an error, if needed, not a Exception

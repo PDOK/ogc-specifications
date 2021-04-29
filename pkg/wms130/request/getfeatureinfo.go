@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
@@ -36,8 +36,8 @@ func (gfi *GetFeatureInfo) Type() string {
 }
 
 // Validate returns GetFeatureInfo
-func (gfi *GetFeatureInfo) Validate(c ows.Capabilities) ows.Exceptions {
-	var exceptions ows.Exceptions
+func (gfi *GetFeatureInfo) Validate(c common.Capabilities) common.Exceptions {
+	var exceptions common.Exceptions
 
 	wmsCapabilities := c.(capabilities.Capabilities)
 
@@ -51,13 +51,13 @@ func (gfi *GetFeatureInfo) Validate(c ows.Capabilities) ows.Exceptions {
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exceptions {
-	var xmlattributes ows.XMLAttribute
+func (gfi *GetFeatureInfo) ParseXML(body []byte) common.Exceptions {
+	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.Exceptions{ows.MissingParameterValue()}
+		return common.Exceptions{common.MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gfi); err != nil {
-		return ows.Exceptions{ows.MissingParameterValue("REQUEST")}
+		return common.Exceptions{common.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -69,12 +69,12 @@ func (gfi *GetFeatureInfo) ParseXML(body []byte) ows.Exceptions {
 		}
 	}
 
-	gfi.Attr = ows.StripDuplicateAttr(n)
+	gfi.Attr = common.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Exceptions {
+func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
 	gfikvp := orkvp.(*GetFeatureInfoKVP)
 
 	gfi.XMLName.Local = getfeatureinfo
@@ -82,15 +82,15 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp ows.OperationRequestKV
 
 	sld, ex := gfikvp.buildStyledLayerDescriptor()
 	if ex != nil {
-		return ows.Exceptions{ex}
+		return common.Exceptions{ex}
 	}
 	gfi.StyledLayerDescriptor = sld
 
 	gfi.CRS = gfikvp.CRS
 
-	var bbox ows.BoundingBox
+	var bbox common.BoundingBox
 	if err := bbox.ParseString(gfikvp.Bbox); err != nil {
-		return ows.Exceptions{err}
+		return common.Exceptions{err}
 	}
 	gfi.BoundingBox = bbox
 
@@ -98,13 +98,13 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp ows.OperationRequestKV
 
 	w, err := strconv.Atoi(gfikvp.Width)
 	if err != nil {
-		return ows.Exceptions{ows.MissingParameterValue(WIDTH, gfikvp.Width)}
+		return common.Exceptions{common.MissingParameterValue(WIDTH, gfikvp.Width)}
 	}
 	gfi.Size.Width = w
 
 	h, err := strconv.Atoi(gfikvp.Height)
 	if err != nil {
-		return ows.Exceptions{ows.MissingParameterValue(HEIGHT, gfikvp.Height)}
+		return common.Exceptions{common.MissingParameterValue(HEIGHT, gfikvp.Height)}
 	}
 	gfi.Size.Height = h
 
@@ -112,13 +112,13 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp ows.OperationRequestKV
 
 	i, err := strconv.Atoi(gfikvp.I)
 	if err != nil {
-		return ows.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
+		return common.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
 	}
 	gfi.I = i
 
 	j, err := strconv.Atoi(gfikvp.J)
 	if err != nil {
-		return ows.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
+		return common.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
 	}
 	gfi.J = j
 
@@ -135,11 +135,11 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp ows.OperationRequestKV
 }
 
 // ParseKVP builds a GetFeatureInfo object based on the available query parameters
-func (gfi *GetFeatureInfo) ParseKVP(query url.Values) ows.Exceptions {
+func (gfi *GetFeatureInfo) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
-		return ows.Exceptions{ows.MissingParameterValue(VERSION), ows.MissingParameterValue(REQUEST)}
+		return common.Exceptions{common.MissingParameterValue(VERSION), common.MissingParameterValue(REQUEST)}
 	}
 
 	gfikvp := GetFeatureInfoKVP{}
@@ -183,7 +183,7 @@ type GetFeatureInfo struct {
 	// needed in a GetFeatureInfo request
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"` //TODO layers is need styles is not!
 	CRS                   string                `xml:"CRS" yaml:"crs"`
-	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox"`
+	BoundingBox           common.BoundingBox    `xml:"BoundingBox" yaml:"boundingbox"`
 	// We skip the Output struct, because these are not required parameters
 	Size   Size   `xml:"Size" yaml:"size"`
 	Format string `xml:"Format,omitempty" yaml:"format,omitempty"`

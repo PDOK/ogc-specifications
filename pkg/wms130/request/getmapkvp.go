@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 //GetMapKVP struct
@@ -44,11 +44,11 @@ type GetMapKVPOptional struct {
 }
 
 // ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
-	var exceptions ows.Exceptions
+func (gmkvp *GetMapKVP) ParseKVP(query url.Values) common.Exceptions {
+	var exceptions common.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
-			exceptions = append(exceptions, ows.InvalidParameterValue(k, strings.Join(v, ",")))
+			exceptions = append(exceptions, common.InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
@@ -92,7 +92,7 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) ows.Exceptions {
 }
 
 // ParseOperationRequest builds a GetMapKVP object based on a GetMap struct
-func (gmkvp *GetMapKVP) ParseOperationRequest(or ows.OperationRequest) ows.Exceptions {
+func (gmkvp *GetMapKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
 	gm := or.(*GetMap)
 
 	gmkvp.Request = getmap
@@ -126,16 +126,16 @@ func (gmkvp *GetMapKVP) ParseOperationRequest(or ows.OperationRequest) ows.Excep
 }
 
 // BuildOutput builds a Output struct from the KVP information
-func (gmkvp *GetMapKVP) buildOutput() (Output, ows.Exception) {
+func (gmkvp *GetMapKVP) buildOutput() (Output, common.Exception) {
 	output := Output{}
 
 	h, err := strconv.Atoi(gmkvp.Height)
 	if err != nil {
-		return output, ows.InvalidParameterValue(HEIGHT, gmkvp.Height)
+		return output, common.InvalidParameterValue(HEIGHT, gmkvp.Height)
 	}
 	w, err := strconv.Atoi(gmkvp.Width)
 	if err != nil {
-		return output, ows.InvalidParameterValue(WIDTH, gmkvp.Width)
+		return output, common.InvalidParameterValue(WIDTH, gmkvp.Width)
 	}
 
 	output.Size = Size{Height: h, Width: w}
@@ -149,7 +149,7 @@ func (gmkvp *GetMapKVP) buildOutput() (Output, ows.Exception) {
 }
 
 // BuildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the KVP information
-func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, ows.Exception) {
+func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, common.Exception) {
 	var layers, styles []string
 	if sl.Layers != `` {
 		layers = strings.Split(sl.Layers, ",")

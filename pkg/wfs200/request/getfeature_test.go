@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
@@ -35,7 +35,7 @@ func TestGetFeatureBuildXML(t *testing.T) {
  <Query typeNames="test" srsName="urn:ogc:def:crs:EPSG::28992"></Query>
 </GetFeature>`},
 		1: {gf: GetFeature{BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)}, BaseRequest: BaseRequest{
-			Attr: ows.XMLAttribute{
+			Attr: common.XMLAttribute{
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"}},
 			Service: "WFS", Version: "2.0.0"}, Query: Query{TypeNames: "test", SrsName: sp("urn:ogc:def:crs:EPSG::28992")}},
 			result: `<?xml version="1.0" encoding="UTF-8"?>
@@ -59,7 +59,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 	var tests = []struct {
 		Body      []byte
 		Result    GetFeature
-		Exception ows.Exception
+		Exception common.Exception
 	}{
 		// Get 3 features
 		0: {Body: []byte(`<GetFeature outputFormat="application/gml+xml; version=3.2" count="3" startindex="0" service="WFS" version="2.0.0">
@@ -110,11 +110,11 @@ func TestGetFeatureParseXML(t *testing.T) {
 		// Not a XML document
 		3: {Body: []byte(`GetFeature`),
 			Result:    GetFeature{XMLName: xml.Name{Local: "GetFeature"}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}},
-			Exception: ows.NoApplicableCode("Could not process XML, is it XML?"),
+			Exception: common.NoApplicableCode("Could not process XML, is it XML?"),
 		},
 		// No document
 		4: {Result: GetFeature{XMLName: xml.Name{Local: "GetFeature"}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}},
-			Exception: ows.NoApplicableCode("Could not process XML, is it XML?"),
+			Exception: common.NoApplicableCode("Could not process XML, is it XML?"),
 		},
 	}
 
@@ -220,7 +220,7 @@ func TestGetFeatureParseKVP(t *testing.T) {
 	var tests = []struct {
 		QueryParams url.Values
 		Result      GetFeature
-		Exception   ows.Exception
+		Exception   common.Exception
 	}{ // Standaard getfeature request with count
 		0: {QueryParams: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}},
 			Result: GetFeature{XMLName: xml.Name{Local: getfeature}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3)}, BaseRequest: BaseRequest{Service: Service, Version: Version}, Query: Query{TypeNames: "dummy"}}},
@@ -241,7 +241,7 @@ func TestGetFeatureParseKVP(t *testing.T) {
 		3: {QueryParams: map[string][]string{OUTPUTFORMAT: {"application/xml"}, STARTINDEX: {"1000"}, RESULTTYPE: {"hits"}, TYPENAMES: {"dummy"}, COUNT: {"3"}, VERSION: {Version}},
 			Result: GetFeature{BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3), Startindex: ip(1000), ResultType: sp("hits")}, BaseRequest: BaseRequest{Version: Version}, Query: Query{TypeNames: "dummy"}}},
 		4: {QueryParams: map[string][]string{},
-			Exception: ows.MissingParameterValue(VERSION),
+			Exception: common.MissingParameterValue(VERSION),
 		},
 		// Resourceids
 		5: {QueryParams: map[string][]string{RESOURCEID: {"one,two,three"}, VERSION: {Version}},
@@ -259,7 +259,7 @@ func TestGetFeatureParseKVP(t *testing.T) {
 		// 0: {QueryParams: map[string][]string{FILTER: []string{`<Filter><OR><AND><PropertyIsLike wildcard='*' singleChar='.' escape='!'><PropertyName>NAME</PropertyName><Literal>Syd*</Literal></PropertyIsLike><PropertyIsEqualTo><PropertyName>POPULATION</PropertyName><Literal>4250065</Literal></PropertyIsEqualTo></AND><DWithin><PropertyName>Geometry</PropertyName><Point srsName="mekker"><coordinates>135.500000,34.666667</coordinates></Point><Distance units='m'>10000</Distance></DWithin></OR></Filter>`}, SRSNAME: []string{"srsname"}},
 		// 	Result: GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{}}, BaseRequest: BaseRequest{Version: Version}}},
 		9: {QueryParams: map[string][]string{BBOX: {`1,1,2,2`}, FILTER: {`<Filter><ResourceId rid="one"/><ResourceId rid="two"/><ResourceId rid="three"/></Filter>`}, SRSNAME: {"srsname"}, VERSION: {Version}},
-			Result: GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{1, 1}, UpperCorner: ows.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
+			Result: GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: common.Position{1, 1}, UpperCorner: common.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 	}
 
 	for tid, q := range tests {
@@ -440,10 +440,10 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 	var tests = []struct {
 		Query     string
 		Expected  GEOBBOX
-		Exception ows.Exception
+		Exception common.Exception
 	}{
-		0: {Query: "18.54,-72.3544,18.62,-72.2564", Expected: GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{18.54, -72.3544}, UpperCorner: ows.Position{18.62, -72.2564}}}},
-		1: {Query: "49.1874,-123.2778,49.3504,-122.8892,urn:ogc:def:crs:EPSG::4326", Expected: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: ows.Position{49.1874, -123.2778}, UpperCorner: ows.Position{49.3504, -122.8892}}}},
+		0: {Query: "18.54,-72.3544,18.62,-72.2564", Expected: GEOBBOX{Envelope: Envelope{LowerCorner: common.Position{18.54, -72.3544}, UpperCorner: common.Position{18.62, -72.2564}}}},
+		1: {Query: "49.1874,-123.2778,49.3504,-122.8892,urn:ogc:def:crs:EPSG::4326", Expected: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: common.Position{49.1874, -123.2778}, UpperCorner: common.Position{49.3504, -122.8892}}}},
 		2: {Query: "", Expected: GEOBBOX{}},
 		3: {Query: "18.54;-72.3544;18.62;-72.2564", Expected: GEOBBOX{}},
 		// Needs a beter solution
@@ -479,8 +479,8 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 		GeoBBox  GEOBBOX
 		Expected string
 	}{
-		0: {Expected: "18.540000,-72.354400,18.620000,-72.256400", GeoBBox: GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{18.54, -72.3544}, UpperCorner: ows.Position{18.62, -72.2564}}}},
-		1: {Expected: "49.187400,-123.277800,49.350400,-122.889200,urn:ogc:def:crs:EPSG::4326", GeoBBox: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: ows.Position{49.1874, -123.2778}, UpperCorner: ows.Position{49.3504, -122.8892}}}},
+		0: {Expected: "18.540000,-72.354400,18.620000,-72.256400", GeoBBox: GEOBBOX{Envelope: Envelope{LowerCorner: common.Position{18.54, -72.3544}, UpperCorner: common.Position{18.62, -72.2564}}}},
+		1: {Expected: "49.187400,-123.277800,49.350400,-122.889200,urn:ogc:def:crs:EPSG::4326", GeoBBox: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326"), Envelope: Envelope{LowerCorner: common.Position{49.1874, -123.2778}, UpperCorner: common.Position{49.3504, -122.8892}}}},
 		2: {Expected: "", GeoBBox: GEOBBOX{}},
 		3: {Expected: "", GeoBBox: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326")}},
 	}
@@ -498,14 +498,14 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 // ----------
 
 func BenchmarkGetFeatureBuildKVP(b *testing.B) {
-	gf := GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{1, 1}, UpperCorner: ows.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
+	gf := GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: common.Position{1, 1}, UpperCorner: common.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
 		gf.BuildKVP()
 	}
 }
 
 func BenchmarkGetFeatureBuildXML(b *testing.B) {
-	gf := GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: ows.Position{1, 1}, UpperCorner: ows.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
+	gf := GetFeature{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: common.Position{1, 1}, UpperCorner: common.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
 		gf.BuildXML()
 	}

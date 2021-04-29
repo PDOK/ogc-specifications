@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 //
@@ -20,19 +20,19 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate(c ows.Capabilities) ows.Exceptions {
-	var exceptions ows.Exceptions
+func (gc *GetCapabilities) Validate(c common.Capabilities) common.Exceptions {
+	var exceptions common.Exceptions
 	return exceptions
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) ows.Exceptions {
-	var xmlattributes ows.XMLAttribute
+func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
+	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.Exceptions{ows.MissingParameterValue()}
+		return common.Exceptions{common.MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return ows.Exceptions{ows.MissingParameterValue("REQUEST")}
+		return common.Exceptions{common.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -44,16 +44,16 @@ func (gc *GetCapabilities) ParseXML(body []byte) ows.Exceptions {
 		}
 	}
 
-	gc.Attr = ows.StripDuplicateAttr(n)
+	gc.Attr = common.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
+func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty SERVICE and REQUEST parameter is missing.
-		return ows.Exceptions{ows.MissingParameterValue(SERVICE), ows.MissingParameterValue(REQUEST)}
+		return common.Exceptions{common.MissingParameterValue(SERVICE), common.MissingParameterValue(REQUEST)}
 	}
 
 	gckvp := GetCapabilitiesKVP{}
@@ -69,7 +69,7 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) ows.Exceptions {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilities) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Exceptions {
+func (gc *GetCapabilities) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
 	gckvp := orkvp.(*GetCapabilitiesKVP)
 
 	gc.XMLName.Local = gckvp.Request

@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
 	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
@@ -44,8 +44,8 @@ func (gm *GetMap) Type() string {
 }
 
 // Validate returns GetMap
-func (gm *GetMap) Validate(c ows.Capabilities) ows.Exceptions {
-	var exceptions ows.Exceptions
+func (gm *GetMap) Validate(c common.Capabilities) common.Exceptions {
+	var exceptions common.Exceptions
 
 	wmsCapabilities := c.(capabilities.Capabilities)
 
@@ -66,7 +66,7 @@ func (gm *GetMap) Validate(c ows.Capabilities) ows.Exceptions {
 }
 
 // checkCRS against a given list of CRS
-func checkCRS(crs ows.CRS, definedCrs []ows.CRS) ows.Exception {
+func checkCRS(crs common.CRS, definedCrs []common.CRS) common.Exception {
 	for _, defined := range definedCrs {
 		if defined == crs {
 			return nil
@@ -76,7 +76,7 @@ func checkCRS(crs ows.CRS, definedCrs []ows.CRS) ows.Exception {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gm *GetMap) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Exceptions {
+func (gm *GetMap) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
 	gmkvp := orkvp.(*GetMapKVP)
 
 	gm.XMLName.Local = getmap
@@ -84,23 +84,23 @@ func (gm *GetMap) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Ex
 
 	sld, err := gmkvp.buildStyledLayerDescriptor()
 	if err != nil {
-		return ows.Exceptions{err}
+		return common.Exceptions{err}
 	}
 	gm.StyledLayerDescriptor = sld
 
-	var crs ows.CRS
+	var crs common.CRS
 	crs.ParseString(gmkvp.CRS)
 	gm.CRS = crs
 
-	var bbox ows.BoundingBox
+	var bbox common.BoundingBox
 	if err := bbox.ParseString(gmkvp.Bbox); err != nil {
-		return ows.Exceptions{err}
+		return common.Exceptions{err}
 	}
 	gm.BoundingBox = bbox
 
 	output, err := gmkvp.buildOutput()
 	if err != nil {
-		return ows.Exceptions{err}
+		return common.Exceptions{err}
 	}
 	gm.Output = output
 
@@ -110,11 +110,11 @@ func (gm *GetMap) ParseOperationRequestKVP(orkvp ows.OperationRequestKVP) ows.Ex
 }
 
 // ParseKVP builds a GetMap object based on the available query parameters
-func (gm *GetMap) ParseKVP(query url.Values) ows.Exceptions {
+func (gm *GetMap) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
-		return ows.Exceptions{ows.MissingParameterValue(VERSION), ows.MissingParameterValue(REQUEST)}
+		return common.Exceptions{common.MissingParameterValue(VERSION), common.MissingParameterValue(REQUEST)}
 	}
 
 	gmkvp := GetMapKVP{}
@@ -130,10 +130,10 @@ func (gm *GetMap) ParseKVP(query url.Values) ows.Exceptions {
 }
 
 // ParseXML builds a GetMap object based on a XML document
-func (gm *GetMap) ParseXML(body []byte) ows.Exceptions {
-	var xmlattributes ows.XMLAttribute
+func (gm *GetMap) ParseXML(body []byte) common.Exceptions {
+	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return ows.Exceptions{ows.MissingParameterValue()}
+		return common.Exceptions{common.MissingParameterValue()}
 	}
 	xml.Unmarshal(body, &gm) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
 	var n []xml.Attr
@@ -144,7 +144,7 @@ func (gm *GetMap) ParseXML(body []byte) ows.Exceptions {
 			n = append(n, a)
 		}
 	}
-	gm.BaseRequest.Attr = ows.StripDuplicateAttr(n)
+	gm.BaseRequest.Attr = common.StripDuplicateAttr(n)
 	return nil
 }
 
@@ -163,7 +163,7 @@ func (gm *GetMap) BuildXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, ows.Exception) {
+func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, common.Exception) {
 	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
 	// 1. cnt(STYLE) == 0 -> Added LAYERS
 	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
@@ -243,8 +243,8 @@ type GetMap struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
 	BaseRequest
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
-	CRS                   ows.CRS               `xml:"CRS" yaml:"crs"`
-	BoundingBox           ows.BoundingBox       `xml:"BoundingBox" yaml:"boundingbox"`
+	CRS                   common.CRS            `xml:"CRS" yaml:"crs"`
+	BoundingBox           common.BoundingBox    `xml:"BoundingBox" yaml:"boundingbox"`
 	Output                Output                `xml:"Output" yaml:"output"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
@@ -253,13 +253,13 @@ type GetMap struct {
 }
 
 // Validate validates the output parameters
-func (output *Output) Validate(c capabilities.Capabilities) ows.Exceptions {
-	var exceptions ows.Exceptions
+func (output *Output) Validate(c capabilities.Capabilities) common.Exceptions {
+	var exceptions common.Exceptions
 	if output.Size.Width > c.MaxWidth {
-		exceptions = append(exceptions, ows.NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
+		exceptions = append(exceptions, common.NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
 	}
 	if output.Size.Height > c.MaxHeight {
-		exceptions = append(exceptions, ows.NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
+		exceptions = append(exceptions, common.NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
 	}
 
 	for _, format := range c.WMSCapabilities.Request.GetMap.Format {
@@ -299,7 +299,7 @@ type StyledLayerDescriptor struct {
 }
 
 // Validate the StyledLayerDescriptor
-func (sld *StyledLayerDescriptor) Validate(c capabilities.Capabilities) ows.Exceptions {
+func (sld *StyledLayerDescriptor) Validate(c capabilities.Capabilities) common.Exceptions {
 	var unknownLayers []string
 	var unknownStyles []struct{ layer, style string }
 
@@ -323,7 +323,7 @@ func (sld *StyledLayerDescriptor) Validate(c capabilities.Capabilities) ows.Exce
 		}
 	}
 
-	var exceptions ows.Exceptions
+	var exceptions common.Exceptions
 	if len(unknownLayers) > 0 {
 		for _, l := range unknownLayers {
 			exceptions = append(exceptions, exception.LayerNotDefined(l))

@@ -1,4 +1,4 @@
-package ows
+package common
 
 // OperationResponse interface
 type OperationResponse interface {
