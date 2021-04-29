@@ -2,12 +2,12 @@ package request
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"strings"
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 func TestGetFeatureInfoType(t *testing.T) {
@@ -214,9 +214,9 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 		},
 		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{common.MissingParameterValue(WIDTH, `not a number`)}},
 		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{common.MissingParameterValue(HEIGHT, `not a number`)}},
-		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{exception.InvalidPoint(`not a number`, `1`)}},
-		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{exception.InvalidPoint(`1`, `not a number`)}},
-		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{exception.InvalidPoint(`this in not a number`, `this is also not a number`)}},
+		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{wms130.InvalidPoint(`not a number`, `1`)}},
+		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{wms130.InvalidPoint(`1`, `not a number`)}},
+		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{wms130.InvalidPoint(`this in not a number`, `this is also not a number`)}},
 	}
 
 	for k, test := range tests {

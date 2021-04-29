@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
-	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 // GetFeatureInfo
@@ -112,13 +112,13 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp common.OperationReques
 
 	i, err := strconv.Atoi(gfikvp.I)
 	if err != nil {
-		return common.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
+		return common.Exceptions{wms130.InvalidPoint(gfikvp.I, gfikvp.J)}
 	}
 	gfi.I = i
 
 	j, err := strconv.Atoi(gfikvp.J)
 	if err != nil {
-		return common.Exceptions{exception.InvalidPoint(gfikvp.I, gfikvp.J)}
+		return common.Exceptions{wms130.InvalidPoint(gfikvp.I, gfikvp.J)}
 	}
 	gfi.J = j
 

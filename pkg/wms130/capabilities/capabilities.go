@@ -2,10 +2,10 @@ package capabilities
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"log"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 	"gopkg.in/yaml.v2"
 )
 
@@ -186,7 +186,7 @@ func (c *Capabilities) GetLayer(layername string) (Layer, common.Exception) {
 	}
 
 	if !found {
-		return layer, exception.LayerNotDefined(layername)
+		return layer, wms130.LayerNotDefined(layername)
 	}
 
 	for _, l := range c.Layer {

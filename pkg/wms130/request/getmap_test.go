@@ -2,12 +2,12 @@ package request
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"testing"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
-	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 func sp(s string) *string {
@@ -37,8 +37,8 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 		Error  common.Exception
 	}{
 		0: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: "style1"}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: "style2"}}}}},
-		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Error: exception.StyleNotDefined()},
-		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Error: exception.StyleNotDefined()},
+		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Error: wms130.StyleNotDefined()},
+		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Error: wms130.StyleNotDefined()},
 		3: {layers: []string{"layer1", "layer2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}}},
 	}
 
@@ -93,7 +93,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 				},
 			},
 			sld:        StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styletwo`}}}},
-			exceptions: common.Exceptions{exception.LayerNotDefined(`layer1`), exception.StyleNotDefined(`styletwo`, `layer2`)},
+			exceptions: common.Exceptions{wms130.LayerNotDefined(`layer1`), wms130.StyleNotDefined(`styletwo`, `layer2`)},
 		},
 	}
 
@@ -489,7 +489,7 @@ func TestCheckCRS(t *testing.T) {
 		exception common.Exception
 	}{
 		0: {crs: common.CRS{Namespace: `CRS`, Code: 84}},
-		1: {crs: common.CRS{Namespace: `UNKNOWN`}, exception: exception.InvalidCRS(`UNKNOWN`)},
+		1: {crs: common.CRS{Namespace: `UNKNOWN`}, exception: wms130.InvalidCRS(`UNKNOWN`)},
 	}
 
 	for k, test := range tests {

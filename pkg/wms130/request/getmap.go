@@ -3,12 +3,12 @@ package request
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/pdok/ogc-specifications/pkg/wms130"
 	"net/url"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wms130/capabilities"
-	"github.com/pdok/ogc-specifications/pkg/wms130/exception"
 )
 
 // GetMap
@@ -58,7 +58,7 @@ func (gm *GetMap) Validate(c common.Capabilities) common.Exceptions {
 			exceptions = append(exceptions, layerexception)
 		}
 		if CRSException := checkCRS(gm.CRS, layer.CRS); CRSException != nil {
-			exceptions = append(exceptions, exception.InvalidCRS(gm.CRS.String(), *layer.Name))
+			exceptions = append(exceptions, wms130.InvalidCRS(gm.CRS.String(), *layer.Name))
 		}
 	}
 
@@ -72,7 +72,7 @@ func checkCRS(crs common.CRS, definedCrs []common.CRS) common.Exception {
 			return nil
 		}
 	}
-	return exception.InvalidCRS(crs.String())
+	return wms130.InvalidCRS(crs.String())
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
@@ -197,7 +197,7 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 		return sld, nil
 		// 4.
 	} else if len(layers) != len(styles) {
-		return StyledLayerDescriptor{}, exception.StyleNotDefined()
+		return StyledLayerDescriptor{}, wms130.StyleNotDefined()
 	}
 
 	return StyledLayerDescriptor{}, nil
@@ -268,7 +268,7 @@ func (output *Output) Validate(c capabilities.Capabilities) common.Exceptions {
 			found = true
 		}
 		if !found {
-			exceptions = append(exceptions, exception.InvalidFormat(output.Format))
+			exceptions = append(exceptions, wms130.InvalidFormat(output.Format))
 		}
 	}
 
@@ -326,13 +326,13 @@ func (sld *StyledLayerDescriptor) Validate(c capabilities.Capabilities) common.E
 	var exceptions common.Exceptions
 	if len(unknownLayers) > 0 {
 		for _, l := range unknownLayers {
-			exceptions = append(exceptions, exception.LayerNotDefined(l))
+			exceptions = append(exceptions, wms130.LayerNotDefined(l))
 		}
 	}
 
 	if len(unknownStyles) > 0 {
 		for _, sld := range unknownStyles {
-			exceptions = append(exceptions, exception.StyleNotDefined(sld.style, sld.layer))
+			exceptions = append(exceptions, wms130.StyleNotDefined(sld.style, sld.layer))
 		}
 	}
 

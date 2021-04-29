@@ -1,79 +1,79 @@
-package exception
+package wfs200
 
 import "fmt"
 
 // CannotLockAllFeatures exception
-func CannotLockAllFeatures() WFSException {
-	return WFSException{
+func CannotLockAllFeatures() Exception {
+	return exception{
 		ExceptionCode: "CannotLockAllFeatures",
 	}
 }
 
 // DuplicateStoredQueryIDValue exception
-func DuplicateStoredQueryIDValue() WFSException {
-	return WFSException{
+func DuplicateStoredQueryIDValue() Exception {
+	return exception{
 		ExceptionCode: "DuplicateStoredQueryIDValue",
 	}
 }
 
 // DuplicateStoredQueryParameterName exception
-func DuplicateStoredQueryParameterName() WFSException {
-	return WFSException{
+func DuplicateStoredQueryParameterName() Exception {
+	return exception{
 		ExceptionCode: "DuplicateStoredQueryParameterName",
 	}
 }
 
 // FeaturesNotLocked exception
-func FeaturesNotLocked() WFSException {
-	return WFSException{
+func FeaturesNotLocked() Exception {
+	return exception{
 		ExceptionCode: "FeaturesNotLocked",
 	}
 }
 
 // InvalidLockID exception
-func InvalidLockID() WFSException {
-	return WFSException{
+func InvalidLockID() Exception {
+	return exception{
 		ExceptionCode: "InvalidLockID",
 	}
 }
 
 // InvalidValue exception
-func InvalidValue(s ...string) WFSException {
+func InvalidValue(s ...string) Exception {
 	if len(s) == 1 {
-		return WFSException{ExceptionText: fmt.Sprintf("The parameter: %s, contains a InvalidValue", s[0]),
+		return exception{ExceptionText: fmt.Sprintf("The parameter: %s, contains a InvalidValue", s[0]),
 			ExceptionCode: "InvalidValue",
 			LocatorCode:   s[0]}
 	}
-	return WFSException{
+	return exception{
 		ExceptionCode: "InvalidValue",
 	}
 }
 
 // LockHasExpired exception
-func LockHasExpired() WFSException {
-	return WFSException{
+func LockHasExpired() Exception {
+	return exception{
 		ExceptionCode: "LockHasExpired",
 	}
 }
 
 // OperationParsingFailed exception
-func OperationParsingFailed(value, locator string) WFSException {
-	return WFSException{
+func OperationParsingFailed(value, locator string) Exception {
+	return exception{
 		ExceptionText: fmt.Sprintf("Failed to parse the operation, found: %s", value),
 		LocatorCode:   locator,
 		ExceptionCode: "OperationParsingFailed"}
 }
 
 // OperationProcessingFailed exception
-func OperationProcessingFailed() WFSException {
-	return WFSException{
+func OperationProcessingFailed() Exception {
+	return exception{
 		ExceptionCode: "OperationProcessingFailed",
 	}
 }
 
 // ResponseCacheExpired exception
-func ResponseCacheExpired() WFSException {
-	return WFSException{
+func ResponseCacheExpired() Exception {
+	return exception{
 		ExceptionCode: "ResponseCacheExpired",
 	}
 }

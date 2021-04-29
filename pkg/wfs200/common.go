@@ -1,4 +1,4 @@
-package request
+package wfs200
 
 import (
 	"net/url"

@@ -1,4 +1,4 @@
-package exception
+package wfs200
 
 import (
 	"testing"
@@ -6,12 +6,12 @@ import (
 
 func TestWFSException(t *testing.T) {
 	var tests = []struct {
-		exception     WFSException
+		exception     Exception
 		exceptionText string
 		exceptionCode string
 		locatorCode   string
 	}{
-		0: {exception: WFSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
+		0: {exception: exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
 			exceptionText: "",
 			exceptionCode: "",
 			locatorCode:   "",
@@ -65,16 +65,16 @@ func TestWFSException(t *testing.T) {
 
 func TestReport(t *testing.T) {
 	var tests = []struct {
-		exceptions WFSExceptions
+		exceptions Exceptions
 		result     []byte
 		err        error
 	}{
-		0: {exceptions: WFSExceptions{WFSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
+		0: {exceptions: Exceptions{exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <ExceptionReport xmlns:common="http://www.opengis.net/common/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/common/1.1 http://schemas.opengis.net/common/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
  <Exception exceptionCode=""></Exception>
 </ExceptionReport>`)},
-		1: {exceptions: WFSExceptions{
+		1: {exceptions: Exceptions{
 			CannotLockAllFeatures(),
 			DuplicateStoredQueryIDValue(),
 		},

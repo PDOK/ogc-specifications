@@ -1,4 +1,4 @@
-package exception
+package wms130
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ func TestWFSException(t *testing.T) {
 		exceptionCode string
 		locatorCode   string
 	}{
-		0: {exception: WMSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
+		0: {exception: exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
 			exceptionText: "",
 			exceptionCode: "",
 			locatorCode:   "",
@@ -77,16 +77,16 @@ func TestWFSException(t *testing.T) {
 
 func TestReport(t *testing.T) {
 	var tests = []struct {
-		exceptions WMSExceptions
+		exceptions Exceptions
 		result     []byte
 		err        error
 	}{
-		0: {exceptions: WMSExceptions{WMSException{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
+		0: {exceptions: Exceptions{exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <ServiceExceptionReport version="1.3.0" xmlns="http://www.opengis.net/ogc" xsi="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd">
  <ServiceException code=""></ServiceException>
 </ServiceExceptionReport>`)},
-		1: {exceptions: WMSExceptions{
+		1: {exceptions: Exceptions{
 			LayerNotQueryable(`unknown:layer`),
 			InvalidPoint("0", "0"),
 		},

@@ -1,4 +1,4 @@
-package request
+package wfs200
 
 import (
 	"encoding/xml"
@@ -10,7 +10,6 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
-	"github.com/pdok/ogc-specifications/pkg/wfs200/exception"
 )
 
 // Contains the GetFeature struct and specific functions for building a GetFeature request
@@ -663,16 +662,16 @@ func (gb *GEOBBOX) UnmarshalText(q string) common.Exception {
 		var err error
 
 		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
-			return exception.InvalidValue(BBOX)
+			return InvalidValue(BBOX)
 		}
 		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
-			return exception.InvalidValue(BBOX)
+			return InvalidValue(BBOX)
 		}
 		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
-			return exception.InvalidValue(BBOX)
+			return InvalidValue(BBOX)
 		}
 		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
-			return exception.InvalidValue(BBOX)
+			return InvalidValue(BBOX)
 		}
 
 		gb.Envelope.LowerCorner = common.Position{lx, ly}

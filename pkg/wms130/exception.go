@@ -1,7 +1,8 @@
-package exception
+package wms130
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 const (
@@ -9,24 +10,26 @@ const (
 	Version = `1.3.0`
 )
 
-type WMSException struct {
+type Exception common.Exception
+
+type exception struct {
 	ExceptionText string `xml:",chardata" yaml:"exception"`
 	ExceptionCode string `xml:"code,attr" yaml:"code"`
 	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locator,omitempty"`
 }
 
-type WMSExceptions []WMSException
+type Exceptions []Exception
 
 type WMSServiceExceptionReport struct {
-	XMLName          xml.Name      `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
-	Version          string        `xml:"version,attr" yaml:"version"`
-	Xmlns            string        `xml:"xmlns,attr,omitempty"`
-	Xsi              string        `xml:"xsi,attr,omitempty"`
-	SchemaLocation   string        `xml:"schemaLocation,attr,omitempty"`
-	ServiceException WMSExceptions `xml:"ServiceException"`
+	XMLName          xml.Name   `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
+	Version          string     `xml:"version,attr" yaml:"version"`
+	Xmlns            string     `xml:"xmlns,attr,omitempty"`
+	Xsi              string     `xml:"xsi,attr,omitempty"`
+	SchemaLocation   string     `xml:"schemaLocation,attr,omitempty"`
+	ServiceException Exceptions `xml:"ServiceException"`
 }
 
-func (e WMSExceptions) ToReport() WMSServiceExceptionReport {
+func (e Exceptions) ToReport() WMSServiceExceptionReport {
 	r := WMSServiceExceptionReport{}
 	r.Version = Version
 	r.Xmlns = `http://www.opengis.net/ogc`
@@ -41,14 +44,14 @@ func (r WMSServiceExceptionReport) ToBytes() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func (e WMSException) Error() string {
+func (e exception) Error() string {
 	return e.ExceptionText
 }
 
-func (e WMSException) Code() string {
+func (e exception) Code() string {
 	return e.ExceptionCode
 }
 
-func (e WMSException) Locator() string {
+func (e exception) Locator() string {
 	return e.LocatorCode
 }
