@@ -33,7 +33,7 @@ func (c Contents) GetTilematrixsets() map[string]bool {
 type Layer struct {
 	Title             string              `xml:"ows:Title" yaml:"title"`
 	Abstract          string              `xml:"ows:Abstract" yaml:"abstract"`
-	WGS84BoundingBox  common.BoundingBox  `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	WGS84BoundingBox  WGS84BoundingBox    `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
 	Identifier        string              `xml:"ows:Identifier" yaml:"identifier"`
 	Metadata          Metadata            `xml:"ows:Metadata" yaml:"metadata"`
 	Style             []Style             `xml:"Style" yaml:"style"`
@@ -44,6 +44,13 @@ type Layer struct {
 		ResourceType string `xml:"resourceType,attr" yaml:"resourcetype"`
 		Template     string `xml:"template,attr" yaml:"template"`
 	} `xml:"ResourceURL" yaml:"resourceurl"`
+}
+
+type WGS84BoundingBox struct {
+	Crs         string          `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
+	Dimensions  string          `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
+	LowerCorner common.Position `xml:"ows:LowerCorner" yaml:"lowercorner"`
+	UpperCorner common.Position `xml:"ows:UpperCorner" yaml:"uppercorner"`
 }
 
 // Metadata  in struct for repeatability

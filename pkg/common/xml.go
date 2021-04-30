@@ -33,7 +33,7 @@ func (xmlattr *XMLAttribute) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 }
 
 // MarshalXML Position
-func (p *Position) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (p Position) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	s := fmt.Sprintf("%f %f", p[0], p[1])
 	return e.EncodeElement(s, start)
 }
