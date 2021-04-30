@@ -9,17 +9,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-//
-const (
-	getcapabilities = `GetCapabilities`
-)
-
-// Type and Version as constant
-const (
-	Service string = `WCS`
-	Version string = `2.0.1`
-)
-
 // WCS 2.0.1 Tokens
 const (
 	SERVICE = `SERVICE`
@@ -29,7 +18,7 @@ const (
 
 // Type returns GetCapabilities
 func (gc *GetCapabilities) Type() string {
-	return getcapabilities
+	return Getcapabilities
 }
 
 // Validate validates the GetCapabilities struct
@@ -65,8 +54,8 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
-			if strings.EqualFold(v[0], getcapabilities) {
-				gc.XMLName.Local = getcapabilities
+			if strings.EqualFold(v[0], Getcapabilities) {
+				gc.XMLName.Local = Getcapabilities
 			}
 		case SERVICE:
 			gc.Service = strings.ToUpper(v[0])

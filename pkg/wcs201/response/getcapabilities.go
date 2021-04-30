@@ -8,32 +8,19 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wcs201"
 )
 
-//
-const (
-	getcapabilities = `GetCapabilities`
-)
-
-//
-const (
-	Service = `WFS`
-	Version = `2.0.0`
-)
-
-// Contains the WFS200 struct
-
 // Type function needed for the interface
 func (gc *GetCapabilities) Type() string {
-	return getcapabilities
+	return wcs201.Getcapabilities
 }
 
 // Service function needed for the interface
 func (gc *GetCapabilities) Service() string {
-	return Service
+	return wcs201.Service
 }
 
 // Version function needed for the interface
 func (gc *GetCapabilities) Version() string {
-	return Version
+	return wcs201.Version
 }
 
 // Validate function of the wfs200 spec
