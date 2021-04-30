@@ -1,4 +1,4 @@
-package capabilities
+package wcs201
 
 // ParseXML func
 func (c *Capabilities) ParseXML(doc []byte) error {

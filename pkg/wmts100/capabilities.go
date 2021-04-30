@@ -1,4 +1,4 @@
-package capabilities
+package wmts100
 
 import "github.com/pdok/ogc-specifications/pkg/common"
 
@@ -35,7 +35,7 @@ type Layer struct {
 	Abstract          string              `xml:"ows:Abstract" yaml:"abstract"`
 	WGS84BoundingBox  common.BoundingBox  `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
 	Identifier        string              `xml:"ows:Identifier" yaml:"identifier"`
-	Metadata          Metadata            `xml:"Metadata" yaml:"metadata"`
+	Metadata          Metadata            `xml:"ows:Metadata" yaml:"metadata"`
 	Style             []Style             `xml:"Style" yaml:"style"`
 	Format            string              `xml:"Format" yaml:"format"`
 	TileMatrixSetLink []TileMatrixSetLink `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`

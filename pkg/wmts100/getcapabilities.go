@@ -1,4 +1,4 @@
-package request
+package wmts100
 
 import (
 	"encoding/xml"
@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wcs201/capabilities"
 )
 
 //
@@ -17,11 +16,11 @@ const (
 
 // Type and Version as constant
 const (
-	Service string = `WCS`
-	Version string = `2.0.1`
+	Service string = `WMTS`
+	Version string = `1.0.0`
 )
 
-// WCS 2.0.1 Tokens
+// WMTS 1.0.0 Tokens
 const (
 	SERVICE = `SERVICE`
 	REQUEST = `REQUEST`
@@ -33,8 +32,8 @@ func (gc *GetCapabilities) Type() string {
 	return getcapabilities
 }
 
-// Validate validates the GetCapabilities struct
-func (gc *GetCapabilities) Validate(c capabilities.Capabilities) common.Exceptions {
+// Validate returns GetCapabilities
+func (gc *GetCapabilities) Validate(c Contents) common.Exceptions {
 	return nil
 }
 
@@ -66,7 +65,7 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
-			if strings.ToUpper(v[0]) == strings.ToUpper(getcapabilities) {
+			if strings.EqualFold(v[0], getcapabilities) {
 				gc.XMLName.Local = getcapabilities
 			}
 		case SERVICE:

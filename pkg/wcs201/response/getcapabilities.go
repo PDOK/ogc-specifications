@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wcs201/capabilities"
+	"github.com/pdok/ogc-specifications/pkg/wcs201"
 )
 
 //
@@ -54,7 +54,7 @@ type GetCapabilities struct {
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
 	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceprovider"`
-	capabilities.Capabilities
+	wcs201.Capabilities
 }
 
 // Namespaces struct containing the namespaces needed for the XML document

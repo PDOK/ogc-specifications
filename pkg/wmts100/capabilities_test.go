@@ -1,4 +1,4 @@
-package capabilities
+package wmts100
 
 import (
 	"encoding/xml"

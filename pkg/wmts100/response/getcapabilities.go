@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wmts100/capabilities"
+	"github.com/pdok/ogc-specifications/pkg/wmts100"
 )
 
 //
@@ -51,7 +51,7 @@ type GetCapabilities struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	Contents              capabilities.Contents `xml:"Contents" yaml:"contents"`
+	Contents              wmts100.Contents      `xml:"Contents" yaml:"contents"`
 	ServiceMetadataURL    ServiceMetadataURL    `xml:"ServiceMetadataURL" yaml:"servicemetadataurl"`
 }
 

@@ -9,22 +9,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-//
-const (
-	getcapabilities = `GetCapabilities`
-)
-
-// Type returns GetCapabilities
-func (gc *GetCapabilities) Type() string {
-	return getcapabilities
-}
-
-// Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate(c common.Capabilities) common.Exceptions {
-	var exceptions common.Exceptions
-	return exceptions
-}
-
 // ParseXML builds a GetCapabilities object based on a XML document
 func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
@@ -91,10 +75,4 @@ func (gc *GetCapabilities) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
-}
-
-// GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
-type GetCapabilities struct {
-	XMLName xml.Name `xml:"GetCapabilities" yaml:"getcapabilities"`
-	BaseRequest
 }
