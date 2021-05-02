@@ -18,7 +18,7 @@ const (
 
 // Type returns GetCapabilities
 func (gc *GetCapabilities) Type() string {
-	return Getcapabilities
+	return getcapabilities
 }
 
 // Validate validates the GetCapabilities struct
@@ -54,8 +54,8 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
-			if strings.EqualFold(v[0], Getcapabilities) {
-				gc.XMLName.Local = Getcapabilities
+			if strings.EqualFold(v[0], getcapabilities) {
+				gc.XMLName.Local = getcapabilities
 			}
 		case SERVICE:
 			gc.Service = strings.ToUpper(v[0])

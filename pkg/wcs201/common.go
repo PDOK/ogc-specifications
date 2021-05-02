@@ -2,7 +2,7 @@ package wcs201
 
 //
 const (
-	Getcapabilities = `GetCapabilities`
+	getcapabilities = `GetCapabilities`
 )
 
 // Type and Version as constant

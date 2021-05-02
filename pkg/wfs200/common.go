@@ -8,6 +8,13 @@ import (
 
 //
 const (
+	getcapabilities     = `GetCapabilities`
+	getfeature          = `GetFeature`
+	describefeaturetype = `DescribeFeatureType`
+)
+
+//
+const (
 	Service = `WFS`
 	Version = `2.0.0`
 )

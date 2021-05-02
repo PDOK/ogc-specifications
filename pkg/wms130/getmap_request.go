@@ -37,12 +37,12 @@ const (
 )
 
 // Type returns GetMap
-func (gm *GetMap) Type() string {
+func (gm *GetMapRequest) Type() string {
 	return getmap
 }
 
 // Validate returns GetMap
-func (gm *GetMap) Validate(c common.Capabilities) common.Exceptions {
+func (gm *GetMapRequest) Validate(c common.Capabilities) common.Exceptions {
 	var exceptions common.Exceptions
 
 	wmsCapabilities := c.(Capabilities)
@@ -74,7 +74,7 @@ func checkCRS(crs common.CRS, definedCrs []common.CRS) common.Exception {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gm *GetMap) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
+func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
 	gmkvp := orkvp.(*GetMapKVP)
 
 	gm.XMLName.Local = getmap
@@ -108,7 +108,7 @@ func (gm *GetMap) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) com
 }
 
 // ParseKVP builds a GetMap object based on the available query parameters
-func (gm *GetMap) ParseKVP(query url.Values) common.Exceptions {
+func (gm *GetMapRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
@@ -128,7 +128,7 @@ func (gm *GetMap) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // ParseXML builds a GetMap object based on a XML document
-func (gm *GetMap) ParseXML(body []byte) common.Exceptions {
+func (gm *GetMapRequest) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return common.Exceptions{common.MissingParameterValue()}
@@ -147,7 +147,7 @@ func (gm *GetMap) ParseXML(body []byte) common.Exceptions {
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gm *GetMap) BuildKVP() url.Values {
+func (gm *GetMapRequest) BuildKVP() url.Values {
 	gmkvp := GetMapKVP{}
 	gmkvp.ParseOperationRequest(gm)
 
@@ -156,7 +156,7 @@ func (gm *GetMap) BuildKVP() url.Values {
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gm *GetMap) BuildXML() []byte {
+func (gm *GetMapRequest) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gm, "", " ")
 	return append([]byte(xml.Header), si...)
 }
@@ -237,7 +237,7 @@ func (sld *StyledLayerDescriptor) getNamedStyles() []string {
 
 // GetMap struct with the needed parameters/attributes needed for making a GetMap request
 // Struct based on http://schemas.opengis.net/sld/1.1/example_getmap.xml
-type GetMap struct {
+type GetMapRequest struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
 	BaseRequest
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`

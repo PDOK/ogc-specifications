@@ -5,43 +5,42 @@ import (
 	"regexp"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wcs201"
 )
 
 // Type function needed for the interface
-func (gc *GetCapabilities) Type() string {
-	return wcs201.Getcapabilities
+func (gc *GetCapabilitiesResponse) Type() string {
+	return getcapabilities
 }
 
 // Service function needed for the interface
-func (gc *GetCapabilities) Service() string {
-	return wcs201.Service
+func (gc *GetCapabilitiesResponse) Service() string {
+	return Service
 }
 
 // Version function needed for the interface
-func (gc *GetCapabilities) Version() string {
-	return wcs201.Version
+func (gc *GetCapabilitiesResponse) Version() string {
+	return Version
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilities) Validate() common.Exceptions {
+func (gc *GetCapabilitiesResponse) Validate() common.Exceptions {
 	return nil
 }
 
 // BuildXML builds a GetCapabilities response object
-func (gc *GetCapabilities) BuildXML() []byte {
+func (gc *GetCapabilitiesResponse) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // GetCapabilities base struct
-type GetCapabilities struct {
+type GetCapabilitiesResponse struct {
 	XMLName               xml.Name `xml:"wcs:Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
 	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceprovider"`
-	wcs201.Capabilities
+	Capabilities
 }
 
 // Namespaces struct containing the namespaces needed for the XML document

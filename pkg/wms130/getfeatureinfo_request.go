@@ -25,7 +25,7 @@ const (
 )
 
 // GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request
-type GetFeatureInfo struct {
+type GetFeatureInfoRequest struct {
 	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
 	BaseRequest
 
@@ -48,12 +48,12 @@ type GetFeatureInfo struct {
 }
 
 // Type returns GetFeatureInfo
-func (gfi *GetFeatureInfo) Type() string {
+func (gfi *GetFeatureInfoRequest) Type() string {
 	return getfeatureinfo
 }
 
 // Validate returns GetFeatureInfo
-func (gfi *GetFeatureInfo) Validate(c common.Capabilities) common.Exceptions {
+func (gfi *GetFeatureInfoRequest) Validate(c common.Capabilities) common.Exceptions {
 	var exceptions common.Exceptions
 
 	wmsCapabilities := c.(Capabilities)
@@ -68,7 +68,7 @@ func (gfi *GetFeatureInfo) Validate(c common.Capabilities) common.Exceptions {
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) ParseXML(body []byte) common.Exceptions {
+func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return common.Exceptions{common.MissingParameterValue()}
@@ -91,7 +91,7 @@ func (gfi *GetFeatureInfo) ParseXML(body []byte) common.Exceptions {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
+func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
 	gfikvp := orkvp.(*GetFeatureInfoKVP)
 
 	gfi.XMLName.Local = getfeatureinfo
@@ -153,7 +153,7 @@ func (gfi *GetFeatureInfo) ParseOperationRequestKVP(orkvp common.OperationReques
 }
 
 // ParseKVP builds a GetFeatureInfo object based on the available query parameters
-func (gfi *GetFeatureInfo) ParseKVP(query url.Values) common.Exceptions {
+func (gfi *GetFeatureInfoRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
@@ -173,7 +173,7 @@ func (gfi *GetFeatureInfo) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gfi *GetFeatureInfo) BuildKVP() url.Values {
+func (gfi *GetFeatureInfoRequest) BuildKVP() url.Values {
 	gfikvp := GetFeatureInfoKVP{}
 	gfikvp.ParseOperationRequest(gfi)
 
@@ -185,7 +185,7 @@ func (gfi *GetFeatureInfo) BuildKVP() url.Values {
 // Note: this GetFeatureInfo XML body is a interpretation and there isn't a
 // good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfo) BuildXML() []byte {
+func (gfi *GetFeatureInfoRequest) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gfi, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

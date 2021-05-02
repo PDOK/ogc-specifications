@@ -45,7 +45,7 @@ func (gckvp *GetCapabilitiesKVP) ParseKVP(query url.Values) common.Exceptions {
 //             SERVICE=WFS
 // Optional:   VERSION=2.0.0
 func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
-	gc := or.(*GetCapabilities)
+	gc := or.(*GetCapabilitiesRequest)
 
 	gckvp.Request = getcapabilities
 	gckvp.Version = gc.Version

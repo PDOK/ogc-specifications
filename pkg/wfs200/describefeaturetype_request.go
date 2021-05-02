@@ -13,22 +13,21 @@ import (
 
 //
 const (
-	TYPENAME            = `TYPENAME` //NOTE: TYPENAME for KVP encoding & typeNames for XML encoding
-	describefeaturetype = `DescribeFeatureType`
+	TYPENAME = `TYPENAME` //NOTE: TYPENAME for KVP encoding & typeNames for XML encoding
 )
 
 // Type returns DescribeFeatureType
-func (dft *DescribeFeatureType) Type() string {
+func (dft *DescribeFeatureTypeRequest) Type() string {
 	return describefeaturetype
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureType) Validate(c Capabilities) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) common.Exceptions {
 	return nil
 }
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
-func (dft *DescribeFeatureType) ParseXML(doc []byte) common.Exception {
+func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exception {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return common.NoApplicableCode("Could not process XML, is it XML?")
@@ -52,7 +51,7 @@ func (dft *DescribeFeatureType) ParseXML(doc []byte) common.Exception {
 }
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureType) ParseKVP(query url.Values) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
@@ -84,7 +83,7 @@ func (dft *DescribeFeatureType) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (dft *DescribeFeatureType) BuildKVP() url.Values {
+func (dft *DescribeFeatureTypeRequest) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{dft.XMLName.Local}
 	querystring[SERVICE] = []string{dft.BaseRequest.Service}
@@ -99,14 +98,14 @@ func (dft *DescribeFeatureType) BuildKVP() url.Values {
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (dft *DescribeFeatureType) BuildXML() []byte {
+func (dft *DescribeFeatureTypeRequest) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(dft, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // DescribeFeatureType struct with the needed parameters/attributes needed for making a DescribeFeatureType request
-type DescribeFeatureType struct {
+type DescribeFeatureTypeRequest struct {
 	XMLName xml.Name `xml:"DescribeFeatureType" yaml:"describefeaturetype"`
 	BaseRequest
 	BaseDescribeFeatureTypeRequest

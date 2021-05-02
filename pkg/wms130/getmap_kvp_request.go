@@ -93,7 +93,7 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) common.Exceptions {
 
 // ParseOperationRequest builds a GetMapKVP object based on a GetMap struct
 func (gmkvp *GetMapKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
-	gm := or.(*GetMap)
+	gm := or.(*GetMapRequest)
 
 	gmkvp.Request = getmap
 	gmkvp.Version = Version

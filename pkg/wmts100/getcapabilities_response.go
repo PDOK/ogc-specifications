@@ -1,57 +1,45 @@
-package response
+package wmts100
 
 import (
 	"encoding/xml"
 	"regexp"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wmts100"
-)
-
-//
-const (
-	getcapabilities = `GetCapabilities`
-)
-
-//
-const (
-	Service = `WMTS`
-	Version = `1.0.0`
 )
 
 // Type function needed for the interface
-func (gc *GetCapabilities) Type() string {
+func (gc *GetCapabilitiesResponse) Type() string {
 	return getcapabilities
 }
 
 // Service function needed for the interface
-func (gc *GetCapabilities) Service() string {
+func (gc *GetCapabilitiesResponse) Service() string {
 	return Service
 }
 
 // Version function needed for the interface
-func (gc *GetCapabilities) Version() string {
+func (gc *GetCapabilitiesResponse) Version() string {
 	return Version
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilities) Validate() common.Exceptions {
+func (gc *GetCapabilitiesResponse) Validate() common.Exceptions {
 	return nil
 }
 
 // BuildXML builds a GetCapabilities response object
-func (gc *GetCapabilities) BuildXML() []byte {
+func (gc *GetCapabilitiesResponse) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // GetCapabilities base struct
-type GetCapabilities struct {
+type GetCapabilitiesResponse struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	Contents              wmts100.Contents      `xml:"Contents" yaml:"contents"`
+	Contents              Contents              `xml:"Contents" yaml:"contents"`
 	ServiceMetadataURL    ServiceMetadataURL    `xml:"ServiceMetadataURL" yaml:"servicemetadataurl"`
 }
 

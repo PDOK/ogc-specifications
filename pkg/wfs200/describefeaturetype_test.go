@@ -9,7 +9,7 @@ import (
 )
 
 func TestDescribeFeatureTypeType(t *testing.T) {
-	dft := DescribeFeatureType{}
+	dft := DescribeFeatureTypeRequest{}
 	if dft.Type() != `DescribeFeatureType` {
 		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `DescribeFeatureType`, dft.Type())
 	}
@@ -18,12 +18,12 @@ func TestDescribeFeatureTypeType(t *testing.T) {
 func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	var tests = []struct {
 		Body   []byte
-		Result DescribeFeatureType
+		Result DescribeFeatureTypeRequest
 		Error  Exception
 	}{
 		// Lots of attribute declarations
 		0: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"/>`),
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"},
 					{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows/1.1"},
@@ -42,20 +42,20 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 		3: {Error: exception{ExceptionText: "Could not process XML, is it XML?"}},
 		// Duplicate attributes in XML message with the same value
 		4: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}}},
 		// Duplicate attributes in XML message with different values
 		5: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/ows/1.1"  xmlns:wfs="http://www.w3.org/2001/XMLSchema-instance" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}}},
 		6: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" typeName="acme:anvils"/>`),
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype},
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: "wfs", Version: "2.0.0"}}},
 	}
 
 	for k, n := range tests {
-		var dft DescribeFeatureType
+		var dft DescribeFeatureTypeRequest
 		err := dft.ParseXML(n.Body)
 		if err != nil {
 			if n.Error != nil {
@@ -101,26 +101,26 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query     url.Values
-		Result    DescribeFeatureType
+		Result    DescribeFeatureTypeRequest
 		Exception common.Exceptions
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {Query: map[string][]string{"SERVICE": {Service}, "Request": {describefeaturetype}, "version": {"2.0.0"}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
 		// Missing mandatory SERVICE attribute
 		1: {Query: map[string][]string{"Request": {describefeaturetype}},
 			Exception: common.Exceptions{common.MissingParameterValue(VERSION)}},
 		// Missing optional VERSION attribute
 		2: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "Version": {"2.0.0"}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: Version}}},
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: Version}}},
 		// Unknown optional VERSION attribute
 		3: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"no version supplied"}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "no version supplied"}}},
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "no version supplied"}}},
 		// Not configured optional VERSION attribute
 		4: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"1.1.0"}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "1.1.0"}}},
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "1.1.0"}}},
 		5: {Query: map[string][]string{VERSION: {Version}, SERVICE: {Service}, REQUEST: {describefeaturetype}, TYPENAME: {"acme:anvils"}},
-			Result: DescribeFeatureType{XMLName: xml.Name{Local: describefeaturetype},
+			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: Service, Version: Version}}},
 		6: {Query: map[string][]string{},
@@ -129,7 +129,7 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		var dft DescribeFeatureType
+		var dft DescribeFeatureTypeRequest
 		err := dft.ParseKVP(n.Query)
 		if err != nil {
 			if err[0].Error() != n.Exception[0].Error() {
@@ -155,10 +155,10 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 }
 func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 	var tests = []struct {
-		dft   DescribeFeatureType
+		dft   DescribeFeatureTypeRequest
 		query url.Values
 	}{
-		0: {dft: DescribeFeatureType{
+		0: {dft: DescribeFeatureTypeRequest{
 			XMLName:     xml.Name{Local: `DescribeFeatureType`},
 			BaseRequest: BaseRequest{Version: Version, Service: Service},
 			BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
@@ -187,10 +187,10 @@ func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 
 func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 	var tests = []struct {
-		dft  DescribeFeatureType
+		dft  DescribeFeatureTypeRequest
 		body string
 	}{
-		0: {dft: DescribeFeatureType{
+		0: {dft: DescribeFeatureTypeRequest{
 			XMLName:     xml.Name{Local: `DescribeFeatureType`},
 			BaseRequest: BaseRequest{Version: Version, Service: Service},
 			BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
@@ -213,7 +213,7 @@ func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 // ----------
 
 func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
-	df := DescribeFeatureType{
+	df := DescribeFeatureTypeRequest{
 		XMLName:     xml.Name{Local: `DescribeFeatureType`},
 		BaseRequest: BaseRequest{Version: Version, Service: Service},
 		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
@@ -225,7 +225,7 @@ func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
 }
 
 func BenchmarkDescribeFeatureTypeBuildXML(b *testing.B) {
-	df := DescribeFeatureType{
+	df := DescribeFeatureTypeRequest{
 		XMLName:     xml.Name{Local: `DescribeFeatureType`},
 		BaseRequest: BaseRequest{Version: Version, Service: Service},
 		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{

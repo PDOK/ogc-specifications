@@ -22,7 +22,7 @@ func bp(b bool) *bool {
 }
 
 func TestGetMapType(t *testing.T) {
-	dft := GetMap{}
+	dft := GetMapRequest{}
 	if dft.Type() != `GetMap` {
 		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetMap`, dft.Type())
 	}
@@ -117,7 +117,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 func TestGetMapParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
-		Excepted GetMap
+		Excepted GetMapRequest
 		Error    common.Exception
 	}{
 		// GetMap http://schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
@@ -158,7 +158,7 @@ func TestGetMapParseXML(t *testing.T) {
 		</Output>
 		<Exceptions>XML</Exceptions>
 	</GetMap>`),
-			Excepted: GetMap{
+			Excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
 					Attr: common.XMLAttribute{
@@ -192,10 +192,10 @@ func TestGetMapParseXML(t *testing.T) {
 			},
 		},
 		1: {Body: []byte(``), Error: common.MissingParameterValue()},
-		2: {Body: []byte(`<UnknownTag/>`), Excepted: GetMap{}},
+		2: {Body: []byte(`<UnknownTag/>`), Excepted: GetMapRequest{}},
 	}
 	for k, n := range tests {
-		var gm GetMap
+		var gm GetMapRequest
 		err := gm.ParseXML(n.Body)
 		if err != nil {
 			if err[0].Error() != n.Error.Error() {
@@ -271,7 +271,7 @@ func TestGetStyleKVPValue(t *testing.T) {
 func TestGetMapParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query     url.Values
-		Excepted  GetMap
+		Excepted  GetMapRequest
 		Exception common.Exception
 	}{
 		0: {Query: map[string][]string{REQUEST: {getmap}, CRS: {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
@@ -292,7 +292,7 @@ func TestGetMapParseKVP(t *testing.T) {
 			EXCEPTIONS:  {`XML`},
 			BGCOLOR:     {`0x7F7F7F`},
 		},
-			Excepted: GetMap{
+			Excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
 				},
@@ -316,7 +316,7 @@ func TestGetMapParseKVP(t *testing.T) {
 			}},
 	}
 	for k, n := range tests {
-		var gm GetMap
+		var gm GetMapRequest
 		err := gm.ParseKVP(n.Query)
 		if err != nil {
 			if err[0].Error() != n.Exception.Error() {
@@ -330,11 +330,11 @@ func TestGetMapParseKVP(t *testing.T) {
 
 func TestGetMapBuildKVP(t *testing.T) {
 	var tests = []struct {
-		Object   GetMap
+		Object   GetMapRequest
 		Excepted url.Values
 		Error    common.Exception
 	}{
-		0: {Object: GetMap{
+		0: {Object: GetMapRequest{
 			XMLName: xml.Name{Local: "GetMap"},
 			BaseRequest: BaseRequest{
 				Version: "1.3.0",
@@ -370,7 +370,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			REQUEST:     {`GetMap`},
 			SERVICE:     {`WMS`},
 		}},
-		1: {Object: GetMap{
+		1: {Object: GetMapRequest{
 			CRS: common.CRS{Namespace: "EPSG", Code: 4326},
 			BoundingBox: common.BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
@@ -416,10 +416,10 @@ func TestGetMapBuildKVP(t *testing.T) {
 
 func TestGetMapBuildXML(t *testing.T) {
 	var tests = []struct {
-		gm     GetMap
+		gm     GetMapRequest
 		result string
 	}{
-		0: {gm: GetMap{},
+		0: {gm: GetMapRequest{},
 			result: `<?xml version="1.0" encoding="UTF-8"?>
 <GetMap service="" version="">
  <StyledLayerDescriptor version=""></StyledLayerDescriptor>
@@ -505,7 +505,7 @@ func TestCheckCRS(t *testing.T) {
 	}
 }
 
-func compareGetMapObject(result, expected GetMap, t *testing.T, k int) {
+func compareGetMapObject(result, expected GetMapRequest, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)
 	}
@@ -625,10 +625,10 @@ func TestGetMapValidate(t *testing.T) {
 	}
 
 	var tests = []struct {
-		gm         GetMap
+		gm         GetMapRequest
 		exceptions common.Exceptions
 	}{
-		0: {gm: GetMap{
+		0: {gm: GetMapRequest{
 			BaseRequest: BaseRequest{
 				Version: "1.3.0",
 				Attr: common.XMLAttribute{
@@ -675,7 +675,7 @@ func TestGetMapValidate(t *testing.T) {
 // ----------
 
 func BenchmarkGetMapBuildKVP(b *testing.B) {
-	gm := GetMap{
+	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
 			Attr: common.XMLAttribute{
@@ -713,7 +713,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 }
 
 func BenchmarkGetMapBuildXML(b *testing.B) {
-	gm := GetMap{
+	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
 			Attr: common.XMLAttribute{
@@ -765,7 +765,7 @@ func BenchmarkGetMapParseKVP(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		gm := GetMap{}
+		gm := GetMapRequest{}
 		gm.ParseKVP(kvp)
 	}
 }
@@ -810,7 +810,7 @@ func BenchmarkGetMapParseXML(b *testing.B) {
 </GetMap>`)
 
 	for i := 0; i < b.N; i++ {
-		gm := GetMap{}
+		gm := GetMapRequest{}
 		gm.ParseXML(doc)
 	}
 }
@@ -870,7 +870,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 		},
 	}
 
-	gm := GetMap{
+	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
 			Attr: common.XMLAttribute{
@@ -962,7 +962,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 		},
 	}
 
-	var gm = GetMap{
+	var gm = GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
 			Attr: common.XMLAttribute{

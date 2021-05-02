@@ -1,4 +1,4 @@
-package response
+package wfs200
 
 import "encoding/xml"
 

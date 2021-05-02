@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetFeatureInfoType(t *testing.T) {
-	dft := GetFeatureInfo{}
+	dft := GetFeatureInfoRequest{}
 	if dft.Type() != `GetFeatureInfo` {
 		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetFeatureInfo`, dft.Type())
 	}
@@ -18,11 +18,11 @@ func TestGetFeatureInfoType(t *testing.T) {
 
 func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	var tests = []struct {
-		Object    GetFeatureInfo
+		Object    GetFeatureInfoRequest
 		Excepted  url.Values
 		Exception common.Exception
 	}{
-		0: {Object: GetFeatureInfo{
+		0: {Object: GetFeatureInfoRequest{
 			XMLName: xml.Name{Local: `GetFeatureInfo`},
 			BaseRequest: BaseRequest{
 				Service: Service,
@@ -89,10 +89,10 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 
 func TestGetFeatureInfoBuildXML(t *testing.T) {
 	var tests = []struct {
-		gfi    GetFeatureInfo
+		gfi    GetFeatureInfoRequest
 		result string
 	}{
-		0: {gfi: GetFeatureInfo{
+		0: {gfi: GetFeatureInfoRequest{
 			XMLName: xml.Name{Local: `GetFeatureInfo`},
 			BaseRequest: BaseRequest{
 				Service: Service,
@@ -167,7 +167,7 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 func TestGetFeatureInfoParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query      url.Values
-		Excepted   GetFeatureInfo
+		Excepted   GetFeatureInfoRequest
 		Exceptions common.Exceptions
 	}{
 		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: common.Exceptions{common.InvalidParameterValue("", `boundingbox`)}},
@@ -187,7 +187,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 			INFOFORMAT:   {`application/json`},
 			FEATURECOUNT: {`8`},
 		},
-			Excepted: GetFeatureInfo{
+			Excepted: GetFeatureInfoRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
 				},
@@ -219,7 +219,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		var gfi GetFeatureInfo
+		var gfi GetFeatureInfoRequest
 		errs := gfi.ParseKVP(test.Query)
 		if errs != nil {
 			if len(errs) != len(test.Exceptions) {
@@ -246,7 +246,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 func TestGetFeatureInfoParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
-		Excepted GetFeatureInfo
+		Excepted GetFeatureInfoRequest
 		Error    common.Exception
 	}{
 		// GetFeatureInfo example request
@@ -283,7 +283,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 			</Size>
 		<Exceptions>XML</Exceptions>
 	</GetFeatureInfo>`),
-			Excepted: GetFeatureInfo{
+			Excepted: GetFeatureInfoRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
 					Attr: common.XMLAttribute{
@@ -317,7 +317,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 		2: {Body: []byte(`<UnknownTag/>`), Error: common.MissingParameterValue("REQUEST")},
 	}
 	for k, n := range tests {
-		var gm GetFeatureInfo
+		var gm GetFeatureInfoRequest
 		err := gm.ParseXML(n.Body)
 		if err != nil {
 			if err[0].Error() != n.Error.Error() {
@@ -329,7 +329,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 	}
 }
 
-func compareGetFeatureInfoObject(result, expected GetFeatureInfo, t *testing.T, k int) {
+func compareGetFeatureInfoObject(result, expected GetFeatureInfoRequest, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)
 	}
@@ -420,7 +420,7 @@ func compareGetFeatureInfoObject(result, expected GetFeatureInfo, t *testing.T, 
 // ----------
 
 func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
-	gfi := GetFeatureInfo{
+	gfi := GetFeatureInfoRequest{
 		XMLName: xml.Name{Local: `GetFeatureInfo`},
 		BaseRequest: BaseRequest{
 			Service: Service,
@@ -448,7 +448,7 @@ func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
 }
 
 func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
-	gfi := GetFeatureInfo{
+	gfi := GetFeatureInfoRequest{
 		XMLName: xml.Name{Local: `GetFeatureInfo`},
 		BaseRequest: BaseRequest{
 			Service: Service,

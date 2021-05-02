@@ -6,6 +6,11 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
+//
+const (
+	getcapabilities = `GetCapabilities`
+)
+
 // Type and Version as constant
 const (
 	Service string = `WMS`

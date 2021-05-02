@@ -120,7 +120,7 @@ func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
 
 // ParseOperationRequest builds a GetFeatureInfoKVP object based on a GetFeatureInfo struct
 func (gfikvp *GetFeatureInfoKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
-	gfi := or.(*GetFeatureInfo)
+	gfi := or.(*GetFeatureInfoRequest)
 
 	gfikvp.Request = getfeatureinfo
 	gfikvp.Version = Version

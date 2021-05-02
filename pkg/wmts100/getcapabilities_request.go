@@ -1,4 +1,4 @@
-package wfs200
+package wmts100
 
 import (
 	"encoding/xml"
@@ -9,32 +9,31 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-// Type and Version as constant
+// WMTS 1.0.0 Tokens
 const (
-	getcapabilities = `GetCapabilities`
+	SERVICE = `SERVICE`
+	REQUEST = `REQUEST`
+	VERSION = `VERSION`
 )
 
-// Contains the GetCapabilities struct and specific functions for building a GetCapabilities request
-
 // Type returns GetCapabilities
-func (gc *GetCapabilities) Type() string {
+func (gc *GetCapabilitiesRequest) Type() string {
 	return getcapabilities
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilities) Validate(c common.Capabilities) common.Exceptions {
-	var exceptions common.Exceptions
-	return exceptions
+func (gc *GetCapabilitiesRequest) Validate(c Contents) common.Exceptions {
+	return nil
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(doc []byte) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
-	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.Exceptions{common.NoApplicableCode("Could not process XML, is it XML?")}
+	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
+		return common.Exceptions{common.MissingParameterValue()}
 	}
-	if err := xml.Unmarshal(doc, &gc); err != nil {
-		return common.Exceptions{common.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
+	if err := xml.Unmarshal(body, &gc); err != nil {
+		return common.Exceptions{common.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -51,7 +50,7 @@ func (gc *GetCapabilities) ParseXML(doc []byte) common.Exceptions {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) common.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -67,19 +66,8 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 	return nil
 }
 
-// ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilities) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
-	gckvp := orkvp.(*GetCapabilitiesKVP)
-
-	gc.XMLName.Local = gckvp.Request
-	gc.Service = gckvp.Service
-	gc.Version = gckvp.Version
-
-	return nil
-}
-
 // BuildKVP builds a new query string that will be proxied
-func (gc *GetCapabilities) BuildKVP() url.Values {
+func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}
@@ -89,14 +77,14 @@ func (gc *GetCapabilities) BuildKVP() url.Values {
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilities) BuildXML() []byte {
+func (gc *GetCapabilitiesRequest) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
-type GetCapabilities struct {
+type GetCapabilitiesRequest struct {
 	XMLName xml.Name            `xml:"GetCapabilities" yaml:"getcapabilities"`
 	Service string              `xml:"service,attr" yaml:"service"`
 	Version string              `xml:"version,attr" yaml:"version"`

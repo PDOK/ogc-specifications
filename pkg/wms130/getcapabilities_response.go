@@ -1,59 +1,47 @@
-package response
+package wms130
 
 import (
 	"encoding/xml"
 	"regexp"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wms130"
 )
 
 // Contains the WMS130 struct
 
-//
-const (
-	getcapabilities = `GetCapabilities`
-)
-
-// Type and Version as constant
-const (
-	Service string = `WMS`
-	Version string = `1.3.0`
-)
-
 // Type function needed for the interface
-func (gc *GetCapabilities) Type() string {
+func (gc *GetCapabilitiesResponse) Type() string {
 	return getcapabilities
 }
 
 // Service function needed for the interface
-func (gc *GetCapabilities) Service() string {
+func (gc *GetCapabilitiesResponse) Service() string {
 	return Service
 }
 
 // Version function needed for the interface
-func (gc *GetCapabilities) Version() string {
+func (gc *GetCapabilitiesResponse) Version() string {
 	return Version
 }
 
 // Validate function of the wms130 spec
-func (gc *GetCapabilities) Validate() common.Exceptions {
+func (gc *GetCapabilitiesResponse) Validate() common.Exceptions {
 	return nil
 }
 
 // BuildXML builds a GetCapabilities response object
-func (gc *GetCapabilities) BuildXML() []byte {
+func (gc *GetCapabilitiesResponse) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
 // GetCapabilities base struct
-type GetCapabilities struct {
+type GetCapabilitiesResponse struct {
 	XMLName      xml.Name `xml:"WMS_Capabilities"`
 	Namespaces   `yaml:"namespaces"`
-	WMSService   WMSService          `xml:"Service" yaml:"service"`
-	Capabilities wms130.Capabilities `xml:"Capability" yaml:"capability"`
+	WMSService   WMSService   `xml:"Service" yaml:"service"`
+	Capabilities Capabilities `xml:"Capability" yaml:"capability"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
@@ -99,5 +87,5 @@ type WMSService struct {
 	} `xml:"ContactInformation"`
 	Fees              string `xml:"Fees" yaml:"fees"`
 	AccessConstraints string `xml:"AccessConstraints" yaml:"accessconstraints"`
-	wms130.OptionalConstraints
+	OptionalConstraints
 }

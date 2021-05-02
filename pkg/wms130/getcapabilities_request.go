@@ -9,8 +9,25 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
+// GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
+type GetCapabilitiesRequest struct {
+	XMLName xml.Name `xml:"GetCapabilities" yaml:"getcapabilities"`
+	BaseRequest
+}
+
+// Type returns GetCapabilities
+func (gc *GetCapabilitiesRequest) Type() string {
+	return getcapabilities
+}
+
+// Validate returns GetCapabilities
+func (gc *GetCapabilitiesRequest) Validate(c common.Capabilities) common.Exceptions {
+	var exceptions common.Exceptions
+	return exceptions
+}
+
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return common.Exceptions{common.MissingParameterValue()}
@@ -33,7 +50,7 @@ func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty SERVICE and REQUEST parameter is missing.
@@ -53,7 +70,7 @@ func (gc *GetCapabilities) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilities) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
 	gckvp := orkvp.(*GetCapabilitiesKVP)
 
 	gc.XMLName.Local = gckvp.Request
@@ -62,7 +79,7 @@ func (gc *GetCapabilities) ParseOperationRequestKVP(orkvp common.OperationReques
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gc *GetCapabilities) BuildKVP() url.Values {
+func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
 	gckvp := GetCapabilitiesKVP{}
 	gckvp.ParseOperationRequest(gc)
 
@@ -71,7 +88,7 @@ func (gc *GetCapabilities) BuildKVP() url.Values {
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilities) BuildXML() []byte {
+func (gc *GetCapabilitiesRequest) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
