@@ -2,7 +2,9 @@ package wcs201
 
 //
 const (
-	getcapabilities = `GetCapabilities`
+	getcapabilities  = `GetCapabilities`
+	describecoverage = `DescribeCoverage`
+	getcoverage      = `GetCoverage`
 )
 
 // Type and Version as constant
