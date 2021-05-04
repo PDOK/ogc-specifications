@@ -38,11 +38,32 @@ func TestIdentifyRequest(t *testing.T) {
 		request string
 		errors  common.Exceptions
 	}{
-		0: {doc: []byte(`<Mekker/>`), request: `Mekker`},
+		0: {doc: []byte(`<?xml version="1.0" encoding="UTF-8"?>
+		<Mekker/>`), request: `Mekker`},
 		1: {doc: []byte(`<GetCapabilities/>`), request: `GetCapabilities`},
-		2: {doc: []byte(`</>`), errors: common.Exceptions{common.MissingParameterValue()}},
-		3: {doc: []byte(`<|\/|>`), errors: common.Exceptions{common.MissingParameterValue()}},
-		4: {doc: nil, errors: common.Exceptions{common.MissingParameterValue()}},
+		2: {doc: []byte(`<ogc:GetMap xmlns:ogc="http://www.opengis.net/ows"
+		xmlns:gml="http://www.opengis.net/gml"
+		version="1.3.0" service="WMS">
+<StyledLayerDescriptor version="1.1.0">
+  <NamedLayer>
+	<Name>pand</Name>
+  </NamedLayer>
+</StyledLayerDescriptor>
+<BoundingBox srsName="http://www.opengis.net/gml/srs/epsg.xml#3857">
+  <coord><X>662489.7241121939151</X><Y>6834200.591356366873</Y></coord>
+  <coord><X>663837.270904958481</X><Y>6835015.857165988535</Y></coord>
+</BoundingBox>
+<Output>
+  <Format>image/png</Format>
+  <Size>
+	<Width>800</Width>
+	<Height>450</Height>
+  </Size>
+</Output>
+</ogc:GetMap>`), request: `GetMap`},
+		3: {doc: []byte(`</>`), errors: common.Exceptions{common.MissingParameterValue()}},
+		4: {doc: []byte(`<|\/|>`), errors: common.Exceptions{common.MissingParameterValue()}},
+		5: {doc: nil, errors: common.Exceptions{common.MissingParameterValue()}},
 	}
 
 	for k, i := range tests {
@@ -84,5 +105,41 @@ func TestIdentifyRequestKVP(t *testing.T) {
 				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.request, request)
 			}
 		}
+	}
+}
+
+func BenchmarkIdentifyRequest(b *testing.B) {
+	r := []byte(`<ogc:GetMap xmlns:ogc="http://www.opengis.net/ows"
+	xmlns:gml="http://www.opengis.net/gml"
+	version="1.3.0" service="WMS">
+<StyledLayerDescriptor version="1.1.0">
+<NamedLayer>
+<Name>pand</Name>
+</NamedLayer>
+</StyledLayerDescriptor>
+<BoundingBox srsName="http://www.opengis.net/gml/srs/epsg.xml#3857">
+<coord><X>662489.7241121939151</X><Y>6834200.591356366873</Y></coord>
+<coord><X>663837.270904958481</X><Y>6835015.857165988535</Y></coord>
+</BoundingBox>
+<Output>
+<Format>image/png</Format>
+<Size>
+<Width>800</Width>
+<Height>450</Height>
+</Size>
+</Output>
+</ogc:GetMap>`)
+	for i := 0; i < b.N; i++ {
+		IdentifyRequest(r)
+		IdentifyRequest(nil)
+	}
+}
+
+func BenchmarkIdentifyRequestKVP(b *testing.B) {
+	kvp := map[string][]string{REQUEST: {`getfeature`}, `SERVICE`: {`WFS`}, `VERSION`: {`2.0.0`}, `OUTPUTFORMAT`: {"application/xml"}, `TYPENAMES`: {"dummy"}, `COUNT`: {"3"}}
+
+	for i := 0; i < b.N; i++ {
+		IdentifyRequestKVP(kvp)
+		IdentifyRequestKVP(map[string][]string{})
 	}
 }
