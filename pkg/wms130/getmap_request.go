@@ -9,11 +9,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-// GetMap
-const (
-	getmap = `GetMap`
-)
-
 // Mandatory GetMap Keys
 const (
 	LAYERS = `LAYERS`

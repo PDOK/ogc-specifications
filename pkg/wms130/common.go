@@ -9,10 +9,9 @@ import (
 //
 const (
 	getcapabilities = `GetCapabilities`
-)
+	getmap          = `GetMap`
+	getfeatureinfo  = `GetFeatureInfo`
 
-// Type and Version as constant
-const (
 	Service string = `WMS`
 	Version string = `1.3.0`
 )

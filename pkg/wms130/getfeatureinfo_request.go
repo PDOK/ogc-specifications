@@ -12,8 +12,6 @@ import (
 
 // GetFeatureInfo
 const (
-	getfeatureinfo = `GetFeatureInfo`
-
 	// Mandatory
 	QUERYLAYERS = `QUERY_LAYERS`
 	I           = `I`

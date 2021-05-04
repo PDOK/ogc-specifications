@@ -11,10 +11,21 @@ const (
 	getcapabilities     = `GetCapabilities`
 	getfeature          = `GetFeature`
 	describefeaturetype = `DescribeFeatureType`
-)
+	getpropertyvalue    = `GetPropertyValue`
 
-//
-const (
+	/* Unused/support transactional requesttypes
+	lockfeature = `LockFeature`
+	getfeaturewithlock = `GetFeatureWithLock`
+	*/
+
+	// TODO StoredQuery
+	// liststoredqueries     = `ListStoredQueries`
+	// describestoredqueries = `DescribeStoredQueries`
+	/* Unused/support tranactional storedquery requesttypes
+	createstoredquery = `CreateStoredQuery`
+	dropstoredquery = `DropStoredQuery`
+	*/
+
 	Service = `WFS`
 	Version = `2.0.0`
 )
