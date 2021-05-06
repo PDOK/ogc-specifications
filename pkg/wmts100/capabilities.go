@@ -1,6 +1,9 @@
 package wmts100
 
-import "github.com/pdok/ogc-specifications/pkg/common"
+import (
+	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
+)
 
 // ParseXML func
 func (c *Contents) ParseXML(doc []byte) error {
@@ -49,8 +52,8 @@ type Layer struct {
 type WGS84BoundingBox struct {
 	Crs         string          `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
 	Dimensions  string          `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
-	LowerCorner common.Position `xml:"ows:LowerCorner" yaml:"lowercorner"`
-	UpperCorner common.Position `xml:"ows:UpperCorner" yaml:"uppercorner"`
+	LowerCorner wsc110.Position `xml:"ows:LowerCorner" yaml:"lowercorner"`
+	UpperCorner wsc110.Position `xml:"ows:UpperCorner" yaml:"uppercorner"`
 }
 
 // Metadata  in struct for repeatability

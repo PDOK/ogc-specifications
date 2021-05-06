@@ -1,9 +1,13 @@
-package common
+package wsc110
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/pdok/ogc-specifications/pkg/common"
+)
 
 // OperationNotSupported exception
-func OperationNotSupported(message string) Exception {
+func OperationNotSupported(message string) common.Exception {
 	return exception{
 		ExceptionText: fmt.Sprintf("This service does not know the operation: %s", message),
 		ExceptionCode: `OperationNotSupported`,
@@ -12,7 +16,7 @@ func OperationNotSupported(message string) Exception {
 }
 
 // MissingParameterValue exception
-func MissingParameterValue(s ...string) Exception {
+func MissingParameterValue(s ...string) common.Exception {
 	if len(s) >= 2 {
 		return exception{ExceptionText: fmt.Sprintf("%s key got incorrect value: %s", s[0], s[1]), ExceptionCode: "MissingParameterValue", LocatorCode: s[0]}
 	}
@@ -24,7 +28,7 @@ func MissingParameterValue(s ...string) Exception {
 }
 
 // InvalidParameterValue exception
-func InvalidParameterValue(value, locator string) Exception {
+func InvalidParameterValue(value, locator string) common.Exception {
 	return exception{
 		ExceptionText: fmt.Sprintf("%s contains a invalid value: %s", locator, value),
 		LocatorCode:   value,
@@ -33,7 +37,7 @@ func InvalidParameterValue(value, locator string) Exception {
 }
 
 // VersionNegotiationFailed exception
-func VersionNegotiationFailed(version string) Exception {
+func VersionNegotiationFailed(version string) common.Exception {
 	return exception{
 		ExceptionText: fmt.Sprintf("%s is an invalid version number", version),
 		ExceptionCode: `VersionNegotiationFailed`,
@@ -42,14 +46,14 @@ func VersionNegotiationFailed(version string) Exception {
 }
 
 // InvalidUpdateSequence exception
-func InvalidUpdateSequence() Exception {
+func InvalidUpdateSequence() common.Exception {
 	return exception{
 		ExceptionCode: `InvalidUpdateSequence`,
 	}
 }
 
 // OptionNotSupported exception
-func OptionNotSupported(s ...string) Exception {
+func OptionNotSupported(s ...string) common.Exception {
 	if len(s) == 1 {
 		return exception{
 			ExceptionText: s[0],
@@ -62,7 +66,7 @@ func OptionNotSupported(s ...string) Exception {
 }
 
 // NoApplicableCode exception
-func NoApplicableCode(message string) Exception {
+func NoApplicableCode(message string) common.Exception {
 	return exception{
 		ExceptionText: message,
 		ExceptionCode: `NoApplicableCode`,

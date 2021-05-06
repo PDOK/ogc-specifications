@@ -6,6 +6,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 
 	"regexp"
 	"strings"
@@ -22,7 +23,7 @@ func (dft *DescribeFeatureTypeRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) wsc110.Exceptions {
 	return nil
 }
 
@@ -30,10 +31,10 @@ func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) common.Exception
 func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exception {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.NoApplicableCode("Could not process XML, is it XML?")
+		return wsc110.NoApplicableCode("Could not process XML, is it XML?")
 	}
 	if err := xml.Unmarshal(doc, &dft); err != nil {
-		return common.OperationNotSupported(err.Error())
+		return wsc110.OperationNotSupported(err.Error())
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -51,11 +52,11 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exception {
 }
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return common.Exceptions{common.MissingParameterValue(VERSION)}
+		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)

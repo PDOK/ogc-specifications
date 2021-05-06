@@ -34,7 +34,7 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
 			CRS: "EPSG:4326",
-			BoundingBox: common.BoundingBox{
+			BoundingBox: BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
 			},
@@ -104,7 +104,7 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
 			CRS: "EPSG:4326",
-			BoundingBox: common.BoundingBox{
+			BoundingBox: BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
 			},
@@ -159,7 +159,7 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 		y := strings.Replace(v.result, "\n", ``, -1)
 
 		if x != y {
-			t.Errorf("test: %d, Expected body: \n%s\nbut was not got: \n%s", k, x, y)
+			t.Errorf("test: %d, Expected body: \n%s\nbut was not got: \n%s", k, y, x)
 		}
 	}
 }
@@ -170,8 +170,8 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 		Excepted   GetFeatureInfoRequest
 		Exceptions common.Exceptions
 	}{
-		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: common.Exceptions{common.InvalidParameterValue("", `boundingbox`)}},
-		1: {Query: url.Values{}, Exceptions: common.Exceptions{common.MissingParameterValue(VERSION), common.MissingParameterValue(REQUEST)}},
+		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: common.Exceptions{InvalidParameterValue("", `boundingbox`)}},
+		1: {Query: url.Values{}, Exceptions: common.Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}},
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:       {`Rivers,Roads,Houses`},
 			STYLES:       {`CenterLine,,Outline`},
@@ -198,7 +198,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
 				CRS: "EPSG:4326",
-				BoundingBox: common.BoundingBox{
+				BoundingBox: BoundingBox{
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
 				},
@@ -211,8 +211,8 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 				InfoFormat:   `application/json`,
 			},
 		},
-		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{common.MissingParameterValue(WIDTH, `not a number`)}},
-		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{common.MissingParameterValue(HEIGHT, `not a number`)}},
+		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{MissingParameterValue(WIDTH, `not a number`)}},
+		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{MissingParameterValue(HEIGHT, `not a number`)}},
 		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{InvalidPoint(`not a number`, `1`)}},
 		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{InvalidPoint(`1`, `not a number`)}},
 		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{InvalidPoint(`this in not a number`, `this is also not a number`)}},
@@ -304,7 +304,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
 				CRS: "EPSG:4326",
-				BoundingBox: common.BoundingBox{
+				BoundingBox: BoundingBox{
 					Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
@@ -313,8 +313,8 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 				Exceptions: sp("XML"),
 			},
 		},
-		1: {Body: []byte(``), Error: common.MissingParameterValue()},
-		2: {Body: []byte(`<UnknownTag/>`), Error: common.MissingParameterValue("REQUEST")},
+		1: {Body: []byte(``), Error: MissingParameterValue()},
+		2: {Body: []byte(`<UnknownTag/>`), Error: MissingParameterValue("REQUEST")},
 	}
 	for k, n := range tests {
 		var gm GetFeatureInfoRequest
@@ -432,7 +432,7 @@ func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: "EPSG:4326",
-		BoundingBox: common.BoundingBox{
+		BoundingBox: BoundingBox{
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},
 		},
@@ -460,7 +460,7 @@ func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: "EPSG:4326",
-		BoundingBox: common.BoundingBox{
+		BoundingBox: BoundingBox{
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},
 		},

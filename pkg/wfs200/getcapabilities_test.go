@@ -88,7 +88,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query  url.Values
 		Result GetCapabilitiesRequest
-		Error  Exception
+		Error  exception
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"2.0.0"}},

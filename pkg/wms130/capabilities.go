@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // ParseXML func
@@ -74,7 +74,7 @@ type Layer struct {
 	KeywordList             *common.Keywords         `xml:"KeywordList" yaml:"keywordlist"`
 	CRS                     []common.CRS             `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
-	BoundingBox             []*BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
+	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingbox"`
 	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
 	Identifier              *Identifier              `xml:"Identifier" yaml:"identifier"`
 	MetadataURL             []*MetadataURL           `xml:"MetadataURL" yaml:"metadataurl"`
@@ -256,8 +256,8 @@ type EXGeographicBoundingBox struct {
 	NorthBoundLatitude float64 `xml:"northBoundLatitude" yaml:"northboundlatitude"`
 }
 
-// BoundingBox in struct for repeatability
-type BoundingBox struct {
+// LayerBoundingBox in struct for repeatability
+type LayerBoundingBox struct {
 	CRS  string  `xml:"CRS,attr" yaml:"crs"`
 	Minx float64 `xml:"minx,attr" yaml:"minx"`
 	Miny float64 `xml:"miny,attr" yaml:"miny"`

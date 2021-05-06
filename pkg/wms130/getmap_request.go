@@ -85,7 +85,7 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp common.OperationRequestK
 	crs.ParseString(gmkvp.CRS)
 	gm.CRS = crs
 
-	var bbox common.BoundingBox
+	var bbox BoundingBox
 	if err := bbox.ParseString(gmkvp.Bbox); err != nil {
 		return common.Exceptions{err}
 	}
@@ -107,7 +107,7 @@ func (gm *GetMapRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
-		return common.Exceptions{common.MissingParameterValue(VERSION), common.MissingParameterValue(REQUEST)}
+		return common.Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
 	gmkvp := GetMapKVP{}
@@ -126,7 +126,7 @@ func (gm *GetMapRequest) ParseKVP(query url.Values) common.Exceptions {
 func (gm *GetMapRequest) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return common.Exceptions{common.MissingParameterValue()}
+		return common.Exceptions{MissingParameterValue()}
 	}
 	xml.Unmarshal(body, &gm) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
 	var n []xml.Attr
@@ -237,7 +237,7 @@ type GetMapRequest struct {
 	BaseRequest
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
 	CRS                   common.CRS            `xml:"CRS" yaml:"crs"`
-	BoundingBox           common.BoundingBox    `xml:"BoundingBox" yaml:"boundingbox"`
+	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
 	Output                Output                `xml:"Output" yaml:"output"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
@@ -249,10 +249,10 @@ type GetMapRequest struct {
 func (output *Output) Validate(c Capabilities) common.Exceptions {
 	exceptions := common.Exceptions{}
 	if output.Size.Width > c.MaxWidth {
-		exceptions = append(exceptions, common.NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
+		exceptions = append(exceptions, NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
 	}
 	if output.Size.Height > c.MaxHeight {
-		exceptions = append(exceptions, common.NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
+		exceptions = append(exceptions, NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
 	}
 
 	for _, format := range c.WMSCapabilities.Request.GetMap.Format {

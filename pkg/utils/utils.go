@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 const (
@@ -34,20 +34,33 @@ type identify struct {
 	XMLName xml.Name
 }
 
-func IdentifyRequest(doc []byte) (string, common.Exceptions) {
+// func (i *identify) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+// 	i.XMLName = start.Name
+// 	for {
+// 		token, _ := d.Token()
+// 		switch el := token.(type) {
+// 		case xml.EndElement:
+// 			if el == start.End() {
+// 				return nil
+// 			}
+// 		}
+// 	}
+// }
+
+func IdentifyRequest(doc []byte) (string, wsc110.Exceptions) {
 	var i identify
 
 	if err := xml.Unmarshal(doc, &i); err != nil {
-		return ``, common.Exceptions{common.MissingParameterValue()}
+		return ``, wsc110.Exceptions{wsc110.MissingParameterValue()}
 	} else {
 		return i.XMLName.Local, nil
 	}
 }
 
-func IdentifyRequestKVP(query url.Values) (string, common.Exceptions) {
+func IdentifyRequestKVP(query url.Values) (string, wsc110.Exceptions) {
 	if query[REQUEST] != nil {
 		return query[REQUEST][0], nil
 	}
 
-	return ``, common.Exceptions{common.MissingParameterValue()}
+	return ``, wsc110.Exceptions{wsc110.MissingParameterValue()}
 }

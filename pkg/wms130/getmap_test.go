@@ -179,7 +179,7 @@ func TestGetMapParseXML(t *testing.T) {
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
 				CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-				BoundingBox: common.BoundingBox{
+				BoundingBox: BoundingBox{
 					Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
@@ -191,7 +191,7 @@ func TestGetMapParseXML(t *testing.T) {
 				Exceptions: sp("XML"),
 			},
 		},
-		1: {Body: []byte(``), Error: common.MissingParameterValue()},
+		1: {Body: []byte(``), Error: MissingParameterValue()},
 		2: {Body: []byte(`<UnknownTag/>`), Excepted: GetMapRequest{}},
 	}
 	for k, n := range tests {
@@ -275,10 +275,10 @@ func TestGetMapParseKVP(t *testing.T) {
 		Exception common.Exception
 	}{
 		0: {Query: map[string][]string{REQUEST: {getmap}, CRS: {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
-			Exception: common.InvalidParameterValue(``, `boundingbox`),
+			Exception: InvalidParameterValue(``, `boundingbox`),
 		},
 		1: {Query: url.Values{},
-			Exception: common.MissingParameterValue(VERSION)},
+			Exception: MissingParameterValue(VERSION)},
 		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
@@ -303,7 +303,7 @@ func TestGetMapParseKVP(t *testing.T) {
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
 				CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-				BoundingBox: common.BoundingBox{
+				BoundingBox: BoundingBox{
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
 				},
@@ -347,7 +347,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
 			CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-			BoundingBox: common.BoundingBox{
+			BoundingBox: BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
 			},
@@ -372,7 +372,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 		}},
 		1: {Object: GetMapRequest{
 			CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-			BoundingBox: common.BoundingBox{
+			BoundingBox: BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
 			},
@@ -649,7 +649,7 @@ func TestGetMapValidate(t *testing.T) {
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
 			CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-			BoundingBox: common.BoundingBox{
+			BoundingBox: BoundingBox{
 				Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
@@ -696,7 +696,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-		BoundingBox: common.BoundingBox{
+		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},
@@ -734,7 +734,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-		BoundingBox: common.BoundingBox{
+		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},
@@ -891,7 +891,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-		BoundingBox: common.BoundingBox{
+		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},
@@ -983,7 +983,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
 		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
-		BoundingBox: common.BoundingBox{
+		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
 			UpperCorner: [2]float64{180.0, 90.0},

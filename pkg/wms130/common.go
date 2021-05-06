@@ -48,13 +48,13 @@ func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
 		b.Version = query[VERSION][0]
 	} else {
 		// Version is mandatory
-		return common.Exceptions{common.MissingParameterValue(VERSION)}
+		return common.Exceptions{MissingParameterValue(VERSION)}
 	}
 	return nil
 }
 
 // Build builds a BaseRequest struct
-func (b *BaseRequest) Build(service, version string) common.Exception {
+func (b *BaseRequest) Build(service, version string) Exceptions {
 	if service != `` {
 		// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
 		b.Service = service
@@ -63,7 +63,7 @@ func (b *BaseRequest) Build(service, version string) common.Exception {
 		b.Version = version
 	} else {
 		// Version is mandatory
-		return common.MissingParameterValue(VERSION)
+		return Exceptions{MissingParameterValue(VERSION)}
 	}
 	return nil
 }

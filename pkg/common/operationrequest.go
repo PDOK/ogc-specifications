@@ -1,6 +1,8 @@
 package common
 
-import "net/url"
+import (
+	"net/url"
+)
 
 // OperationRequest interface
 type OperationRequest interface {

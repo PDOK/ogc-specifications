@@ -6,17 +6,15 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-type Exception common.Exception
-
 type exception struct {
 	ExceptionText string `xml:",chardata" yaml:"exception"`
 	ExceptionCode string `xml:"code,attr" yaml:"code"`
 	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locator,omitempty"`
 }
 
-type Exceptions []Exception
+type Exceptions []common.Exception
 
-type WMSServiceExceptionReport struct {
+type ServiceExceptionReport struct {
 	XMLName          xml.Name   `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
 	Version          string     `xml:"version,attr" yaml:"version"`
 	Xmlns            string     `xml:"xmlns,attr,omitempty"`
@@ -25,17 +23,17 @@ type WMSServiceExceptionReport struct {
 	ServiceException Exceptions `xml:"ServiceException"`
 }
 
-func (e Exceptions) ToReport() WMSServiceExceptionReport {
-	r := WMSServiceExceptionReport{}
-	r.Version = Version
+func (e Exceptions) ToReport() ServiceExceptionReport {
+	r := ServiceExceptionReport{}
+	r.SchemaLocation = `http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd`
 	r.Xmlns = `http://www.opengis.net/ogc`
 	r.Xsi = `http://www.w3.org/2001/XMLSchema-instance`
-	r.SchemaLocation = `http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd`
+	r.Version = Version
 	r.ServiceException = e
 	return r
 }
 
-func (r WMSServiceExceptionReport) ToBytes() []byte {
+func (r ServiceExceptionReport) ToBytes() []byte {
 	si, _ := xml.MarshalIndent(r, "", " ")
 	return append([]byte(xml.Header), si...)
 }

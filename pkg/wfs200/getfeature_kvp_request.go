@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 // GetFeatureKVP struct
@@ -64,11 +65,11 @@ type StoredQueryKeywords struct {
 	// storedquery_parameter not implemented
 }
 
-func (gfkvp *GetFeatureKVP) ParseKVP(query url.Values) common.Exceptions {
-	var exceptions common.Exceptions
+func (gfkvp *GetFeatureKVP) ParseKVP(query url.Values) wsc110.Exceptions {
+	var exceptions wsc110.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
-			exceptions = append(exceptions, common.InvalidParameterValue(k, strings.Join(v, ",")))
+			exceptions = append(exceptions, wsc110.InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
@@ -137,7 +138,7 @@ func (gfkvp *GetFeatureKVP) ParseKVP(query url.Values) common.Exceptions {
 	return nil
 }
 
-func (gfkvp *GetFeatureKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
+func (gfkvp *GetFeatureKVP) ParseOperationRequest(or common.OperationRequest) wsc110.Exceptions {
 	return nil
 }
 

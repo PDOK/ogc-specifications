@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 // WMTS 1.0.0 Tokens
@@ -22,18 +23,18 @@ func (gc *GetCapabilitiesRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Validate(c Contents) common.Exceptions {
+func (gc *GetCapabilitiesRequest) Validate(c Contents) wsc110.Exceptions {
 	return nil
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilitiesRequest) ParseXML(body []byte) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseXML(body []byte) wsc110.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return common.Exceptions{common.MissingParameterValue()}
+		return wsc110.Exceptions{wsc110.MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return common.Exceptions{common.MissingParameterValue("REQUEST")}
+		return wsc110.Exceptions{wsc110.MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -50,7 +51,7 @@ func (gc *GetCapabilitiesRequest) ParseXML(body []byte) common.Exceptions {
 }
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:

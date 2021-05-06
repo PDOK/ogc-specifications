@@ -10,6 +10,7 @@ import (
 
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 // Contains the GetFeature struct and specific functions for building a GetFeature request
@@ -65,7 +66,7 @@ var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FI
 func (gf *GetFeatureRequest) ParseXML(doc []byte) common.Exception {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.NoApplicableCode("Could not process XML, is it XML?")
+		return wsc110.NoApplicableCode("Could not process XML, is it XML?")
 	}
 	xml.Unmarshal(doc, &gf) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
 	var n []xml.Attr
@@ -86,11 +87,11 @@ func (gf *GetFeatureRequest) ParseXML(doc []byte) common.Exception {
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
-func (gf *GetFeatureRequest) ParseKVP(query url.Values) common.Exceptions {
+func (gf *GetFeatureRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return common.Exceptions{common.MissingParameterValue(VERSION)}
+		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)
@@ -546,8 +547,8 @@ type Box struct {
 
 // Envelope struct for GeometryOperand
 type Envelope struct {
-	LowerCorner common.Position `xml:"lowerCorner" yaml:"lowercorner"`
-	UpperCorner common.Position `xml:"upperCorner" yaml:"uppercorner"`
+	LowerCorner wsc110.Position `xml:"lowerCorner" yaml:"lowercorner"`
+	UpperCorner wsc110.Position `xml:"upperCorner" yaml:"uppercorner"`
 }
 
 // SpatialOperator struct for Filter
@@ -671,8 +672,8 @@ func (gb *GEOBBOX) UnmarshalText(q string) common.Exception {
 			return InvalidValue(BBOX)
 		}
 
-		gb.Envelope.LowerCorner = common.Position{lx, ly}
-		gb.Envelope.UpperCorner = common.Position{ux, uy}
+		gb.Envelope.LowerCorner = wsc110.Position{lx, ly}
+		gb.Envelope.UpperCorner = wsc110.Position{ux, uy}
 	}
 	if len(result) == 5 {
 		gb.SrsName = &result[4]

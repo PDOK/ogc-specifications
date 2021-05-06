@@ -4,6 +4,7 @@ import (
 	"net/url"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 //
@@ -54,7 +55,7 @@ type BaseRequest struct {
 }
 
 // ParseKVP builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
+func (b *BaseRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	if len(query[SERVICE]) > 0 {
 		// Service is optional, because it's implicit for a GetFeature/DescribeFeatureType request
 		b.Service = query[SERVICE][0]
@@ -63,7 +64,7 @@ func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
 		b.Version = query[VERSION][0]
 	} else {
 		// Version is mandatory
-		return common.Exceptions{common.MissingParameterValue(VERSION)}
+		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
 	}
 	return nil
 }

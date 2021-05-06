@@ -19,7 +19,7 @@ func (gckvp *GetCapabilitiesKVP) ParseKVP(query url.Values) common.Exceptions {
 	var exceptions common.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
-			exceptions = append(exceptions, common.InvalidParameterValue(k, strings.Join(v, ",")))
+			exceptions = append(exceptions, InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:

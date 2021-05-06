@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 // Contains the GetCapabilities struct and specific functions for building a GetCapabilities request
@@ -26,10 +27,10 @@ func (gc *GetCapabilitiesRequest) Validate(c common.Capabilities) common.Excepti
 func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.Exceptions{common.NoApplicableCode("Could not process XML, is it XML?")}
+		return common.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
 	}
 	if err := xml.Unmarshal(doc, &gc); err != nil {
-		return common.Exceptions{common.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
+		return common.Exceptions{wsc110.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {

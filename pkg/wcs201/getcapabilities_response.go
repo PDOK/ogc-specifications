@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 // Type function needed for the interface
@@ -23,7 +24,7 @@ func (gc *GetCapabilitiesResponse) Version() string {
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilitiesResponse) Validate() common.Exceptions {
+func (gc *GetCapabilitiesResponse) Validate() wsc110.Exceptions {
 	return nil
 }
 

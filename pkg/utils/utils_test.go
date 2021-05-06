@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 func TestKeysToUpper(t *testing.T) {
@@ -36,7 +36,7 @@ func TestIdentifyRequest(t *testing.T) {
 	var tests = []struct {
 		doc     []byte
 		request string
-		errors  common.Exceptions
+		errors  wsc110.Exceptions
 	}{
 		0: {doc: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 		<Mekker/>`), request: `Mekker`},
@@ -61,9 +61,9 @@ func TestIdentifyRequest(t *testing.T) {
   </Size>
 </Output>
 </ogc:GetMap>`), request: `GetMap`},
-		3: {doc: []byte(`</>`), errors: common.Exceptions{common.MissingParameterValue()}},
-		4: {doc: []byte(`<|\/|>`), errors: common.Exceptions{common.MissingParameterValue()}},
-		5: {doc: nil, errors: common.Exceptions{common.MissingParameterValue()}},
+		3: {doc: []byte(`</>`), errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
+		4: {doc: []byte(`<|\/|>`), errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
+		5: {doc: nil, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
 	}
 
 	for k, i := range tests {
@@ -85,13 +85,13 @@ func TestIdentifyRequestKVP(t *testing.T) {
 	var tests = []struct {
 		url     map[string][]string
 		request string
-		errors  common.Exceptions
+		errors  wsc110.Exceptions
 	}{
 		0: {url: map[string][]string{REQUEST: {`Mekker`}}, request: `Mekker`},
 		1: {url: map[string][]string{REQUEST: {`GetCapabilities`}}, request: `GetCapabilities`},
-		2: {url: map[string][]string{`SERVICE`: {`NoREQUESTKey`}}, errors: common.Exceptions{common.MissingParameterValue()}},
-		3: {url: map[string][]string{}, errors: common.Exceptions{common.MissingParameterValue()}},
-		4: {url: nil, errors: common.Exceptions{common.MissingParameterValue()}},
+		2: {url: map[string][]string{`SERVICE`: {`NoREQUESTKey`}}, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
+		3: {url: map[string][]string{}, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
+		4: {url: nil, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
 	}
 
 	for k, i := range tests {

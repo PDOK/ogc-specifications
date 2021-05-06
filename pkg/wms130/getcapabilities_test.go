@@ -25,11 +25,11 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 		0: {Body: []byte(`<GetCapabilities service="wms" version="1.3.0" xmlns="http://www.opengis.net/wms"/>`),
 			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: "wms", Version: "1.3.0", Attr: []xml.Attr{{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/wms"}}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: common.MissingParameterValue("REQUEST")},
+		1: {Body: []byte("<Unknown/>"), Error: MissingParameterValue("REQUEST")},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: common.MissingParameterValue()},
+		2: {Body: []byte("no XML document, just a string"), Error: MissingParameterValue()},
 		// document at all
-		3: {Error: common.MissingParameterValue()},
+		3: {Error: MissingParameterValue()},
 	}
 
 	for k, n := range tests {
@@ -88,7 +88,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: Service, Version: "no version found"}}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			Exceptions: common.Exceptions{common.MissingParameterValue(REQUEST), common.MissingParameterValue(SERVICE)}},
+			Exceptions: common.Exceptions{MissingParameterValue(REQUEST), MissingParameterValue(SERVICE)}},
 	}
 
 	for k, test := range tests {

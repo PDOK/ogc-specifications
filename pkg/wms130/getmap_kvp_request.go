@@ -48,7 +48,7 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) common.Exceptions {
 	var exceptions common.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
-			exceptions = append(exceptions, common.InvalidParameterValue(k, strings.Join(v, ",")))
+			exceptions = append(exceptions, InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
@@ -131,11 +131,11 @@ func (gmkvp *GetMapKVP) buildOutput() (Output, common.Exception) {
 
 	h, err := strconv.Atoi(gmkvp.Height)
 	if err != nil {
-		return output, common.InvalidParameterValue(HEIGHT, gmkvp.Height)
+		return output, InvalidParameterValue(HEIGHT, gmkvp.Height)
 	}
 	w, err := strconv.Atoi(gmkvp.Width)
 	if err != nil {
-		return output, common.InvalidParameterValue(WIDTH, gmkvp.Width)
+		return output, InvalidParameterValue(WIDTH, gmkvp.Width)
 	}
 
 	output.Size = Size{Height: h, Width: w}

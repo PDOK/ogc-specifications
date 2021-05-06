@@ -32,7 +32,7 @@ type GetFeatureInfoRequest struct {
 	// needed in a GetFeatureInfo request
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"` //TODO layers is need styles is not!
 	CRS                   string                `xml:"CRS" yaml:"crs"`
-	BoundingBox           common.BoundingBox    `xml:"BoundingBox" yaml:"boundingbox"`
+	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
 	// We skip the Output struct, because these are not required parameters
 	Size   Size   `xml:"Size" yaml:"size"`
 	Format string `xml:"Format,omitempty" yaml:"format,omitempty"`
@@ -69,10 +69,10 @@ func (gfi *GetFeatureInfoRequest) Validate(c common.Capabilities) common.Excepti
 func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return common.Exceptions{common.MissingParameterValue()}
+		return common.Exceptions{MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gfi); err != nil {
-		return common.Exceptions{common.MissingParameterValue("REQUEST")}
+		return common.Exceptions{MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -103,7 +103,7 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp common.Operatio
 
 	gfi.CRS = gfikvp.CRS
 
-	var bbox common.BoundingBox
+	var bbox BoundingBox
 	if err := bbox.ParseString(gfikvp.Bbox); err != nil {
 		return common.Exceptions{err}
 	}
@@ -113,13 +113,13 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp common.Operatio
 
 	w, err := strconv.Atoi(gfikvp.Width)
 	if err != nil {
-		return common.Exceptions{common.MissingParameterValue(WIDTH, gfikvp.Width)}
+		return common.Exceptions{MissingParameterValue(WIDTH, gfikvp.Width)}
 	}
 	gfi.Size.Width = w
 
 	h, err := strconv.Atoi(gfikvp.Height)
 	if err != nil {
-		return common.Exceptions{common.MissingParameterValue(HEIGHT, gfikvp.Height)}
+		return common.Exceptions{MissingParameterValue(HEIGHT, gfikvp.Height)}
 	}
 	gfi.Size.Height = h
 
@@ -140,7 +140,7 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp common.Operatio
 	fc, err := strconv.Atoi(*gfikvp.FeatureCount)
 	if err != nil {
 		// TODO: ignore or a exception
-		return common.Exceptions{common.NoApplicableCode("Unknown FeatureCount value")}
+		return common.Exceptions{NoApplicableCode("Unknown FeatureCount value")}
 	}
 
 	gfi.FeatureCount = fc
@@ -155,7 +155,7 @@ func (gfi *GetFeatureInfoRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
-		return common.Exceptions{common.MissingParameterValue(VERSION), common.MissingParameterValue(REQUEST)}
+		return common.Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
 	gfikvp := GetFeatureInfoKVP{}

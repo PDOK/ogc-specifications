@@ -33,36 +33,6 @@ func (xmlattr *XMLAttribute) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 }
 
 // MarshalXML Position
-func (p Position) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	s := fmt.Sprintf("%f %f", p[0], p[1])
-	return e.EncodeElement(s, start)
-}
-
-// UnmarshalXML Position
-func (p *Position) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var position Position
-	for {
-		token, err := d.Token()
-		if err != nil {
-			return err
-		}
-		switch el := token.(type) {
-		case xml.CharData:
-			coords := getPositionFromString(string([]byte(el)))
-			if len(coords) >= 2 {
-				// take first 2 positions (xy)
-				position = [2]float64{coords[0], coords[1]}
-			}
-		case xml.EndElement:
-			if el == start.End() {
-				*p = position
-				return nil
-			}
-		}
-	}
-}
-
-// MarshalXML Position
 func (c *CRS) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	var s = ``
 	if c.Namespace != `` {

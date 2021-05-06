@@ -30,10 +30,10 @@ func (gc *GetCapabilitiesRequest) Validate(c common.Capabilities) common.Excepti
 func (gc *GetCapabilitiesRequest) ParseXML(body []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return common.Exceptions{common.MissingParameterValue()}
+		return common.Exceptions{MissingParameterValue()}
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return common.Exceptions{common.MissingParameterValue("REQUEST")}
+		return common.Exceptions{MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -54,7 +54,7 @@ func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty SERVICE and REQUEST parameter is missing.
-		return common.Exceptions{common.MissingParameterValue(SERVICE), common.MissingParameterValue(REQUEST)}
+		return common.Exceptions{MissingParameterValue(SERVICE), MissingParameterValue(REQUEST)}
 	}
 
 	gckvp := GetCapabilitiesKVP{}
