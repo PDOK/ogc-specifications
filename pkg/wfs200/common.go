@@ -55,7 +55,7 @@ type BaseRequest struct {
 }
 
 // ParseKVP builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) ParseKVP(query url.Values) wsc110.Exceptions {
+func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query[SERVICE]) > 0 {
 		// Service is optional, because it's implicit for a GetFeature/DescribeFeatureType request
 		b.Service = query[SERVICE][0]
@@ -64,7 +64,7 @@ func (b *BaseRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 		b.Version = query[VERSION][0]
 	} else {
 		// Version is mandatory
-		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
+		return common.Exceptions{wsc110.MissingParameterValue(VERSION)}
 	}
 	return nil
 }

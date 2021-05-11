@@ -86,7 +86,7 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp common.OperationRequestK
 	gm.CRS = crs
 
 	var bbox BoundingBox
-	if err := bbox.ParseString(gmkvp.Bbox); err != nil {
+	if err := bbox.parseString(gmkvp.Bbox); err != nil {
 		return common.Exceptions{err}
 	}
 	gm.BoundingBox = bbox

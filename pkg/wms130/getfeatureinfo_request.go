@@ -104,7 +104,7 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp common.Operatio
 	gfi.CRS = gfikvp.CRS
 
 	var bbox BoundingBox
-	if err := bbox.ParseString(gfikvp.Bbox); err != nil {
+	if err := bbox.parseString(gfikvp.Bbox); err != nil {
 		return common.Exceptions{err}
 	}
 	gfi.BoundingBox = bbox

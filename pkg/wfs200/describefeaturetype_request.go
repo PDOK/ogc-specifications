@@ -23,18 +23,18 @@ func (dft *DescribeFeatureTypeRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) wsc110.Exceptions {
+func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) common.Exceptions {
 	return nil
 }
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
-func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exception {
+func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return wsc110.NoApplicableCode("Could not process XML, is it XML?")
+		return common.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
 	}
 	if err := xml.Unmarshal(doc, &dft); err != nil {
-		return wsc110.OperationNotSupported(err.Error())
+		return common.Exceptions{wsc110.OperationNotSupported(err.Error())}
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -52,11 +52,11 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exception {
 }
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Exceptions {
+func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
+		return common.Exceptions{wsc110.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)

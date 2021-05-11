@@ -24,7 +24,7 @@ func (b *BoundingBox) BuildKVP() string {
 }
 
 //ParseString builds a BoundingBox based on a string
-func (b *BoundingBox) ParseString(boundingbox string) common.Exception {
+func (b *BoundingBox) parseString(boundingbox string) common.Exception {
 	result := strings.Split(boundingbox, ",")
 	var lx, ly, ux, uy float64
 	var err error

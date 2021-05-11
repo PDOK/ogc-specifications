@@ -87,11 +87,11 @@ func (gf *GetFeatureRequest) ParseXML(doc []byte) common.Exception {
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
-func (gf *GetFeatureRequest) ParseKVP(query url.Values) wsc110.Exceptions {
+func (gf *GetFeatureRequest) ParseKVP(query url.Values) common.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
+		return common.Exceptions{wsc110.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)
@@ -174,7 +174,7 @@ func (gf *GetFeatureRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 			case FILTERLANGUAGE:
 				// TODO
 				// See ISO 19143:2010, 6.3.3 seems to behind a pay wall...
-				// For now we are gonna skip it
+				// For now we are gonna skip it and only accept XML
 			case RESOURCEID:
 				// Resourceid's are
 				ids := strings.Split(q[k][0], `,`)
@@ -247,7 +247,7 @@ func mergeResourceIDGroups(rids ...[]ResourceID) []ResourceID {
 	return mergedRids
 }
 
-// the use of a map make that with dublicate namespaces prefixes the last match is used
+// the use of a map makes that with dublicate namespaces prefixes the last match is used
 func procesNamespaces(namespace string) []xml.Attr {
 	regex := regexp.MustCompile(`xmlns\((.*?)\)`)
 	namespacematches := regex.FindAllStringSubmatch(namespace, -1)

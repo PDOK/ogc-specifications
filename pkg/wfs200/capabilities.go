@@ -115,7 +115,7 @@ type FeatureType struct {
 	OutputFormats struct {
 		Format []string `xml:"wfs:Format" yaml:"format"`
 	} `xml:"wfs:OutputFormats" yaml:"outputformats"`
-	WGS84BoundingBox wsc110.BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	WGS84BoundingBox wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
 	MetadataURL      struct {
 		Href string `xml:"xlink:href,attr" yaml:"href"`
 	} `xml:"wfs:MetadataURL" yaml:"metadataurl"`
