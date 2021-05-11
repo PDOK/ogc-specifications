@@ -8,20 +8,28 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-// BoundingBox struct
-// Base BoundingBox struct to be used for OGC Boundingbox object
-// What todo with Geoserver implementation...
-// 'cause the http://schemas.opengis.net/ows/1.0.0/owsCommon.xsd is quite clear... PositionTypes and CRS not srsName and coords....
-// <BoundingBox srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
-//   <gml:coord><gml:X>-130</gml:X><gml:Y>24</gml:Y></gml:coord>
-//   <gml:coord><gml:X>-55</gml:X><gml:Y>50</gml:Y></gml:coord>
-// </BoundingBox>
-type BoundingBox struct {
+// BoundingBoxUnmarshal struct
+// BoundingBox struct to be used for Unmarshalling of boundingbox object
+// regarding the issue https://stackoverflow.com/questions/48609596/xml-namespace-prefix-issue-at-go
+// There are 2 structs needed one for Unmarshalling and one for Marshalling
+type BoundingBoxUnmarshal struct {
 	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
 	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
 	LowerCorner Position `xml:"LowerCorner" yaml:"lowercorner"`
 	UpperCorner Position `xml:"UpperCorner" yaml:"uppercorner"`
 }
+
+type BoundingBox struct {
+	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
+	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
+	LowerCorner Position `xml:"ows:LowerCorner" yaml:"lowercorner"`
+	UpperCorner Position `xml:"ows:UpperCorner" yaml:"uppercorner"`
+}
+
+// WGS84BoundingBox layers on the wsc110.BoundingBox
+// with a predefined crs "urn:ogc:def:crs:OGC::84"
+// and bound dimensions, lowercorner and uppercorner, all 2 values
+type WGS84BoundingBox BoundingBox
 
 // Position type
 type Position [2]float64

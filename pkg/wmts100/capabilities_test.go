@@ -23,7 +23,7 @@ var contentsWithLegend = Contents{
 			Abstract: `ETOPO2 - 2 minute Worldwide Bathymetry/Topography
 		Data taken from National Geophysical Data Center(NGDC),
 		ETOPO2 Global 2' Elevations, September 2001...`,
-			WGS84BoundingBox: WGS84BoundingBox{LowerCorner: wsc110.Position{-180, -90}, UpperCorner: wsc110.Position{180, 90}},
+			WGS84BoundingBox: wsc110.WGS84BoundingBox{LowerCorner: wsc110.Position{-180, -90}, UpperCorner: wsc110.Position{180, 90}},
 			Identifier:       "etopo2",
 			Metadata:         Metadata{Href: "http://www.maps.bob/etopo2/ metadata.htm"},
 			Style: []Style{
@@ -69,7 +69,7 @@ var contentsWithoutLegend = Contents{
 			Abstract: `ETOPO2 - 2 minute Worldwide Bathymetry/Topography
 		Data taken from National Geophysical Data Center(NGDC),
 		ETOPO2 Global 2' Elevations, September 2001...`,
-			WGS84BoundingBox: WGS84BoundingBox{LowerCorner: wsc110.Position{-180, -90}, UpperCorner: wsc110.Position{180, 90}},
+			WGS84BoundingBox: wsc110.WGS84BoundingBox{LowerCorner: wsc110.Position{-180, -90}, UpperCorner: wsc110.Position{180, 90}},
 			Identifier:       "etopo2",
 			Metadata:         Metadata{Href: "http://www.maps.bob/etopo2/ metadata.htm"},
 			Style: []Style{

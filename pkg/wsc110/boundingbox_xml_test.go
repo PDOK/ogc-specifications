@@ -9,7 +9,7 @@ import (
 func TestUnMarshalXMLBoundingBox(t *testing.T) {
 	var tests = []struct {
 		xmlraw      string
-		boundingbox BoundingBox
+		boundingbox BoundingBoxUnmarshal
 		exception   error
 	}{
 		// BoundingBox from GetMap schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
@@ -17,24 +17,24 @@ func TestUnMarshalXMLBoundingBox(t *testing.T) {
 		<ows:LowerCorner>-180.0 -90.0</ows:LowerCorner>
 		<ows:UpperCorner>180.0 90.0</ows:UpperCorner>
 		</BoundingBox>`,
-			boundingbox: BoundingBox{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", LowerCorner: [2]float64{-180.0, -90.0}, UpperCorner: [2]float64{180.0, 90.0}}},
+			boundingbox: BoundingBoxUnmarshal{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", LowerCorner: [2]float64{-180.0, -90.0}, UpperCorner: [2]float64{180.0, 90.0}}},
 		1: {xmlraw: `<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326" dimensions="2">
 			<ows:LowerCorner>-180.0 -90.0</ows:LowerCorner>
 			<ows:UpperCorner>180.0 90.0</ows:UpperCorner>
 			</BoundingBox>`,
-			boundingbox: BoundingBox{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", Dimensions: "2", LowerCorner: [2]float64{-180.0, -90.0}, UpperCorner: [2]float64{180.0, 90.0}}},
+			boundingbox: BoundingBoxUnmarshal{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", Dimensions: "2", LowerCorner: [2]float64{-180.0, -90.0}, UpperCorner: [2]float64{180.0, 90.0}}},
 		2: {xmlraw: `<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326" dimensions="2">
 			<ows:LowerCorner/>
 			<ows:UpperCorner/>
 			</BoundingBox>`,
-			boundingbox: BoundingBox{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", Dimensions: "2"}},
+			boundingbox: BoundingBoxUnmarshal{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", Dimensions: "2"}},
 		3: {xmlraw: `<BoundingBox/>`,
-			boundingbox: BoundingBox{}},
+			boundingbox: BoundingBoxUnmarshal{}},
 		4: {xmlraw: `<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326" dimensions="2">
 			<ows:LowerCorner>Not a coord</ows:LowerCorner>
 			<ows:UpperCorner/>
 			</BoundingBox>`,
-			boundingbox: BoundingBox{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", Dimensions: "2"}},
+			boundingbox: BoundingBoxUnmarshal{Crs: "http://www.opengis.net/gml/srs/epsg.xml#4326", Dimensions: "2"}},
 		5: {xmlraw: `<BoundingBox crs="http://www.opengis.net/gml/srs/epsg.xml#4326" dimensions="2">
 			<ows:LowerCorner>Not a coord</ows:LowerCorner>
 			<ows:UpperCorner/>
@@ -42,7 +42,7 @@ func TestUnMarshalXMLBoundingBox(t *testing.T) {
 			exception: errors.New("XML syntax error on line 4: unexpected EOF")},
 	}
 	for k, a := range tests {
-		var bbox BoundingBox
+		var bbox BoundingBoxUnmarshal
 		if err := xml.Unmarshal([]byte(a.xmlraw), &bbox); err != nil {
 			if err.Error() != a.exception.Error() {
 				t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())

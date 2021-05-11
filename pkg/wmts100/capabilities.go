@@ -34,26 +34,19 @@ func (c Contents) GetTilematrixsets() map[string]bool {
 
 // Layer in struct for repeatability
 type Layer struct {
-	Title             string              `xml:"ows:Title" yaml:"title"`
-	Abstract          string              `xml:"ows:Abstract" yaml:"abstract"`
-	WGS84BoundingBox  WGS84BoundingBox    `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
-	Identifier        string              `xml:"ows:Identifier" yaml:"identifier"`
-	Metadata          Metadata            `xml:"ows:Metadata" yaml:"metadata"`
-	Style             []Style             `xml:"Style" yaml:"style"`
-	Format            string              `xml:"Format" yaml:"format"`
-	TileMatrixSetLink []TileMatrixSetLink `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
+	Title             string                  `xml:"ows:Title" yaml:"title"`
+	Abstract          string                  `xml:"ows:Abstract" yaml:"abstract"`
+	WGS84BoundingBox  wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	Identifier        string                  `xml:"ows:Identifier" yaml:"identifier"`
+	Metadata          Metadata                `xml:"ows:Metadata" yaml:"metadata"`
+	Style             []Style                 `xml:"Style" yaml:"style"`
+	Format            string                  `xml:"Format" yaml:"format"`
+	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
 	ResourceURL       struct {
 		Format       string `xml:"format,attr" yaml:"format"`
 		ResourceType string `xml:"resourceType,attr" yaml:"resourcetype"`
 		Template     string `xml:"template,attr" yaml:"template"`
 	} `xml:"ResourceURL" yaml:"resourceurl"`
-}
-
-type WGS84BoundingBox struct {
-	Crs         string          `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
-	Dimensions  string          `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
-	LowerCorner wsc110.Position `xml:"ows:LowerCorner" yaml:"lowercorner"`
-	UpperCorner wsc110.Position `xml:"ows:UpperCorner" yaml:"uppercorner"`
 }
 
 // Metadata  in struct for repeatability
