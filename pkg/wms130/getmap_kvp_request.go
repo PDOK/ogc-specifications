@@ -4,8 +4,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 //GetMapKVP struct
@@ -44,8 +42,8 @@ type GetMapKVPOptional struct {
 }
 
 // ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gmkvp *GetMapKVP) ParseKVP(query url.Values) common.Exceptions {
-	var exceptions common.Exceptions
+func (gmkvp *GetMapKVP) ParseQueryParameters(query url.Values) Exceptions {
+	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, InvalidParameterValue(k, strings.Join(v, ",")))
@@ -61,7 +59,7 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) common.Exceptions {
 				gmkvp.GetMapKVPMandatory.Layers = v[0]
 			case STYLES:
 				gmkvp.GetMapKVPMandatory.Styles = v[0]
-			case CRS:
+			case "CRS":
 				gmkvp.GetMapKVPMandatory.CRS = v[0]
 			case BBOX:
 				gmkvp.GetMapKVPMandatory.Bbox = v[0]
@@ -92,7 +90,7 @@ func (gmkvp *GetMapKVP) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // ParseOperationRequest builds a GetMapKVP object based on a GetMap struct
-func (gmkvp *GetMapKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
+func (gmkvp *GetMapKVP) ParseOperationRequest(or OperationRequest) Exceptions {
 	gm := or.(*GetMapRequest)
 
 	gmkvp.Request = getmap
@@ -101,7 +99,7 @@ func (gmkvp *GetMapKVP) ParseOperationRequest(or common.OperationRequest) common
 	gmkvp.Layers = gm.StyledLayerDescriptor.getLayerKVPValue()
 	gmkvp.Styles = gm.StyledLayerDescriptor.getStyleKVPValue()
 	gmkvp.CRS = gm.CRS.String()
-	gmkvp.Bbox = gm.BoundingBox.BuildKVP()
+	gmkvp.Bbox = gm.BoundingBox.BuildQueryParameters()
 	gmkvp.Width = strconv.Itoa(gm.Output.Size.Width)
 	gmkvp.Height = strconv.Itoa(gm.Output.Size.Height)
 	gmkvp.Format = gm.Output.Format
@@ -126,16 +124,16 @@ func (gmkvp *GetMapKVP) ParseOperationRequest(or common.OperationRequest) common
 }
 
 // BuildOutput builds a Output struct from the KVP information
-func (gmkvp *GetMapKVP) buildOutput() (Output, common.Exception) {
+func (gmkvp *GetMapKVP) buildOutput() (Output, Exceptions) {
 	output := Output{}
 
 	h, err := strconv.Atoi(gmkvp.Height)
 	if err != nil {
-		return output, InvalidParameterValue(HEIGHT, gmkvp.Height)
+		return output, InvalidParameterValue(HEIGHT, gmkvp.Height).ToExceptions()
 	}
 	w, err := strconv.Atoi(gmkvp.Width)
 	if err != nil {
-		return output, InvalidParameterValue(WIDTH, gmkvp.Width)
+		return output, InvalidParameterValue(WIDTH, gmkvp.Width).ToExceptions()
 	}
 
 	output.Size = Size{Height: h, Width: w}
@@ -149,7 +147,7 @@ func (gmkvp *GetMapKVP) buildOutput() (Output, common.Exception) {
 }
 
 // BuildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the KVP information
-func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, common.Exception) {
+func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, Exceptions) {
 	var layers, styles []string
 	if sl.Layers != `` {
 		layers = strings.Split(sl.Layers, ",")
@@ -167,7 +165,7 @@ func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, comm
 }
 
 // BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gmkvp *GetMapKVP) BuildKVP() url.Values {
+func (gmkvp *GetMapKVP) ToQueryParameters() url.Values {
 	query := make(map[string][]string)
 
 	query[SERVICE] = []string{gmkvp.Service}
@@ -175,7 +173,7 @@ func (gmkvp *GetMapKVP) BuildKVP() url.Values {
 	query[REQUEST] = []string{gmkvp.Request}
 	query[LAYERS] = []string{gmkvp.Layers}
 	query[STYLES] = []string{gmkvp.Styles}
-	query[CRS] = []string{gmkvp.CRS}
+	query["CRS"] = []string{gmkvp.CRS}
 	query[BBOX] = []string{gmkvp.Bbox}
 	query[WIDTH] = []string{gmkvp.Width}
 	query[HEIGHT] = []string{gmkvp.Height}

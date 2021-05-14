@@ -2,12 +2,10 @@ package wms130
 
 import (
 	"fmt"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // InvalidFormat exception
-func InvalidFormat(unknownformat string) common.Exception {
+func InvalidFormat(unknownformat string) exception {
 	return exception{
 		ExceptionText: fmt.Sprintf("The format: %s, is a invalid image format", unknownformat),
 		ExceptionCode: `InvalidFormat`,
@@ -15,7 +13,7 @@ func InvalidFormat(unknownformat string) common.Exception {
 }
 
 // InvalidCRS exception
-func InvalidCRS(s ...string) common.Exception {
+func InvalidCRS(s ...string) exception {
 	if len(s) == 1 {
 		return exception{
 			ExceptionText: fmt.Sprintf("CRS is not known by this service: %s", s[0]),
@@ -34,7 +32,7 @@ func InvalidCRS(s ...string) common.Exception {
 }
 
 // LayerNotDefined exception
-func LayerNotDefined(s ...string) common.Exception {
+func LayerNotDefined(s ...string) exception {
 	if len(s) == 1 {
 		return exception{
 			ExceptionText: fmt.Sprintf("The layer: %s is not known by the server", s[0]),
@@ -47,7 +45,7 @@ func LayerNotDefined(s ...string) common.Exception {
 }
 
 // StyleNotDefined exception
-func StyleNotDefined(s ...string) common.Exception {
+func StyleNotDefined(s ...string) exception {
 	if len(s) == 2 {
 		return exception{
 			ExceptionText: fmt.Sprintf("The style: %s is not known by the server for the layer: %s", s[0], s[1]),
@@ -62,7 +60,7 @@ func StyleNotDefined(s ...string) common.Exception {
 }
 
 // LayerNotQueryable exception
-func LayerNotQueryable(s ...string) common.Exception {
+func LayerNotQueryable(s ...string) exception {
 	if len(s) == 1 {
 		return exception{
 			ExceptionText: fmt.Sprintf("Layer: %s, can not be queried", s[0]),
@@ -77,7 +75,7 @@ func LayerNotQueryable(s ...string) common.Exception {
 
 // InvalidPoint exception
 // i and j are strings so we can return none integer values in the exception
-func InvalidPoint(i, j string) common.Exception {
+func InvalidPoint(i, j string) exception {
 	// TODO provide giving WIDTH and HEIGHT values in Exception response
 	return exception{
 		ExceptionText: fmt.Sprintf("The parameters I and J are invalid, given: %s for I and %s for J", i, j),
@@ -86,28 +84,28 @@ func InvalidPoint(i, j string) common.Exception {
 }
 
 // CurrentUpdateSequence exception
-func CurrentUpdateSequence() common.Exception {
+func CurrentUpdateSequence() exception {
 	return exception{
 		ExceptionCode: `CurrentUpdateSequence`,
 	}
 }
 
 // InvalidUpdateSequence exception
-func InvalidUpdateSequence() common.Exception {
+func InvalidUpdateSequence() exception {
 	return exception{
 		ExceptionCode: `InvalidUpdateSequence`,
 	}
 }
 
 // MissingDimensionValue exception
-func MissingDimensionValue() common.Exception {
+func MissingDimensionValue() exception {
 	return exception{
 		ExceptionCode: `MissingDimensionValue`,
 	}
 }
 
 // InvalidDimensionValue exception
-func InvalidDimensionValue() common.Exception {
+func InvalidDimensionValue() exception {
 	return exception{
 		ExceptionCode: `InvalidDimensionValue`,
 	}
@@ -117,7 +115,7 @@ func InvalidDimensionValue() common.Exception {
 ////////////////
 
 // MissingParameterValue exception
-func MissingParameterValue(s ...string) common.Exception {
+func MissingParameterValue(s ...string) exception {
 	if len(s) >= 2 {
 		return exception{ExceptionText: fmt.Sprintf("%s key got incorrect value: %s", s[0], s[1]), ExceptionCode: "MissingParameterValue", LocatorCode: s[0]}
 	}
@@ -129,7 +127,7 @@ func MissingParameterValue(s ...string) common.Exception {
 }
 
 // InvalidParameterValue exception
-func InvalidParameterValue(value, locator string) common.Exception {
+func InvalidParameterValue(value, locator string) exception {
 	return exception{
 		ExceptionText: fmt.Sprintf("%s contains a invalid value: %s", locator, value),
 		LocatorCode:   value,
@@ -138,7 +136,7 @@ func InvalidParameterValue(value, locator string) common.Exception {
 }
 
 // NoApplicableCode exception
-func NoApplicableCode(message string) common.Exception {
+func NoApplicableCode(message string) exception {
 	return exception{
 		ExceptionText: message,
 		ExceptionCode: `NoApplicableCode`,
@@ -146,7 +144,7 @@ func NoApplicableCode(message string) common.Exception {
 }
 
 // OperationNotSupported exception
-func OperationNotSupported(message string) common.Exception {
+func OperationNotSupported(message string) exception {
 	return exception{
 		ExceptionText: fmt.Sprintf("This service does not know the operation: %s", message),
 		ExceptionCode: `OperationNotSupported`,

@@ -5,15 +5,12 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // Mandatory GetMap Keys
 const (
 	LAYERS = `LAYERS`
 	STYLES = `STYLES`
-	CRS    = `CRS`
 	BBOX   = `BBOX`
 	WIDTH  = `WIDTH`
 	HEIGHT = `HEIGHT`
@@ -31,24 +28,17 @@ const (
 	// ELEVATION   = `ELEVATION`
 )
 
-// Type returns GetMap
-func (gm *GetMapRequest) Type() string {
-	return getmap
-}
-
 // Validate returns GetMap
-func (gm *GetMapRequest) Validate(c common.Capabilities) common.Exceptions {
-	var exceptions common.Exceptions
+func (gm *GetMapRequest) Validate(c Capabilities) Exceptions {
+	var exceptions Exceptions
 
-	wmsCapabilities := c.(Capabilities)
-
-	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(wmsCapabilities)...)
-	exceptions = append(exceptions, gm.Output.Validate(wmsCapabilities)...)
+	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(c)...)
+	exceptions = append(exceptions, gm.Output.Validate(c)...)
 
 	for _, sld := range gm.StyledLayerDescriptor.NamedLayer {
-		layer, layerexception := wmsCapabilities.GetLayer(sld.Name)
+		layer, layerexception := c.GetLayer(sld.Name)
 		if layerexception != nil {
-			exceptions = append(exceptions, layerexception)
+			exceptions = append(exceptions, layerexception...)
 		}
 		if CRSException := checkCRS(gm.CRS, layer.CRS); CRSException != nil {
 			exceptions = append(exceptions, InvalidCRS(gm.CRS.String(), *layer.Name))
@@ -59,17 +49,17 @@ func (gm *GetMapRequest) Validate(c common.Capabilities) common.Exceptions {
 }
 
 // checkCRS against a given list of CRS
-func checkCRS(crs common.CRS, definedCrs []common.CRS) common.Exception {
+func checkCRS(crs CRS, definedCrs []CRS) Exceptions {
 	for _, defined := range definedCrs {
 		if defined == crs {
 			return nil
 		}
 	}
-	return InvalidCRS(crs.String())
+	return InvalidCRS(crs.String()).ToExceptions()
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
+func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exceptions {
 	gmkvp := orkvp.(*GetMapKVP)
 
 	gm.XMLName.Local = getmap
@@ -77,23 +67,23 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp common.OperationRequestK
 
 	sld, err := gmkvp.buildStyledLayerDescriptor()
 	if err != nil {
-		return common.Exceptions{err}
+		return err
 	}
 	gm.StyledLayerDescriptor = sld
 
-	var crs common.CRS
+	var crs CRS
 	crs.ParseString(gmkvp.CRS)
 	gm.CRS = crs
 
 	var bbox BoundingBox
 	if err := bbox.parseString(gmkvp.Bbox); err != nil {
-		return common.Exceptions{err}
+		return err
 	}
 	gm.BoundingBox = bbox
 
 	output, err := gmkvp.buildOutput()
 	if err != nil {
-		return common.Exceptions{err}
+		return err
 	}
 	gm.Output = output
 
@@ -103,15 +93,15 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp common.OperationRequestK
 }
 
 // ParseKVP builds a GetMap object based on the available query parameters
-func (gm *GetMapRequest) ParseKVP(query url.Values) common.Exceptions {
+func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
-		return common.Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
+		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
 	gmkvp := GetMapKVP{}
-	if err := gmkvp.ParseKVP(query); err != nil {
+	if err := gmkvp.ParseQueryParameters(query); err != nil {
 		return err
 	}
 
@@ -123,10 +113,10 @@ func (gm *GetMapRequest) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // ParseXML builds a GetMap object based on a XML document
-func (gm *GetMapRequest) ParseXML(body []byte) common.Exceptions {
-	var xmlattributes common.XMLAttribute
+func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
+	var xmlattributes XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return common.Exceptions{MissingParameterValue()}
+		return Exceptions{MissingParameterValue()}
 	}
 	xml.Unmarshal(body, &gm) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
 	var n []xml.Attr
@@ -137,26 +127,26 @@ func (gm *GetMapRequest) ParseXML(body []byte) common.Exceptions {
 			n = append(n, a)
 		}
 	}
-	gm.BaseRequest.Attr = common.StripDuplicateAttr(n)
+	gm.BaseRequest.Attr = StripDuplicateAttr(n)
 	return nil
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gm *GetMapRequest) BuildKVP() url.Values {
+func (gm *GetMapRequest) ToQueryParameters() url.Values {
 	gmkvp := GetMapKVP{}
 	gmkvp.ParseOperationRequest(gm)
 
-	kvp := gmkvp.BuildKVP()
+	kvp := gmkvp.ToQueryParameters()
 	return kvp
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gm *GetMapRequest) BuildXML() []byte {
+func (gm *GetMapRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gm, "", " ")
 	return append([]byte(xml.Header), si...)
 }
 
-func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, common.Exception) {
+func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, Exceptions) {
 	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
 	// 1. cnt(STYLE) == 0 -> Added LAYERS
 	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
@@ -190,7 +180,7 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 		return sld, nil
 		// 4.
 	} else if len(layers) != len(styles) {
-		return StyledLayerDescriptor{}, StyleNotDefined()
+		return StyledLayerDescriptor{}, StyleNotDefined().ToExceptions()
 	}
 
 	return StyledLayerDescriptor{}, nil
@@ -236,7 +226,7 @@ type GetMapRequest struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
 	BaseRequest
 	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
-	CRS                   common.CRS            `xml:"CRS" yaml:"crs"`
+	CRS                   CRS                   `xml:"CRS" yaml:"crs"`
 	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
 	Output                Output                `xml:"Output" yaml:"output"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
@@ -246,8 +236,8 @@ type GetMapRequest struct {
 }
 
 // Validate validates the output parameters
-func (output *Output) Validate(c Capabilities) common.Exceptions {
-	exceptions := common.Exceptions{}
+func (output *Output) Validate(c Capabilities) Exceptions {
+	exceptions := Exceptions{}
 	if output.Size.Width > c.MaxWidth {
 		exceptions = append(exceptions, NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
 	}
@@ -296,7 +286,7 @@ type StyledLayerDescriptor struct {
 }
 
 // Validate the StyledLayerDescriptor
-func (sld *StyledLayerDescriptor) Validate(c Capabilities) common.Exceptions {
+func (sld StyledLayerDescriptor) Validate(c Capabilities) Exceptions {
 	var unknownLayers []string
 	var unknownStyles []struct{ layer, style string }
 
@@ -320,7 +310,7 @@ func (sld *StyledLayerDescriptor) Validate(c Capabilities) common.Exceptions {
 		}
 	}
 
-	var exceptions common.Exceptions
+	var exceptions Exceptions
 	if len(unknownLayers) > 0 {
 		for _, l := range unknownLayers {
 			exceptions = append(exceptions, LayerNotDefined(l))

@@ -2,13 +2,11 @@ package wms130
 
 import (
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 func TestWFSException(t *testing.T) {
 	var tests = []struct {
-		exception     common.Exception
+		exception     exception
 		exceptionText string
 		exceptionCode string
 		locatorCode   string

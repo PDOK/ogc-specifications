@@ -3,8 +3,6 @@ package wms130
 import (
 	"encoding/xml"
 	"regexp"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // Contains the WMS130 struct
@@ -25,7 +23,7 @@ func (gc *GetCapabilitiesResponse) Version() string {
 }
 
 // Validate function of the wms130 spec
-func (gc *GetCapabilitiesResponse) Validate() common.Exceptions {
+func (gc *GetCapabilitiesResponse) Validate() Exceptions {
 	return nil
 }
 
@@ -58,10 +56,10 @@ type Namespaces struct {
 
 // WMSService struct containing the base service information filled from the template
 type WMSService struct {
-	Name           string           `xml:"Name" yaml:"name"`
-	Title          string           `xml:"Title" yaml:"title"`
-	Abstract       string           `xml:"Abstract" yaml:"abstract"`
-	KeywordList    *common.Keywords `xml:"KeywordList" yaml:"keywordlist"`
+	Name           string    `xml:"Name" yaml:"name"`
+	Title          string    `xml:"Title" yaml:"title"`
+	Abstract       string    `xml:"Abstract" yaml:"abstract"`
+	KeywordList    *Keywords `xml:"KeywordList" yaml:"keywordlist"`
 	OnlineResource struct {
 		Xlink *string `xml:"xmlns:xlink,attr" yaml:"xlink"`
 		Type  *string `xml:"xlink:type,attr" yaml:"type"`

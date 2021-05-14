@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 type BoundingBox struct {
@@ -19,32 +17,32 @@ type BoundingBox struct {
 type Position [2]float64
 
 // BuildKVP function for getting a KVP Query BBOX value
-func (b *BoundingBox) BuildKVP() string {
+func (b *BoundingBox) BuildQueryParameters() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
 //ParseString builds a BoundingBox based on a string
-func (b *BoundingBox) parseString(boundingbox string) common.Exception {
+func (b *BoundingBox) parseString(boundingbox string) Exceptions {
 	result := strings.Split(boundingbox, ",")
 	var lx, ly, ux, uy float64
 	var err error
 
 	if len(result) < 4 {
-		return InvalidParameterValue(boundingbox, `boundingbox`)
+		return InvalidParameterValue(boundingbox, `boundingbox`).ToExceptions()
 	}
 
 	if len(result) == 4 || len(result) == 5 {
 		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
-			return InvalidParameterValue(boundingbox, `boundingbox`)
+			return InvalidParameterValue(boundingbox, `boundingbox`).ToExceptions()
 		}
 		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
-			return InvalidParameterValue(boundingbox, `boundingbox`)
+			return InvalidParameterValue(boundingbox, `boundingbox`).ToExceptions()
 		}
 		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
-			return InvalidParameterValue(boundingbox, `boundingbox`)
+			return InvalidParameterValue(boundingbox, `boundingbox`).ToExceptions()
 		}
 		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
-			return InvalidParameterValue(boundingbox, `boundingbox`)
+			return InvalidParameterValue(boundingbox, `boundingbox`).ToExceptions()
 		}
 	}
 

@@ -2,8 +2,6 @@ package wms130
 
 import (
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 var capabilities = Capabilities{
@@ -66,18 +64,18 @@ func TestStyleDefined(t *testing.T) {
 func TestGetLayer(t *testing.T) {
 	var tests = []struct {
 		layername string
-		exception common.Exception
+		exception Exceptions
 	}{
 		0: {layername: `depthTwoLayerThree`},
 		1: {layername: `depthThreeLayerSeven`},
-		2: {layername: `unknownLayer`, exception: LayerNotDefined(`unknownLayer`)},
+		2: {layername: `unknownLayer`, exception: Exceptions{LayerNotDefined(`unknownLayer`)}},
 	}
 
 	for k, test := range tests {
 		layerfound, exception := capabilities.GetLayer(test.layername)
 		if exception != nil {
 			if test.exception != nil {
-				if test.exception.Code() != exception.Code() {
+				if test.exception[0].Code() != exception[0].Code() {
 					t.Errorf("test: %d, expected: %s \ngot: %v", k, test.layername, capabilities.GetLayerNames())
 				}
 			}

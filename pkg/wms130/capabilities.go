@@ -2,10 +2,8 @@ package wms130
 
 import (
 	"encoding/xml"
-	"log"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"gopkg.in/yaml.v3"
+	"log"
 )
 
 // ParseXML func
@@ -71,8 +69,8 @@ type Layer struct {
 	Name                    *string                  `xml:"Name" yaml:"name"`
 	Title                   string                   `xml:"Title" yaml:"title"`
 	Abstract                string                   `xml:"Abstract" yaml:"abstract"`
-	KeywordList             *common.Keywords         `xml:"KeywordList" yaml:"keywordlist"`
-	CRS                     []common.CRS             `xml:"CRS" yaml:"crs"`
+	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordlist"`
+	CRS                     []CRS                    `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
 	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingbox"`
 	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
@@ -174,7 +172,7 @@ func (l *Layer) findLayer(layername string) *Layer {
 
 // GetLayer returns the Layer Capabilities from the Capabilities document.
 // when the requested Layer is not found a exception is thrown.
-func (c *Capabilities) GetLayer(layername string) (Layer, common.Exception) {
+func (c *Capabilities) GetLayer(layername string) (Layer, Exceptions) {
 	var layer Layer
 
 	found := false
@@ -185,7 +183,7 @@ func (c *Capabilities) GetLayer(layername string) (Layer, common.Exception) {
 	}
 
 	if !found {
-		return layer, LayerNotDefined(layername)
+		return layer, Exceptions{LayerNotDefined(layername)}
 	}
 
 	for _, l := range c.Layer {

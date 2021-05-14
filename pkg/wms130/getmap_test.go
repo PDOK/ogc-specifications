@@ -4,40 +4,18 @@ import (
 	"encoding/xml"
 	"net/url"
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
-
-// TODO move helper func
-func sp(s string) *string {
-	return &s
-}
-
-func ip(i int) *int {
-	return &i
-}
-
-func bp(b bool) *bool {
-	return &b
-}
-
-func TestGetMapType(t *testing.T) {
-	dft := GetMapRequest{}
-	if dft.Type() != `GetMap` {
-		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetMap`, dft.Type())
-	}
-}
 
 func TestBuildStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
 		layers []string
 		styles []string
 		sld    StyledLayerDescriptor
-		Error  common.Exception
+		Error  Exceptions
 	}{
 		0: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: "style1"}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: "style2"}}}}},
-		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Error: StyleNotDefined()},
-		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Error: StyleNotDefined()},
+		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Error: StyleNotDefined().ToExceptions()},
+		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Error: StyleNotDefined().ToExceptions()},
 		3: {layers: []string{"layer1", "layer2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}}},
 	}
 
@@ -45,7 +23,7 @@ func TestBuildStyledLayerDescriptor(t *testing.T) {
 		result, err := buildStyledLayerDescriptor(test.layers, test.styles)
 
 		if err != nil {
-			if test.Error == nil || err != test.Error {
+			if test.Error == nil || err[0] != test.Error[0] {
 				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.Error, err)
 			}
 		}
@@ -69,7 +47,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
 		capabilities Capabilities
 		sld          StyledLayerDescriptor
-		exceptions   common.Exceptions
+		exceptions   Exceptions
 	}{
 		0: {
 			capabilities: Capabilities{
@@ -92,7 +70,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 				},
 			},
 			sld:        StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2", NamedStyle: &NamedStyle{Name: `styletwo`}}}},
-			exceptions: common.Exceptions{LayerNotDefined(`layer1`), StyleNotDefined(`styletwo`, `layer2`)},
+			exceptions: Exceptions{LayerNotDefined(`layer1`), StyleNotDefined(`styletwo`, `layer2`)},
 		},
 	}
 
@@ -118,7 +96,7 @@ func TestGetMapParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
 		Excepted GetMapRequest
-		Error    common.Exception
+		Error    exception
 	}{
 		// GetMap http://schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
 		0: {Body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
@@ -161,7 +139,7 @@ func TestGetMapParseXML(t *testing.T) {
 			Excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
-					Attr: common.XMLAttribute{
+					Attr: XMLAttribute{
 						xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -178,7 +156,7 @@ func TestGetMapParseXML(t *testing.T) {
 						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
-				CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+				CRS: CRS{Namespace: "EPSG", Code: 4326},
 				BoundingBox: BoundingBox{
 					Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 					LowerCorner: [2]float64{-180.0, -90.0},
@@ -272,9 +250,9 @@ func TestGetMapParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query     url.Values
 		Excepted  GetMapRequest
-		Exception common.Exception
+		Exception exception
 	}{
-		0: {Query: map[string][]string{REQUEST: {getmap}, CRS: {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
+		0: {Query: map[string][]string{REQUEST: {getmap}, "CRS": {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
 			Exception: InvalidParameterValue(``, `boundingbox`),
 		},
 		1: {Query: url.Values{},
@@ -283,7 +261,7 @@ func TestGetMapParseKVP(t *testing.T) {
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
 			STYLES:      {`CenterLine,CenterLine,Outline`},
-			CRS:         {`EPSG:4326`},
+			"CRS":       {`EPSG:4326`},
 			BBOX:        {`-180.0,-90.0,180.0,90.0`},
 			WIDTH:       {`1024`},
 			HEIGHT:      {`512`},
@@ -302,7 +280,7 @@ func TestGetMapParseKVP(t *testing.T) {
 						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 					}},
-				CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+				CRS: CRS{Namespace: "EPSG", Code: 4326},
 				BoundingBox: BoundingBox{
 					LowerCorner: [2]float64{-180.0, -90.0},
 					UpperCorner: [2]float64{180.0, 90.0},
@@ -317,7 +295,7 @@ func TestGetMapParseKVP(t *testing.T) {
 	}
 	for k, n := range tests {
 		var gm GetMapRequest
-		err := gm.ParseKVP(n.Query)
+		err := gm.ParseQueryParameters(n.Query)
 		if err != nil {
 			if err[0].Error() != n.Exception.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
@@ -332,7 +310,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetMapRequest
 		Excepted url.Values
-		Error    common.Exception
+		Error    exception
 	}{
 		0: {Object: GetMapRequest{
 			XMLName: xml.Name{Local: "GetMap"},
@@ -346,7 +324,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 					{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
-			CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+			CRS: CRS{Namespace: "EPSG", Code: 4326},
 			BoundingBox: BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
@@ -360,7 +338,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			VERSION:     {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
 			STYLES:      {`CenterLine,CenterLine,Outline`},
-			CRS:         {`EPSG:4326`},
+			"CRS":       {`EPSG:4326`},
 			BBOX:        {`-180.000000,-90.000000,180.000000,90.000000`},
 			EXCEPTIONS:  {`XML`},
 			FORMAT:      {`image/jpeg`},
@@ -371,7 +349,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			SERVICE:     {`WMS`},
 		}},
 		1: {Object: GetMapRequest{
-			CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+			CRS: CRS{Namespace: "EPSG", Code: 4326},
 			BoundingBox: BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
 				UpperCorner: [2]float64{180.0, 90.0},
@@ -381,7 +359,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			Excepted: map[string][]string{
 				LAYERS:     {``},
 				STYLES:     {``},
-				CRS:        {`EPSG:4326`},
+				"CRS":      {`EPSG:4326`},
 				BBOX:       {`-180.000000,-90.000000,180.000000,90.000000`},
 				FORMAT:     {``},
 				HEIGHT:     {`0`},
@@ -394,7 +372,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildKVP()
+		url := n.Object.ToQueryParameters()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -439,7 +417,7 @@ func TestGetMapBuildXML(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gm.BuildXML()
+		body := v.gm.ToXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
@@ -482,21 +460,21 @@ func TestGetNamedStyles(t *testing.T) {
 }
 
 func TestCheckCRS(t *testing.T) {
-	definedCrs := []common.CRS{{Namespace: `CRS`, Code: 84}, {Namespace: `EPSG`, Code: 4326}, {Namespace: `EPSG`, Code: 3857}}
+	definedCrs := []CRS{{Namespace: `CRS`, Code: 84}, {Namespace: `EPSG`, Code: 4326}, {Namespace: `EPSG`, Code: 3857}}
 	var tests = []struct {
-		crs       common.CRS
-		exception common.Exception
+		crs       CRS
+		exception Exceptions
 	}{
-		0: {crs: common.CRS{Namespace: `CRS`, Code: 84}},
-		1: {crs: common.CRS{Namespace: `UNKNOWN`}, exception: InvalidCRS(`UNKNOWN`)},
+		0: {crs: CRS{Namespace: `CRS`, Code: 84}},
+		1: {crs: CRS{Namespace: `UNKNOWN`}, exception: InvalidCRS(`UNKNOWN`).ToExceptions()},
 	}
 
 	for k, test := range tests {
 		exception := checkCRS(test.crs, definedCrs)
 		if exception != nil {
 			if test.exception != nil {
-				if exception.Code() != test.exception.Code() {
-					t.Errorf("test: %d, Expected one of %s but was not \n got: %s", k, test.exception.Code(), exception.Code())
+				if exception[0].Code() != test.exception[0].Code() {
+					t.Errorf("test: %d, Expected one of %s but was not \n got: %s", k, test.exception[0].Code(), exception[0].Code())
 				}
 			} else {
 				t.Errorf("test: %d, Expected one of %v but was not \n got: %s", k, definedCrs, test.crs.String())
@@ -582,13 +560,13 @@ func TestGetMapValidate(t *testing.T) {
 				{
 					Queryable: ip(1),
 					Title:     `Rivers, Roads and Houses`,
-					CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+					CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 					Layer: []*Layer{
 						{
 							Queryable: ip(1),
 							Name:      sp(`Rivers`),
 							Title:     `Rivers`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `CenterLine`,
@@ -599,7 +577,7 @@ func TestGetMapValidate(t *testing.T) {
 							Queryable: ip(1),
 							Name:      sp(`Roads`),
 							Title:     `Roads`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `CenterLine`,
@@ -610,7 +588,7 @@ func TestGetMapValidate(t *testing.T) {
 							Queryable: ip(1),
 							Name:      sp(`Houses`),
 							Title:     `Houses`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `Outline`,
@@ -626,12 +604,12 @@ func TestGetMapValidate(t *testing.T) {
 
 	var tests = []struct {
 		gm         GetMapRequest
-		exceptions common.Exceptions
+		exceptions Exceptions
 	}{
 		0: {gm: GetMapRequest{
 			BaseRequest: BaseRequest{
 				Version: "1.3.0",
-				Attr: common.XMLAttribute{
+				Attr: XMLAttribute{
 					xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -648,7 +626,7 @@ func TestGetMapValidate(t *testing.T) {
 					{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 					{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 				}},
-			CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+			CRS: CRS{Namespace: "EPSG", Code: 4326},
 			BoundingBox: BoundingBox{
 				Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 				LowerCorner: [2]float64{-180.0, -90.0},
@@ -678,7 +656,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: common.XMLAttribute{
+			Attr: XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -695,7 +673,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+		CRS: CRS{Namespace: "EPSG", Code: 4326},
 		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
@@ -708,7 +686,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 		Exceptions: sp("XML"),
 	}
 	for i := 0; i < b.N; i++ {
-		gm.BuildKVP()
+		gm.ToQueryParameters()
 	}
 }
 
@@ -716,7 +694,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: common.XMLAttribute{
+			Attr: XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -733,7 +711,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+		CRS: CRS{Namespace: "EPSG", Code: 4326},
 		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
@@ -746,7 +724,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 		Exceptions: sp("XML"),
 	}
 	for i := 0; i < b.N; i++ {
-		gm.BuildXML()
+		gm.ToXML()
 	}
 }
 
@@ -754,7 +732,7 @@ func BenchmarkGetMapParseKVP(b *testing.B) {
 	kvp := map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 		LAYERS:      {`Rivers,Roads,Houses`},
 		STYLES:      {`CenterLine,CenterLine,Outline`},
-		CRS:         {`EPSG:4326`},
+		"CRS":       {`EPSG:4326`},
 		BBOX:        {`-180.0,-90.0,180.0,90.0`},
 		WIDTH:       {`1024`},
 		HEIGHT:      {`512`},
@@ -766,7 +744,7 @@ func BenchmarkGetMapParseKVP(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gm := GetMapRequest{}
-		gm.ParseKVP(kvp)
+		gm.ParseQueryParameters(kvp)
 	}
 }
 
@@ -829,13 +807,13 @@ func BenchmarkGetMapValidate(b *testing.B) {
 				{
 					Queryable: ip(1),
 					Title:     `Rivers, Roads and Houses`,
-					CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+					CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 					Layer: []*Layer{
 						{
 							Queryable: ip(1),
 							Name:      sp(`Rivers`),
 							Title:     `Rivers`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `CenterLine`,
@@ -846,7 +824,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 							Queryable: ip(1),
 							Name:      sp(`Roads`),
 							Title:     `Roads`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `CenterLine`,
@@ -857,7 +835,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 							Queryable: ip(1),
 							Name:      sp(`Houses`),
 							Title:     `Houses`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `Outline`,
@@ -873,7 +851,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: common.XMLAttribute{
+			Attr: XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -890,7 +868,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+		CRS: CRS{Namespace: "EPSG", Code: 4326},
 		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},
@@ -921,13 +899,13 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 				{
 					Queryable: ip(1),
 					Title:     `Rivers, Roads and Houses`,
-					CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+					CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 					Layer: []*Layer{
 						{
 							Queryable: ip(1),
 							Name:      sp(`Rivers`),
 							Title:     `Rivers`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `CenterLine`,
@@ -938,7 +916,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 							Queryable: ip(1),
 							Name:      sp(`Roads`),
 							Title:     `Roads`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `CenterLine`,
@@ -949,7 +927,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 							Queryable: ip(1),
 							Name:      sp(`Houses`),
 							Title:     `Houses`,
-							CRS:       []common.CRS{{Code: 4326, Namespace: `EPSG`}},
+							CRS:       []CRS{{Code: 4326, Namespace: `EPSG`}},
 							Style: []*Style{
 								{
 									Name: `Outline`,
@@ -965,7 +943,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 	var gm = GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: common.XMLAttribute{
+			Attr: XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -982,7 +960,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
 			}},
-		CRS: common.CRS{Namespace: "EPSG", Code: 4326},
+		CRS: CRS{Namespace: "EPSG", Code: 4326},
 		BoundingBox: BoundingBox{
 			Crs:         "http://www.opengis.net/gml/srs/epsg.xml#4326",
 			LowerCorner: [2]float64{-180.0, -90.0},

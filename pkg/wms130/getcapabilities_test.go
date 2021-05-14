@@ -4,16 +4,7 @@ import (
 	"encoding/xml"
 	"net/url"
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
-
-func TestGetCapabilitiesType(t *testing.T) {
-	dft := GetCapabilitiesRequest{}
-	if dft.Type() != `GetCapabilities` {
-		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetCapabilities`, dft.Type())
-	}
-}
 
 func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
@@ -70,7 +61,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query      url.Values
 		Result     GetCapabilitiesRequest
-		Exceptions common.Exceptions
+		Exceptions Exceptions
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {Query: map[string][]string{"SERVICE": {"wms"}, "Request": {"GetCapabilities"}, "version": {"1.3.0"}},
@@ -88,12 +79,12 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: Service, Version: "no version found"}}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			Exceptions: common.Exceptions{MissingParameterValue(REQUEST), MissingParameterValue(SERVICE)}},
+			Exceptions: Exceptions{MissingParameterValue(REQUEST), MissingParameterValue(SERVICE)}},
 	}
 
 	for k, test := range tests {
 		var gc GetCapabilitiesRequest
-		errs := gc.ParseKVP(test.Query)
+		errs := gc.ParseQueryParameters(test.Query)
 		if len(errs) > 0 {
 			for _, err := range errs {
 				found := false
@@ -124,7 +115,7 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object   GetCapabilitiesRequest
 		Excepted url.Values
-		Error    common.Exception
+		Error    Exceptions
 	}{
 		0: {Object: GetCapabilitiesRequest{BaseRequest: BaseRequest{Service: Service, Version: Version}, XMLName: xml.Name{Local: `GetCapabilities`}},
 			Excepted: map[string][]string{
@@ -135,7 +126,7 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildKVP()
+		url := n.Object.ToQueryParameters()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -166,7 +157,7 @@ func TestGetCapabilitiesBuildXML(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gc.BuildXML()
+		body := v.gc.ToXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
@@ -181,13 +172,13 @@ func TestGetCapabilitiesBuildXML(t *testing.T) {
 func BenchmarkGetCapabilitiesBuildKVP(b *testing.B) {
 	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, BaseRequest: BaseRequest{Service: Service, Version: Version}}
 	for i := 0; i < b.N; i++ {
-		gc.BuildKVP()
+		gc.ToQueryParameters()
 	}
 }
 
 func BenchmarkGetCapabilitiesBuildXML(b *testing.B) {
 	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, BaseRequest: BaseRequest{Service: Service, Version: Version}}
 	for i := 0; i < b.N; i++ {
-		gc.BuildXML()
+		gc.ToQueryParameters()
 	}
 }

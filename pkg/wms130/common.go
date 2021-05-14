@@ -3,7 +3,7 @@ package wms130
 import (
 	"net/url"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 //
@@ -33,13 +33,16 @@ type BaseRequestKVP struct {
 // http://schemas.opengis.net/sld/1.1//example_getmap.xml
 // Note: not usable for GetCapabilities request regarding deviation of Optional/Mandatory parameters SERVICE and VERSION
 type BaseRequest struct {
-	Service string              `xml:"service,attr" yaml:"service,omitempty"`
-	Version string              `xml:"version,attr" yaml:"version"`
-	Attr    common.XMLAttribute `xml:",attr"`
+	Service string       `xml:"service,attr" yaml:"service,omitempty"`
+	Version string       `xml:"version,attr" yaml:"version"`
+	Attr    XMLAttribute `xml:",attr"`
 }
 
-// ParseKVP builds a BaseRequest struct based on the given parameters
-func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
+// ParseQueryParameters builds a BaseRequest struct based on the given parameters
+func (b *BaseRequest) ParseQueryParameters(q url.Values) Exceptions {
+
+	query := utils.KeysToUpper(q)
+
 	if len(query[SERVICE]) > 0 {
 		// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
 		b.Service = query[SERVICE][0]
@@ -48,7 +51,7 @@ func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
 		b.Version = query[VERSION][0]
 	} else {
 		// Version is mandatory
-		return common.Exceptions{MissingParameterValue(VERSION)}
+		return MissingParameterValue(VERSION).ToExceptions()
 	}
 	return nil
 }

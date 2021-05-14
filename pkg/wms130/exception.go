@@ -2,8 +2,6 @@ package wms130
 
 import (
 	"encoding/xml"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 type exception struct {
@@ -12,7 +10,7 @@ type exception struct {
 	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locator,omitempty"`
 }
 
-type Exceptions []common.Exception
+type Exceptions []exception
 
 type ServiceExceptionReport struct {
 	XMLName          xml.Name   `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
@@ -21,6 +19,10 @@ type ServiceExceptionReport struct {
 	Xsi              string     `xml:"xsi,attr,omitempty"`
 	SchemaLocation   string     `xml:"schemaLocation,attr,omitempty"`
 	ServiceException Exceptions `xml:"ServiceException"`
+}
+
+func (e exception) ToExceptions() Exceptions {
+	return Exceptions{e}
 }
 
 func (e Exceptions) ToReport() ServiceExceptionReport {

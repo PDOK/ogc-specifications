@@ -5,22 +5,13 @@ import (
 	"net/url"
 	"strings"
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
-
-func TestGetFeatureInfoType(t *testing.T) {
-	dft := GetFeatureInfoRequest{}
-	if dft.Type() != `GetFeatureInfo` {
-		t.Errorf("test: %d, expected: %s,\n got: %s", 0, `GetFeatureInfo`, dft.Type())
-	}
-}
 
 func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object    GetFeatureInfoRequest
 		Excepted  url.Values
-		Exception common.Exception
+		Exception Exceptions
 	}{
 		0: {Object: GetFeatureInfoRequest{
 			XMLName: xml.Name{Local: `GetFeatureInfo`},
@@ -51,7 +42,7 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 				SERVICE:      {Service},
 				REQUEST:      {`GetFeatureInfo`},
 				BBOX:         {`-180.000000,-90.000000,180.000000,90.000000`},
-				CRS:          {`EPSG:4326`},
+				"CRS":        {`EPSG:4326`},
 				LAYERS:       {`Rivers,Roads,Houses`},
 				STYLES:       {`CenterLine,CenterLine,Outline`},
 				QUERYLAYERS:  {`CenterLine`},
@@ -67,7 +58,7 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildKVP()
+		url := n.Object.ToQueryParameters()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -153,7 +144,7 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gfi.BuildXML()
+		body := v.gfi.ToXML()
 
 		x := strings.Replace(string(body), "\n", ``, -1)
 		y := strings.Replace(v.result, "\n", ``, -1)
@@ -168,14 +159,14 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 	var tests = []struct {
 		Query      url.Values
 		Excepted   GetFeatureInfoRequest
-		Exceptions common.Exceptions
+		Exceptions Exceptions
 	}{
-		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: common.Exceptions{InvalidParameterValue("", `boundingbox`)}},
-		1: {Query: url.Values{}, Exceptions: common.Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}},
+		0: {Query: map[string][]string{REQUEST: {getfeatureinfo}, SERVICE: {Service}, VERSION: {Version}}, Exceptions: Exceptions{InvalidParameterValue("", `boundingbox`)}},
+		1: {Query: url.Values{}, Exceptions: Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}},
 		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:       {`Rivers,Roads,Houses`},
 			STYLES:       {`CenterLine,,Outline`},
-			CRS:          {`EPSG:4326`},
+			"CRS":        {`EPSG:4326`},
 			BBOX:         {`-180.0,-90.0,180.0,90.0`},
 			WIDTH:        {`1024`},
 			HEIGHT:       {`512`},
@@ -211,16 +202,16 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 				InfoFormat:   `application/json`,
 			},
 		},
-		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{MissingParameterValue(WIDTH, `not a number`)}},
-		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{MissingParameterValue(HEIGHT, `not a number`)}},
-		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{InvalidPoint(`not a number`, `1`)}},
-		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{InvalidPoint(`1`, `not a number`)}},
-		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: common.Exceptions{InvalidPoint(`this in not a number`, `this is also not a number`)}},
+		3: {Query: map[string][]string{WIDTH: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: Exceptions{MissingParameterValue(WIDTH, `not a number`)}},
+		4: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: Exceptions{MissingParameterValue(HEIGHT, `not a number`)}},
+		5: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`not a number`}, J: {`1`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: Exceptions{InvalidPoint(`not a number`, `1`)}},
+		6: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`1`}, J: {`not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: Exceptions{InvalidPoint(`1`, `not a number`)}},
+		7: {Query: map[string][]string{WIDTH: {`1024`}, HEIGHT: {`1024`}, I: {`this in not a number`}, J: {`this is also not a number`}, VERSION: {Version}, BBOX: {`-180.0,-90.0,180.0,90.0`}}, Exceptions: Exceptions{InvalidPoint(`this in not a number`, `this is also not a number`)}},
 	}
 
 	for k, test := range tests {
 		var gfi GetFeatureInfoRequest
-		errs := gfi.ParseKVP(test.Query)
+		errs := gfi.ParseQueryParameters(test.Query)
 		if errs != nil {
 			if len(errs) != len(test.Exceptions) {
 				t.Errorf("test: %d, expected: %d exceptions,\n got: %d exceptions", k, len(test.Exceptions), len(errs))
@@ -247,7 +238,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 	var tests = []struct {
 		Body     []byte
 		Excepted GetFeatureInfoRequest
-		Error    common.Exception
+		Error    Exceptions
 	}{
 		// GetFeatureInfo example request
 		0: {Body: []byte(`<GetFeatureInfo xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
@@ -286,7 +277,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 			Excepted: GetFeatureInfoRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
-					Attr: common.XMLAttribute{
+					Attr: XMLAttribute{
 						xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -313,14 +304,14 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 				Exceptions: sp("XML"),
 			},
 		},
-		1: {Body: []byte(``), Error: MissingParameterValue()},
-		2: {Body: []byte(`<UnknownTag/>`), Error: MissingParameterValue("REQUEST")},
+		1: {Body: []byte(``), Error: MissingParameterValue().ToExceptions()},
+		2: {Body: []byte(`<UnknownTag/>`), Error: MissingParameterValue("REQUEST").ToExceptions()},
 	}
 	for k, n := range tests {
 		var gm GetFeatureInfoRequest
 		err := gm.ParseXML(n.Body)
 		if err != nil {
-			if err[0].Error() != n.Error.Error() {
+			if err[0].Error() != n.Error[0].Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
 			}
 		} else {
@@ -443,7 +434,7 @@ func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
 		J:           1,
 	}
 	for i := 0; i < b.N; i++ {
-		gfi.BuildKVP()
+		gfi.ToQueryParameters()
 	}
 }
 
@@ -471,6 +462,6 @@ func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
 		J:           1,
 	}
 	for i := 0; i < b.N; i++ {
-		gfi.BuildXML()
+		gfi.ToXML()
 	}
 }

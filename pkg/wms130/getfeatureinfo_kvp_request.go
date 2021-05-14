@@ -4,8 +4,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 //GetFeatureInfoKVP struct
@@ -33,8 +31,8 @@ type GetFeatureInfoKVPOptional struct {
 }
 
 // ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gfikvp *GetFeatureInfoKVP) ParseKVP(query url.Values) common.Exceptions {
-	var exceptions common.Exceptions
+func (gfikvp *GetFeatureInfoKVP) ParseQueryParameters(query url.Values) Exceptions {
+	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, InvalidParameterValue(k, strings.Join(v, ",")))
@@ -50,7 +48,7 @@ func (gfikvp *GetFeatureInfoKVP) ParseKVP(query url.Values) common.Exceptions {
 				gfikvp.GetMapKVPMandatory.Layers = v[0]
 			case STYLES:
 				gfikvp.GetMapKVPMandatory.Styles = v[0]
-			case CRS:
+			case "CRS":
 				gfikvp.GetMapKVPMandatory.CRS = v[0]
 			case BBOX:
 				gfikvp.GetMapKVPMandatory.Bbox = v[0]
@@ -86,7 +84,7 @@ func (gfikvp *GetFeatureInfoKVP) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
+func (gfikvp *GetFeatureInfoKVP) ToQueryParameters() url.Values {
 	query := make(map[string][]string)
 
 	query[SERVICE] = []string{gfikvp.Service}
@@ -94,7 +92,7 @@ func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
 	query[REQUEST] = []string{gfikvp.Request}
 	query[LAYERS] = []string{gfikvp.Layers}
 	query[STYLES] = []string{gfikvp.Styles}
-	query[CRS] = []string{gfikvp.CRS}
+	query["CRS"] = []string{gfikvp.CRS}
 	query[BBOX] = []string{gfikvp.Bbox}
 	query[WIDTH] = []string{gfikvp.Width}
 	query[HEIGHT] = []string{gfikvp.Height}
@@ -119,16 +117,16 @@ func (gfikvp *GetFeatureInfoKVP) BuildKVP() url.Values {
 }
 
 // ParseOperationRequest builds a GetFeatureInfoKVP object based on a GetFeatureInfo struct
-func (gfikvp *GetFeatureInfoKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
+func (gfirkvp *GetFeatureInfoKVP) ParseOperationRequest(or OperationRequest) Exceptions {
 	gfi := or.(*GetFeatureInfoRequest)
-
+	gfikvp := gfirkvp
 	gfikvp.Request = getfeatureinfo
 	gfikvp.Version = Version
 	gfikvp.Service = Service
 	gfikvp.Layers = gfi.StyledLayerDescriptor.getLayerKVPValue()
 	gfikvp.Styles = gfi.StyledLayerDescriptor.getStyleKVPValue()
 	gfikvp.CRS = gfi.CRS
-	gfikvp.Bbox = gfi.BoundingBox.BuildKVP()
+	gfikvp.Bbox = gfi.BoundingBox.BuildQueryParameters()
 	gfikvp.Width = strconv.Itoa(gfi.Size.Width)
 	gfikvp.Height = strconv.Itoa(gfi.Size.Height)
 
