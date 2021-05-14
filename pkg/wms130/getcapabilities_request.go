@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
@@ -21,7 +23,7 @@ func (gc *GetCapabilitiesRequest) Validate(c Capabilities) Exceptions {
 
 // ParseXML builds a GetCapabilities object based on a XML document
 func (gc *GetCapabilitiesRequest) ParseXML(body []byte) Exceptions {
-	var xmlattributes XMLAttribute
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
@@ -38,7 +40,7 @@ func (gc *GetCapabilitiesRequest) ParseXML(body []byte) Exceptions {
 		}
 	}
 
-	gc.Attr = StripDuplicateAttr(n)
+	gc.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 

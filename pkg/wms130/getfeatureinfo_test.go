@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 func TestGetFeatureInfoBuildKVP(t *testing.T) {
@@ -277,7 +279,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 			Excepted: GetFeatureInfoRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
-					Attr: XMLAttribute{
+					Attr: utils.XMLAttribute{
 						xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},

@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 // GetFeatureInfo
@@ -58,7 +60,7 @@ func (gfi *GetFeatureInfoRequest) Validate(c Capabilities) Exceptions {
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
 func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
-	var xmlattributes XMLAttribute
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
@@ -75,7 +77,7 @@ func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 		}
 	}
 
-	gfi.Attr = StripDuplicateAttr(n)
+	gfi.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 

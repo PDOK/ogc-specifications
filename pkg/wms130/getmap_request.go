@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 // Mandatory GetMap Keys
@@ -114,7 +116,7 @@ func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 
 // ParseXML builds a GetMap object based on a XML document
 func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
-	var xmlattributes XMLAttribute
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
@@ -127,7 +129,7 @@ func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
 			n = append(n, a)
 		}
 	}
-	gm.BaseRequest.Attr = StripDuplicateAttr(n)
+	gm.BaseRequest.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 

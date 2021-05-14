@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"net/url"
 	"testing"
+
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 func TestBuildStyledLayerDescriptor(t *testing.T) {
@@ -139,7 +141,7 @@ func TestGetMapParseXML(t *testing.T) {
 			Excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
-					Attr: XMLAttribute{
+					Attr: utils.XMLAttribute{
 						xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 						xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -609,7 +611,7 @@ func TestGetMapValidate(t *testing.T) {
 		0: {gm: GetMapRequest{
 			BaseRequest: BaseRequest{
 				Version: "1.3.0",
-				Attr: XMLAttribute{
+				Attr: utils.XMLAttribute{
 					xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 					xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -656,7 +658,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: XMLAttribute{
+			Attr: utils.XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -694,7 +696,7 @@ func BenchmarkGetMapBuildXML(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: XMLAttribute{
+			Attr: utils.XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -851,7 +853,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: XMLAttribute{
+			Attr: utils.XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},
@@ -943,7 +945,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 	var gm = GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
-			Attr: XMLAttribute{
+			Attr: utils.XMLAttribute{
 				xml.Attr{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/sld"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml"},
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "ogc"}, Value: "http://www.opengis.net/ogc"},

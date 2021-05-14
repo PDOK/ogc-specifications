@@ -33,9 +33,9 @@ type BaseRequestKVP struct {
 // http://schemas.opengis.net/sld/1.1//example_getmap.xml
 // Note: not usable for GetCapabilities request regarding deviation of Optional/Mandatory parameters SERVICE and VERSION
 type BaseRequest struct {
-	Service string       `xml:"service,attr" yaml:"service,omitempty"`
-	Version string       `xml:"version,attr" yaml:"version"`
-	Attr    XMLAttribute `xml:",attr"`
+	Service string             `xml:"service,attr" yaml:"service,omitempty"`
+	Version string             `xml:"version,attr" yaml:"version"`
+	Attr    utils.XMLAttribute `xml:",attr"`
 }
 
 // ParseQueryParameters builds a BaseRequest struct based on the given parameters
