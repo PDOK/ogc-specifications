@@ -67,11 +67,9 @@ func (gfikvp *GetFeatureInfoKVP) ParseQueryParameters(query url.Values) Exceptio
 			case J:
 				gfikvp.GetFeatureInfoKVPMandatory.J = v[0]
 			case FEATURECOUNT:
-				vp := v[0]
-				gfikvp.GetFeatureInfoKVPOptional.FeatureCount = &vp
+				gfikvp.GetFeatureInfoKVPOptional.FeatureCount = &(v[0])
 			case EXCEPTIONS:
-				vp := v[0]
-				gfikvp.GetFeatureInfoKVPOptional.Exceptions = &vp
+				gfikvp.GetFeatureInfoKVPOptional.Exceptions = &(v[0])
 			}
 		}
 	}

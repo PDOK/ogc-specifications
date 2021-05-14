@@ -70,14 +70,11 @@ func (gmkvp *GetMapKVP) ParseQueryParameters(query url.Values) Exceptions {
 			case FORMAT:
 				gmkvp.GetMapKVPMandatory.Format = v[0]
 			case TRANSPARENT:
-				vp := v[0]
-				gmkvp.GetMapKVPOptional.Transparent = &vp
+				gmkvp.GetMapKVPOptional.Transparent = &(v[0])
 			case BGCOLOR:
-				vp := v[0]
-				gmkvp.GetMapKVPOptional.BGColor = &vp
+				gmkvp.GetMapKVPOptional.BGColor = &(v[0])
 			case EXCEPTIONS:
-				vp := v[0]
-				gmkvp.GetMapKVPOptional.Exceptions = &vp
+				gmkvp.GetMapKVPOptional.Exceptions = &(v[0])
 			}
 		}
 	}
