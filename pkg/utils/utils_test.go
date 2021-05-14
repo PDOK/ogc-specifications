@@ -1,10 +1,9 @@
 package utils
 
 import (
+	"errors"
 	"net/url"
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 func TestKeysToUpper(t *testing.T) {
@@ -36,7 +35,7 @@ func TestIdentifyRequest(t *testing.T) {
 	var tests = []struct {
 		doc     []byte
 		request string
-		errors  wsc110.Exceptions
+		errors  error
 	}{
 		0: {doc: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 		<Mekker/>`), request: `Mekker`},
@@ -61,16 +60,16 @@ func TestIdentifyRequest(t *testing.T) {
   </Size>
 </Output>
 </ogc:GetMap>`), request: `GetMap`},
-		3: {doc: []byte(`</>`), errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
-		4: {doc: []byte(`<|\/|>`), errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
-		5: {doc: nil, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
+		3: {doc: []byte(`</>`), errors: errors.New(`unknown REQUEST parameter`)},
+		4: {doc: []byte(`<|\/|>`), errors: errors.New(`unknown REQUEST parameter`)},
+		5: {doc: nil, errors: errors.New(`unknown REQUEST parameter`)},
 	}
 
 	for k, i := range tests {
 		request, errs := IdentifyRequest(i.doc)
 		if errs != nil {
-			if errs[0].Error() != i.errors[0].Error() {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors[0].Error(), errs[0].Error())
+			if errs.Error() != i.errors.Error() {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors.Error(), errs.Error())
 			}
 		} else {
 			if request != i.request {
@@ -85,20 +84,20 @@ func TestIdentifyRequestKVP(t *testing.T) {
 	var tests = []struct {
 		url     map[string][]string
 		request string
-		errors  wsc110.Exceptions
+		errors  error
 	}{
 		0: {url: map[string][]string{REQUEST: {`Mekker`}}, request: `Mekker`},
 		1: {url: map[string][]string{REQUEST: {`GetCapabilities`}}, request: `GetCapabilities`},
-		2: {url: map[string][]string{`SERVICE`: {`NoREQUESTKey`}}, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
-		3: {url: map[string][]string{}, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
-		4: {url: nil, errors: wsc110.Exceptions{wsc110.MissingParameterValue()}},
+		2: {url: map[string][]string{`SERVICE`: {`NoREQUESTKey`}}, errors: errors.New(`unknown REQUEST parameter`)},
+		3: {url: map[string][]string{}, errors: errors.New(`unknown REQUEST parameter`)},
+		4: {url: nil, errors: errors.New(`unknown REQUEST parameter`)},
 	}
 
 	for k, i := range tests {
 		request, errs := IdentifyRequestKVP(i.url)
 		if errs != nil {
-			if errs[0].Error() != i.errors[0].Error() {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors[0].Error(), errs[0].Error())
+			if errs.Error() != i.errors.Error() {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors.Error(), errs.Error())
 			}
 		} else {
 			if request != i.request {

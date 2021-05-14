@@ -52,17 +52,17 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
 }
 
 // ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return common.Exceptions{wsc110.MissingParameterValue(VERSION)}
+		return wsc110.MissingParameterValue(VERSION).ToExceptions()
 	}
 
 	q := utils.KeysToUpper(query)
 
 	var br BaseRequest
-	if err := br.ParseKVP(q); err != nil {
+	if err := br.parseQueryParameters(q); err != nil {
 		return err
 	}
 	dft.BaseRequest = br

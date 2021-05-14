@@ -18,19 +18,19 @@ func (gc *GetCapabilitiesRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Validate(c common.Capabilities) common.Exceptions {
-	var exceptions common.Exceptions
+func (gc *GetCapabilitiesRequest) Validate(c wsc110.Capabilities) wsc110.Exceptions {
+	var exceptions wsc110.Exceptions
 	return exceptions
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) wsc110.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
+		return wsc110.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
 	}
 	if err := xml.Unmarshal(doc, &gc); err != nil {
-		return common.Exceptions{wsc110.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
+		return wsc110.Exceptions{wsc110.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -46,8 +46,8 @@ func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) common.Exceptions {
 	return nil
 }
 
-// ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) common.Exceptions {
+// ParseQueryParameters builds a GetCapabilities object based on the available query parameters
+func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -64,7 +64,7 @@ func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) common.Exceptions {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilitiesRequest) ParseOperationRequestKVP(orkvp common.OperationRequestKVP) common.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseOperationRequestKVP(orkvp wsc110.OperationRequestKVP) wsc110.Exceptions {
 	gckvp := orkvp.(*GetCapabilitiesKVP)
 
 	gc.XMLName.Local = gckvp.Request
@@ -74,8 +74,8 @@ func (gc *GetCapabilitiesRequest) ParseOperationRequestKVP(orkvp common.Operatio
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
-func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
+// ToQueryParameters builds a new query string that will be proxied
+func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}
@@ -84,8 +84,8 @@ func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
 	return querystring
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilitiesRequest) BuildXML() []byte {
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func (gc *GetCapabilitiesRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

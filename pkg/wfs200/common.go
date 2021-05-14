@@ -54,8 +54,8 @@ type BaseRequest struct {
 	Attr    common.XMLAttribute `xml:",attr"`
 }
 
-// ParseKVP builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
+// parseQueryParameters builds a BaseRequest Struct based on the given parameters
+func (b *BaseRequest) parseQueryParameters(query url.Values) wsc110.Exceptions {
 	if len(query[SERVICE]) > 0 {
 		// Service is optional, because it's implicit for a GetFeature/DescribeFeatureType request
 		b.Service = query[SERVICE][0]
@@ -64,7 +64,7 @@ func (b *BaseRequest) ParseKVP(query url.Values) common.Exceptions {
 		b.Version = query[VERSION][0]
 	} else {
 		// Version is mandatory
-		return common.Exceptions{wsc110.MissingParameterValue(VERSION)}
+		return wsc110.MissingParameterValue(VERSION).ToExceptions()
 	}
 	return nil
 }

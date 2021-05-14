@@ -4,7 +4,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -138,7 +137,7 @@ func (gfkvp *GetFeatureKVP) ParseKVP(query url.Values) wsc110.Exceptions {
 	return nil
 }
 
-func (gfkvp *GetFeatureKVP) ParseOperationRequest(or common.OperationRequest) wsc110.Exceptions {
+func (gfkvp *GetFeatureKVP) ParseOperationRequest(or wsc110.OperationRequest) wsc110.Exceptions {
 	return nil
 }
 

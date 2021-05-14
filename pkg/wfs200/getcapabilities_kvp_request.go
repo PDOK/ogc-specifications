@@ -4,7 +4,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -15,9 +14,9 @@ type GetCapabilitiesKVP struct {
 	BaseRequestKVP
 }
 
-// ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gckvp *GetCapabilitiesKVP) ParseKVP(query url.Values) common.Exceptions {
-	var exceptions common.Exceptions
+// ParseQueryParameters builds a GetCapabilities object based on the available query parameters
+func (gckvp *GetCapabilitiesKVP) ParseQueryParameters(query url.Values) wsc110.Exceptions {
+	var exceptions wsc110.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, wsc110.InvalidParameterValue(k, strings.Join(v, ",")))
@@ -45,7 +44,7 @@ func (gckvp *GetCapabilitiesKVP) ParseKVP(query url.Values) common.Exceptions {
 // Mandatory:  REQUEST=GetCapabilities
 //             SERVICE=WFS
 // Optional:   VERSION=2.0.0
-func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or common.OperationRequest) common.Exceptions {
+func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or wsc110.OperationRequest) wsc110.Exceptions {
 	gc := or.(*GetCapabilitiesRequest)
 
 	gckvp.Request = getcapabilities
@@ -55,8 +54,8 @@ func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or common.OperationReques
 	return nil
 }
 
-// BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gckvp *GetCapabilitiesKVP) BuildKVP() url.Values {
+// ToQueryParameters builds a url.Values query from a GetCapabilitiesKVP struct
+func (gckvp *GetCapabilitiesKVP) ToQueryParameters() url.Values {
 	query := make(map[string][]string)
 
 	query[SERVICE] = []string{gckvp.Service}

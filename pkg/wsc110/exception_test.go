@@ -13,7 +13,7 @@ func TestOWSException(t *testing.T) {
 		exceptionCode string
 		locatorCode   string
 	}{
-		0: {exception: exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
+		0: {exception: Exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
 			exceptionText: "",
 			exceptionCode: "",
 			locatorCode:   "",

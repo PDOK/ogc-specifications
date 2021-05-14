@@ -47,7 +47,7 @@ func (gf *GetFeatureRequest) Type() string {
 }
 
 // Validate returns GetFeature
-func (gf *GetFeatureRequest) Validate(c common.Capabilities) common.Exceptions {
+func (gf *GetFeatureRequest) Validate(c wsc110.Capabilities) wsc110.Exceptions {
 
 	//getfeaturecap := c.(capabilities.Capabilities)
 	return nil
@@ -63,10 +63,10 @@ var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FI
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gf *GetFeatureRequest) ParseXML(doc []byte) common.Exception {
+func (gf *GetFeatureRequest) ParseXML(doc []byte) wsc110.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return wsc110.NoApplicableCode("Could not process XML, is it XML?")
+		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
 	xml.Unmarshal(doc, &gf) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
 	var n []xml.Attr
@@ -87,11 +87,11 @@ func (gf *GetFeatureRequest) ParseXML(doc []byte) common.Exception {
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
-func (gf *GetFeatureRequest) ParseKVP(query url.Values) common.Exceptions {
+func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return common.Exceptions{wsc110.MissingParameterValue(VERSION)}
+		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
 	}
 
 	q := utils.KeysToUpper(query)
@@ -102,7 +102,7 @@ func (gf *GetFeatureRequest) ParseKVP(query url.Values) common.Exceptions {
 	}
 
 	var br BaseRequest
-	if err := br.ParseKVP(q); err != nil {
+	if err := br.parseQueryParameters(q); err != nil {
 		return err
 	}
 	gf.BaseRequest = br
@@ -213,13 +213,13 @@ func (gf *GetFeatureRequest) ParseKVP(query url.Values) common.Exceptions {
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
 // TODO: In the Filter>Query>... the content of the GeometryOperand (Point,Line,Polygon,...) is the raw xml (text)
-func (gf *GetFeatureRequest) BuildXML() []byte {
+func (gf *GetFeatureRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gf, "", " ")
 	return append([]byte(xml.Header), si...)
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gf *GetFeatureRequest) BuildKVP() url.Values {
+func (gf *GetFeatureRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	// base
 	querystring[REQUEST] = []string{gf.XMLName.Local}

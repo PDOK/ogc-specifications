@@ -45,7 +45,7 @@ func TestGetFeatureBuildXML(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gf.BuildXML()
+		body := v.gf.ToXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
@@ -59,7 +59,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 	var tests = []struct {
 		Body      []byte
 		Result    GetFeatureRequest
-		Exception common.Exception
+		Exception wsc110.Exceptions
 	}{
 		// Get 3 features
 		0: {Body: []byte(`<GetFeature outputFormat="application/gml+xml; version=3.2" count="3" startindex="0" service="WFS" version="2.0.0">
@@ -110,11 +110,11 @@ func TestGetFeatureParseXML(t *testing.T) {
 		// Not a XML document
 		3: {Body: []byte(`GetFeature`),
 			Result:    GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}},
-			Exception: wsc110.NoApplicableCode("Could not process XML, is it XML?"),
+			Exception: wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions(),
 		},
 		// No document
 		4: {Result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}},
-			Exception: wsc110.NoApplicableCode("Could not process XML, is it XML?"),
+			Exception: wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions(),
 		},
 	}
 
@@ -122,7 +122,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 		var gf GetFeatureRequest
 		err := gf.ParseXML(n.Body)
 		if err != nil {
-			if err.Error() != n.Exception.Error() {
+			if err[0].Error() != n.Exception[0].Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
 			}
 		} else {
@@ -264,7 +264,7 @@ func TestGetFeatureParseKVP(t *testing.T) {
 
 	for tid, q := range tests {
 		var gf GetFeatureRequest
-		if err := gf.ParseKVP(q.QueryParams); err != nil {
+		if err := gf.ParseQueryParameters(q.QueryParams); err != nil {
 			if err[0] != q.Exception {
 				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, q.Exception, err)
 			}
@@ -355,7 +355,7 @@ func TestParseQueryInnerXML(t *testing.T) {
 
 	for k, q := range tests {
 		var gf GetFeatureRequest
-		gf.ParseKVP(q.QueryParams)
+		gf.ParseQueryParameters(q.QueryParams)
 
 		if q.Result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content != gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.Result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content, gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content)
@@ -416,7 +416,7 @@ func TestGetFeatureBuildKVP(t *testing.T) {
 	}
 
 	for k, q := range tests {
-		result := q.getfeature.BuildKVP()
+		result := q.getfeature.ToQueryParameters()
 		if len(q.expectedquery) != len(result) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.expectedquery, result)
 		} else {
@@ -500,14 +500,14 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 func BenchmarkGetFeatureBuildKVP(b *testing.B) {
 	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
-		gf.BuildKVP()
+		gf.ToQueryParameters()
 	}
 }
 
 func BenchmarkGetFeatureBuildXML(b *testing.B) {
 	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
-		gf.BuildXML()
+		gf.ToXML()
 	}
 }
 
@@ -516,7 +516,7 @@ func BenchmarkGetFeatureParseKVP(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gm := GetFeatureRequest{}
-		gm.ParseKVP(kvp)
+		gm.ParseQueryParameters(kvp)
 	}
 }
 

@@ -111,7 +111,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 
 	for k, n := range tests {
 		var gc GetCapabilitiesRequest
-		err := gc.ParseKVP(n.Query)
+		err := gc.ParseQueryParameters(n.Query)
 		if err != nil {
 			if err[0].Error() != n.Error.Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
@@ -145,7 +145,7 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.BuildKVP()
+		url := n.Object.ToQueryParameters()
 		if len(n.Excepted) != len(url) {
 			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
 		} else {
@@ -176,7 +176,7 @@ func TestGetCapabilitiesBuildXML(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		body := v.gc.BuildXML()
+		body := v.gc.ToXML()
 
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
@@ -191,13 +191,13 @@ func TestGetCapabilitiesBuildXML(t *testing.T) {
 func BenchmarkGetCapabilitiesBuildKVP(b *testing.B) {
 	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
 	for i := 0; i < b.N; i++ {
-		gc.BuildKVP()
+		gc.ToQueryParameters()
 	}
 }
 
 func BenchmarkGetCapabilitiesBuildXML(b *testing.B) {
 	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
 	for i := 0; i < b.N; i++ {
-		gc.BuildXML()
+		gc.ToXML()
 	}
 }

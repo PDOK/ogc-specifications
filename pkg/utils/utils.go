@@ -2,10 +2,9 @@ package utils
 
 import (
 	"encoding/xml"
+	"errors"
 	"net/url"
 	"strings"
-
-	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 const (
@@ -47,20 +46,21 @@ type identify struct {
 // 	}
 // }
 
-func IdentifyRequest(doc []byte) (string, wsc110.Exceptions) {
+func IdentifyRequest(doc []byte) (string, error) {
 	var i identify
 
 	if err := xml.Unmarshal(doc, &i); err != nil {
-		return ``, wsc110.Exceptions{wsc110.MissingParameterValue()}
+		return ``, errors.New(`unknown REQUEST parameter`) // error string can be used in a OGC type exception
 	} else {
 		return i.XMLName.Local, nil
 	}
 }
 
-func IdentifyRequestKVP(query url.Values) (string, wsc110.Exceptions) {
+func IdentifyRequestKVP(query url.Values) (string, error) {
 	if query[REQUEST] != nil {
 		return query[REQUEST][0], nil
 	}
 
-	return ``, wsc110.Exceptions{wsc110.MissingParameterValue()}
+	// error string can be used in a OGC type exception
+	return ``, errors.New(`unknown REQUEST parameter`)
 }
