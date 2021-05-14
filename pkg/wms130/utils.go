@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"net/url"
 	"strings"
+
+	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
 // TODO move helper func
@@ -55,7 +57,10 @@ func IdentifyPostRequest(doc []byte) (string, Exceptions) {
 	}
 }
 
-func IdentifyGetRequest(query url.Values) (string, Exceptions) {
+func IdentifyGetRequest(q url.Values) (string, Exceptions) {
+
+	query := utils.KeysToUpper(q)
+
 	if query[REQUEST] != nil {
 		return query[REQUEST][0], nil
 	}
