@@ -8,12 +8,12 @@ import (
 
 type Exceptions wsc110.Exceptions
 
-// wfs200exception
-type exception struct {
-	ExceptionText string `xml:",chardata" yaml:"exception"`
-	ExceptionCode string `xml:"exceptionCode,attr" yaml:"exceptioncode"`
-	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locatorcode,omitempty"`
-}
+// // wfs200exception
+// type exception struct {
+// 	ExceptionText string `xml:",chardata" yaml:"exception"`
+// 	ExceptionCode string `xml:"exceptionCode,attr" yaml:"exceptioncode"`
+// 	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locatorcode,omitempty"`
+// }
 
 type ExceptionReport struct {
 	XMLName        xml.Name   `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
@@ -41,14 +41,14 @@ func (r ExceptionReport) ToBytes() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func (e exception) Error() string {
-	return e.ExceptionText
-}
+// func (e exception) Error() string {
+// 	return e.ExceptionText
+// }
 
-func (e exception) Code() string {
-	return e.ExceptionCode
-}
+// func (e exception) Code() string {
+// 	return e.ExceptionCode
+// }
 
-func (e exception) Locator() string {
-	return e.LocatorCode
-}
+// func (e exception) Locator() string {
+// 	return e.LocatorCode
+// }

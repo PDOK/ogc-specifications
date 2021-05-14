@@ -25,7 +25,7 @@ var contentsWithLegend = Contents{
 		ETOPO2 Global 2' Elevations, September 2001...`,
 			WGS84BoundingBox: wsc110.WGS84BoundingBox{LowerCorner: wsc110.Position{-180, -90}, UpperCorner: wsc110.Position{180, 90}},
 			Identifier:       "etopo2",
-			Metadata:         Metadata{Href: "http://www.maps.bob/etopo2/ metadata.htm"},
+			Metadata:         &Metadata{Href: "http://www.maps.bob/etopo2/ metadata.htm"},
 			Style: []Style{
 				{
 					Title:      sp(`default`),
@@ -71,7 +71,7 @@ var contentsWithoutLegend = Contents{
 		ETOPO2 Global 2' Elevations, September 2001...`,
 			WGS84BoundingBox: wsc110.WGS84BoundingBox{LowerCorner: wsc110.Position{-180, -90}, UpperCorner: wsc110.Position{180, 90}},
 			Identifier:       "etopo2",
-			Metadata:         Metadata{Href: "http://www.maps.bob/etopo2/ metadata.htm"},
+			Metadata:         &Metadata{Href: "http://www.maps.bob/etopo2/ metadata.htm"},
 			Style: []Style{
 				{
 					Title:      sp(`default`),

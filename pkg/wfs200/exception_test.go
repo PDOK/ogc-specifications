@@ -3,18 +3,17 @@ package wfs200
 import (
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 func TestWFSException(t *testing.T) {
 	var tests = []struct {
-		exception     common.Exception
+		exception     wsc110.Exception
 		exceptionText string
 		exceptionCode string
 		locatorCode   string
 	}{
-		0: {exception: exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
+		0: {exception: wsc110.Exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
 			exceptionText: "",
 			exceptionCode: "",
 			locatorCode:   "",

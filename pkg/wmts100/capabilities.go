@@ -38,7 +38,7 @@ type Layer struct {
 	Abstract          string                  `xml:"ows:Abstract" yaml:"abstract"`
 	WGS84BoundingBox  wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
 	Identifier        string                  `xml:"ows:Identifier" yaml:"identifier"`
-	Metadata          Metadata                `xml:"ows:Metadata" yaml:"metadata"`
+	Metadata          *Metadata               `xml:"ows:Metadata,omitempty" yaml:"metadata"`
 	Style             []Style                 `xml:"Style" yaml:"style"`
 	Format            string                  `xml:"Format" yaml:"format"`
 	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
@@ -51,7 +51,7 @@ type Layer struct {
 
 // Metadata  in struct for repeatability
 type Metadata struct {
-	Href string `xml:"xlink:href,attr" yaml:"href"`
+	Href string `xml:"xlink:href,attr,omitempty" yaml:"href"`
 }
 
 // Style in struct for repeatability
