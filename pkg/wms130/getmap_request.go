@@ -43,7 +43,7 @@ func (gm *GetMapRequest) Validate(c Capabilities) Exceptions {
 			exceptions = append(exceptions, layerexception...)
 		}
 		if CRSException := checkCRS(gm.CRS, layer.CRS); CRSException != nil {
-			exceptions = append(exceptions, InvalidCRS(gm.CRS.String(), *layer.Name))
+			exceptions = append(exceptions, InvalidCRS(gm.CRS.String(), sld.Name))
 		}
 	}
 
