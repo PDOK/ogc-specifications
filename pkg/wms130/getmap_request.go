@@ -240,10 +240,10 @@ type GetMapRequest struct {
 // Validate validates the output parameters
 func (output *Output) Validate(c Capabilities) Exceptions {
 	exceptions := Exceptions{}
-	if output.Size.Width > c.MaxWidth {
+	if c.MaxWidth > 0 && output.Size.Width > c.MaxWidth {
 		exceptions = append(exceptions, NoApplicableCode(fmt.Sprintf("Image size out of range, WIDTH must be between 1 and %d pixels", c.MaxWidth)))
 	}
-	if output.Size.Height > c.MaxHeight {
+	if c.MaxHeight > 0 && output.Size.Height > c.MaxHeight {
 		exceptions = append(exceptions, NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
 	}
 
