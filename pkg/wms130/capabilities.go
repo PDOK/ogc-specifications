@@ -8,8 +8,8 @@ import (
 )
 
 // ParseXML func
-func (c Capabilities) ParseXML(doc []byte) error {
-	if err := xml.Unmarshal(doc, &c); err != nil {
+func (c *Capabilities) ParseXML(doc []byte) error {
+	if err := xml.Unmarshal(doc, c); err != nil {
 		log.Fatalf("error: %v", err)
 		return err
 	}
@@ -17,8 +17,8 @@ func (c Capabilities) ParseXML(doc []byte) error {
 }
 
 // ParseYAML func
-func (c Capabilities) ParseYAML(doc []byte) error {
-	if err := yaml.Unmarshal(doc, &c); err != nil {
+func (c *Capabilities) ParseYAML(doc []byte) error {
+	if err := yaml.Unmarshal(doc, c); err != nil {
 		log.Fatalf("error: %v", err)
 		return err
 	}
