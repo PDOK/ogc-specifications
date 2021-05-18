@@ -18,7 +18,7 @@ This package has support for the following OGC Web Service Specifications:
 | WMTS | 1.0.0 | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
 | WCS | 2.0.1 | GetCapabilities | :heavy_check_mark: | :grey_exclamation: |
 
-It will provide the user with OperationRequest, OperationResponse and Capabilities structs that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Web Service. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and KVP query strings based on those structs.
+It will provide the user with OperationRequest, OperationResponse and Capabilities structs for the different OGC specifications that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Web Service. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and KVP query strings based on those structs.
 
 ## Notice
 

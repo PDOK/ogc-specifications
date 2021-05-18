@@ -4,12 +4,12 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	ows "github.com/pdok/ogc-specifications/pkg/ows"
+	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 func main() {
 
-	var bbox ows.BoundingBox
+	var bbox wsc110.BoundingBox
 	bbox.Crs = `EPSG:4326`
 	bbox.LowerCorner = [2]float64{-180.0, -90.0}
 	bbox.UpperCorner = [2]float64{180.0, 90.0}
