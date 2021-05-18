@@ -2,8 +2,9 @@ package wms130
 
 import (
 	"encoding/xml"
-	"gopkg.in/yaml.v3"
 	"log"
+
+	"gopkg.in/yaml.v3"
 )
 
 // ParseXML func
@@ -15,8 +16,8 @@ func (c Capabilities) ParseXML(doc []byte) error {
 	return nil
 }
 
-// ParseYAMl func
-func (c Capabilities) ParseYAMl(doc []byte) error {
+// ParseYAML func
+func (c Capabilities) ParseYAML(doc []byte) error {
 	if err := yaml.Unmarshal(doc, &c); err != nil {
 		log.Fatalf("error: %v", err)
 		return err

@@ -5,8 +5,8 @@ func (c *Capabilities) ParseXML(doc []byte) error {
 	return nil
 }
 
-// ParseYAMl func
-func (c *Capabilities) ParseYAMl(doc []byte) error {
+// ParseYAML func
+func (c *Capabilities) ParseYAML(doc []byte) error {
 	return nil
 }
 

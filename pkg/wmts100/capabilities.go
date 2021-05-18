@@ -10,8 +10,8 @@ func (c *Contents) ParseXML(doc []byte) error {
 	return nil
 }
 
-// ParseYAMl func
-func (c *Contents) ParseYAMl(doc []byte) error {
+// ParseYAML func
+func (c *Contents) ParseYAML(doc []byte) error {
 	return nil
 }
 
