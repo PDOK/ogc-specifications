@@ -8,8 +8,8 @@ import (
 )
 
 // ParseXML func
-func (c Capabilities) ParseXML(doc []byte) error {
-	if err := xml.Unmarshal(doc, &c); err != nil {
+func (c *Capabilities) ParseXML(doc []byte) error {
+	if err := xml.Unmarshal(doc, c); err != nil {
 		log.Fatalf("error: %v", err)
 		return err
 	}
@@ -17,8 +17,8 @@ func (c Capabilities) ParseXML(doc []byte) error {
 }
 
 // ParseYAML func
-func (c Capabilities) ParseYAML(doc []byte) error {
-	if err := yaml.Unmarshal(doc, &c); err != nil {
+func (c *Capabilities) ParseYAML(doc []byte) error {
+	if err := yaml.Unmarshal(doc, c); err != nil {
 		log.Fatalf("error: %v", err)
 		return err
 	}
@@ -27,8 +27,8 @@ func (c Capabilities) ParseYAML(doc []byte) error {
 
 // Capabilities struct needed for keeping all constraints and capabilities together
 type Capabilities struct {
-	WMSCapabilities
-	OptionalConstraints
+	WMSCapabilities     `xml:"WMSCapabilities" yaml:"wmscapabilities"`
+	OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalconstraints"`
 }
 
 // WMSCapabilities base struct
