@@ -7,7 +7,7 @@ import (
 )
 
 func TestKeysToUpper(t *testing.T) {
-	var testkeysToUpperQuerys = []struct {
+	var tests = []struct {
 		query         url.Values
 		expectedquery url.Values
 	}{
@@ -23,10 +23,10 @@ func TestKeysToUpper(t *testing.T) {
 		4: {query: map[string][]string{"SERVICE": {"WFS"}, "SeRvIcE": {"WMS"}, "service": {"wmts"}}, expectedquery: map[string][]string{"SERVICE": {"WFS", "wmts", "WMS"}}},
 	}
 
-	for k, tq := range testkeysToUpperQuerys {
-		q := KeysToUpper(tq.query)
-		if len(q) != len(tq.expectedquery) {
-			t.Errorf("test: %d, expected: %s \ngot: %s", k, tq.expectedquery, q)
+	for k, test := range tests {
+		q := KeysToUpper(test.query)
+		if len(q) != len(test.expectedquery) {
+			t.Errorf("test: %d, expected: %s \ngot: %s", k, test.expectedquery, q)
 		}
 	}
 }
@@ -65,18 +65,17 @@ func TestIdentifyRequest(t *testing.T) {
 		5: {doc: nil, errors: errors.New(`unknown REQUEST parameter`)},
 	}
 
-	for k, i := range tests {
-		request, errs := IdentifyRequest(i.doc)
+	for k, test := range tests {
+		request, errs := IdentifyRequest(test.doc)
 		if errs != nil {
-			if errs.Error() != i.errors.Error() {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors.Error(), errs.Error())
+			if errs.Error() != test.errors.Error() {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.errors.Error(), errs.Error())
 			}
 		} else {
-			if request != i.request {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.request, request)
+			if request != test.request {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.request, request)
 			}
 		}
-
 	}
 }
 
@@ -93,15 +92,15 @@ func TestIdentifyRequestKVP(t *testing.T) {
 		4: {url: nil, errors: errors.New(`unknown REQUEST parameter`)},
 	}
 
-	for k, i := range tests {
-		request, errs := IdentifyRequestKVP(i.url)
+	for k, test := range tests {
+		request, errs := IdentifyRequestKVP(test.url)
 		if errs != nil {
-			if errs.Error() != i.errors.Error() {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors.Error(), errs.Error())
+			if errs.Error() != test.errors.Error() {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.errors.Error(), errs.Error())
 			}
 		} else {
-			if request != i.request {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.request, request)
+			if request != test.request {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.request, request)
 			}
 		}
 	}

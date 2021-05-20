@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -23,7 +22,7 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 		exception wsc110.Exception
 	}{
 		// Lots of attribute declarations
-		0: {body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"/>`),
+		0: {body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"/>`),
 			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"},
 					{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"},
@@ -34,7 +33,7 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "inspire_common"}, Value: "http://inspire.ec.europa.eu/schemas/common/1.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "inspire_dls"}, Value: "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
-					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}},
+					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"}}}},
 		// Unknown XML document
 		1: {body: []byte("<Unknown/>"),
 			exception: wsc110.Exception{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
@@ -53,35 +52,35 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var gc GetCapabilitiesRequest
-		exception := gc.ParseXML(n.body)
+		exception := gc.ParseXML(test.body)
 		if exception != nil {
-			if exception[0].Error() != n.exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exception)
+			if exception[0].Error() != test.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
 			}
 		} else {
-			if gc.Service != n.result.Service {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result, gc)
+			if gc.Service != test.result.Service {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result, gc)
 			}
-			if gc.Version != n.result.Version {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result, gc)
+			if gc.Version != test.result.Version {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result, gc)
 			}
-			if len(n.result.Attr) == len(gc.Attr) {
+			if len(test.result.Attr) == len(gc.Attr) {
 				c := false
-				for _, expected := range n.result.Attr {
+				for _, expected := range test.result.Attr {
 					for _, result := range gc.Attr {
 						if result.Name.Local == expected.Name.Local && result.Value == expected.Value {
 							c = true
 						}
 					}
 					if !c {
-						t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Attr, gc.Attr)
+						t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Attr, gc.Attr)
 					}
 					c = false
 				}
 			} else {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Attr, gc.Attr)
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Attr, gc.Attr)
 			}
 		}
 	}
@@ -113,22 +112,22 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 		},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var gc GetCapabilitiesRequest
-		exception := gc.ParseQueryParameters(n.query)
+		exception := gc.ParseQueryParameters(test.query)
 		if exception != nil {
-			if exception[0].Error() != n.exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exception)
+			if exception[0].Error() != test.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
 			}
 		} else {
-			if n.result.XMLName.Local != gc.XMLName.Local {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.XMLName.Local, gc.XMLName.Local)
+			if test.result.XMLName.Local != gc.XMLName.Local {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.XMLName.Local, gc.XMLName.Local)
 			}
-			if n.result.Service != gc.Service {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Service, gc.Service)
+			if test.result.Service != gc.Service {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Service, gc.Service)
 			}
-			if n.result.Version != gc.Version {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Version, gc.Version)
+			if test.result.Version != gc.Version {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Version, gc.Version)
 			}
 		}
 	}
@@ -138,7 +137,7 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	var tests = []struct {
 		Object    GetCapabilitiesRequest
 		Excepted  url.Values
-		Exception common.Exception
+		Exception wsc110.Exception
 	}{
 		0: {Object: GetCapabilitiesRequest{Service: Service, Version: Version, XMLName: xml.Name{Local: `GetCapabilities`}},
 			Excepted: map[string][]string{
@@ -148,21 +147,21 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 			}},
 	}
 
-	for k, n := range tests {
-		url := n.Object.ToQueryParameters()
-		if len(n.Excepted) != len(url) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+	for k, test := range tests {
+		url := test.Object.ToQueryParameters()
+		if len(test.Excepted) != len(url) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.Excepted, url)
 		} else {
 			for _, rid := range url {
 				found := false
-				for _, erid := range n.Excepted {
+				for _, erid := range test.Excepted {
 					if rid[0] == erid[0] {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.Excepted, url)
 				}
 			}
 		}

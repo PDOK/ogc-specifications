@@ -63,15 +63,15 @@ func TestOWSException(t *testing.T) {
 		},
 	}
 
-	for k, a := range tests {
-		if a.exception.Error() != a.exceptionText {
-			t.Errorf("test: %d, expected: %s\n got: %s", k, a.exceptionText, a.exception.Error())
+	for k, test := range tests {
+		if test.exception.Error() != test.exceptionText {
+			t.Errorf("test: %d, expected: %s\n got: %s", k, test.exceptionText, test.exception.Error())
 		}
-		if a.exception.Code() != a.exceptionCode {
-			t.Errorf("test: %d, expected: %s\n got: %s", k, a.exceptionCode, a.exception.Code())
+		if test.exception.Code() != test.exceptionCode {
+			t.Errorf("test: %d, expected: %s\n got: %s", k, test.exceptionCode, test.exception.Code())
 		}
-		if a.exception.Locator() != a.locatorCode {
-			t.Errorf("test: %d, expected: %s\n got: %s", k, a.locatorCode, a.exception.Locator())
+		if test.exception.Locator() != test.locatorCode {
+			t.Errorf("test: %d, expected: %s\n got: %s", k, test.locatorCode, test.exception.Locator())
 		}
 	}
 }

@@ -25,35 +25,35 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 		3: {exception: MissingParameterValue()},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var gc GetCapabilitiesRequest
-		exception := gc.ParseXML(n.body)
+		exception := gc.ParseXML(test.body)
 		if exception != nil {
-			if exception[0].Error() != n.exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exception)
+			if exception[0].Error() != test.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
 			}
 		} else {
-			if gc.Service != n.result.Service {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result, gc)
+			if gc.Service != test.result.Service {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result, gc)
 			}
-			if gc.Version != n.result.Version {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result, gc)
+			if gc.Version != test.result.Version {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result, gc)
 			}
-			if len(n.result.Attr) == len(gc.Attr) {
+			if len(test.result.Attr) == len(gc.Attr) {
 				c := false
-				for _, expected := range n.result.Attr {
+				for _, expected := range test.result.Attr {
 					for _, result := range gc.Attr {
 						if result.Name.Local == expected.Name.Local && result.Value == expected.Value {
 							c = true
 						}
 					}
 					if !c {
-						t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Attr, gc.Attr)
+						t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Attr, gc.Attr)
 					}
 					c = false
 				}
 			} else {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Attr, gc.Attr)
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Attr, gc.Attr)
 			}
 		}
 	}
@@ -125,21 +125,21 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 			}},
 	}
 
-	for k, n := range tests {
-		url := n.object.ToQueryParameters()
-		if len(n.excepted) != len(url) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
+	for k, test := range tests {
+		url := test.object.ToQueryParameters()
+		if len(test.excepted) != len(url) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.excepted, url)
 		} else {
 			for _, rid := range url {
 				found := false
-				for _, erid := range n.excepted {
+				for _, erid := range test.excepted {
 					if rid[0] == erid[0] {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.excepted, url)
 				}
 			}
 		}

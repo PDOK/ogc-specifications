@@ -59,21 +59,21 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 		},
 	}
 
-	for k, n := range tests {
-		url := n.object.ToQueryParameters()
-		if len(n.excepted) != len(url) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
+	for k, test := range tests {
+		url := test.object.ToQueryParameters()
+		if len(test.excepted) != len(url) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.excepted, url)
 		} else {
 			for _, rid := range url {
 				found := false
-				for _, erid := range n.excepted {
+				for _, erid := range test.excepted {
 					if rid[0] == erid[0] {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.excepted, url)
 				}
 			}
 		}
@@ -145,11 +145,11 @@ func TestGetFeatureInfoBuildXML(t *testing.T) {
 </GetFeatureInfo>`},
 	}
 
-	for k, v := range tests {
-		body := v.gfi.ToXML()
+	for k, test := range tests {
+		body := test.gfi.ToXML()
 
 		x := strings.Replace(string(body), "\n", ``, -1)
-		y := strings.Replace(v.result, "\n", ``, -1)
+		y := strings.Replace(test.result, "\n", ``, -1)
 
 		if x != y {
 			t.Errorf("test: %d, Expected body: \n%s\nbut was not got: \n%s", k, y, x)
@@ -324,15 +324,15 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 		2: {body: []byte(`<UnknownTag/>`),
 			exceptions: MissingParameterValue("REQUEST").ToExceptions()},
 	}
-	for k, n := range tests {
+	for k, test := range tests {
 		var gm GetFeatureInfoRequest
-		exceptions := gm.ParseXML(n.body)
+		exceptions := gm.ParseXML(test.body)
 		if exceptions != nil {
-			if exceptions[0].Error() != n.exceptions[0].Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exceptions, exceptions)
+			if exceptions[0].Error() != test.exceptions[0].Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exceptions, exceptions)
 			}
 		} else {
-			compareGetFeatureInfoObject(gm, n.excepted, t, k)
+			compareGetFeatureInfoObject(gm, test.excepted, t, k)
 		}
 	}
 }

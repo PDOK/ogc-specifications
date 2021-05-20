@@ -175,15 +175,15 @@ func TestGetMapParseXML(t *testing.T) {
 			exception: MissingParameterValue()},
 		2: {body: []byte(`<UnknownTag/>`), excepted: GetMapRequest{}},
 	}
-	for k, n := range tests {
+	for k, test := range tests {
 		var gm GetMapRequest
-		exceptions := gm.ParseXML(n.body)
+		exceptions := gm.ParseXML(test.body)
 		if exceptions != nil {
-			if exceptions[0].Error() != n.exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exceptions)
+			if exceptions[0].Error() != test.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exceptions)
 			}
 		} else {
-			compareGetMapObject(gm, n.excepted, t, k)
+			compareGetMapObject(gm, test.excepted, t, k)
 		}
 	}
 }
@@ -209,10 +209,10 @@ func TestGetLayerKVPValue(t *testing.T) {
 			excepted: "Rivers"},
 	}
 
-	for k, n := range tests {
-		result := n.styledLayerDescriptor.getLayerKVPValue()
-		if n.excepted != result {
-			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.excepted, result)
+	for k, test := range tests {
+		result := test.styledLayerDescriptor.getLayerKVPValue()
+		if test.excepted != result {
+			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, test.excepted, result)
 		}
 	}
 }
@@ -248,10 +248,10 @@ func TestGetStyleKVPValue(t *testing.T) {
 			excepted: ""},
 	}
 
-	for k, n := range tests {
-		result := n.styledLayerDescriptor.getStyleKVPValue()
-		if n.excepted != result {
-			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.excepted, result)
+	for k, test := range tests {
+		result := test.styledLayerDescriptor.getStyleKVPValue()
+		if test.excepted != result {
+			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, test.excepted, result)
 		}
 	}
 }
@@ -303,15 +303,15 @@ func TestGetMapParseKVP(t *testing.T) {
 				Exceptions: sp("XML"),
 			}},
 	}
-	for k, n := range tests {
+	for k, test := range tests {
 		var gm GetMapRequest
-		exceptions := gm.ParseQueryParameters(n.query)
+		exceptions := gm.ParseQueryParameters(test.query)
 		if exceptions != nil {
-			if exceptions[0].Error() != n.exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exceptions)
+			if exceptions[0].Error() != test.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exceptions)
 			}
 		} else {
-			compareGetMapObject(gm, n.excepted, t, k)
+			compareGetMapObject(gm, test.excepted, t, k)
 		}
 	}
 }
@@ -382,21 +382,21 @@ func TestGetMapBuildKVP(t *testing.T) {
 			}},
 	}
 
-	for k, n := range tests {
-		url := n.object.ToQueryParameters()
-		if len(n.excepted) != len(url) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
+	for k, test := range tests {
+		url := test.object.ToQueryParameters()
+		if len(test.excepted) != len(url) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.excepted, url)
 		} else {
 			for _, rid := range url {
 				found := false
-				for _, erid := range n.excepted {
+				for _, erid := range test.excepted {
 					if rid[0] == erid[0] {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.excepted, url)
 				}
 			}
 		}
@@ -427,11 +427,11 @@ func TestGetMapBuildXML(t *testing.T) {
 </GetMap>`},
 	}
 
-	for k, v := range tests {
-		body := v.gm.ToXML()
+	for k, test := range tests {
+		body := test.gm.ToXML()
 
-		if string(body) != v.result {
-			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
+		if string(body) != test.result {
+			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, test.result, string(body))
 		}
 	}
 

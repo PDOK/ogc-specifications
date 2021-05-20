@@ -18,26 +18,26 @@ func TestUnMarshalXMLAttribute(t *testing.T) {
 		3: {xmlraw: `<startelement attr="one"`, exception: errors.New("XML syntax error on line 1: unexpected EOF")},
 	}
 
-	for k, a := range tests {
+	for k, test := range tests {
 		var xmlattr XMLAttribute
-		if err := xml.Unmarshal([]byte(a.xmlraw), &xmlattr); err != nil {
-			if err.Error() != a.exception.Error() {
+		if err := xml.Unmarshal([]byte(test.xmlraw), &xmlattr); err != nil {
+			if err.Error() != test.exception.Error() {
 				t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
 			}
 		}
 
-		if len(a.expected) != len(xmlattr) {
-			t.Errorf("test: %d, expected: %s,\n got: %s", k, a.expected, xmlattr)
+		if len(test.expected) != len(xmlattr) {
+			t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, xmlattr)
 		} else {
 			c := false
-			for _, exceptedAttr := range a.expected {
+			for _, exceptedAttr := range test.expected {
 				for _, result := range xmlattr {
 					if exceptedAttr == result {
 						c = true
 					}
 				}
 				if !c {
-					t.Errorf("test: %d, expected: %s,\n got: %s", k, a.expected, xmlattr)
+					t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, xmlattr)
 				}
 				c = false
 			}

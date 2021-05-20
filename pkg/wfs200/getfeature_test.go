@@ -44,11 +44,11 @@ func TestGetFeatureBuildXML(t *testing.T) {
 </GetFeature>`},
 	}
 
-	for k, v := range tests {
-		body := v.gf.ToXML()
+	for k, test := range tests {
+		body := test.gf.ToXML()
 
-		if string(body) != v.result {
-			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
+		if string(body) != test.result {
+			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, test.result, string(body))
 		}
 	}
 }
@@ -118,25 +118,25 @@ func TestGetFeatureParseXML(t *testing.T) {
 		},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var gf GetFeatureRequest
-		exception := gf.ParseXML(n.body)
+		exception := gf.ParseXML(test.body)
 		if exception != nil {
-			if exception[0].Error() != n.exception[0].Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exception)
+			if exception[0].Error() != test.exception[0].Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
 			}
 		} else {
-			if gf.BaseRequest.Service != n.result.BaseRequest.Service {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Service, gf.BaseRequest.Service)
+			if gf.BaseRequest.Service != test.result.BaseRequest.Service {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Service, gf.BaseRequest.Service)
 			}
-			if gf.BaseRequest.Version != n.result.BaseRequest.Version {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.Version, gf.Version)
+			if gf.BaseRequest.Version != test.result.BaseRequest.Version {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Version, gf.Version)
 			}
 			if gf.Query.Filter != nil {
 				if gf.Query.Filter.ResourceID != nil {
 					var r, e []ResourceID
 					r = *gf.Query.Filter.ResourceID
-					e = *n.result.Query.Filter.ResourceID
+					e = *test.result.Query.Filter.ResourceID
 					if r[0] != e[0] {
 						t.Errorf("test: %d, expected: %s ,\n got: %s", k, e, r)
 					}
@@ -144,27 +144,27 @@ func TestGetFeatureParseXML(t *testing.T) {
 				if gf.Query.Filter.PropertyIsEqualTo != nil {
 					var r, e []PropertyIsEqualTo
 					r = *gf.Query.Filter.PropertyIsEqualTo
-					e = *n.result.Query.Filter.PropertyIsEqualTo
+					e = *test.result.Query.Filter.PropertyIsEqualTo
 					if *r[0].ValueReference != *e[0].ValueReference {
 						t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *e[0].ValueReference, *r[0].ValueReference)
 					}
 				}
 			}
-			if len(n.result.BaseRequest.Attr) == len(gf.BaseRequest.Attr) {
+			if len(test.result.BaseRequest.Attr) == len(gf.BaseRequest.Attr) {
 				c := false
-				for _, expected := range n.result.BaseRequest.Attr {
+				for _, expected := range test.result.BaseRequest.Attr {
 					for _, result := range gf.BaseRequest.Attr {
 						if result.Name.Local == expected.Name.Local && result.Value == expected.Value {
 							c = true
 						}
 					}
 					if !c {
-						t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.BaseRequest.Attr, gf.BaseRequest.Attr)
+						t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.BaseRequest.Attr, gf.BaseRequest.Attr)
 					}
 					c = false
 				}
 			} else {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result.BaseRequest.Attr, gf.BaseRequest.Attr)
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.BaseRequest.Attr, gf.BaseRequest.Attr)
 			}
 		}
 	}
@@ -198,17 +198,17 @@ func TestProcesNamespaces(t *testing.T) {
 			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://www.someserver.com/ns1"}}},
 	}
 
-	for k, n := range tests {
-		results := procesNamespaces(n.namespace)
+	for k, test := range tests {
+		results := procesNamespaces(test.namespace)
 		c := false
-		for _, expected := range n.result {
+		for _, expected := range test.result {
 			for _, result := range results {
 				if result.Name.Local == expected.Name.Local && result.Value == expected.Value {
 					c = true
 				}
 			}
 			if !c {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.result, results)
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result, results)
 			}
 			c = false
 		}
@@ -220,7 +220,7 @@ func TestGetFeatureParseKVP(t *testing.T) {
 	var tests = []struct {
 		queryParams url.Values
 		result      GetFeatureRequest
-		exception   common.Exception
+		exception   wsc110.Exception
 	}{ // Standaard getfeature request with count
 		0: {queryParams: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}},
 			result: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3)}, BaseRequest: BaseRequest{Service: Service, Version: Version}, Query: Query{TypeNames: "dummy"}}},
@@ -262,14 +262,14 @@ func TestGetFeatureParseKVP(t *testing.T) {
 			result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 	}
 
-	for tid, q := range tests {
+	for k, test := range tests {
 		var gf GetFeatureRequest
-		if exception := gf.ParseQueryParameters(q.queryParams); exception != nil {
-			if exception[0] != q.exception {
-				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, q.exception, exception)
+		if exception := gf.ParseQueryParameters(test.queryParams); exception != nil {
+			if exception[0] != test.exception {
+				t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, test.exception, exception)
 			}
 		} else {
-			compareGetFeatureQuery(gf, q.result, tid, t)
+			compareGetFeatureQuery(gf, test.result, k, t)
 		}
 	}
 }
@@ -353,16 +353,16 @@ func TestParseQueryInnerXML(t *testing.T) {
 				DWithin: &DWithin{PropertyName: "Geometry", GeometryOperand: GeometryOperand{Point: &Point{Geometry: Geometry{SrsName: "asrsname", Content: "<coordinates>135.500000,34.666667</coordinates>"}}}, Distance: Distance{Units: "m", Text: "10000"}}}}}}, BaseRequest: BaseRequest{Version: Version}}},
 	}
 
-	for k, q := range tests {
+	for k, test := range tests {
 		var gf GetFeatureRequest
-		gf.ParseQueryParameters(q.queryParams)
+		gf.ParseQueryParameters(test.queryParams)
 
-		if q.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content != gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content, gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content)
+		if test.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content != gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content, gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.Content)
 		}
 
-		if q.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName != gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName, gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName)
+		if test.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName != gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.result.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName, gf.Query.Filter.OR.DWithin.GeometryOperand.Point.Geometry.SrsName)
 		}
 	}
 }
@@ -378,22 +378,22 @@ func TestMergeResourceIDGroups(t *testing.T) {
 			outputRids: []ResourceID{{Rid: "one"}, {Rid: "one"}}},
 	}
 
-	for k, q := range tests {
-		mergedRids := mergeResourceIDGroups(q.inputRids...)
+	for k, test := range tests {
+		mergedRids := mergeResourceIDGroups(test.inputRids...)
 
-		if len(mergedRids) != len(q.outputRids) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.outputRids, mergedRids)
+		if len(mergedRids) != len(test.outputRids) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.outputRids, mergedRids)
 		} else {
 			for _, rid := range mergedRids {
 				found := false
-				for _, erid := range q.outputRids {
+				for _, erid := range test.outputRids {
 					if rid == erid {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.outputRids, mergedRids)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.outputRids, mergedRids)
 				}
 			}
 		}
@@ -415,21 +415,21 @@ func TestGetFeatureBuildKVP(t *testing.T) {
 			expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"xml"}, RESULTTYPE: {"hits"}}},
 	}
 
-	for k, q := range tests {
-		result := q.getfeature.ToQueryParameters()
-		if len(q.expectedquery) != len(result) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.expectedquery, result)
+	for k, test := range tests {
+		result := test.getfeature.ToQueryParameters()
+		if len(test.expectedquery) != len(result) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.expectedquery, result)
 		} else {
 			for _, rid := range result {
 				found := false
-				for _, erid := range q.expectedquery {
+				for _, erid := range test.expectedquery {
 					if rid[0] == erid[0] {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, q.expectedquery, result)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.expectedquery, result)
 				}
 			}
 		}
@@ -461,22 +461,22 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 			exception: InvalidValue(`BBOX`)},
 	}
 
-	for k, a := range tests {
+	for k, test := range tests {
 		var gb GEOBBOX
-		exception := gb.UnmarshalText(a.query)
+		exception := gb.UnmarshalText(test.query)
 
 		if exception != nil {
-			if exception != a.exception {
-				t.Errorf("test: %d, expected: %+v,\n got: %+v", k, a.exception, exception)
+			if exception != test.exception {
+				t.Errorf("test: %d, expected: %+v,\n got: %+v", k, test.exception, exception)
 			}
 		}
 
-		if gb.Envelope != a.expected.Envelope {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v", k, a.expected.Envelope, gb.Envelope)
+		if gb.Envelope != test.expected.Envelope {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v", k, test.expected.Envelope, gb.Envelope)
 		}
 		if gb.SrsName != nil {
-			if *gb.SrsName != *a.expected.SrsName {
-				t.Errorf("test: %d, expected: %+v,\n got: %+v", k, &a.expected.SrsName, &gb.SrsName)
+			if *gb.SrsName != *test.expected.SrsName {
+				t.Errorf("test: %d, expected: %+v,\n got: %+v", k, &test.expected.SrsName, &gb.SrsName)
 			}
 		}
 	}
@@ -497,10 +497,10 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 			bbox: GEOBBOX{SrsName: sp("urn:ogc:def:crs:EPSG::4326")}},
 	}
 
-	for k, a := range tests {
-		result := a.bbox.MarshalText()
-		if result != a.expected {
-			t.Errorf("test: %d, expected: %s,\n got: %s", k, a.expected, result)
+	for k, test := range tests {
+		result := test.bbox.MarshalText()
+		if result != test.expected {
+			t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, result)
 		}
 	}
 }
