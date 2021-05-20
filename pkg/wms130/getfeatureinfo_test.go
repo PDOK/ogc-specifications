@@ -36,7 +36,7 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 			I:            1,
 			J:            1,
 			InfoFormat:   `application/json`,
-			FeatureCount: 8,
+			FeatureCount: ip(8),
 			Exceptions:   sp(`xml`),
 		},
 			Excepted: map[string][]string{
@@ -200,7 +200,7 @@ func TestGetFeatureInfoParseKVP(t *testing.T) {
 				QueryLayers:  []string{`Rivers`},
 				I:            101,
 				J:            101,
-				FeatureCount: 8,
+				FeatureCount: ip(8),
 				InfoFormat:   `application/json`,
 			},
 		},
@@ -274,7 +274,6 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 				<Width>1024</Width>
 				<Height>512</Height>
 			</Size>
-		<Exceptions>XML</Exceptions>
 	</GetFeatureInfo>`),
 			Excepted: GetFeatureInfoRequest{
 				BaseRequest: BaseRequest{
@@ -393,18 +392,20 @@ func compareGetFeatureInfoObject(result, expected GetFeatureInfoRequest, t *test
 		t.Errorf("test J: %d, expected: %v ,\n got: %v", k, expected.J, result.J)
 	}
 
+	if expected.InfoFormat != result.InfoFormat {
+		t.Errorf("test InfoFormat: %d, expected: %v ,\n got: %v", k, expected.InfoFormat, result.InfoFormat)
+	}
+
+	if expected.FeatureCount != nil {
+		if *expected.FeatureCount != *result.FeatureCount {
+			t.Errorf("test FeatureCount: %d, expected: %v ,\n got: %v", k, *expected.FeatureCount, *result.FeatureCount)
+		}
+	}
+
 	if expected.Exceptions != nil {
 		if *expected.Exceptions != *result.Exceptions {
 			t.Errorf("test Exceptions: %d, expected: %v ,\n got: %v", k, *expected.Exceptions, *result.Exceptions)
 		}
-	}
-
-	if expected.FeatureCount != result.FeatureCount {
-		t.Errorf("test FeatureCount: %d, expected: %v ,\n got: %v", k, expected.FeatureCount, result.FeatureCount)
-	}
-
-	if expected.InfoFormat != result.InfoFormat {
-		t.Errorf("test InfoFormat: %d, expected: %v ,\n got: %v", k, expected.InfoFormat, result.InfoFormat)
 	}
 }
 

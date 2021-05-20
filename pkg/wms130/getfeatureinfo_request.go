@@ -37,12 +37,14 @@ type GetFeatureInfoRequest struct {
 	Size   Size   `xml:"Size" yaml:"size"`
 	Format string `xml:"Format,omitempty" yaml:"format,omitempty"`
 
-	QueryLayers  []string `xml:"QueryLayers" yaml:"querylayers"`
-	I            int      `xml:"I" yaml:"i"`
-	J            int      `xml:"J" yaml:"j"`
-	InfoFormat   string   `xml:"InfoFormat" yaml:"infoformat" default:"text/plain"`                // default text/plain
-	FeatureCount int      `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty" default:"1"` // default 1
-	Exceptions   *string  `xml:"Exceptions" yaml:"exceptions"`
+	QueryLayers []string `xml:"QueryLayers" yaml:"querylayers"`
+	I           int      `xml:"I" yaml:"i"`
+	J           int      `xml:"J" yaml:"j"`
+	InfoFormat  string   `xml:"InfoFormat" yaml:"infoformat" default:"text/plain"` // default text/plain
+
+	// Optional Keys
+	FeatureCount *int    `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty" default:"1"` // default 1
+	Exceptions   *string `xml:"Exceptions" yaml:"exceptions"`
 }
 
 // Validate returns GetFeatureInfo
@@ -83,6 +85,9 @@ func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
 func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exceptions {
+
+	var exceptions Exceptions
+
 	gfikvp := orkvp.(*GetFeatureInfoKVP)
 
 	gfi.XMLName.Local = getfeatureinfo
@@ -90,15 +95,15 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 
 	sld, ex := gfikvp.buildStyledLayerDescriptor()
 	if ex != nil {
-		return ex
+		exceptions = append(exceptions, ex...)
 	}
 	gfi.StyledLayerDescriptor = sld
 
 	gfi.CRS = gfikvp.CRS
 
 	var bbox BoundingBox
-	if err := bbox.parseString(gfikvp.Bbox); err != nil {
-		return err
+	if ex := bbox.parseString(gfikvp.Bbox); ex != nil {
+		exceptions = append(exceptions, ex...)
 	}
 	gfi.BoundingBox = bbox
 
@@ -130,17 +135,27 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 	}
 	gfi.J = j
 
-	fc, err := strconv.Atoi(*gfikvp.FeatureCount)
-	if err != nil {
-		// TODO: ignore or a exception
-		return NoApplicableCode("Unknown FeatureCount value").ToExceptions()
+	gfi.InfoFormat = gfikvp.InfoFormat
+
+	// Optional keys
+	if gfikvp.FeatureCount != nil {
+		fc, err := strconv.Atoi(*gfikvp.FeatureCount)
+		if err != nil {
+			return NoApplicableCode("Unknown FeatureCount value").ToExceptions()
+		}
+
+		gfi.FeatureCount = &fc
 	}
 
-	gfi.FeatureCount = fc
-	gfi.InfoFormat = gfikvp.InfoFormat
-	gfi.Exceptions = gfikvp.Exceptions
+	if gfikvp.Exceptions != nil {
+		gfi.Exceptions = gfikvp.Exceptions
+	}
 
-	return nil
+	if len(exceptions) > 1 {
+		return exceptions
+	} else {
+		return nil
+	}
 }
 
 // ParseKVP builds a GetFeatureInfo object based on the available query parameters

@@ -135,8 +135,10 @@ func (gfirkvp *GetFeatureInfoKVP) ParseOperationRequest(or OperationRequest) Exc
 
 	gfikvp.Format = gfi.Format
 
-	fcp := strconv.Itoa(gfi.FeatureCount)
-	gfikvp.FeatureCount = &fcp
+	if gfi.FeatureCount != nil {
+		fcp := strconv.Itoa(*gfi.FeatureCount)
+		gfikvp.FeatureCount = &fcp
+	}
 
 	gfikvp.Exceptions = gfi.Exceptions
 
