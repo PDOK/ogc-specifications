@@ -33,18 +33,8 @@ type identify struct {
 	XMLName xml.Name
 }
 
-// func (i *identify) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-// 	i.XMLName = start.Name
-// 	for {
-// 		token, _ := d.Token()
-// 		switch el := token.(type) {
-// 		case xml.EndElement:
-// 			if el == start.End() {
-// 				return nil
-// 			}
-// 		}
-// 	}
-// }
+// Both the IdentifyRequest and IdentifyRequestKVP return an error instead
+// of a OGC exception, because it is unknown with OGC spec is 'used'
 
 func IdentifyRequest(doc []byte) (string, error) {
 	var i identify
