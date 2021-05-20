@@ -27,21 +27,21 @@ func TestBuildBoundingBox(t *testing.T) {
 	var tests = []struct {
 		boundingbox string
 		bbox        BoundingBox
-		Exception   common.Exception
+		exception   common.Exception
 	}{
 		0: {boundingbox: "0,0,100,100", bbox: BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{100, 100}}},
 		1: {boundingbox: "0,0,-100,-100", bbox: BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{-100, -100}}}, // while this isn't correct, this will be 'addressed' in the validation step
-		2: {boundingbox: "0,0,100", Exception: InvalidParameterValue(`0,0,100`, `boundingbox`)},
-		3: {boundingbox: ",,,", Exception: InvalidParameterValue(`,,,`, `boundingbox`)},
-		4: {boundingbox: ",,,100", Exception: InvalidParameterValue(`,,,100`, `boundingbox`)},
-		5: {boundingbox: "number,,,100", Exception: InvalidParameterValue(`number,,,100`, `boundingbox`)},
+		2: {boundingbox: "0,0,100", exception: InvalidParameterValue(`0,0,100`, `boundingbox`)},
+		3: {boundingbox: ",,,", exception: InvalidParameterValue(`,,,`, `boundingbox`)},
+		4: {boundingbox: ",,,100", exception: InvalidParameterValue(`,,,100`, `boundingbox`)},
+		5: {boundingbox: "number,,,100", exception: InvalidParameterValue(`number,,,100`, `boundingbox`)},
 	}
 
 	for k, test := range tests {
 		var bbox BoundingBox
 		if exception := bbox.ParseString(test.boundingbox); exception != nil {
-			if exception != test.Exception {
-				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.Exception, exception)
+			if exception != test.exception {
+				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.exception, exception)
 			}
 		} else {
 			if bbox != test.bbox {

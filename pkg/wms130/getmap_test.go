@@ -96,12 +96,12 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 
 func TestGetMapParseXML(t *testing.T) {
 	var tests = []struct {
-		Body      []byte
-		Excepted  GetMapRequest
-		Exception exception
+		body      []byte
+		excepted  GetMapRequest
+		exception exception
 	}{
 		// GetMap http://schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
-		0: {Body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
+		0: {body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
 		xmlns:se="http://www.opengis.net/se" xmlns:wms="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sld GetMap.xsd" version="1.3.0">
 		<StyledLayerDescriptor version="1.1.0">
 			<NamedLayer>
@@ -138,7 +138,7 @@ func TestGetMapParseXML(t *testing.T) {
 		</Output>
 		<Exceptions>XML</Exceptions>
 	</GetMap>`),
-			Excepted: GetMapRequest{
+			excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
 					Attr: utils.XMLAttribute{
@@ -171,96 +171,104 @@ func TestGetMapParseXML(t *testing.T) {
 				Exceptions: sp("XML"),
 			},
 		},
-		1: {Body: []byte(``), Exception: MissingParameterValue()},
-		2: {Body: []byte(`<UnknownTag/>`), Excepted: GetMapRequest{}},
+		1: {body: []byte(``),
+			exception: MissingParameterValue()},
+		2: {body: []byte(`<UnknownTag/>`), excepted: GetMapRequest{}},
 	}
 	for k, n := range tests {
 		var gm GetMapRequest
-		exceptions := gm.ParseXML(n.Body)
+		exceptions := gm.ParseXML(n.body)
 		if exceptions != nil {
-			if exceptions[0].Error() != n.Exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exceptions)
+			if exceptions[0].Error() != n.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exceptions)
 			}
 		} else {
-			compareGetMapObject(gm, n.Excepted, t, k)
+			compareGetMapObject(gm, n.excepted, t, k)
 		}
 	}
 }
 
 func TestGetLayerKVPValue(t *testing.T) {
 	var tests = []struct {
-		StyledLayerDescriptor StyledLayerDescriptor
-		Excepted              string
+		styledLayerDescriptor StyledLayerDescriptor
+		excepted              string
 	}{
-		0: {StyledLayerDescriptor: StyledLayerDescriptor{
+		0: {styledLayerDescriptor: StyledLayerDescriptor{
 			NamedLayer: []NamedLayer{
 				{Name: "Rivers"},
 				{Name: "Roads"},
 				{Name: "Houses"},
-			}}, Excepted: "Rivers,Roads,Houses"},
-		1: {StyledLayerDescriptor: StyledLayerDescriptor{}, Excepted: ""},
-		2: {StyledLayerDescriptor: StyledLayerDescriptor{
+			}},
+			excepted: "Rivers,Roads,Houses"},
+		1: {styledLayerDescriptor: StyledLayerDescriptor{},
+			excepted: ""},
+		2: {styledLayerDescriptor: StyledLayerDescriptor{
 			NamedLayer: []NamedLayer{
 				{Name: "Rivers"},
-			}}, Excepted: "Rivers"},
+			}},
+			excepted: "Rivers"},
 	}
 
 	for k, n := range tests {
-		result := n.StyledLayerDescriptor.getLayerKVPValue()
-		if n.Excepted != result {
-			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.Excepted, result)
+		result := n.styledLayerDescriptor.getLayerKVPValue()
+		if n.excepted != result {
+			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.excepted, result)
 		}
 	}
 }
 
 func TestGetStyleKVPValue(t *testing.T) {
 	var tests = []struct {
-		StyledLayerDescriptor StyledLayerDescriptor
-		Excepted              string
+		styledLayerDescriptor StyledLayerDescriptor
+		excepted              string
 	}{
-		0: {StyledLayerDescriptor: StyledLayerDescriptor{
+		0: {styledLayerDescriptor: StyledLayerDescriptor{
 			NamedLayer: []NamedLayer{
 				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
-			}}, Excepted: "CenterLine,CenterLine,Outline"},
-		1: {StyledLayerDescriptor: StyledLayerDescriptor{}, Excepted: ""},
-		2: {StyledLayerDescriptor: StyledLayerDescriptor{
+			}},
+			excepted: "CenterLine,CenterLine,Outline"},
+		1: {styledLayerDescriptor: StyledLayerDescriptor{},
+			excepted: ""},
+		2: {styledLayerDescriptor: StyledLayerDescriptor{
 			NamedLayer: []NamedLayer{
 				{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{Name: "Roads"},
 				{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
-			}}, Excepted: "CenterLine,,Outline"},
+			}},
+			excepted: "CenterLine,,Outline"},
 		// 4. This needs to fail in the validation step
-		4: {StyledLayerDescriptor: StyledLayerDescriptor{
+		4: {styledLayerDescriptor: StyledLayerDescriptor{
 			NamedLayer: []NamedLayer{
 				{NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{NamedStyle: &NamedStyle{Name: "CenterLine"}},
 				{NamedStyle: &NamedStyle{Name: "Outline"}},
-			}}, Excepted: ""},
+			}},
+			excepted: ""},
 	}
 
 	for k, n := range tests {
-		result := n.StyledLayerDescriptor.getStyleKVPValue()
-		if n.Excepted != result {
-			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.Excepted, result)
+		result := n.styledLayerDescriptor.getStyleKVPValue()
+		if n.excepted != result {
+			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, n.excepted, result)
 		}
 	}
 }
 
 func TestGetMapParseKVP(t *testing.T) {
 	var tests = []struct {
-		Query     url.Values
-		Excepted  GetMapRequest
-		Exception exception
+		query     url.Values
+		excepted  GetMapRequest
+		exception exception
 	}{
-		0: {Query: map[string][]string{REQUEST: {getmap}, "CRS": {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
-			Exception: InvalidParameterValue(``, `boundingbox`),
+		0: {query: map[string][]string{REQUEST: {getmap}, "CRS": {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
+			exception: InvalidParameterValue(``, `boundingbox`),
 		},
-		1: {Query: url.Values{},
-			Exception: MissingParameterValue(VERSION)},
+		1: {query: url.Values{},
+			exception: MissingParameterValue(VERSION)},
 		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
-		2: {Query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
+		2: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
 			STYLES:      {`CenterLine,CenterLine,Outline`},
 			"CRS":       {`EPSG:4326`},
@@ -272,7 +280,7 @@ func TestGetMapParseKVP(t *testing.T) {
 			EXCEPTIONS:  {`XML`},
 			BGCOLOR:     {`0x7F7F7F`},
 		},
-			Excepted: GetMapRequest{
+			excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
 					Version: "1.3.0",
 				},
@@ -297,24 +305,24 @@ func TestGetMapParseKVP(t *testing.T) {
 	}
 	for k, n := range tests {
 		var gm GetMapRequest
-		exceptions := gm.ParseQueryParameters(n.Query)
+		exceptions := gm.ParseQueryParameters(n.query)
 		if exceptions != nil {
-			if exceptions[0].Error() != n.Exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exceptions)
+			if exceptions[0].Error() != n.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.exception, exceptions)
 			}
 		} else {
-			compareGetMapObject(gm, n.Excepted, t, k)
+			compareGetMapObject(gm, n.excepted, t, k)
 		}
 	}
 }
 
 func TestGetMapBuildKVP(t *testing.T) {
 	var tests = []struct {
-		Object    GetMapRequest
-		Excepted  url.Values
-		Exception exception
+		object    GetMapRequest
+		excepted  url.Values
+		exception exception
 	}{
-		0: {Object: GetMapRequest{
+		0: {object: GetMapRequest{
 			XMLName: xml.Name{Local: "GetMap"},
 			BaseRequest: BaseRequest{
 				Version: "1.3.0",
@@ -336,21 +344,22 @@ func TestGetMapBuildKVP(t *testing.T) {
 				Format:      "image/jpeg",
 				Transparent: bp(false)},
 			Exceptions: sp("XML"),
-		}, Excepted: map[string][]string{
-			VERSION:     {Version},
-			LAYERS:      {`Rivers,Roads,Houses`},
-			STYLES:      {`CenterLine,CenterLine,Outline`},
-			"CRS":       {`EPSG:4326`},
-			BBOX:        {`-180.000000,-90.000000,180.000000,90.000000`},
-			EXCEPTIONS:  {`XML`},
-			FORMAT:      {`image/jpeg`},
-			HEIGHT:      {`512`},
-			WIDTH:       {`1024`},
-			TRANSPARENT: {`false`},
-			REQUEST:     {`GetMap`},
-			SERVICE:     {`WMS`},
-		}},
-		1: {Object: GetMapRequest{
+		},
+			excepted: map[string][]string{
+				VERSION:     {Version},
+				LAYERS:      {`Rivers,Roads,Houses`},
+				STYLES:      {`CenterLine,CenterLine,Outline`},
+				"CRS":       {`EPSG:4326`},
+				BBOX:        {`-180.000000,-90.000000,180.000000,90.000000`},
+				EXCEPTIONS:  {`XML`},
+				FORMAT:      {`image/jpeg`},
+				HEIGHT:      {`512`},
+				WIDTH:       {`1024`},
+				TRANSPARENT: {`false`},
+				REQUEST:     {`GetMap`},
+				SERVICE:     {`WMS`},
+			}},
+		1: {object: GetMapRequest{
 			CRS: CRS{Namespace: "EPSG", Code: 4326},
 			BoundingBox: BoundingBox{
 				LowerCorner: [2]float64{-180.0, -90.0},
@@ -358,7 +367,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 			},
 			Exceptions: sp(`XML`),
 		},
-			Excepted: map[string][]string{
+			excepted: map[string][]string{
 				LAYERS:     {``},
 				STYLES:     {``},
 				"CRS":      {`EPSG:4326`},
@@ -374,20 +383,20 @@ func TestGetMapBuildKVP(t *testing.T) {
 	}
 
 	for k, n := range tests {
-		url := n.Object.ToQueryParameters()
-		if len(n.Excepted) != len(url) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+		url := n.object.ToQueryParameters()
+		if len(n.excepted) != len(url) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
 		} else {
 			for _, rid := range url {
 				found := false
-				for _, erid := range n.Excepted {
+				for _, erid := range n.excepted {
 					if rid[0] == erid[0] {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.excepted, url)
 				}
 			}
 		}
