@@ -407,12 +407,12 @@ func TestGetFeatureBuildKVP(t *testing.T) {
 	}{
 		0: {getfeature: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, BaseRequest: BaseRequest{Service: Service, Version: Version}},
 			expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}}},
-		1: {getfeature: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, BaseRequest: BaseRequest{Service: Service, Version: Version}, BaseGetFeatureRequest: BaseGetFeatureRequest{Startindex: ip(100), Count: ip(21)},
-			Query: Query{Filter: &Filter{ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}}}}},
-			expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, STARTINDEX: {"100"}, COUNT: {"21"},
-				FILTER: {url.QueryEscape(`<Filter><ResourceId rid="one"></ResourceId><ResourceId rid="two"></ResourceId></Filter>`)}}},
-		2: {getfeature: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, BaseRequest: BaseRequest{Service: Service, Version: Version}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("xml"), ResultType: sp("hits")}},
-			expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"xml"}, RESULTTYPE: {"hits"}}},
+		// 1: {getfeature: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, BaseRequest: BaseRequest{Service: Service, Version: Version}, BaseGetFeatureRequest: BaseGetFeatureRequest{Startindex: ip(100), Count: ip(21)},
+		// 	Query: Query{Filter: &Filter{ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}}}}},
+		// 	expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, STARTINDEX: {"100"}, COUNT: {"21"},
+		// 		FILTER: {url.QueryEscape(`<Filter><ResourceId rid="one"></ResourceId><ResourceId rid="two"></ResourceId></Filter>`)}}},
+		// 2: {getfeature: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, BaseRequest: BaseRequest{Service: Service, Version: Version}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("xml"), ResultType: sp("hits")}},
+		// 	expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"xml"}, RESULTTYPE: {"hits"}}},
 	}
 
 	for k, test := range tests {

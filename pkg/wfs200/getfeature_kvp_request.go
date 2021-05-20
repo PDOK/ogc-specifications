@@ -2,69 +2,70 @@ package wfs200
 
 import (
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-// GetFeatureKVP struct
-type GetFeatureKVP struct {
-	Service string `yaml:"service,omitempty"`
-	BaseRequestKVP
+// getFeatureKVPRequest struct
+type getFeatureKVPRequest struct {
+	service string `yaml:"service,omitempty"`
+	baseRequestKVP
 	// Table 17 — Keywords for GetFeature KVP-encoding
-	*CommonKeywords
-	*StandardPresentationParameters
-	*StandardResolveParameters
-	AdhocQueryKeywords
-	*StoredQueryKeywords
+	*commonKeywords
+	*standardPresentationParameters
+	*standardResolveParameters
+	adhocQueryKeywords
+	*storedQueryKeywords
 }
 
 // CommonKeywords struct
-type CommonKeywords struct {
+type commonKeywords struct {
 	// Table 7
-	Namespaces *string `yaml:"namespaces,omitempty"`
+	namespaces *string `yaml:"namespaces,omitempty"`
 	// VSP Vendor-specific parameters
 }
 
-// StandardPresentationParameters struct
-type StandardPresentationParameters struct {
+// standardPresentationParameters struct
+type standardPresentationParameters struct {
 	// Table 5
-	StartIndex   *string `yaml:"startindex,omitempty"`
-	Count        *string `yaml:"count,omitempty"`
-	OutputFormat *string `yaml:"outputformat,omitempty"`
-	ResultType   *string `yaml:"resulttype,omitempty"`
+	startindex   *string `yaml:"startindex,omitempty"`
+	count        *string `yaml:"count,omitempty"`
+	outputformat *string `yaml:"outputformat,omitempty"`
+	resulttype   *string `yaml:"resulttype,omitempty"`
 }
 
-// StandardResolveParameters struct
-type StandardResolveParameters struct {
+// standardResolveParameters struct
+type standardResolveParameters struct {
 	// Table 6
-	Resolve        *string `yaml:"resolve,omitempty"`
-	ResolveDepth   *string `yaml:"resolvedepth,omitempty"`
-	ResolveTimeout *string `yaml:"resolvetimeout,omitempty"`
+	resolve        *string `yaml:"resolve,omitempty"`
+	resolvedepth   *string `yaml:"resolvedepth,omitempty"`
+	resolvetimeout *string `yaml:"resolvetimeout,omitempty"`
 }
 
 // AdhocQueryKeywords struct
-type AdhocQueryKeywords struct {
+type adhocQueryKeywords struct {
 	// Table 8
-	TypeNames string  `yaml:"typenames"`
-	Aliases   *string `yaml:"aliases,omitempty"`
-	SrsName   *string `yaml:"srsname,omitempty"`
+	typenames string  `yaml:"typenames"`
+	aliases   *string `yaml:"aliases,omitempty"`
+	srsname   *string `yaml:"srsname,omitempty"`
 	// Projection_clause not implemented
-	Filter          *string `yaml:"filter,omitempty"`
-	Filter_Language *string `yaml:"filter_language,omitempty"`
-	ResourceId      *string `yaml:"resourceid,omitempty"`
-	Bbox            *string `yaml:"bbox,omitempty"`
-	SortBy          *string `yaml:"sortby,omitempty"`
+	filter          *string `yaml:"filter,omitempty"`
+	filter_language *string `yaml:"filter_language,omitempty"`
+	resourceid      *string `yaml:"resourceid,omitempty"`
+	bbox            *string `yaml:"bbox,omitempty"`
+	sortby          *string `yaml:"sortby,omitempty"`
 }
 
 // StoredQueryKeywords struct
-type StoredQueryKeywords struct {
+type storedQueryKeywords struct {
 	// Table 10
-	StoredQueryId string `yaml:"storedqueryid"`
+	storedqueryid string `yaml:"storedqueryid"`
 	// storedquery_parameter not implemented
 }
 
-func (gfkvp *GetFeatureKVP) ParseKVP(query url.Values) wsc110.Exceptions {
+func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) wsc110.Exceptions {
 	var exceptions wsc110.Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
@@ -72,60 +73,60 @@ func (gfkvp *GetFeatureKVP) ParseKVP(query url.Values) wsc110.Exceptions {
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
-				gfkvp.Service = strings.ToUpper(v[0])
+				gfkvp.service = strings.ToUpper(v[0])
 			case VERSION:
-				gfkvp.BaseRequestKVP.Version = v[0]
+				gfkvp.baseRequestKVP.version = v[0]
 			case REQUEST:
-				gfkvp.BaseRequestKVP.Request = v[0]
+				gfkvp.baseRequestKVP.request = v[0]
 			case STARTINDEX:
 				vp := v[0]
-				gfkvp.StandardPresentationParameters.StartIndex = &vp
+				gfkvp.standardPresentationParameters.startindex = &vp
 			case COUNT:
 				vp := v[0]
-				gfkvp.StandardPresentationParameters.Count = &vp
+				gfkvp.standardPresentationParameters.count = &vp
 			case OUTPUTFORMAT:
 				vp := v[0]
-				gfkvp.StandardPresentationParameters.OutputFormat = &vp
+				gfkvp.standardPresentationParameters.outputformat = &vp
 			case RESULTTYPE:
 				vp := v[0]
-				gfkvp.StandardPresentationParameters.ResultType = &vp
+				gfkvp.standardPresentationParameters.resulttype = &vp
 			case RESOLVE:
 				vp := v[0]
-				gfkvp.StandardResolveParameters.Resolve = &vp
+				gfkvp.standardResolveParameters.resolve = &vp
 			case RESOLVEDEPTH:
 				vp := v[0]
-				gfkvp.StandardResolveParameters.ResolveDepth = &vp
+				gfkvp.standardResolveParameters.resolvedepth = &vp
 			case RESOLVETIMEOUT:
 				vp := v[0]
-				gfkvp.StandardResolveParameters.ResolveTimeout = &vp
+				gfkvp.standardResolveParameters.resolvetimeout = &vp
 			case NAMESPACES:
 				vp := v[0]
-				gfkvp.CommonKeywords.Namespaces = &vp
+				gfkvp.commonKeywords.namespaces = &vp
 			case TYPENAMES:
-				gfkvp.AdhocQueryKeywords.TypeNames = v[0]
+				gfkvp.adhocQueryKeywords.typenames = v[0]
 			case ALIASES:
 				vp := v[0]
-				gfkvp.AdhocQueryKeywords.Aliases = &vp
+				gfkvp.adhocQueryKeywords.aliases = &vp
 			case SRSNAME:
 				vp := v[0]
-				gfkvp.AdhocQueryKeywords.SrsName = &vp
+				gfkvp.adhocQueryKeywords.srsname = &vp
 			case FILTER:
 				vp := v[0]
-				gfkvp.AdhocQueryKeywords.Filter = &vp
+				gfkvp.adhocQueryKeywords.filter = &vp
 			case FILTERLANGUAGE:
 				vp := v[0]
-				gfkvp.AdhocQueryKeywords.Filter_Language = &vp
+				gfkvp.adhocQueryKeywords.filter_language = &vp
 			case RESOURCEID:
 				vp := v[0]
-				gfkvp.AdhocQueryKeywords.ResourceId = &vp
+				gfkvp.adhocQueryKeywords.resourceid = &vp
 			case BBOX:
 				vp := v[0]
-				gfkvp.AdhocQueryKeywords.Bbox = &vp
+				gfkvp.adhocQueryKeywords.bbox = &vp
 			case SORTBY:
 				vp := v[0]
-				gfkvp.AdhocQueryKeywords.SortBy = &vp
+				gfkvp.adhocQueryKeywords.sortby = &vp
 			case STOREDQUERYID:
-				gfkvp.StoredQueryKeywords.StoredQueryId = v[0]
+				gfkvp.storedQueryKeywords.storedqueryid = v[0]
 			}
 		}
 	}
@@ -137,10 +138,47 @@ func (gfkvp *GetFeatureKVP) ParseKVP(query url.Values) wsc110.Exceptions {
 	return nil
 }
 
-func (gfkvp *GetFeatureKVP) ParseOperationRequest(or wsc110.OperationRequest) wsc110.Exceptions {
+func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) wsc110.Exceptions {
+
+	gfkvp.request = getfeature
+	gfkvp.version = Version
+	gfkvp.service = Service
+
+	if gf.Startindex != nil {
+		i := strconv.Itoa(*gf.Startindex)
+		gfkvp.standardPresentationParameters.startindex = &i
+	}
+
+	if gf.Count != nil {
+		i := strconv.Itoa(*gf.Count)
+		gfkvp.standardPresentationParameters.count = &i
+	}
+
+	if gf.OutputFormat != nil {
+		gfkvp.standardPresentationParameters.outputformat = gf.OutputFormat
+	}
+
+	if gf.ResultType != nil {
+		gfkvp.standardPresentationParameters.resulttype = gf.ResultType
+	}
+
+	// gfkvp.standardResolveParameters.resolve = &vp
+	// gfkvp.standardResolveParameters.resolvedepth = &vp
+	// gfkvp.standardResolveParameters.resolvetimeout = &vp
+	// gfkvp.commonKeywords.namespaces = &vp
+	// gfkvp.adhocQueryKeywords.typenames = v[0]
+	// gfkvp.adhocQueryKeywords.aliases = &vp
+	// gfkvp.adhocQueryKeywords.srsname = &vp
+	// gfkvp.adhocQueryKeywords.filter = &vp
+	// gfkvp.adhocQueryKeywords.filter_language = &vp
+	// gfkvp.adhocQueryKeywords.resourceid = &vp
+	// gfkvp.adhocQueryKeywords.bbox = &vp
+	// gfkvp.adhocQueryKeywords.sortby = &vp
+	// gfkvp.storedQueryKeywords.storedqueryid = v[0]
+
 	return nil
 }
 
-func (gfkvp *GetFeatureKVP) BuildKVP() url.Values {
+func (gfkvp *getFeatureKVPRequest) toQueryParameters() url.Values {
 	return nil
 }

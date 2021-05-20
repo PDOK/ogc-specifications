@@ -17,14 +17,12 @@ const (
 	VERSION = `VERSION`
 )
 
-// Type returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Type() string {
-	return getcapabilities
-}
-
-// Validate returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Validate(c Contents) wsc110.Exceptions {
-	return nil
+// GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
+type GetCapabilitiesRequest struct {
+	XMLName xml.Name            `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string              `xml:"service,attr" yaml:"service"`
+	Version string              `xml:"version,attr" yaml:"version"`
+	Attr    common.XMLAttribute `xml:",attr"`
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
@@ -82,12 +80,4 @@ func (gc *GetCapabilitiesRequest) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
-}
-
-// GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
-type GetCapabilitiesRequest struct {
-	XMLName xml.Name            `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string              `xml:"service,attr" yaml:"service"`
-	Version string              `xml:"version,attr" yaml:"version"`
-	Attr    common.XMLAttribute `xml:",attr"`
 }

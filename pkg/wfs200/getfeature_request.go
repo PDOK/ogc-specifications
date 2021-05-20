@@ -219,24 +219,30 @@ func (gf *GetFeatureRequest) ToXML() []byte {
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gf *GetFeatureRequest) ToQueryParameters() url.Values {
-	querystring := make(map[string][]string)
-	// base
-	querystring[REQUEST] = []string{gf.XMLName.Local}
-	querystring[SERVICE] = []string{gf.BaseRequest.Service}
-	querystring[VERSION] = []string{gf.BaseRequest.Version}
+func (gf GetFeatureRequest) ToQueryParameters() url.Values {
+	// querystring := make(map[string][]string)
+	// // base
+	// querystring[REQUEST] = []string{gf.XMLName.Local}
+	// querystring[SERVICE] = []string{gf.BaseRequest.Service}
+	// querystring[VERSION] = []string{gf.BaseRequest.Version}
 
-	// Table 5
-	for k, v := range gf.BaseGetFeatureRequest.BuildQueryString() {
-		querystring[k] = v
-	}
+	// // Table 5
+	// for k, v := range gf.BaseGetFeatureRequest.BuildQueryString() {
+	// 	querystring[k] = v
+	// }
 
-	// Table 7
-	// Table 8
-	for k, v := range gf.Query.BuildQueryString() {
-		querystring[k] = v
-	}
-	return querystring
+	// // Table 7
+	// // Table 8
+	// for k, v := range gf.Query.BuildQueryString() {
+	// 	querystring[k] = v
+	// }
+	// return querystring
+
+	gmkvp := getFeatureKVPRequest{}
+	gmkvp.parseGetFeatureRequest(gf)
+
+	q := gmkvp.toQueryParameters()
+	return q
 }
 
 func mergeResourceIDGroups(rids ...[]ResourceID) []ResourceID {

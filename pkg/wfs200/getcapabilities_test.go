@@ -88,9 +88,9 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 
 func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
-		query     url.Values
-		result    GetCapabilitiesRequest
-		exception wsc110.Exception
+		query      url.Values
+		result     GetCapabilitiesRequest
+		exceptions wsc110.Exceptions
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"2.0.0"}},
@@ -105,10 +105,10 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 		3: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"3.4.5"}},
 			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "3.4.5"}},
 		4: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"no version found"}},
-			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "NO VERSION FOUND"}},
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "no version found"}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			exception: wsc110.Exception{ExceptionText: "Failed to parse the operation, found: "},
+			exceptions: wsc110.Exceptions{wsc110.MissingParameterValue(SERVICE), wsc110.MissingParameterValue(REQUEST)},
 		},
 	}
 
@@ -116,8 +116,8 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 		var gc GetCapabilitiesRequest
 		exception := gc.ParseQueryParameters(test.query)
 		if exception != nil {
-			if exception[0].Error() != test.exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
+			if exception[0].Error() != test.exceptions[0].Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exceptions, exception)
 			}
 		} else {
 			if test.result.XMLName.Local != gc.XMLName.Local {

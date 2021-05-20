@@ -48,40 +48,42 @@ func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) wsc110.Exceptions {
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
 func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
-	for k, v := range query {
-		switch strings.ToUpper(k) {
-		case REQUEST:
-			if strings.EqualFold(v[0], getcapabilities) {
-				gc.XMLName.Local = getcapabilities
-			}
-		case SERVICE:
-			gc.Service = strings.ToUpper(v[0])
-		case VERSION:
-			gc.Version = strings.ToUpper(v[0])
-		}
+	if len(query) == 0 {
+		// When there are no query value we know that at least
+		// the manadorty SERVICE and REQUEST parameter is missing.
+		exceptions := wsc110.MissingParameterValue(SERVICE).ToExceptions()
+		exceptions = append(exceptions, wsc110.MissingParameterValue(REQUEST))
+		return exceptions
 	}
+
+	gckvp := getCapabilitiesKVPRequest{}
+	if exception := gckvp.parseQueryParameters(query); exception != nil {
+		return exception
+	}
+
+	if exception := gc.parseKVP(gckvp); exception != nil {
+		return exception
+	}
+
 	return nil
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilitiesRequest) ParseOperationRequestKVP(orkvp wsc110.OperationRequestKVP) wsc110.Exceptions {
-	gckvp := orkvp.(*GetCapabilitiesKVP)
-
-	gc.XMLName.Local = gckvp.Request
-	gc.Service = gckvp.Service
-	gc.Version = gckvp.Version
+func (gc *GetCapabilitiesRequest) parseKVP(gckvp getCapabilitiesKVPRequest) wsc110.Exceptions {
+	gc.XMLName.Local = gckvp.request
+	gc.Service = gckvp.service
+	gc.Version = gckvp.version
 
 	return nil
 }
 
 // ToQueryParameters builds a new query string that will be proxied
-func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
-	querystring := make(map[string][]string)
-	querystring[REQUEST] = []string{gc.XMLName.Local}
-	querystring[SERVICE] = []string{gc.Service}
-	querystring[VERSION] = []string{gc.Version}
+func (gc GetCapabilitiesRequest) ToQueryParameters() url.Values {
+	gckvp := getCapabilitiesKVPRequest{}
+	gckvp.parseGetCapabilitiesRequest(gc)
 
-	return querystring
+	q := gckvp.toQueryParameters()
+	return q
 }
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document

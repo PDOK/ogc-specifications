@@ -52,12 +52,12 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Excepti
 		return Exceptions{MissingParameterValue(SERVICE), MissingParameterValue(REQUEST)}
 	}
 
-	gckvp := GetCapabilitiesKVP{}
-	if exception := gckvp.ParseQueryParameters(query); exception != nil {
+	gckvp := getCapabilitiesKVPRequest{}
+	if exception := gckvp.parseQueryParameters(query); exception != nil {
 		return exception
 	}
 
-	if exception := gc.ParseOperationRequestKVP(&gckvp); exception != nil {
+	if exception := gc.parseKVP(gckvp); exception != nil {
 		return exception
 	}
 
@@ -65,21 +65,20 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Excepti
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilitiesRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exceptions {
-	gckvp := orkvp.(*GetCapabilitiesKVP)
+func (gc *GetCapabilitiesRequest) parseKVP(gckvp getCapabilitiesKVPRequest) Exceptions {
 
-	gc.XMLName.Local = gckvp.Request
-	gc.BaseRequest.Build(gckvp.Service, gckvp.Version)
+	gc.XMLName.Local = gckvp.request
+	gc.BaseRequest.build(gckvp.service, gckvp.version)
 	return nil
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
-	gckvp := GetCapabilitiesKVP{}
-	gckvp.ParseOperationRequest(gc)
+func (gc GetCapabilitiesRequest) ToQueryParameters() url.Values {
+	gckvp := getCapabilitiesKVPRequest{}
+	gckvp.parseGetCapabilitiesRequest(gc)
 
-	kvp := gckvp.ToQueryParameters()
-	return kvp
+	q := gckvp.toQueryParameters()
+	return q
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document

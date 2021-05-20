@@ -30,6 +30,21 @@ const (
 	// ELEVATION   = `ELEVATION`
 )
 
+// GetMap struct with the needed parameters/attributes needed for making a GetMap request
+// Struct based on http://schemas.opengis.net/sld/1.1/example_getmap.xml
+type GetMapRequest struct {
+	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
+	BaseRequest
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
+	CRS                   CRS                   `xml:"CRS" yaml:"crs"`
+	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
+	Output                Output                `xml:"Output" yaml:"output"`
+	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
+	// TODO: something with Time & Elevation
+	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
+	// Time                  *string               `xml:"Time" yaml:"time"`BuildKVP
+}
+
 // Validate returns GetMap
 func (gm *GetMapRequest) Validate(c Capabilities) Exceptions {
 	var exceptions Exceptions
@@ -50,22 +65,10 @@ func (gm *GetMapRequest) Validate(c Capabilities) Exceptions {
 	return exceptions
 }
 
-// checkCRS against a given list of CRS
-func checkCRS(crs CRS, definedCrs []CRS) Exceptions {
-	for _, defined := range definedCrs {
-		if defined == crs {
-			return nil
-		}
-	}
-	return InvalidCRS(crs.String()).ToExceptions()
-}
-
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exceptions {
-	gmkvp := orkvp.(*GetMapKVP)
-
+func (gm *GetMapRequest) parseKVP(gmkvp getMapKVPRequest) Exceptions {
 	gm.XMLName.Local = getmap
-	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
+	gm.BaseRequest.build(gmkvp.service, gmkvp.version)
 
 	sld, exceptions := gmkvp.buildStyledLayerDescriptor()
 	if exceptions != nil {
@@ -74,11 +77,11 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exc
 	gm.StyledLayerDescriptor = sld
 
 	var crs CRS
-	crs.ParseString(gmkvp.CRS)
+	crs.ParseString(gmkvp.crs)
 	gm.CRS = crs
 
 	var bbox BoundingBox
-	if exceptions := bbox.parseString(gmkvp.Bbox); exceptions != nil {
+	if exceptions := bbox.parseString(gmkvp.bbox); exceptions != nil {
 		return exceptions
 	}
 	gm.BoundingBox = bbox
@@ -89,7 +92,7 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exc
 	}
 	gm.Output = output
 
-	gm.Exceptions = gmkvp.Exceptions
+	gm.Exceptions = gmkvp.exceptions
 
 	return nil
 }
@@ -102,12 +105,12 @@ func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
-	gmkvp := GetMapKVP{}
-	if exceptions := gmkvp.ParseQueryParameters(query); exceptions != nil {
+	gmkvp := getMapKVPRequest{}
+	if exceptions := gmkvp.parseQueryParameters(query); exceptions != nil {
 		return exceptions
 	}
 
-	if exceptions := gm.ParseOperationRequestKVP(&gmkvp); exceptions != nil {
+	if exceptions := gm.parseKVP(gmkvp); exceptions != nil {
 		return exceptions
 	}
 
@@ -134,12 +137,12 @@ func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gm *GetMapRequest) ToQueryParameters() url.Values {
-	gmkvp := GetMapKVP{}
-	gmkvp.ParseOperationRequest(gm)
+func (gm GetMapRequest) ToQueryParameters() url.Values {
+	gmkvp := getMapKVPRequest{}
+	gmkvp.parseGetMapRequest(gm)
 
-	kvp := gmkvp.ToQueryParameters()
-	return kvp
+	q := gmkvp.toQueryParameters()
+	return q
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
@@ -148,93 +151,12 @@ func (gm *GetMapRequest) ToXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, Exceptions) {
-	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
-	// 1. cnt(STYLE) == 0 -> Added LAYERS
-	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
-	// 3. cnt(LAYERS) == cnt(STYLES) -> merge LAYERS STYLES
-	// 4. cnt(LAYERS) != cnt(STYLES) -> raise error Style not defined/Styles do not correspond with layers
-	//    normally when 4 would occur this could be done in the validate step... but,..
-	//    with the serialization -> struct it would become a valid object (yes!?.. YES!)
-	//    That is because POST xml and GET KVP handle this 'different' (at least not in the same way...)
-	//    When 3 is hit the validation at the Validation step wil resolve this
-
-	// 1.
-	if len(styles) == 0 {
-		var sld StyledLayerDescriptor
-		for _, layer := range layers {
-			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer})
-		}
-		sld.Version = "1.1.0"
-		return sld, nil
-		// 2.
-	} else if len(layers) == 0 {
-		// do nothing
-		// will be resolved during validation
-
-		// 3.
-	} else if len(layers) == len(styles) {
-		var sld StyledLayerDescriptor
-		for k, layer := range layers {
-			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer, NamedStyle: &NamedStyle{Name: styles[k]}})
-		}
-		sld.Version = "1.1.0"
-		return sld, nil
-		// 4.
-	} else if len(layers) != len(styles) {
-		return StyledLayerDescriptor{}, StyleNotDefined().ToExceptions()
-	}
-
-	return StyledLayerDescriptor{}, nil
-}
-
-// TODO maybe 'merge' both func in a single one with 2 outputs
-// so their are 'in sync' ...?
-func (sld *StyledLayerDescriptor) getLayerKVPValue() string {
-	return strings.Join(sld.getNamedLayers(), ",")
-}
-
-func (sld *StyledLayerDescriptor) getStyleKVPValue() string {
-	return strings.Join(sld.getNamedStyles(), ",")
-}
-
-// GetNamedLayers return an array of the Layer names
-func (sld *StyledLayerDescriptor) getNamedLayers() []string {
-	layers := []string{}
-	for _, l := range sld.NamedLayer {
-		layers = append(layers, l.Name)
-	}
-	return layers
-}
-
-// GetNamedStyles return an array of the Layer names
-func (sld *StyledLayerDescriptor) getNamedStyles() []string {
-	styles := []string{}
-	for _, l := range sld.NamedLayer {
-		if l.Name != "" {
-			if l.NamedStyle != nil {
-				styles = append(styles, l.NamedStyle.Name)
-			} else {
-				styles = append(styles, "")
-			}
-		}
-	}
-	return styles
-}
-
-// GetMap struct with the needed parameters/attributes needed for making a GetMap request
-// Struct based on http://schemas.opengis.net/sld/1.1/example_getmap.xml
-type GetMapRequest struct {
-	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
-	BaseRequest
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
-	CRS                   CRS                   `xml:"CRS" yaml:"crs"`
-	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
-	Output                Output                `xml:"Output" yaml:"output"`
-	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
-	// TODO: something with Time & Elevation
-	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
-	// Time                  *string               `xml:"Time" yaml:"time"`BuildKVP
+// Output struct
+type Output struct {
+	Size        Size    `xml:"Size" yaml:"size"`
+	Format      string  `xml:"Format" yaml:"format"`
+	Transparent *bool   `xml:"Transparent" yaml:"transparent"`
+	BGcolor     *string `xml:"BGcolor" yaml:"bgcolor"`
 }
 
 // Validate validates the output parameters
@@ -265,14 +187,6 @@ func (output *Output) Validate(c Capabilities) Exceptions {
 	// TODO: BGColor -> https://stackoverflow.com/questions/54197913/parse-hex-string-to-image-color
 
 	return nil
-}
-
-// Output struct
-type Output struct {
-	Size        Size    `xml:"Size" yaml:"size"`
-	Format      string  `xml:"Format" yaml:"format"`
-	Transparent *bool   `xml:"Transparent" yaml:"transparent"`
-	BGcolor     *string `xml:"BGcolor" yaml:"bgcolor"`
 }
 
 // Size struct
@@ -332,6 +246,40 @@ func (sld StyledLayerDescriptor) Validate(c Capabilities) Exceptions {
 	return nil
 }
 
+// TODO maybe 'merge' both func in a single one with 2 outputs
+// so their are 'in sync' ...?
+func (sld *StyledLayerDescriptor) getLayerKVPValue() string {
+	return strings.Join(sld.getNamedLayers(), ",")
+}
+
+func (sld *StyledLayerDescriptor) getStyleKVPValue() string {
+	return strings.Join(sld.getNamedStyles(), ",")
+}
+
+// GetNamedLayers return an array of the Layer names
+func (sld *StyledLayerDescriptor) getNamedLayers() []string {
+	layers := []string{}
+	for _, l := range sld.NamedLayer {
+		layers = append(layers, l.Name)
+	}
+	return layers
+}
+
+// GetNamedStyles return an array of the Layer names
+func (sld *StyledLayerDescriptor) getNamedStyles() []string {
+	styles := []string{}
+	for _, l := range sld.NamedLayer {
+		if l.Name != "" {
+			if l.NamedStyle != nil {
+				styles = append(styles, l.NamedStyle.Name)
+			} else {
+				styles = append(styles, "")
+			}
+		}
+	}
+	return styles
+}
+
 // NamedLayer struct
 type NamedLayer struct {
 	Name       string      `xml:"Name" yaml:"name"`
@@ -352,4 +300,54 @@ type Elevation struct {
 		Min float64 `xml:"Min" yaml:"min"`
 		Max float64 `xml:"Max" yaml:"max"`
 	} `xml:"Interval" yaml:"interval"`
+}
+
+func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, Exceptions) {
+	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
+	// 1. cnt(STYLE) == 0 -> Added LAYERS
+	// 2. cnt(LAYERS) == 0 -> Added no LAYERS (and no STYLES)
+	// 3. cnt(LAYERS) == cnt(STYLES) -> merge LAYERS STYLES
+	// 4. cnt(LAYERS) != cnt(STYLES) -> raise error Style not defined/Styles do not correspond with layers
+	//    normally when 4 would occur this could be done in the validate step... but,..
+	//    with the serialization -> struct it would become a valid object (yes!?.. YES!)
+	//    That is because POST xml and GET KVP handle this 'different' (at least not in the same way...)
+	//    When 3 is hit the validation at the Validation step wil resolve this
+
+	// 1.
+	if len(styles) == 0 {
+		var sld StyledLayerDescriptor
+		for _, layer := range layers {
+			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer})
+		}
+		sld.Version = "1.1.0"
+		return sld, nil
+		// 2.
+	} else if len(layers) == 0 {
+		// do nothing
+		// will be resolved during validation
+
+		// 3.
+	} else if len(layers) == len(styles) {
+		var sld StyledLayerDescriptor
+		for k, layer := range layers {
+			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer, NamedStyle: &NamedStyle{Name: styles[k]}})
+		}
+		sld.Version = "1.1.0"
+		return sld, nil
+		// 4.
+	} else if len(layers) != len(styles) {
+		return StyledLayerDescriptor{}, StyleNotDefined().ToExceptions()
+	}
+
+	return StyledLayerDescriptor{}, nil
+}
+
+// checkCRS against a given list of CRS
+func checkCRS(crs CRS, definedCrs []CRS) Exceptions {
+	for _, defined := range definedCrs {
+		if defined == crs {
+			return nil
+		}
+	}
+	return InvalidCRS(crs.String()).ToExceptions()
 }

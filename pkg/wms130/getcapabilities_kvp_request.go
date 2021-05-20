@@ -5,15 +5,15 @@ import (
 	"strings"
 )
 
-//GetCapabilitiesKVP struct
-type GetCapabilitiesKVP struct {
+//getCapabilitiesKVPRequest struct
+type getCapabilitiesKVPRequest struct {
 	// Table 8 - The Parameters of a GetMap request
-	Service string `yaml:"service,omitempty"`
-	BaseRequestKVP
+	service string `yaml:"service,omitempty"`
+	baseRequestKVP
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gckvp *GetCapabilitiesKVP) ParseQueryParameters(query url.Values) Exceptions {
+func (gckvp *getCapabilitiesKVPRequest) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
@@ -21,11 +21,11 @@ func (gckvp *GetCapabilitiesKVP) ParseQueryParameters(query url.Values) Exceptio
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
-				gckvp.Service = strings.ToUpper(v[0])
+				gckvp.service = strings.ToUpper(v[0])
 			case VERSION:
-				gckvp.BaseRequestKVP.Version = v[0]
+				gckvp.baseRequestKVP.version = v[0]
 			case REQUEST:
-				gckvp.BaseRequestKVP.Request = v[0]
+				gckvp.baseRequestKVP.request = v[0]
 			}
 		}
 	}
@@ -42,23 +42,21 @@ func (gckvp *GetCapabilitiesKVP) ParseQueryParameters(query url.Values) Exceptio
 // Mandatory:  REQUEST=GetCapabilities
 //             SERVICE=WMS
 // Optional:   VERSION=1.3.0
-func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or OperationRequest) Exceptions {
-	gc := or.(*GetCapabilitiesRequest)
-
-	gckvp.Request = getcapabilities
-	gckvp.Version = gc.Version
-	gckvp.Service = gc.Service
+func (gckvp *getCapabilitiesKVPRequest) parseGetCapabilitiesRequest(gc GetCapabilitiesRequest) Exceptions {
+	gckvp.request = getcapabilities
+	gckvp.version = gc.Version
+	gckvp.service = gc.Service
 
 	return nil
 }
 
 // BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gckvp *GetCapabilitiesKVP) ToQueryParameters() url.Values {
+func (gckvp *getCapabilitiesKVPRequest) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
-	query[SERVICE] = []string{gckvp.Service}
-	query[VERSION] = []string{gckvp.Version}
-	query[REQUEST] = []string{gckvp.Request}
+	query[SERVICE] = []string{gckvp.service}
+	query[VERSION] = []string{gckvp.version}
+	query[REQUEST] = []string{gckvp.request}
 
 	return query
 }

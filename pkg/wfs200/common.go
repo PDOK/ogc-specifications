@@ -41,9 +41,9 @@ const (
 )
 
 // BaseRequestKVP struct
-type BaseRequestKVP struct {
-	Version string `yaml:"version,omitempty"`
-	Request string `yaml:"request,omitempty"`
+type baseRequestKVP struct {
+	version string `yaml:"version,omitempty"`
+	request string `yaml:"request,omitempty"`
 }
 
 // BaseRequest based on Table 5 WFS2.0.0 spec

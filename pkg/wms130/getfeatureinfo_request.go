@@ -84,14 +84,12 @@ func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exceptions {
+func (gfi *GetFeatureInfoRequest) parseKVP(gfikvp getFeatureInfoKVPRequest) Exceptions {
 
 	var exceptions Exceptions
 
-	gfikvp := orkvp.(*GetFeatureInfoKVP)
-
 	gfi.XMLName.Local = getfeatureinfo
-	gfi.BaseRequest.Build(gfikvp.Service, gfikvp.Version)
+	gfi.BaseRequest.build(gfikvp.service, gfikvp.version)
 
 	sld, ex := gfikvp.buildStyledLayerDescriptor()
 	if ex != nil {
@@ -99,39 +97,39 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 	}
 	gfi.StyledLayerDescriptor = sld
 
-	gfi.CRS = gfikvp.CRS
+	gfi.CRS = gfikvp.crs
 
 	var bbox BoundingBox
-	if ex := bbox.parseString(gfikvp.Bbox); ex != nil {
+	if ex := bbox.parseString(gfikvp.bbox); ex != nil {
 		exceptions = append(exceptions, ex...)
 	}
 	gfi.BoundingBox = bbox
 
-	gfi.CRS = gfikvp.CRS
+	gfi.CRS = gfikvp.crs
 
-	w, err := strconv.Atoi(gfikvp.Width)
+	w, err := strconv.Atoi(gfikvp.width)
 	if err != nil {
-		exceptions = append(exceptions, Exceptions{MissingParameterValue(WIDTH, gfikvp.Width)}...)
+		exceptions = append(exceptions, Exceptions{MissingParameterValue(WIDTH, gfikvp.width)}...)
 	}
 	gfi.Size.Width = w
 
-	h, err := strconv.Atoi(gfikvp.Height)
+	h, err := strconv.Atoi(gfikvp.height)
 	if err != nil {
-		exceptions = append(exceptions, Exceptions{MissingParameterValue(HEIGHT, gfikvp.Height)}...)
+		exceptions = append(exceptions, Exceptions{MissingParameterValue(HEIGHT, gfikvp.height)}...)
 	}
 	gfi.Size.Height = h
 
-	gfi.QueryLayers = strings.Split(gfikvp.QueryLayers, ",")
+	gfi.QueryLayers = strings.Split(gfikvp.querylayers, ",")
 
-	if exps := gfi.parseIJ(gfikvp.I, gfikvp.J); exps != nil {
+	if exps := gfi.parseIJ(gfikvp.i, gfikvp.j); exps != nil {
 		exceptions = append(exceptions, exps...)
 	}
 
-	gfi.InfoFormat = gfikvp.InfoFormat
+	gfi.InfoFormat = gfikvp.infoformat
 
 	// Optional keys
-	if gfikvp.FeatureCount != nil {
-		fc, err := strconv.Atoi(*gfikvp.FeatureCount)
+	if gfikvp.featurecount != nil {
+		fc, err := strconv.Atoi(*gfikvp.featurecount)
 		if err != nil {
 			exceptions = append(exceptions, NoApplicableCode("Unknown FEATURE_COUNT value"))
 		}
@@ -139,8 +137,8 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 		gfi.FeatureCount = &fc
 	}
 
-	if gfikvp.Exceptions != nil {
-		gfi.Exceptions = gfikvp.Exceptions
+	if gfikvp.exceptions != nil {
+		gfi.Exceptions = gfikvp.exceptions
 	}
 
 	if len(exceptions) > 0 {
@@ -158,12 +156,12 @@ func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Excepti
 		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
-	gfikvp := GetFeatureInfoKVP{}
-	if exceptions := gfikvp.ParseQueryParameters(query); len(exceptions) != 0 {
+	gfikvp := getFeatureInfoKVPRequest{}
+	if exceptions := gfikvp.parseQueryParameters(query); len(exceptions) != 0 {
 		return exceptions
 	}
 
-	if exceptions := gfi.ParseOperationRequestKVP(&gfikvp); len(exceptions) != 0 {
+	if exceptions := gfi.parseKVP(gfikvp); len(exceptions) != 0 {
 		return exceptions
 	}
 
@@ -171,12 +169,12 @@ func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Excepti
 }
 
 // BuildKVP builds a new query string that will be proxied
-func (gfi *GetFeatureInfoRequest) ToQueryParameters() url.Values {
-	gfikvp := GetFeatureInfoKVP{}
-	gfikvp.ParseOperationRequest(gfi)
+func (gfi GetFeatureInfoRequest) ToQueryParameters() url.Values {
+	gfikvp := getFeatureInfoKVPRequest{}
+	gfikvp.parseGetFeatureInfoRequest(gfi)
 
-	kvp := gfikvp.ToQueryParameters()
-	return kvp
+	q := gfikvp.toQueryParameters()
+	return q
 }
 
 // BuildXML builds a 'new' XML document 'based' on the 'original' XML document
