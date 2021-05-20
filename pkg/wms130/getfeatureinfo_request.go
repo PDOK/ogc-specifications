@@ -111,29 +111,21 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 
 	w, err := strconv.Atoi(gfikvp.Width)
 	if err != nil {
-		return Exceptions{MissingParameterValue(WIDTH, gfikvp.Width)}
+		exceptions = append(exceptions, Exceptions{MissingParameterValue(WIDTH, gfikvp.Width)}...)
 	}
 	gfi.Size.Width = w
 
 	h, err := strconv.Atoi(gfikvp.Height)
 	if err != nil {
-		return MissingParameterValue(HEIGHT, gfikvp.Height).ToExceptions()
+		exceptions = append(exceptions, Exceptions{MissingParameterValue(HEIGHT, gfikvp.Height)}...)
 	}
 	gfi.Size.Height = h
 
 	gfi.QueryLayers = strings.Split(gfikvp.QueryLayers, ",")
 
-	i, err := strconv.Atoi(gfikvp.I)
-	if err != nil {
-		return InvalidPoint(gfikvp.I, gfikvp.J).ToExceptions()
+	if exps := gfi.parseIJ(gfikvp.I, gfikvp.J); exps != nil {
+		exceptions = append(exceptions, exps...)
 	}
-	gfi.I = i
-
-	j, err := strconv.Atoi(gfikvp.J)
-	if err != nil {
-		return InvalidPoint(gfikvp.I, gfikvp.J).ToExceptions()
-	}
-	gfi.J = j
 
 	gfi.InfoFormat = gfikvp.InfoFormat
 
@@ -141,7 +133,7 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 	if gfikvp.FeatureCount != nil {
 		fc, err := strconv.Atoi(*gfikvp.FeatureCount)
 		if err != nil {
-			return NoApplicableCode("Unknown FeatureCount value").ToExceptions()
+			exceptions = append(exceptions, NoApplicableCode("Unknown FEATURE_COUNT value"))
 		}
 
 		gfi.FeatureCount = &fc
@@ -151,7 +143,7 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 		gfi.Exceptions = gfikvp.Exceptions
 	}
 
-	if len(exceptions) > 1 {
+	if len(exceptions) > 0 {
 		return exceptions
 	} else {
 		return nil
@@ -167,12 +159,12 @@ func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Excepti
 	}
 
 	gfikvp := GetFeatureInfoKVP{}
-	if err := gfikvp.ParseQueryParameters(query); err != nil {
-		return err
+	if exceptions := gfikvp.ParseQueryParameters(query); len(exceptions) != 0 {
+		return exceptions
 	}
 
-	if err := gfi.ParseOperationRequestKVP(&gfikvp); err != nil {
-		return err
+	if exceptions := gfi.ParseOperationRequestKVP(&gfikvp); len(exceptions) != 0 {
+		return exceptions
 	}
 
 	return nil
@@ -195,4 +187,20 @@ func (gfi *GetFeatureInfoRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gfi, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
+}
+
+func (gfi *GetFeatureInfoRequest) parseIJ(I, J string) Exceptions {
+	i, err := strconv.Atoi(I)
+	if err != nil {
+		return InvalidPoint(I, J).ToExceptions()
+	}
+	gfi.I = i
+
+	j, err := strconv.Atoi(J)
+	if err != nil {
+		return InvalidPoint(I, J).ToExceptions()
+	}
+	gfi.J = j
+
+	return nil
 }

@@ -10,23 +10,23 @@ import (
 
 func TestBuildStyledLayerDescriptor(t *testing.T) {
 	var tests = []struct {
-		layers []string
-		styles []string
-		sld    StyledLayerDescriptor
-		Error  Exceptions
+		layers    []string
+		styles    []string
+		sld       StyledLayerDescriptor
+		Exception Exceptions
 	}{
 		0: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1", NamedStyle: &NamedStyle{Name: "style1"}}, {Name: "layer2", NamedStyle: &NamedStyle{Name: "style2"}}}}},
-		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Error: StyleNotDefined().ToExceptions()},
-		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Error: StyleNotDefined().ToExceptions()},
+		1: {layers: []string{"layer1", "layer2"}, styles: []string{"style1", "style2", "style3"}, Exception: StyleNotDefined().ToExceptions()},
+		2: {layers: []string{"layer1", "layer2"}, styles: []string{"style1"}, Exception: StyleNotDefined().ToExceptions()},
 		3: {layers: []string{"layer1", "layer2"}, sld: StyledLayerDescriptor{NamedLayer: []NamedLayer{{Name: "layer1"}, {Name: "layer2"}}}},
 	}
 
 	for k, test := range tests {
-		result, err := buildStyledLayerDescriptor(test.layers, test.styles)
+		result, exceptions := buildStyledLayerDescriptor(test.layers, test.styles)
 
-		if err != nil {
-			if test.Error == nil || err[0] != test.Error[0] {
-				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.Error, err)
+		if exceptions != nil {
+			if test.Exception == nil || exceptions[0] != test.Exception[0] {
+				t.Errorf("test: %d, expected: %+v \ngot: %+v", k, test.Exception, exceptions)
 			}
 		}
 
@@ -77,17 +77,17 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		errs := test.sld.Validate(test.capabilities)
-		if len(errs) > 0 {
-			for _, err := range errs {
+		exceptions := test.sld.Validate(test.capabilities)
+		if len(exceptions) > 0 {
+			for _, exception := range exceptions {
 				found := false
-				for _, exception := range test.exceptions {
-					if err == exception {
+				for _, testexception := range test.exceptions {
+					if exception == testexception {
 						found = true
 					}
 				}
 				if !found {
-					t.Errorf("test exception: %d, expected one of: %s ,\n got: %s", k, test.exceptions, err.Error())
+					t.Errorf("test exception: %d, expected one of: %s ,\n got: %s", k, test.exceptions, exception.Error())
 				}
 			}
 		}
@@ -96,9 +96,9 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 
 func TestGetMapParseXML(t *testing.T) {
 	var tests = []struct {
-		Body     []byte
-		Excepted GetMapRequest
-		Error    exception
+		Body      []byte
+		Excepted  GetMapRequest
+		Exception exception
 	}{
 		// GetMap http://schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
 		0: {Body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
@@ -171,15 +171,15 @@ func TestGetMapParseXML(t *testing.T) {
 				Exceptions: sp("XML"),
 			},
 		},
-		1: {Body: []byte(``), Error: MissingParameterValue()},
+		1: {Body: []byte(``), Exception: MissingParameterValue()},
 		2: {Body: []byte(`<UnknownTag/>`), Excepted: GetMapRequest{}},
 	}
 	for k, n := range tests {
 		var gm GetMapRequest
-		err := gm.ParseXML(n.Body)
-		if err != nil {
-			if err[0].Error() != n.Error.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+		exceptions := gm.ParseXML(n.Body)
+		if exceptions != nil {
+			if exceptions[0].Error() != n.Exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exceptions)
 			}
 		} else {
 			compareGetMapObject(gm, n.Excepted, t, k)
@@ -297,10 +297,10 @@ func TestGetMapParseKVP(t *testing.T) {
 	}
 	for k, n := range tests {
 		var gm GetMapRequest
-		err := gm.ParseQueryParameters(n.Query)
-		if err != nil {
-			if err[0].Error() != n.Exception.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
+		exceptions := gm.ParseQueryParameters(n.Query)
+		if exceptions != nil {
+			if exceptions[0].Error() != n.Exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exceptions)
 			}
 		} else {
 			compareGetMapObject(gm, n.Excepted, t, k)
@@ -310,9 +310,9 @@ func TestGetMapParseKVP(t *testing.T) {
 
 func TestGetMapBuildKVP(t *testing.T) {
 	var tests = []struct {
-		Object   GetMapRequest
-		Excepted url.Values
-		Error    exception
+		Object    GetMapRequest
+		Excepted  url.Values
+		Exception exception
 	}{
 		0: {Object: GetMapRequest{
 			XMLName: xml.Name{Local: "GetMap"},

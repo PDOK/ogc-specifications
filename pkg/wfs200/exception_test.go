@@ -69,7 +69,6 @@ func TestReport(t *testing.T) {
 	var tests = []struct {
 		exceptions Exceptions
 		result     []byte
-		err        error
 	}{
 		0: {exceptions: Exceptions{wsc110.Exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>

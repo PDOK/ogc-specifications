@@ -8,27 +8,27 @@ import (
 
 func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
-		Body   []byte
-		Result GetCapabilitiesRequest
-		Error  error
+		Body      []byte
+		Result    GetCapabilitiesRequest
+		Exception error
 	}{
 		// GetCapabilities
 		0: {Body: []byte(`<GetCapabilities service="wms" version="1.3.0" xmlns="http://www.opengis.net/wms"/>`),
 			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: "wms", Version: "1.3.0", Attr: []xml.Attr{{Name: xml.Name{Local: "xmlns"}, Value: "http://www.opengis.net/wms"}}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: MissingParameterValue("REQUEST")},
+		1: {Body: []byte("<Unknown/>"), Exception: MissingParameterValue("REQUEST")},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: MissingParameterValue()},
+		2: {Body: []byte("no XML document, just a string"), Exception: MissingParameterValue()},
 		// document at all
-		3: {Error: MissingParameterValue()},
+		3: {Exception: MissingParameterValue()},
 	}
 
 	for k, n := range tests {
 		var gc GetCapabilitiesRequest
-		err := gc.ParseXML(n.Body)
-		if err != nil {
-			if err[0].Error() != n.Error.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+		exception := gc.ParseXML(n.Body)
+		if exception != nil {
+			if exception[0].Error() != n.Exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exception)
 			}
 		} else {
 			if gc.Service != n.Result.Service {
@@ -84,17 +84,17 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 
 	for k, test := range tests {
 		var gc GetCapabilitiesRequest
-		errs := gc.ParseQueryParameters(test.Query)
-		if len(errs) > 0 {
-			for _, err := range errs {
+		exceptions := gc.ParseQueryParameters(test.Query)
+		if len(exceptions) > 0 {
+			for _, exception := range exceptions {
 				found := false
-				for _, exception := range test.Exceptions {
-					if err == exception {
+				for _, testexception := range test.Exceptions {
+					if exception == testexception {
 						found = true
 					}
 				}
 				if !found {
-					t.Errorf("test exception: %d, expected one of: %s ,\n got: %s", k, test.Exceptions, err.Error())
+					t.Errorf("test exception: %d, expected one of: %s ,\n got: %s", k, test.Exceptions, exception.Error())
 				}
 			}
 		} else {
@@ -113,9 +113,9 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 
 func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	var tests = []struct {
-		Object   GetCapabilitiesRequest
-		Excepted url.Values
-		Error    Exceptions
+		Object    GetCapabilitiesRequest
+		Excepted  url.Values
+		Exception Exceptions
 	}{
 		0: {Object: GetCapabilitiesRequest{BaseRequest: BaseRequest{Service: Service, Version: Version}, XMLName: xml.Name{Local: `GetCapabilities`}},
 			Excepted: map[string][]string{

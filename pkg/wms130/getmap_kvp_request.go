@@ -153,9 +153,9 @@ func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, Exce
 		styles = strings.Split(sl.Styles, ",")
 	}
 
-	sld, err := buildStyledLayerDescriptor(layers, styles)
-	if err != nil {
-		return sld, err
+	sld, exceptions := buildStyledLayerDescriptor(layers, styles)
+	if exceptions != nil {
+		return sld, exceptions
 	}
 
 	return sld, nil

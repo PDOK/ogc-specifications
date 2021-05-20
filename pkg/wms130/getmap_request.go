@@ -67,9 +67,9 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exc
 	gm.XMLName.Local = getmap
 	gm.BaseRequest.Build(gmkvp.Service, gmkvp.Version)
 
-	sld, err := gmkvp.buildStyledLayerDescriptor()
-	if err != nil {
-		return err
+	sld, exceptions := gmkvp.buildStyledLayerDescriptor()
+	if exceptions != nil {
+		return exceptions
 	}
 	gm.StyledLayerDescriptor = sld
 
@@ -78,14 +78,14 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exc
 	gm.CRS = crs
 
 	var bbox BoundingBox
-	if err := bbox.parseString(gmkvp.Bbox); err != nil {
-		return err
+	if exceptions := bbox.parseString(gmkvp.Bbox); exceptions != nil {
+		return exceptions
 	}
 	gm.BoundingBox = bbox
 
-	output, err := gmkvp.buildOutput()
-	if err != nil {
-		return err
+	output, exceptions := gmkvp.buildOutput()
+	if exceptions != nil {
+		return exceptions
 	}
 	gm.Output = output
 
@@ -103,12 +103,12 @@ func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 	}
 
 	gmkvp := GetMapKVP{}
-	if err := gmkvp.ParseQueryParameters(query); err != nil {
-		return err
+	if exceptions := gmkvp.ParseQueryParameters(query); exceptions != nil {
+		return exceptions
 	}
 
-	if err := gm.ParseOperationRequestKVP(&gmkvp); err != nil {
-		return err
+	if exceptions := gm.ParseOperationRequestKVP(&gmkvp); exceptions != nil {
+		return exceptions
 	}
 
 	return nil

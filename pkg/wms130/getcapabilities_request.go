@@ -53,12 +53,12 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Excepti
 	}
 
 	gckvp := GetCapabilitiesKVP{}
-	if err := gckvp.ParseQueryParameters(query); err != nil {
-		return err
+	if exception := gckvp.ParseQueryParameters(query); exception != nil {
+		return exception
 	}
 
-	if err := gc.ParseOperationRequestKVP(&gckvp); err != nil {
-		return err
+	if exception := gc.ParseOperationRequestKVP(&gckvp); exception != nil {
+		return exception
 	}
 
 	return nil

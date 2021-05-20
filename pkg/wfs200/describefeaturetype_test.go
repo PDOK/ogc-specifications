@@ -17,9 +17,9 @@ func TestDescribeFeatureTypeType(t *testing.T) {
 
 func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	var tests = []struct {
-		Body   []byte
-		Result DescribeFeatureTypeRequest
-		Error  wsc110.Exceptions
+		Body      []byte
+		Result    DescribeFeatureTypeRequest
+		Exception wsc110.Exceptions
 	}{
 		// Lots of attribute declarations
 		0: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"/>`),
@@ -35,11 +35,11 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
 					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: wsc110.Exception{ExceptionText: "This service does not know the operation: expected element type <DescribeFeatureType> but have <Unknown>"}.ToExceptions()},
+		1: {Body: []byte("<Unknown/>"), Exception: wsc110.Exception{ExceptionText: "This service does not know the operation: expected element type <DescribeFeatureType> but have <Unknown>"}.ToExceptions()},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
+		2: {Body: []byte("no XML document, just a string"), Exception: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
 		// document at all
-		3: {Error: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
+		3: {Exception: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
 		// Duplicate attributes in XML message with the same value
 		4: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
 			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
@@ -56,14 +56,14 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 
 	for k, n := range tests {
 		var dft DescribeFeatureTypeRequest
-		err := dft.ParseXML(n.Body)
-		if err != nil {
-			if n.Error != nil {
-				if err[0].Error() != n.Error[0].Error() {
-					t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+		exception := dft.ParseXML(n.Body)
+		if exception != nil {
+			if n.Exception != nil {
+				if exception[0].Error() != n.Exception[0].Error() {
+					t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exception)
 				}
 			} else {
-				t.Errorf("test: %d, expected NO error,\n got: %s", k, err)
+				t.Errorf("test: %d, expected NO exception,\n got: %s", k, exception)
 			}
 
 		} else {
@@ -130,10 +130,10 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 
 	for k, n := range tests {
 		var dft DescribeFeatureTypeRequest
-		err := dft.ParseKVP(n.Query)
-		if err != nil {
-			if err[0].Error() != n.Exception[0].Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
+		exception := dft.ParseKVP(n.Query)
+		if exception != nil {
+			if exception[0].Error() != n.Exception[0].Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exception)
 			}
 		} else {
 			if n.Result.XMLName.Local != dft.XMLName.Local {

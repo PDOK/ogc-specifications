@@ -120,10 +120,10 @@ func TestGetFeatureParseXML(t *testing.T) {
 
 	for k, n := range tests {
 		var gf GetFeatureRequest
-		err := gf.ParseXML(n.Body)
-		if err != nil {
-			if err[0].Error() != n.Exception[0].Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
+		exception := gf.ParseXML(n.Body)
+		if exception != nil {
+			if exception[0].Error() != n.Exception[0].Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, exception)
 			}
 		} else {
 			if gf.BaseRequest.Service != n.Result.BaseRequest.Service {
@@ -264,9 +264,9 @@ func TestGetFeatureParseKVP(t *testing.T) {
 
 	for tid, q := range tests {
 		var gf GetFeatureRequest
-		if err := gf.ParseQueryParameters(q.QueryParams); err != nil {
-			if err[0] != q.Exception {
-				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, q.Exception, err)
+		if exception := gf.ParseQueryParameters(q.QueryParams); exception != nil {
+			if exception[0] != q.Exception {
+				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, q.Exception, exception)
 			}
 		} else {
 			compareGetFeatureQuery(gf, q.Result, tid, t)
@@ -455,11 +455,11 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 
 	for k, a := range tests {
 		var gb GEOBBOX
-		err := gb.UnmarshalText(a.Query)
+		exception := gb.UnmarshalText(a.Query)
 
-		if err != nil {
-			if err != a.Exception {
-				t.Errorf("test: %d, expected: %+v,\n got: %+v", k, a.Exception, err)
+		if exception != nil {
+			if exception != a.Exception {
+				t.Errorf("test: %d, expected: %+v,\n got: %+v", k, a.Exception, exception)
 			}
 		}
 

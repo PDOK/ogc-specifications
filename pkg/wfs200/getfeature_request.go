@@ -102,8 +102,8 @@ func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) wsc110.Excep
 	}
 
 	var br BaseRequest
-	if err := br.parseQueryParameters(q); err != nil {
-		return err
+	if exception := br.parseQueryParameters(q); exception != nil {
+		return exception
 	}
 	gf.BaseRequest = br
 

@@ -62,8 +62,8 @@ func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Excepti
 	q := utils.KeysToUpper(query)
 
 	var br BaseRequest
-	if err := br.parseQueryParameters(q); err != nil {
-		return err
+	if exception := br.parseQueryParameters(q); exception != nil {
+		return exception
 	}
 	dft.BaseRequest = br
 
