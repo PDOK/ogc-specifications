@@ -68,7 +68,7 @@ func (gm *GetMapRequest) Validate(c Capabilities) Exceptions {
 // ParseOperationRequestKVP process the simple struct to a complex struct
 func (gm *GetMapRequest) parseKVP(gmkvp getMapKVPRequest) Exceptions {
 	gm.XMLName.Local = getmap
-	gm.BaseRequest.build(gmkvp.service, gmkvp.version)
+	gm.BaseRequest.parseKVP(gmkvp.baseRequestKVP)
 
 	sld, exceptions := gmkvp.buildStyledLayerDescriptor()
 	if exceptions != nil {
@@ -77,7 +77,7 @@ func (gm *GetMapRequest) parseKVP(gmkvp getMapKVPRequest) Exceptions {
 	gm.StyledLayerDescriptor = sld
 
 	var crs CRS
-	crs.ParseString(gmkvp.crs)
+	crs.parseString(gmkvp.crs)
 	gm.CRS = crs
 
 	var bbox BoundingBox

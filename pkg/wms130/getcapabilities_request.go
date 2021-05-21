@@ -68,7 +68,7 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Excepti
 func (gc *GetCapabilitiesRequest) parseKVP(gckvp getCapabilitiesKVPRequest) Exceptions {
 
 	gc.XMLName.Local = gckvp.request
-	gc.BaseRequest.build(gckvp.service, gckvp.version)
+	gc.BaseRequest.parseKVP(gckvp.baseRequestKVP)
 	return nil
 }
 

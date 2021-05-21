@@ -89,7 +89,7 @@ func (gfi *GetFeatureInfoRequest) parseKVP(gfikvp getFeatureInfoKVPRequest) Exce
 	var exceptions Exceptions
 
 	gfi.XMLName.Local = getfeatureinfo
-	gfi.BaseRequest.build(gfikvp.service, gfikvp.version)
+	gfi.BaseRequest.parseKVP(gfikvp.baseRequestKVP)
 
 	sld, ex := gfikvp.buildStyledLayerDescriptor()
 	if ex != nil {
