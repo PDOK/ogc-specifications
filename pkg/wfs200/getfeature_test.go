@@ -29,12 +29,12 @@ func TestGetFeatureBuildXML(t *testing.T) {
 		gf     GetFeatureRequest
 		result string
 	}{
-		0: {gf: GetFeatureRequest{BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}, Query: Query{TypeNames: "test", SrsName: sp("urn:ogc:def:crs:EPSG::28992")}},
+		0: {gf: GetFeatureRequest{StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}, Query: Query{TypeNames: "test", SrsName: sp("urn:ogc:def:crs:EPSG::28992")}},
 			result: `<?xml version="1.0" encoding="UTF-8"?>
 <GetFeature service="WFS" version="2.0.0" outputFormat="application/gml+xml; version=3.2" count="3" startindex="0">
  <Query typeNames="test" srsName="urn:ogc:def:crs:EPSG::28992"></Query>
 </GetFeature>`},
-		1: {gf: GetFeatureRequest{BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)}, BaseRequest: BaseRequest{
+		1: {gf: GetFeatureRequest{StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)}, BaseRequest: BaseRequest{
 			Attr: common.XMLAttribute{
 				xml.Attr{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"}},
 			Service: "WFS", Version: "2.0.0"}, Query: Query{TypeNames: "test", SrsName: sp("urn:ogc:def:crs:EPSG::28992")}},
@@ -65,7 +65,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 		0: {body: []byte(`<GetFeature outputFormat="application/gml+xml; version=3.2" count="3" startindex="0" service="WFS" version="2.0.0">
 		<Query typeNames="kadastralekaart:kadastralegrens" srsName="urn:ogc:def:crs:EPSG::28992"/>
 	   </GetFeature>`),
-			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
+			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
 				BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
 		// Get feature by resourceid
 		1: {body: []byte(`<?xml version="1.0" encoding="UTF-8"?>
@@ -76,9 +76,9 @@ func TestGetFeatureParseXML(t *testing.T) {
 		  </fes:Filter>
 		 </Query>
 		</GetFeature>`),
-			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
+			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
 				Query: Query{Filter: &Filter{
-					ResourceID: &[]ResourceID{{Rid: "kadastralegrens.29316bf0-b87f-4e8d-bf00-21f894bdf655"}}}},
+					ResourceID: &ResourceIDs{{Rid: "kadastralegrens.29316bf0-b87f-4e8d-bf00-21f894bdf655"}}}},
 				BaseRequest: BaseRequest{
 					Attr: []xml.Attr{
 						{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"}},
@@ -96,7 +96,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 			  </fes:Filter>
 			 </Query>
 			</GetFeature>`),
-			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
+			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
 				Query: Query{Filter: &Filter{
 					ComparisonOperator: ComparisonOperator{PropertyIsEqualTo: &[]PropertyIsEqualTo{{
 						ComparisonOperatorAttribute: ComparisonOperatorAttribute{MatchCase: sp("true"), ValueReference: sp("id"), Literal: "29316bf0-b87f-4e8d-bf00-21f894bdf655"},
@@ -223,14 +223,14 @@ func TestGetFeatureParseKVP(t *testing.T) {
 		exception   wsc110.Exception
 	}{ // Standaard getfeature request with count
 		0: {queryParams: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}},
-			result: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3)}, BaseRequest: BaseRequest{Service: Service, Version: Version}, Query: Query{TypeNames: "dummy"}}},
+			result: GetFeatureRequest{XMLName: xml.Name{Local: getfeature}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/xml"), Count: ip(3)}, BaseRequest: BaseRequest{Service: Service, Version: Version}, Query: Query{TypeNames: "dummy"}}},
 		// Invalid getfeature request: missing REQUEST, SERVICE, VERSION
 		// But object should still build
 		1: {queryParams: map[string][]string{OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}, VERSION: {Version}},
-			result: GetFeatureRequest{BaseRequest: BaseRequest{Version: Version}, BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3)}, Query: Query{TypeNames: "dummy"}}},
+			result: GetFeatureRequest{BaseRequest: BaseRequest{Version: Version}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/xml"), Count: ip(3)}, Query: Query{TypeNames: "dummy"}}},
 		// Namespacesn
 		2: {queryParams: map[string][]string{OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}, NAMESPACES: {"xmlns(ns1,http://www.someserver.com/ns1),xmlns(ns2,http://someserver.com/ns2)"}, VERSION: {Version}},
-			result: GetFeatureRequest{BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3)}, BaseRequest: BaseRequest{
+			result: GetFeatureRequest{StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/xml"), Count: ip(3)}, BaseRequest: BaseRequest{
 				Version: Version,
 				Attr: []xml.Attr{
 					{Name: xml.Name{Space: "xmlns", Local: "ns1"}, Value: "http://www.someserver.com/ns1"},
@@ -239,27 +239,27 @@ func TestGetFeatureParseKVP(t *testing.T) {
 				Query: Query{TypeNames: "dummy"}}},
 		// Startindex & resulttype
 		3: {queryParams: map[string][]string{OUTPUTFORMAT: {"application/xml"}, STARTINDEX: {"1000"}, RESULTTYPE: {"hits"}, TYPENAMES: {"dummy"}, COUNT: {"3"}, VERSION: {Version}},
-			result: GetFeatureRequest{BaseGetFeatureRequest: BaseGetFeatureRequest{OutputFormat: sp("application/xml"), Count: ip(3), Startindex: ip(1000), ResultType: sp("hits")}, BaseRequest: BaseRequest{Version: Version}, Query: Query{TypeNames: "dummy"}}},
+			result: GetFeatureRequest{StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/xml"), Count: ip(3), Startindex: ip(1000), ResultType: sp("hits")}, BaseRequest: BaseRequest{Version: Version}, Query: Query{TypeNames: "dummy"}}},
 		4: {queryParams: map[string][]string{},
 			exception: wsc110.MissingParameterValue(VERSION),
 		},
 		// Resourceids
 		5: {queryParams: map[string][]string{RESOURCEID: {"one,two,three"}, VERSION: {Version}},
-			result: GetFeatureRequest{Query: Query{Filter: &Filter{ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
+			result: GetFeatureRequest{Query: Query{Filter: &Filter{ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 		// Resourceids through Filter
 		6: {queryParams: map[string][]string{FILTER: {`<Filter><ResourceId rid="one"/><ResourceId rid="two"/><ResourceId rid="three"/></Filter>`}, VERSION: {Version}},
-			result: GetFeatureRequest{Query: Query{Filter: &Filter{ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
+			result: GetFeatureRequest{Query: Query{Filter: &Filter{ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 		// Resourceids through Filter and RESOURCEID parameter,.. should this be possible?
 		7: {queryParams: map[string][]string{RESOURCEID: {"one,two,three"}, FILTER: {`<Filter><ResourceId rid="four"/><ResourceId rid="five"/><ResourceId rid="six"/></Filter>`}, VERSION: {Version}},
-			result: GetFeatureRequest{Query: Query{Filter: &Filter{ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}, {Rid: "four"}, {Rid: "five"}, {Rid: "six"}}}}, BaseRequest: BaseRequest{Version: Version}}},
+			result: GetFeatureRequest{Query: Query{Filter: &Filter{ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}, {Rid: "four"}, {Rid: "five"}, {Rid: "six"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 		// Resourceids through Filter
 		8: {queryParams: map[string][]string{FILTER: {`<Filter><ResourceId rid="one"/><ResourceId rid="two"/><ResourceId rid="three"/></Filter>`}, SRSNAME: {"srsname"}, VERSION: {Version}},
-			result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
+			result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 		// // Complex Filter
 		// 0: {QueryParams: map[string][]string{FILTER: []string{`<Filter><OR><AND><PropertyIsLike wildcard='*' singleChar='.' escape='!'><PropertyName>NAME</PropertyName><Literal>Syd*</Literal></PropertyIsLike><PropertyIsEqualTo><PropertyName>POPULATION</PropertyName><Literal>4250065</Literal></PropertyIsEqualTo></AND><DWithin><PropertyName>Geometry</PropertyName><Point srsName="mekker"><coordinates>135.500000,34.666667</coordinates></Point><Distance units='m'>10000</Distance></DWithin></OR></Filter>`}, SRSNAME: []string{"srsname"}},
 		// 	Result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{}}, BaseRequest: BaseRequest{Version: Version}}},
 		9: {queryParams: map[string][]string{BBOX: {`1,1,2,2`}, FILTER: {`<Filter><ResourceId rid="one"/><ResourceId rid="two"/><ResourceId rid="three"/></Filter>`}, SRSNAME: {"srsname"}, VERSION: {Version}},
-			result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
+			result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}},
 	}
 
 	for k, test := range tests {
@@ -463,7 +463,7 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 
 	for k, test := range tests {
 		var gb GEOBBOX
-		exception := gb.UnmarshalText(test.query)
+		exception := gb.parseString(test.query)
 
 		if exception != nil {
 			if exception != test.exception {
@@ -498,7 +498,7 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		result := test.bbox.MarshalText()
+		result := test.bbox.toString()
 		if result != test.expected {
 			t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, result)
 		}
@@ -510,14 +510,14 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 // ----------
 
 func BenchmarkGetFeatureBuildKVP(b *testing.B) {
-	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
+	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
 		gf.ToQueryParameters()
 	}
 }
 
 func BenchmarkGetFeatureBuildXML(b *testing.B) {
-	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &[]ResourceID{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
+	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
 		gf.ToXML()
 	}

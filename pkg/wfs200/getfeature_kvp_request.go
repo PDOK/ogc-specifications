@@ -45,6 +45,7 @@ type standardResolveParameters struct {
 }
 
 // AdhocQueryKeywords struct
+// NOTE filter, resourceid and bbox are mutually exclusive
 type adhocQueryKeywords struct {
 	// Table 8
 	typenames string  `yaml:"typenames"`
@@ -162,18 +163,56 @@ func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) 
 		gfkvp.standardPresentationParameters.resulttype = gf.ResultType
 	}
 
-	// gfkvp.standardResolveParameters.resolve = &vp
-	// gfkvp.standardResolveParameters.resolvedepth = &vp
-	// gfkvp.standardResolveParameters.resolvetimeout = &vp
+	if gf.Resolve != nil {
+		gfkvp.standardResolveParameters.resolve = gf.Resolve
+	}
+
+	if gf.ResolveDepth != nil {
+		i := strconv.Itoa(*gf.ResolveDepth)
+		gfkvp.standardResolveParameters.resolvedepth = &i
+	}
+
+	if gf.ResolveTimeout != nil {
+		i := strconv.Itoa(*gf.ResolveTimeout)
+		gfkvp.standardResolveParameters.resolvetimeout = &i
+	}
+
+	// TODO: extract namespaces from dataset specific and with inspire/ogc
 	// gfkvp.commonKeywords.namespaces = &vp
-	// gfkvp.adhocQueryKeywords.typenames = v[0]
+
+	gfkvp.adhocQueryKeywords.typenames = gf.Query.TypeNames
+
+	// TODO
 	// gfkvp.adhocQueryKeywords.aliases = &vp
-	// gfkvp.adhocQueryKeywords.srsname = &vp
-	// gfkvp.adhocQueryKeywords.filter = &vp
+
+	if gf.Query.SrsName != nil {
+		gfkvp.srsname = gf.Query.SrsName
+	}
+
+	if gf.Query.Filter != nil {
+		f := gf.Query.Filter.toString()
+		gfkvp.filter = &f
+	}
+
+	// TODO
 	// gfkvp.adhocQueryKeywords.filter_language = &vp
-	// gfkvp.adhocQueryKeywords.resourceid = &vp
-	// gfkvp.adhocQueryKeywords.bbox = &vp
-	// gfkvp.adhocQueryKeywords.sortby = &vp
+
+	if gf.Query.Filter.ResourceID != nil {
+		s := gf.Query.Filter.ResourceID.toString()
+		gfkvp.resourceid = &(s)
+	}
+
+	if gf.Query.Filter.BBOX != nil {
+		s := gf.Query.Filter.BBOX.toString()
+		gfkvp.bbox = &s
+	}
+
+	if gf.Query.SortBy != nil {
+		s := gf.Query.SortBy.toString()
+		gfkvp.adhocQueryKeywords.sortby = &s
+	}
+
+	// TODO
 	// gfkvp.storedQueryKeywords.storedqueryid = v[0]
 
 	return nil

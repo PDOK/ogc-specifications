@@ -1,8 +1,6 @@
 package wfs200
 
 import (
-	"net/url"
-
 	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
@@ -55,13 +53,12 @@ type BaseRequest struct {
 }
 
 // parseQueryParameters builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) parseQueryParameters(query url.Values) wsc110.Exceptions {
-	if len(query[SERVICE]) > 0 {
-		// Service is optional, because it's implicit for a GetFeature/DescribeFeatureType request
-		b.Service = query[SERVICE][0]
-	}
-	if len(query[VERSION]) > 0 {
-		b.Version = query[VERSION][0]
+func (b *BaseRequest) parseKVP(bskvp baseRequestKVP) wsc110.Exceptions {
+	// Service is optional, because it's implicit for a GetFeature request
+	b.Service = Service
+
+	if bskvp.version != `` {
+		b.Version = bskvp.version
 	} else {
 		// Version is mandatory
 		return wsc110.MissingParameterValue(VERSION).ToExceptions()
