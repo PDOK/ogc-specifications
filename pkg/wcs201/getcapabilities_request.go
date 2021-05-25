@@ -67,7 +67,7 @@ func (gc *GetCapabilities) QueryParameters(query url.Values) common.Exceptions {
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gc *GetCapabilities) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
@@ -77,7 +77,7 @@ func (gc *GetCapabilities) BuildKVP() url.Values {
 	return querystring
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (gc *GetCapabilities) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)

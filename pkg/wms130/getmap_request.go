@@ -94,7 +94,7 @@ func (gm *GetMapRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exc
 	return nil
 }
 
-// ParseKVP builds a GetMap object based on the available query parameters
+// ParseQueryParameters builds a GetMap object based on the available query parameters
 func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
@@ -133,7 +133,7 @@ func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gm *GetMapRequest) ToQueryParameters() url.Values {
 	gmkvp := GetMapKVP{}
 	gmkvp.ParseOperationRequest(gm)
@@ -142,7 +142,7 @@ func (gm *GetMapRequest) ToQueryParameters() url.Values {
 	return kvp
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (gm *GetMapRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gm, "", " ")
 	return append([]byte(xml.Header), si...)
@@ -234,7 +234,7 @@ type GetMapRequest struct {
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
 	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
-	// Time                  *string               `xml:"Time" yaml:"time"`BuildKVP
+	// Time                  *string               `xml:"Time" yaml:"time"`ToQueryParameters
 }
 
 // Validate validates the output parameters

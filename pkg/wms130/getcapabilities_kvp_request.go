@@ -52,7 +52,7 @@ func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or OperationRequest) Exce
 	return nil
 }
 
-// BuildKVP builds a url.Values query from a GetMapKVP struct
+// ToQueryParameters builds a url.Values query from a GetMapKVP struct
 func (gckvp *GetCapabilitiesKVP) ToQueryParameters() url.Values {
 	query := make(map[string][]string)
 

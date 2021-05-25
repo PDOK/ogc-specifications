@@ -41,7 +41,7 @@ type GetMapKVPOptional struct {
 	// Elevation   *string `yaml:"elevation,omitempty"`
 }
 
-// ParseKVP builds a GetMapKVP object based on the available query parameters
+// ParseQueryParameters builds a GetMapKVP object based on the available query parameters
 func (gmkvp *GetMapKVP) ParseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
@@ -161,7 +161,7 @@ func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, Exce
 	return sld, nil
 }
 
-// BuildKVP builds a url.Values query from a GetMapKVP struct
+// ToQueryParameters builds a url.Values query from a GetMapKVP struct
 func (gmkvp *GetMapKVP) ToQueryParameters() url.Values {
 	query := make(map[string][]string)
 

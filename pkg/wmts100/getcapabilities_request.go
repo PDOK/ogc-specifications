@@ -50,7 +50,7 @@ func (gc *GetCapabilitiesRequest) ParseXML(body []byte) wsc110.Exceptions {
 	return nil
 }
 
-// ParseKVP builds a GetCapabilities object based on the available query parameters
+// ParseQueryParameters builds a GetCapabilities object based on the available query parameters
 func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
@@ -67,7 +67,7 @@ func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
@@ -77,7 +77,7 @@ func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
 	return querystring
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (gc *GetCapabilitiesRequest) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)

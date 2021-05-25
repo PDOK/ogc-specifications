@@ -143,7 +143,7 @@ func (gfi *GetFeatureInfoRequest) ParseOperationRequestKVP(orkvp OperationReques
 	return nil
 }
 
-// ParseKVP builds a GetFeatureInfo object based on the available query parameters
+// ParseQueryParameters builds a GetFeatureInfo object based on the available query parameters
 func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -163,7 +163,7 @@ func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Excepti
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gfi *GetFeatureInfoRequest) ToQueryParameters() url.Values {
 	gfikvp := GetFeatureInfoKVP{}
 	gfikvp.ParseOperationRequest(gfi)
@@ -172,7 +172,7 @@ func (gfi *GetFeatureInfoRequest) ToQueryParameters() url.Values {
 	return kvp
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 // Note: this GetFeatureInfo XML body is a interpretation and there isn't a
 // good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.

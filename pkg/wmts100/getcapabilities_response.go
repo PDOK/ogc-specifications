@@ -27,7 +27,7 @@ func (gc *GetCapabilitiesResponse) Validate() wsc110.Exceptions {
 	return nil
 }
 
-// BuildXML builds a GetCapabilities response object
+// ToXML builds a GetCapabilities response object
 func (gc *GetCapabilitiesResponse) BuildXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)

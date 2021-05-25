@@ -30,7 +30,7 @@ type GetFeatureInfoKVPOptional struct {
 	Exceptions   *string `yaml:"exceptions,omitempty"`
 }
 
-// ParseKVP builds a GetMapKVP object based on the available query parameters
+// ParseQueryParameters builds a GetMapKVP object based on the available query parameters
 func (gfikvp *GetFeatureInfoKVP) ParseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
@@ -81,7 +81,7 @@ func (gfikvp *GetFeatureInfoKVP) ParseQueryParameters(query url.Values) Exceptio
 	return nil
 }
 
-// BuildKVP builds a url.Values query from a GetMapKVP struct
+// ToQueryParameters builds a url.Values query from a GetMapKVP struct
 func (gfikvp *GetFeatureInfoKVP) ToQueryParameters() url.Values {
 	query := make(map[string][]string)
 
