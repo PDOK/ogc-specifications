@@ -130,7 +130,7 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 
 	for k, n := range tests {
 		var dft DescribeFeatureTypeRequest
-		err := dft.ParseKVP(n.Query)
+		err := dft.ParseQueryParameters(n.Query)
 		if err != nil {
 			if err[0].Error() != n.Exception[0].Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
@@ -169,7 +169,7 @@ func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 	}
 
 	for k, v := range tests {
-		values := v.dft.BuildKVP()
+		values := v.dft.ToQueryParameters()
 		c := false
 		for _, value := range values {
 			for _, q := range v.query {
@@ -201,7 +201,7 @@ func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 		},
 	}
 	for k, v := range tests {
-		b := string(v.dft.BuildXML())
+		b := string(v.dft.ToXML())
 		if b != v.body {
 			t.Errorf("test: %d, expected: %s ,\n got: %s", k, v.body, b)
 		}
@@ -220,7 +220,7 @@ func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
 			OutputFormat: sp(`application/json`),
 			TypeName:     sp(`example:example`)}}
 	for i := 0; i < b.N; i++ {
-		df.BuildKVP()
+		df.ToQueryParameters()
 	}
 }
 
@@ -232,6 +232,6 @@ func BenchmarkDescribeFeatureTypeBuildXML(b *testing.B) {
 			OutputFormat: sp(`application/json`),
 			TypeName:     sp(`example:example`)}}
 	for i := 0; i < b.N; i++ {
-		df.BuildXML()
+		df.ToXML()
 	}
 }

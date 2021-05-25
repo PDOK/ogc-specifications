@@ -85,7 +85,7 @@ func (gf *GetFeatureRequest) ParseXML(doc []byte) wsc110.Exceptions {
 	return nil
 }
 
-// ParseKVP builds a GetCapabilities object based on the available query parameters
+// ParseQueryParameters builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
 func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
 	if len(query) == 0 {
@@ -211,14 +211,14 @@ func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) wsc110.Excep
 	return nil
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 // TODO: In the Filter>Query>... the content of the GeometryOperand (Point,Line,Polygon,...) is the raw xml (text)
 func (gf *GetFeatureRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gf, "", " ")
 	return append([]byte(xml.Header), si...)
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gf *GetFeatureRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	// base

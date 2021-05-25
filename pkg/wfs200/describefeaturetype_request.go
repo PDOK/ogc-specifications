@@ -23,18 +23,18 @@ func (dft *DescribeFeatureTypeRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) Validate(c wsc110.Capabilities) wsc110.Exceptions {
 	return nil
 }
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
-func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) wsc110.Exceptions {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
+		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
 	if err := xml.Unmarshal(doc, &dft); err != nil {
-		return common.Exceptions{wsc110.OperationNotSupported(err.Error())}
+		return wsc110.OperationNotSupported(err.Error()).ToExceptions()
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -51,8 +51,8 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
 	return nil
 }
 
-// ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Exceptions {
+// ParseQueryParameters builds a DescribeFeatureType object based on the available query parameters
+func (dft *DescribeFeatureTypeRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
@@ -83,8 +83,8 @@ func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Excepti
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
-func (dft *DescribeFeatureTypeRequest) BuildKVP() url.Values {
+// ToQueryParameters builds a new query string that will be proxied
+func (dft *DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{dft.XMLName.Local}
 	querystring[SERVICE] = []string{dft.BaseRequest.Service}
@@ -98,8 +98,8 @@ func (dft *DescribeFeatureTypeRequest) BuildKVP() url.Values {
 	return querystring
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (dft *DescribeFeatureTypeRequest) BuildXML() []byte {
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func (dft *DescribeFeatureTypeRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(dft, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
