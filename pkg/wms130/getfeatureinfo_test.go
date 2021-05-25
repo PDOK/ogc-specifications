@@ -157,7 +157,7 @@ func TestGetFeatureInfoToXML(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoParseKVP(t *testing.T) {
+func TestGetFeatureInfoParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query      url.Values
 		excepted   GetFeatureInfoRequest

@@ -93,7 +93,7 @@ func (gf *GetFeatureRequest) ParseXML(doc []byte) []wsc110.Exception {
 	return nil
 }
 
-// ParseKVP builds a GetCapabilities object based on the available query parameters
+// ParseQueryParameters builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
 func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
@@ -108,7 +108,7 @@ func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) []wsc110.Exc
 		return exceptions
 	}
 
-	if exceptions := gf.parseKVP(gfkvp); exceptions != nil {
+	if exceptions := gf.parseKVPRequest(gfkvp); exceptions != nil {
 		return exceptions
 	}
 	return nil
@@ -121,19 +121,19 @@ func (gf *GetFeatureRequest) ToXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func (gf *GetFeatureRequest) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Exception {
+func (gf *GetFeatureRequest) parseKVPRequest(gfkvp getFeatureKVPRequest) []wsc110.Exception {
 	// Base
 	gf.XMLName.Local = getfeature
 
 	var br BaseRequest
-	if exceptions := br.parseKVP(gfkvp.baseRequestKVP); exceptions != nil {
+	if exceptions := br.parseKVPRequest(gfkvp.baseRequestKVP); exceptions != nil {
 		return exceptions
 	}
 	gf.BaseRequest = br
 
 	// Table 5
 	var spp StandardPresentationParameters
-	if exceptions := spp.parseKVP(gfkvp); exceptions != nil {
+	if exceptions := spp.parseKVPRequest(gfkvp); exceptions != nil {
 		return exceptions
 	}
 
@@ -148,7 +148,7 @@ func (gf *GetFeatureRequest) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Excep
 
 	// Table 8
 	var q Query
-	if exceptions := q.parseKVP(gfkvp); exceptions != nil {
+	if exceptions := q.parseKVPRequest(gfkvp); exceptions != nil {
 		return exceptions
 	}
 	gf.Query = q
@@ -200,7 +200,7 @@ type StandardPresentationParameters struct {
 	Startindex   *int    `xml:"startindex,attr" yaml:"startindex"` // default 0
 }
 
-func (b *StandardPresentationParameters) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Exception {
+func (b *StandardPresentationParameters) parseKVPRequest(gfkvp getFeatureKVPRequest) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 
 	if gfkvp.standardPresentationParameters != nil {
@@ -277,7 +277,7 @@ type Query struct {
 	PropertyName *[]string `xml:"PropertyName" yaml:"propertyname"`
 }
 
-func (q *Query) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Exception {
+func (q *Query) parseKVPRequest(gfkvp getFeatureKVPRequest) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 
 	q.TypeNames = gfkvp.typenames
@@ -304,19 +304,19 @@ func (q *Query) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Exception {
 		case RESOURCEID:
 			f := Filter{}
 			var rids ResourceIDs
-			rids.parseKVP(*gfkvp.resourceid)
+			rids.parseKVPRequest(*gfkvp.resourceid)
 
 			f.ResourceID = &rids
 			q.Filter = &f
 		case FILTER:
 			var f Filter
-			if exception := f.parseKVP(*gfkvp.filter); exception != nil {
+			if exception := f.parseKVPRequest(*gfkvp.filter); exception != nil {
 				exceptions = append(exceptions, exception...)
 			}
 			q.Filter = &f
 		case BBOX:
 			var b GEOBBOX
-			if exception := b.parseString(*gfkvp.bbox); exception != nil {
+			if exception := b.parseKVPRequest(*gfkvp.bbox); exception != nil {
 				exceptions = append(exceptions, exception...)
 			}
 			q.Filter.BBOX = &b
@@ -400,7 +400,7 @@ func (f Filter) toString() string {
 	return (xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
-func (f *Filter) parseKVP(filter string) []wsc110.Exception {
+func (f *Filter) parseKVPRequest(filter string) []wsc110.Exception {
 	if error := xml.Unmarshal([]byte(filter), &f); error != nil {
 		return wsc110.NoApplicableCode(`Filter is not valid XML`).ToExceptions()
 	}
@@ -447,7 +447,7 @@ func (r ResourceIDs) toString() string {
 	return strings.Join(rids, ",")
 }
 
-func (r *ResourceIDs) parseKVP(resourceids string) []wsc110.Exception {
+func (r *ResourceIDs) parseKVPRequest(resourceids string) []wsc110.Exception {
 	var rids ResourceIDs
 	for _, resourceid := range strings.Split(resourceids, `,`) {
 		rids = append(rids, ResourceID{Rid: resourceid})
@@ -711,7 +711,7 @@ type GEOBBOX struct {
 }
 
 // UnmarshalText a string to a GEOBBOX object
-func (gb *GEOBBOX) parseString(q string) []wsc110.Exception {
+func (gb *GEOBBOX) parseKVPRequest(q string) []wsc110.Exception {
 	regex := regexp.MustCompile(`,`)
 	result := regex.Split(q, -1)
 	if len(result) == 4 || len(result) == 5 {

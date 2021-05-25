@@ -86,7 +86,7 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesParseKVP(t *testing.T) {
+func TestGetCapabilitiesParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query      url.Values
 		result     GetCapabilitiesRequest

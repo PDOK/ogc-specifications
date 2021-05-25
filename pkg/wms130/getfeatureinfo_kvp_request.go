@@ -16,7 +16,7 @@ type getFeatureInfoKVPRequest struct {
 	getFeatureInfoKVPOptional
 }
 
-// ParseKVP builds a GetMapKVP object based on the available query parameters
+// parseQueryParameters builds a GetMapKVP object based on the available query parameters
 func (gfikvp *getFeatureInfoKVPRequest) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {

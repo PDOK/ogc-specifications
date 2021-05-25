@@ -65,42 +65,19 @@ func (dft *DescribeFeatureTypeRequest) ParseQueryParameters(query url.Values) []
 		return exceptions
 	}
 
-	if exceptions := dft.parseKVP(dftkvp); exceptions != nil {
+	if exceptions := dft.parseKVPRequest(dftkvp); exceptions != nil {
 		return exceptions
 	}
 	return nil
-
-	// q := utils.KeysToUpper(query)
-
-	// var br BaseRequest
-	// if exception := br.parseKVP(q); exception != nil {
-	// 	return exception
-	// }
-	// dft.BaseRequest = br
-
-	// for k, v := range query {
-	// 	switch strings.ToUpper(k) {
-	// 	case REQUEST:
-	// 		if strings.EqualFold(v[0], describefeaturetype) {
-	// 			dft.XMLName.Local = describefeaturetype
-	// 		}
-	// 	case TYPENAME:
-	// 		dft.BaseDescribeFeatureTypeRequest.TypeName = &v[0] //TODO maybe process as a comma separated list
-	// 	case OUTPUTFORMAT:
-	// 		// TODO nothing for now always assume the default text/xml; subtype=gml/3.2
-	// 	}
-	// }
-
-	// return nil
 }
 
-func (dft *DescribeFeatureTypeRequest) parseKVP(dftkvp describeFeatureTypeKVPRequest) []wsc110.Exception {
+func (dft *DescribeFeatureTypeRequest) parseKVPRequest(dftkvp describeFeatureTypeKVPRequest) []wsc110.Exception {
 
 	// Base
 	dft.XMLName.Local = describefeaturetype
 
 	var br BaseRequest
-	if exceptions := br.parseKVP(dftkvp.baseRequestKVP); exceptions != nil {
+	if exceptions := br.parseKVPRequest(dftkvp.baseRequestKVP); exceptions != nil {
 		return exceptions
 	}
 	dft.BaseRequest = br

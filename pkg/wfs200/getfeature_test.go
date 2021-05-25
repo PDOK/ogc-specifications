@@ -215,7 +215,7 @@ func TestProcesNamespaces(t *testing.T) {
 	}
 }
 
-func TestGetFeatureParseKVP(t *testing.T) {
+func TestGetFeatureParseQueryParameters(t *testing.T) {
 
 	var tests = []struct {
 		queryParams url.Values
@@ -502,7 +502,7 @@ func TestUnmarshalTextGeoBOXX(t *testing.T) {
 
 	for k, test := range tests {
 		var gb GEOBBOX
-		exception := gb.parseString(test.query)
+		exception := gb.parseKVPRequest(test.query)
 
 		if exception != nil {
 			if exception[0] != test.exception {
@@ -562,7 +562,7 @@ func BenchmarkGetFeatureToXML(b *testing.B) {
 	}
 }
 
-func BenchmarkGetFeatureParseKVP(b *testing.B) {
+func BenchmarkGetFeatureParseQueryParameters(b *testing.B) {
 	kvp := map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}}
 
 	for i := 0; i < b.N; i++ {

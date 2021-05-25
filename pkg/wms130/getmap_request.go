@@ -66,9 +66,9 @@ func (gm *GetMapRequest) Validate(c Capabilities) Exceptions {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gm *GetMapRequest) parseKVP(gmkvp getMapKVPRequest) Exceptions {
+func (gm *GetMapRequest) parseKVPRequest(gmkvp getMapKVPRequest) Exceptions {
 	gm.XMLName.Local = getmap
-	gm.BaseRequest.parseKVP(gmkvp.baseRequestKVP)
+	gm.BaseRequest.parseKVPRequest(gmkvp.baseRequestKVP)
 
 	sld, exceptions := gmkvp.buildStyledLayerDescriptor()
 	if exceptions != nil {
@@ -97,7 +97,7 @@ func (gm *GetMapRequest) parseKVP(gmkvp getMapKVPRequest) Exceptions {
 	return nil
 }
 
-// ParseKVP builds a GetMap object based on the available query parameters
+// ParseQueryParameters builds a GetMap object based on the available query parameters
 func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
@@ -110,7 +110,7 @@ func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 		return exceptions
 	}
 
-	if exceptions := gm.parseKVP(gmkvp); exceptions != nil {
+	if exceptions := gm.parseKVPRequest(gmkvp); exceptions != nil {
 		return exceptions
 	}
 

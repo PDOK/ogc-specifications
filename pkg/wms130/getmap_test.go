@@ -256,7 +256,7 @@ func TestGetStyleKVPValue(t *testing.T) {
 	}
 }
 
-func TestGetMapParseKVP(t *testing.T) {
+func TestGetMapParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query     url.Values
 		excepted  GetMapRequest
@@ -739,7 +739,7 @@ func BenchmarkGetMapToXML(b *testing.B) {
 	}
 }
 
-func BenchmarkGetMapParseKVP(b *testing.B) {
+func BenchmarkGetMapParseQueryParameters(b *testing.B) {
 	kvp := map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 		LAYERS:      {`Rivers,Roads,Houses`},
 		STYLES:      {`CenterLine,CenterLine,Outline`},

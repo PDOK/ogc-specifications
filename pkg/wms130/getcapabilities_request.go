@@ -57,7 +57,7 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Excepti
 		return exception
 	}
 
-	if exception := gc.parseKVP(gckvp); exception != nil {
+	if exception := gc.parseKVPRequest(gckvp); exception != nil {
 		return exception
 	}
 
@@ -65,10 +65,10 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Excepti
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilitiesRequest) parseKVP(gckvp getCapabilitiesKVPRequest) Exceptions {
+func (gc *GetCapabilitiesRequest) parseKVPRequest(gckvp getCapabilitiesKVPRequest) Exceptions {
 
 	gc.XMLName.Local = gckvp.request
-	gc.BaseRequest.parseKVP(gckvp.baseRequestKVP)
+	gc.BaseRequest.parseKVPRequest(gckvp.baseRequestKVP)
 	return nil
 }
 

@@ -57,7 +57,7 @@ type BaseRequest struct {
 }
 
 // parseQueryParameters builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) parseKVP(bskvp baseRequestKVP) []wsc110.Exception {
+func (b *BaseRequest) parseKVPRequest(bskvp baseRequestKVP) []wsc110.Exception {
 	// Service is optional, because it's implicit for a GetFeature request
 	b.Service = Service
 

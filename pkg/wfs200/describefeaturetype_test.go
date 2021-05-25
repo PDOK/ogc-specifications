@@ -100,7 +100,7 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	}
 }
 
-func TestDescribeFeatureTypeParseKVP(t *testing.T) {
+func TestDescribeFeatureTypeParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query     url.Values
 		result    DescribeFeatureTypeRequest

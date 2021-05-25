@@ -48,8 +48,8 @@ func (gc *GetCapabilitiesRequest) ParseXML(body []byte) wsc110.Exceptions {
 	return nil
 }
 
-// ParseKVP builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) wsc110.Exceptions {
+// ParseQueryParameters builds a GetCapabilities object based on the available query parameters
+func (gc GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:

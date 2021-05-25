@@ -84,12 +84,12 @@ func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gfi *GetFeatureInfoRequest) parseKVP(gfikvp getFeatureInfoKVPRequest) Exceptions {
+func (gfi *GetFeatureInfoRequest) parseKVPRequest(gfikvp getFeatureInfoKVPRequest) Exceptions {
 
 	var exceptions Exceptions
 
 	gfi.XMLName.Local = getfeatureinfo
-	gfi.BaseRequest.parseKVP(gfikvp.baseRequestKVP)
+	gfi.BaseRequest.parseKVPRequest(gfikvp.baseRequestKVP)
 
 	sld, ex := gfikvp.buildStyledLayerDescriptor()
 	if ex != nil {
@@ -148,7 +148,7 @@ func (gfi *GetFeatureInfoRequest) parseKVP(gfikvp getFeatureInfoKVPRequest) Exce
 	}
 }
 
-// ParseKVP builds a GetFeatureInfo object based on the available query parameters
+// ParseQueryParameters builds a GetFeatureInfo object based on the available query parameters
 func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
@@ -161,7 +161,7 @@ func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Excepti
 		return exceptions
 	}
 
-	if exceptions := gfi.parseKVP(gfikvp); len(exceptions) != 0 {
+	if exceptions := gfi.parseKVPRequest(gfikvp); len(exceptions) != 0 {
 		return exceptions
 	}
 
