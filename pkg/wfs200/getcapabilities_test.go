@@ -36,12 +36,12 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"}}}},
 		// Unknown XML document
 		1: {body: []byte("<Unknown/>"),
-			exception: wsc110.Exception{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
+			exception: wsc110.NoApplicableCode("This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>")},
 		// no XML document
 		2: {body: []byte("no XML document, just a string"),
-			exception: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}},
+			exception: wsc110.NoApplicableCode("Could not process XML, is it XML?")},
 		// document at all
-		3: {exception: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}},
+		3: {exception: wsc110.NoApplicableCode("Could not process XML, is it XML?")},
 		// Duplicate attributes in XML message with the same value
 		4: {body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
 			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
@@ -90,7 +90,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 	var tests = []struct {
 		query      url.Values
 		result     GetCapabilitiesRequest
-		exceptions wsc110.Exceptions
+		exceptions []wsc110.Exception
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"2.0.0"}},
@@ -108,7 +108,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "no version found"}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			exceptions: wsc110.Exceptions{wsc110.MissingParameterValue(SERVICE), wsc110.MissingParameterValue(REQUEST)},
+			exceptions: []wsc110.Exception{wsc110.MissingParameterValue(SERVICE), wsc110.MissingParameterValue(REQUEST)},
 		},
 	}
 

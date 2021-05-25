@@ -18,19 +18,19 @@ func (gc *GetCapabilitiesRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Validate(c wsc110.Capabilities) wsc110.Exceptions {
-	var exceptions wsc110.Exceptions
+func (gc *GetCapabilitiesRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
+	var exceptions []wsc110.Exception
 	return exceptions
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) wsc110.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return wsc110.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
+		return []wsc110.Exception{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
 	}
 	if err := xml.Unmarshal(doc, &gc); err != nil {
-		return wsc110.Exceptions{wsc110.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
+		return []wsc110.Exception{wsc110.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -47,7 +47,7 @@ func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) wsc110.Exceptions {
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty SERVICE and REQUEST parameter is missing.
@@ -69,7 +69,7 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.
 }
 
 // ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilitiesRequest) parseKVP(gckvp getCapabilitiesKVPRequest) wsc110.Exceptions {
+func (gc *GetCapabilitiesRequest) parseKVP(gckvp getCapabilitiesKVPRequest) []wsc110.Exception {
 	gc.XMLName.Local = gckvp.request
 	gc.Service = gckvp.service
 	gc.Version = gckvp.version

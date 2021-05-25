@@ -9,14 +9,13 @@ import (
 
 //getCapabilitiesKVPRequest struct
 type getCapabilitiesKVPRequest struct {
-	// Table 8 - The Parameters of a GetMap request
 	service string `yaml:"service,omitempty"`
 	baseRequestKVP
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gckvp *getCapabilitiesKVPRequest) parseQueryParameters(query url.Values) wsc110.Exceptions {
-	var exceptions wsc110.Exceptions
+func (gckvp *getCapabilitiesKVPRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
+	var exceptions []wsc110.Exception
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, wsc110.InvalidParameterValue(k, strings.Join(v, ",")))
@@ -44,7 +43,7 @@ func (gckvp *getCapabilitiesKVPRequest) parseQueryParameters(query url.Values) w
 // Mandatory:  REQUEST=GetCapabilities
 //             SERVICE=WFS
 // Optional:   VERSION=2.0.0
-func (gckvp *getCapabilitiesKVPRequest) parseGetCapabilitiesRequest(gc GetCapabilitiesRequest) wsc110.Exceptions {
+func (gckvp *getCapabilitiesKVPRequest) parseGetCapabilitiesRequest(gc GetCapabilitiesRequest) []wsc110.Exception {
 	gckvp.request = getcapabilities
 	gckvp.version = gc.Version
 	gckvp.service = gc.Service
@@ -53,7 +52,7 @@ func (gckvp *getCapabilitiesKVPRequest) parseGetCapabilitiesRequest(gc GetCapabi
 }
 
 // toQueryParameters builds a url.Values query from a GetCapabilitiesKVP struct
-func (gckvp *getCapabilitiesKVPRequest) toQueryParameters() url.Values {
+func (gckvp getCapabilitiesKVPRequest) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
 	query[SERVICE] = []string{gckvp.service}

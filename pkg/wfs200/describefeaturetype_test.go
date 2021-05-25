@@ -19,7 +19,7 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	var tests = []struct {
 		body      []byte
 		result    DescribeFeatureTypeRequest
-		exception wsc110.Exceptions
+		exception []wsc110.Exception
 	}{
 		// Lots of attribute declarations
 		0: {body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"/>`),
@@ -36,12 +36,12 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"}}}}},
 		// Unknown XML document
 		1: {body: []byte("<Unknown/>"),
-			exception: wsc110.Exception{ExceptionText: "This service does not know the operation: expected element type <DescribeFeatureType> but have <Unknown>"}.ToExceptions()},
+			exception: exception{ExceptionText: "expected element type <DescribeFeatureType> but have <Unknown>"}.ToExceptions()},
 		// no XML document
 		2: {body: []byte("no XML document, just a string"),
-			exception: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
+			exception: exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
 		// document at all
-		3: {exception: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
+		3: {exception: exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
 		// Duplicate attributes in XML message with the same value
 		4: {body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
 			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
@@ -104,14 +104,14 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 	var tests = []struct {
 		query     url.Values
 		result    DescribeFeatureTypeRequest
-		exception wsc110.Exceptions
+		exception []wsc110.Exception
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
 		0: {query: map[string][]string{"SERVICE": {Service}, "Request": {describefeaturetype}, "version": {"2.0.0"}},
 			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
 		// Missing mandatory SERVICE attribute
 		1: {query: map[string][]string{"Request": {describefeaturetype}},
-			exception: wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}},
+			exception: []wsc110.Exception{wsc110.MissingParameterValue(VERSION)}},
 		// Missing optional VERSION attribute
 		2: {query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "Version": {"2.0.0"}},
 			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: Version}}},
@@ -126,13 +126,13 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: Service, Version: Version}}},
 		6: {query: map[string][]string{},
-			exception: wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)},
+			exception: []wsc110.Exception{wsc110.MissingParameterValue(VERSION)},
 		},
 	}
 
 	for k, test := range tests {
 		var dft DescribeFeatureTypeRequest
-		exception := dft.ParseKVP(test.query)
+		exception := dft.ParseQueryParameters(test.query)
 		if exception != nil {
 			if exception[0].Error() != test.exception[0].Error() {
 				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)

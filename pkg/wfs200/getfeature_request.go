@@ -44,7 +44,7 @@ const (
 type GetFeatureRequest struct {
 	XMLName xml.Name `xml:"GetFeature" yaml:"getfeature"`
 	BaseRequest
-	StandardPresentationParameters
+	*StandardPresentationParameters
 	*StandardResolveParameters
 	Query Query `xml:"Query" yaml:"query"`
 }
@@ -55,7 +55,7 @@ func (gf *GetFeatureRequest) Type() string {
 }
 
 // Validate returns GetFeature
-func (gf *GetFeatureRequest) Validate(c wsc110.Capabilities) wsc110.Exceptions {
+func (gf *GetFeatureRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
 
 	//getfeaturecap := c.(capabilities.Capabilities)
 	return nil
@@ -71,7 +71,7 @@ var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FI
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gf *GetFeatureRequest) ParseXML(doc []byte) wsc110.Exceptions {
+func (gf *GetFeatureRequest) ParseXML(doc []byte) []wsc110.Exception {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
@@ -95,11 +95,11 @@ func (gf *GetFeatureRequest) ParseXML(doc []byte) wsc110.Exceptions {
 
 // ParseKVP builds a GetCapabilities object based on the available query parameters
 // All the keys from the query url.Values need to be UpperCase, this is done during the execution of the operations.ValidRequest()
-func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
+func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
-		return wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}
+		return []wsc110.Exception{wsc110.MissingParameterValue(VERSION)}
 	}
 
 	gfkvp := getFeatureKVPRequest{}
@@ -121,7 +121,7 @@ func (gf *GetFeatureRequest) ToXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func (gf *GetFeatureRequest) parseKVP(gfkvp getFeatureKVPRequest) wsc110.Exceptions {
+func (gf *GetFeatureRequest) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Exception {
 	// Base
 	gf.XMLName.Local = getfeature
 
@@ -137,11 +137,13 @@ func (gf *GetFeatureRequest) parseKVP(gfkvp getFeatureKVPRequest) wsc110.Excepti
 		return exceptions
 	}
 
-	gf.StandardPresentationParameters = spp
+	gf.StandardPresentationParameters = &spp
 
 	// Table 7
-	if gfkvp.namespaces != nil {
-		gf.BaseRequest.Attr = procesNamespaces(*gfkvp.namespaces)
+	if gfkvp.commonKeywords != nil {
+		if gfkvp.namespaces != nil {
+			gf.BaseRequest.Attr = procesNamespaces(*gfkvp.namespaces)
+		}
 	}
 
 	// Table 8
@@ -198,26 +200,33 @@ type StandardPresentationParameters struct {
 	Startindex   *int    `xml:"startindex,attr" yaml:"startindex"` // default 0
 }
 
-func (b *StandardPresentationParameters) parseKVP(gfkvp getFeatureKVPRequest) wsc110.Exceptions {
-	var exceptions wsc110.Exceptions
+func (b *StandardPresentationParameters) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Exception {
+	var exceptions []wsc110.Exception
 
-	b.ResultType = gfkvp.resulttype
-	b.OutputFormat = gfkvp.outputformat
-
-	if gfkvp.count != nil {
-		count, err := strconv.Atoi(*gfkvp.count)
-		if err != nil {
-			exceptions = append(exceptions, wsc110.MissingParameterValue(COUNT, *gfkvp.count))
+	if gfkvp.standardPresentationParameters != nil {
+		if gfkvp.resulttype != nil {
+			b.ResultType = gfkvp.resulttype
 		}
-		b.Count = &count
-	}
 
-	if gfkvp.startindex != nil {
-		startindex, err := strconv.Atoi(*gfkvp.startindex)
-		if err != nil {
-			exceptions = append(exceptions, wsc110.MissingParameterValue(STARTINDEX, *gfkvp.startindex))
+		if gfkvp.outputformat != nil {
+			b.OutputFormat = gfkvp.outputformat
 		}
-		b.Startindex = &startindex
+
+		if gfkvp.count != nil {
+			count, err := strconv.Atoi(*gfkvp.count)
+			if err != nil {
+				exceptions = append(exceptions, wsc110.MissingParameterValue(COUNT, *gfkvp.count))
+			}
+			b.Count = &count
+		}
+
+		if gfkvp.startindex != nil {
+			startindex, err := strconv.Atoi(*gfkvp.startindex)
+			if err != nil {
+				exceptions = append(exceptions, wsc110.MissingParameterValue(STARTINDEX, *gfkvp.startindex))
+			}
+			b.Startindex = &startindex
+		}
 	}
 
 	if len(exceptions) > 0 {
@@ -226,32 +235,32 @@ func (b *StandardPresentationParameters) parseKVP(gfkvp getFeatureKVPRequest) ws
 	return nil
 }
 
-// BuildQueryString for BaseGetFeatureRequest struct
-func (b *StandardPresentationParameters) BuildQueryString() url.Values {
-	querystring := make(map[string][]string)
+// // BuildQueryString for BaseGetFeatureRequest struct
+// func (b *StandardPresentationParameters) BuildQueryString() url.Values {
+// 	querystring := make(map[string][]string)
 
-	for k := range table5 {
-		switch k {
-		case STARTINDEX:
-			if b.Startindex != nil {
-				querystring[STARTINDEX] = []string{strconv.Itoa(*b.Startindex)}
-			}
-		case COUNT:
-			if b.Count != nil {
-				querystring[COUNT] = []string{strconv.Itoa(*b.Count)}
-			}
-		case OUTPUTFORMAT:
-			if b.OutputFormat != nil {
-				querystring[OUTPUTFORMAT] = []string{*b.OutputFormat}
-			}
-		case RESULTTYPE:
-			if b.ResultType != nil {
-				querystring[RESULTTYPE] = []string{*b.ResultType}
-			}
-		}
-	}
-	return querystring
-}
+// 	for k := range table5 {
+// 		switch k {
+// 		case STARTINDEX:
+// 			if b.Startindex != nil {
+// 				querystring[STARTINDEX] = []string{strconv.Itoa(*b.Startindex)}
+// 			}
+// 		case COUNT:
+// 			if b.Count != nil {
+// 				querystring[COUNT] = []string{strconv.Itoa(*b.Count)}
+// 			}
+// 		case OUTPUTFORMAT:
+// 			if b.OutputFormat != nil {
+// 				querystring[OUTPUTFORMAT] = []string{*b.OutputFormat}
+// 			}
+// 		case RESULTTYPE:
+// 			if b.ResultType != nil {
+// 				querystring[RESULTTYPE] = []string{*b.ResultType}
+// 			}
+// 		}
+// 	}
+// 	return querystring
+// }
 
 type StandardResolveParameters struct {
 	Resolve        *string `xml:"Resolve" yaml:"resolve"` //can be one of: local, remote, all, none
@@ -268,8 +277,8 @@ type Query struct {
 	PropertyName *[]string `xml:"PropertyName" yaml:"propertyname"`
 }
 
-func (q *Query) parseKVP(gfkvp getFeatureKVPRequest) wsc110.Exceptions {
-	var exceptions wsc110.Exceptions
+func (q *Query) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Exception {
+	var exceptions []wsc110.Exception
 
 	q.TypeNames = gfkvp.typenames
 
@@ -293,31 +302,35 @@ func (q *Query) parseKVP(gfkvp getFeatureKVPRequest) wsc110.Exceptions {
 	} else if len(selectionclause) == 1 {
 		switch selectionclause[0] {
 		case RESOURCEID:
+			f := Filter{}
 			var rids ResourceIDs
 			rids.parseKVP(*gfkvp.resourceid)
-			q.Filter.ResourceID = &rids
+
+			f.ResourceID = &rids
+			q.Filter = &f
 		case FILTER:
-			q.Filter = gfkvp.filter
+			var f Filter
+			if exception := f.parseKVP(*gfkvp.filter); exception != nil {
+				exceptions = append(exceptions, exception...)
+			}
+			q.Filter = &f
 		case BBOX:
+			var b GEOBBOX
+			if exception := b.parseString(*gfkvp.bbox); exception != nil {
+				exceptions = append(exceptions, exception...)
+			}
+			q.Filter.BBOX = &b
 		}
-	}
-
-	if gfkvp.resourceid != nil {
-		q.Filter.ResourceID = gfkvp.resourceid
-	} else {
-		// ResourceID are specific, so it seems to be one or another
-		// this behaviour seems to be because ResourceID is also used incombination with transactions
-		if gfkvp.filter != nil {
-			q.Filter = gfkvp.filter
-		}
-
 	}
 
 	// TODO aliases
 	// TODO filterlanguage
 
-	q.Filter.BBOX = gfkvp.bbox
-	q.SortBy = gfkvp.sortby
+	//q.SortBy = gfkvp.sortby
+
+	if len(exceptions) > 0 {
+		return exceptions
+	}
 	return nil
 }
 
@@ -387,6 +400,13 @@ func (f Filter) toString() string {
 	return (xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
+func (f *Filter) parseKVP(filter string) []wsc110.Exception {
+	if error := xml.Unmarshal([]byte(filter), &f); error != nil {
+		return wsc110.NoApplicableCode(`Filter is not valid XML`).ToExceptions()
+	}
+	return nil
+}
+
 // AND struct for Filter
 type AND struct {
 	AND *AND `xml:"AND" yaml:"and"`
@@ -427,13 +447,14 @@ func (r ResourceIDs) toString() string {
 	return strings.Join(rids, ",")
 }
 
-func (r *ResourceIDs) parseKVP(resourceids string) {
+func (r *ResourceIDs) parseKVP(resourceids string) []wsc110.Exception {
 	var rids ResourceIDs
 	for _, resourceid := range strings.Split(resourceids, `,`) {
 		rids = append(rids, ResourceID{Rid: resourceid})
 	}
+	*r = rids
 
-	r = &rids
+	return nil
 }
 
 // ResourceID struct for Filter
@@ -690,7 +711,7 @@ type GEOBBOX struct {
 }
 
 // UnmarshalText a string to a GEOBBOX object
-func (gb *GEOBBOX) parseString(q string) common.Exception {
+func (gb *GEOBBOX) parseString(q string) []wsc110.Exception {
 	regex := regexp.MustCompile(`,`)
 	result := regex.Split(q, -1)
 	if len(result) == 4 || len(result) == 5 {
@@ -699,25 +720,28 @@ func (gb *GEOBBOX) parseString(q string) common.Exception {
 		var err error
 
 		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
-			return InvalidValue(BBOX)
+			return InvalidValue(BBOX).ToExceptions()
 		}
 		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
-			return InvalidValue(BBOX)
+			return InvalidValue(BBOX).ToExceptions()
 		}
 		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
-			return InvalidValue(BBOX)
+			return InvalidValue(BBOX).ToExceptions()
 		}
 		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
-			return InvalidValue(BBOX)
+			return InvalidValue(BBOX).ToExceptions()
 		}
 
 		gb.Envelope.LowerCorner = wsc110.Position{lx, ly}
 		gb.Envelope.UpperCorner = wsc110.Position{ux, uy}
+		if len(result) == 5 {
+			gb.SrsName = &result[4]
+		}
+	} else {
+		return wsc110.MissingParameterValue(BBOX, q).ToExceptions()
 	}
-	if len(result) == 5 {
-		gb.SrsName = &result[4]
-	}
-	return wsc110.MissingParameterValue(BBOX, q)
+
+	return nil
 }
 
 // MarshalText build a KVP string of a GEOBBOX object

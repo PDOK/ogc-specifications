@@ -6,14 +6,33 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-type Exceptions wsc110.Exceptions
+type exception struct {
+	XMLName       xml.Name `xml:"ows:Exception"`
+	ExceptionText string   `xml:",chardata" yaml:"exception"`
+	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptioncode"`
+	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locationcode"`
+}
 
-// // wfs200exception
-// type exception struct {
-// 	ExceptionText string `xml:",chardata" yaml:"exception"`
-// 	ExceptionCode string `xml:"exceptionCode,attr" yaml:"exceptioncode"`
-// 	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locatorcode,omitempty"`
-// }
+func (e exception) ToExceptions() []wsc110.Exception {
+	return []wsc110.Exception{e}
+}
+
+// Error returns available ExceptionText
+func (e exception) Error() string {
+	return e.ExceptionText
+}
+
+// Code returns available ExceptionCode
+func (e exception) Code() string {
+	return e.ExceptionCode
+}
+
+// Locator returns available ExceptionCode
+func (e exception) Locator() string {
+	return e.LocatorCode
+}
+
+type Exceptions []wsc110.Exception
 
 type ExceptionReport struct {
 	XMLName        xml.Name   `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
@@ -40,15 +59,3 @@ func (r ExceptionReport) ToBytes() []byte {
 	si, _ := xml.MarshalIndent(r, "", " ")
 	return append([]byte(xml.Header), si...)
 }
-
-// func (e exception) Error() string {
-// 	return e.ExceptionText
-// }
-
-// func (e exception) Code() string {
-// 	return e.ExceptionCode
-// }
-
-// func (e exception) Locator() string {
-// 	return e.LocatorCode
-// }

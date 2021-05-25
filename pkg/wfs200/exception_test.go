@@ -13,7 +13,7 @@ func TestWFSException(t *testing.T) {
 		exceptionCode string
 		locatorCode   string
 	}{
-		0: {exception: wsc110.Exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
+		0: {exception: exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
 			exceptionText: "",
 			exceptionCode: "",
 			locatorCode:   "",
@@ -70,7 +70,7 @@ func TestReport(t *testing.T) {
 		exceptions Exceptions
 		result     []byte
 	}{
-		0: {exceptions: Exceptions{wsc110.Exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
+		0: {exceptions: Exceptions{exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
  <ows:Exception exceptionCode=""></ows:Exception>

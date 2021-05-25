@@ -5,7 +5,6 @@ import (
 	"net/url"
 
 	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 
 	"regexp"
@@ -23,18 +22,19 @@ func (dft *DescribeFeatureTypeRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) []wsc110.Exception {
 	return nil
 }
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
-func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
+func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) []wsc110.Exception {
 	var xmlattributes common.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
+		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
 	if err := xml.Unmarshal(doc, &dft); err != nil {
-		return common.Exceptions{wsc110.OperationNotSupported(err.Error())}
+		// TODO fix with pretty exception message
+		return wsc110.NoApplicableCode(err.Error()).ToExceptions()
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -51,33 +51,67 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
 	return nil
 }
 
-// ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Exceptions {
+// ParseQueryParameters builds a DescribeFeatureType object based on the available query parameters
+func (dft *DescribeFeatureTypeRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
 		return wsc110.MissingParameterValue(VERSION).ToExceptions()
 	}
 
-	q := utils.KeysToUpper(query)
+	dftkvp := describeFeatureTypeKVPRequest{}
+
+	if exceptions := dftkvp.parseQueryParameters(query); exceptions != nil {
+		return exceptions
+	}
+
+	if exceptions := dft.parseKVP(dftkvp); exceptions != nil {
+		return exceptions
+	}
+	return nil
+
+	// q := utils.KeysToUpper(query)
+
+	// var br BaseRequest
+	// if exception := br.parseKVP(q); exception != nil {
+	// 	return exception
+	// }
+	// dft.BaseRequest = br
+
+	// for k, v := range query {
+	// 	switch strings.ToUpper(k) {
+	// 	case REQUEST:
+	// 		if strings.EqualFold(v[0], describefeaturetype) {
+	// 			dft.XMLName.Local = describefeaturetype
+	// 		}
+	// 	case TYPENAME:
+	// 		dft.BaseDescribeFeatureTypeRequest.TypeName = &v[0] //TODO maybe process as a comma separated list
+	// 	case OUTPUTFORMAT:
+	// 		// TODO nothing for now always assume the default text/xml; subtype=gml/3.2
+	// 	}
+	// }
+
+	// return nil
+}
+
+func (dft *DescribeFeatureTypeRequest) parseKVP(dftkvp describeFeatureTypeKVPRequest) []wsc110.Exception {
+
+	// Base
+	dft.XMLName.Local = describefeaturetype
 
 	var br BaseRequest
-	if exception := br.parseQueryParameters(q); exception != nil {
-		return exception
+	if exceptions := br.parseKVP(dftkvp.baseRequestKVP); exceptions != nil {
+		return exceptions
 	}
 	dft.BaseRequest = br
 
-	for k, v := range query {
-		switch strings.ToUpper(k) {
-		case REQUEST:
-			if strings.EqualFold(v[0], describefeaturetype) {
-				dft.XMLName.Local = describefeaturetype
-			}
-		case TYPENAME:
-			dft.BaseDescribeFeatureTypeRequest.TypeName = &v[0] //TODO maybe process as a comma separated list
-		case OUTPUTFORMAT:
-			// TODO nothing for now always assume the default text/xml; subtype=gml/3.2
-		}
+	dft.TypeName = dftkvp.typeName
+
+	if dftkvp.outputFormat != nil {
+		dft.OutputFormat = dftkvp.outputFormat
+	} else {
+		s := gml32
+		dft.OutputFormat = &(s)
 	}
 
 	return nil

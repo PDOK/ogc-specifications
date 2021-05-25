@@ -38,6 +38,10 @@ const (
 	OUTPUTFORMAT = `OUTPUTFORMAT`
 )
 
+const (
+	gml32 string = `text/xml' subtype=gml/3.2`
+)
+
 // BaseRequestKVP struct
 type baseRequestKVP struct {
 	version string `yaml:"version,omitempty"`
@@ -53,7 +57,7 @@ type BaseRequest struct {
 }
 
 // parseQueryParameters builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) parseKVP(bskvp baseRequestKVP) wsc110.Exceptions {
+func (b *BaseRequest) parseKVP(bskvp baseRequestKVP) []wsc110.Exception {
 	// Service is optional, because it's implicit for a GetFeature request
 	b.Service = Service
 

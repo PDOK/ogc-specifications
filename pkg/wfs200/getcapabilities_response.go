@@ -26,7 +26,7 @@ func (gc *GetCapabilitiesResponse) Version() string {
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilitiesResponse) Validate() wsc110.Exceptions {
+func (gc *GetCapabilitiesResponse) Validate() []wsc110.Exception {
 	return nil
 }
 

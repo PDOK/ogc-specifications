@@ -66,8 +66,8 @@ type storedQueryKeywords struct {
 	// storedquery_parameter not implemented
 }
 
-func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) wsc110.Exceptions {
-	var exceptions wsc110.Exceptions
+func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
+	var exceptions []wsc110.Exception
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, wsc110.InvalidParameterValue(k, strings.Join(v, ",")))
@@ -81,16 +81,40 @@ func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) wsc110
 				gfkvp.baseRequestKVP.request = v[0]
 			case STARTINDEX:
 				vp := v[0]
-				gfkvp.standardPresentationParameters.startindex = &vp
+				if gfkvp.standardPresentationParameters != nil {
+					gfkvp.standardPresentationParameters.startindex = &vp
+				} else {
+					spp := standardPresentationParameters{}
+					spp.startindex = &vp
+					gfkvp.standardPresentationParameters = &spp
+				}
 			case COUNT:
 				vp := v[0]
-				gfkvp.standardPresentationParameters.count = &vp
+				if gfkvp.standardPresentationParameters != nil {
+					gfkvp.standardPresentationParameters.count = &vp
+				} else {
+					spp := standardPresentationParameters{}
+					spp.count = &vp
+					gfkvp.standardPresentationParameters = &spp
+				}
 			case OUTPUTFORMAT:
 				vp := v[0]
-				gfkvp.standardPresentationParameters.outputformat = &vp
+				if gfkvp.standardPresentationParameters != nil {
+					gfkvp.standardPresentationParameters.outputformat = &vp
+				} else {
+					spp := standardPresentationParameters{}
+					spp.outputformat = &vp
+					gfkvp.standardPresentationParameters = &spp
+				}
 			case RESULTTYPE:
 				vp := v[0]
-				gfkvp.standardPresentationParameters.resulttype = &vp
+				if gfkvp.standardPresentationParameters != nil {
+					gfkvp.standardPresentationParameters.resulttype = &vp
+				} else {
+					spp := standardPresentationParameters{}
+					spp.resulttype = &vp
+					gfkvp.standardPresentationParameters = &spp
+				}
 			case RESOLVE:
 				vp := v[0]
 				gfkvp.standardResolveParameters.resolve = &vp
@@ -102,7 +126,13 @@ func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) wsc110
 				gfkvp.standardResolveParameters.resolvetimeout = &vp
 			case NAMESPACES:
 				vp := v[0]
-				gfkvp.commonKeywords.namespaces = &vp
+				if gfkvp.commonKeywords != nil {
+					gfkvp.commonKeywords.namespaces = &vp
+				} else {
+					ck := commonKeywords{}
+					ck.namespaces = &vp
+					gfkvp.commonKeywords = &ck
+				}
 			case TYPENAMES:
 				gfkvp.adhocQueryKeywords.typenames = v[0]
 			case ALIASES:
@@ -139,42 +169,70 @@ func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) wsc110
 	return nil
 }
 
-func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) wsc110.Exceptions {
+func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) []wsc110.Exception {
 
 	gfkvp.request = getfeature
 	gfkvp.version = Version
 	gfkvp.service = Service
 
-	if gf.Startindex != nil {
-		i := strconv.Itoa(*gf.Startindex)
-		gfkvp.standardPresentationParameters.startindex = &i
+	if gf.StandardPresentationParameters != nil {
+		if gf.Startindex != nil {
+			i := strconv.Itoa(*gf.Startindex)
+			if gfkvp.standardPresentationParameters != nil {
+				gfkvp.standardPresentationParameters.startindex = &i
+			} else {
+				spp := standardPresentationParameters{}
+				spp.startindex = &i
+				gfkvp.standardPresentationParameters = &spp
+			}
+		}
+
+		if gf.Count != nil {
+			i := strconv.Itoa(*gf.Count)
+			if gfkvp.standardPresentationParameters != nil {
+				gfkvp.standardPresentationParameters.count = &i
+			} else {
+				spp := standardPresentationParameters{}
+				spp.count = &i
+				gfkvp.standardPresentationParameters = &spp
+			}
+		}
+
+		if gf.OutputFormat != nil {
+			if gfkvp.standardPresentationParameters != nil {
+				gfkvp.standardPresentationParameters.outputformat = gf.OutputFormat
+			} else {
+				spp := standardPresentationParameters{}
+				spp.outputformat = gf.OutputFormat
+				gfkvp.standardPresentationParameters = &spp
+			}
+		}
+
+		if gf.ResultType != nil {
+			if gfkvp.standardPresentationParameters != nil {
+				gfkvp.standardPresentationParameters.resulttype = gf.ResultType
+			} else {
+				spp := standardPresentationParameters{}
+				spp.resulttype = gf.ResultType
+				gfkvp.standardPresentationParameters = &spp
+			}
+		}
 	}
 
-	if gf.Count != nil {
-		i := strconv.Itoa(*gf.Count)
-		gfkvp.standardPresentationParameters.count = &i
-	}
+	if gf.StandardResolveParameters != nil {
+		if gf.Resolve != nil {
+			gfkvp.standardResolveParameters.resolve = gf.Resolve
+		}
 
-	if gf.OutputFormat != nil {
-		gfkvp.standardPresentationParameters.outputformat = gf.OutputFormat
-	}
+		if gf.ResolveDepth != nil {
+			i := strconv.Itoa(*gf.ResolveDepth)
+			gfkvp.standardResolveParameters.resolvedepth = &i
+		}
 
-	if gf.ResultType != nil {
-		gfkvp.standardPresentationParameters.resulttype = gf.ResultType
-	}
-
-	if gf.Resolve != nil {
-		gfkvp.standardResolveParameters.resolve = gf.Resolve
-	}
-
-	if gf.ResolveDepth != nil {
-		i := strconv.Itoa(*gf.ResolveDepth)
-		gfkvp.standardResolveParameters.resolvedepth = &i
-	}
-
-	if gf.ResolveTimeout != nil {
-		i := strconv.Itoa(*gf.ResolveTimeout)
-		gfkvp.standardResolveParameters.resolvetimeout = &i
+		if gf.ResolveTimeout != nil {
+			i := strconv.Itoa(*gf.ResolveTimeout)
+			gfkvp.standardResolveParameters.resolvetimeout = &i
+		}
 	}
 
 	// TODO: extract namespaces from dataset specific and with inspire/ogc
@@ -190,22 +248,20 @@ func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) 
 	}
 
 	if gf.Query.Filter != nil {
-		f := gf.Query.Filter.toString()
-		gfkvp.filter = &f
+		if gf.Query.Filter.ResourceID != nil {
+			s := gf.Query.Filter.ResourceID.toString()
+			gfkvp.resourceid = &(s)
+		} else if gf.Query.Filter.BBOX != nil {
+			s := gf.Query.Filter.BBOX.toString()
+			gfkvp.bbox = &s
+		} else {
+			f := gf.Query.Filter.toString()
+			gfkvp.filter = &f
+		}
 	}
 
 	// TODO
 	// gfkvp.adhocQueryKeywords.filter_language = &vp
-
-	if gf.Query.Filter.ResourceID != nil {
-		s := gf.Query.Filter.ResourceID.toString()
-		gfkvp.resourceid = &(s)
-	}
-
-	if gf.Query.Filter.BBOX != nil {
-		s := gf.Query.Filter.BBOX.toString()
-		gfkvp.bbox = &s
-	}
 
 	if gf.Query.SortBy != nil {
 		s := gf.Query.SortBy.toString()
@@ -218,6 +274,80 @@ func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) 
 	return nil
 }
 
-func (gfkvp *getFeatureKVPRequest) toQueryParameters() url.Values {
-	return nil
+func (gfkvp getFeatureKVPRequest) toQueryParameters() url.Values {
+	query := make(map[string][]string)
+
+	query[SERVICE] = []string{gfkvp.service}
+	query[VERSION] = []string{gfkvp.version}
+	query[REQUEST] = []string{gfkvp.request}
+
+	// commonKeywords
+	if gfkvp.commonKeywords != nil {
+		if gfkvp.namespaces != nil {
+			query[NAMESPACES] = []string{*gfkvp.namespaces}
+		}
+	}
+
+	// standardPresentationParameters
+	if gfkvp.standardPresentationParameters != nil {
+		if gfkvp.startindex != nil {
+			query[STARTINDEX] = []string{*gfkvp.startindex}
+		}
+		if gfkvp.count != nil {
+			query[COUNT] = []string{*gfkvp.count}
+		}
+		if gfkvp.outputformat != nil {
+			query[OUTPUTFORMAT] = []string{*gfkvp.outputformat}
+		}
+		if gfkvp.resulttype != nil {
+			query[RESULTTYPE] = []string{*gfkvp.resulttype}
+		}
+	}
+
+	// standardResolveParameters
+	if gfkvp.standardResolveParameters != nil {
+		if gfkvp.resolve != nil {
+			query[RESOLVE] = []string{*gfkvp.resolve}
+		}
+		if gfkvp.resolvedepth != nil {
+			query[RESOLVEDEPTH] = []string{*gfkvp.resolvedepth}
+		}
+		if gfkvp.resolvetimeout != nil {
+			query[RESOLVETIMEOUT] = []string{*gfkvp.resolvetimeout}
+		}
+	}
+
+	// // adhocQueryKeywords
+	query[TYPENAMES] = []string{gfkvp.typenames}
+
+	if gfkvp.aliases != nil {
+		query[ALIASES] = []string{*gfkvp.aliases}
+	}
+
+	if gfkvp.srsname != nil {
+		query[SRSNAME] = []string{*gfkvp.srsname}
+	}
+	// // Projection_clause not implemented
+
+	if gfkvp.filter != nil {
+		query[FILTER] = []string{*gfkvp.filter}
+	} else if gfkvp.resourceid != nil {
+		query[RESOURCEID] = []string{*gfkvp.resourceid}
+	} else if gfkvp.bbox != nil {
+		query[BBOX] = []string{*gfkvp.bbox}
+	}
+
+	// filter_language *string `yaml:"filter_language,omitempty"`
+
+	// sortby          *string `yaml:"sortby,omitempty"`
+	if gfkvp.sortby != nil {
+		query[SORTBY] = []string{*gfkvp.sortby}
+	}
+
+	// storedQueryKeywords
+	if gfkvp.storedQueryKeywords != nil {
+		query[STOREDQUERYID] = []string{gfkvp.storedqueryid}
+	}
+
+	return query
 }
