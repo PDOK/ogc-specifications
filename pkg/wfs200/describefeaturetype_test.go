@@ -155,7 +155,7 @@ func TestDescribeFeatureTypeParseKVP(t *testing.T) {
 		}
 	}
 }
-func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
+func TestDescribeFeatureTypeToQueryParameters(t *testing.T) {
 	var tests = []struct {
 		dft   DescribeFeatureTypeRequest
 		query url.Values
@@ -171,7 +171,7 @@ func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		values := test.dft.BuildKVP()
+		values := test.dft.ToQueryParameters()
 		c := false
 		for _, value := range values {
 			for _, q := range test.query {
@@ -187,7 +187,7 @@ func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 	}
 }
 
-func TestDescribeFeatureTypeBuildXML(t *testing.T) {
+func TestDescribeFeatureTypeToXML(t *testing.T) {
 	var tests = []struct {
 		dft  DescribeFeatureTypeRequest
 		body string
@@ -203,7 +203,7 @@ func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 		},
 	}
 	for k, test := range tests {
-		b := string(test.dft.BuildXML())
+		b := string(test.dft.ToXML())
 		if b != test.body {
 			t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.body, b)
 		}
@@ -214,7 +214,7 @@ func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 // Benchmarks
 // ----------
 
-func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
+func BenchmarkDescribeFeatureTypeToQueryParameters(b *testing.B) {
 	df := DescribeFeatureTypeRequest{
 		XMLName:     xml.Name{Local: `DescribeFeatureType`},
 		BaseRequest: BaseRequest{Version: Version, Service: Service},
@@ -222,11 +222,11 @@ func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
 			OutputFormat: sp(`application/json`),
 			TypeName:     sp(`example:example`)}}
 	for i := 0; i < b.N; i++ {
-		df.BuildKVP()
+		df.ToQueryParameters()
 	}
 }
 
-func BenchmarkDescribeFeatureTypeBuildXML(b *testing.B) {
+func BenchmarkDescribeFeatureTypeToXML(b *testing.B) {
 	df := DescribeFeatureTypeRequest{
 		XMLName:     xml.Name{Local: `DescribeFeatureType`},
 		BaseRequest: BaseRequest{Version: Version, Service: Service},
@@ -234,6 +234,6 @@ func BenchmarkDescribeFeatureTypeBuildXML(b *testing.B) {
 			OutputFormat: sp(`application/json`),
 			TypeName:     sp(`example:example`)}}
 	for i := 0; i < b.N; i++ {
-		df.BuildXML()
+		df.ToXML()
 	}
 }

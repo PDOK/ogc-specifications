@@ -316,7 +316,7 @@ func TestGetMapParseKVP(t *testing.T) {
 	}
 }
 
-func TestGetMapBuildKVP(t *testing.T) {
+func TestGetMapToQueryParameters(t *testing.T) {
 	var tests = []struct {
 		object    GetMapRequest
 		excepted  url.Values
@@ -403,7 +403,7 @@ func TestGetMapBuildKVP(t *testing.T) {
 	}
 }
 
-func TestGetMapBuildXML(t *testing.T) {
+func TestGetMapToXML(t *testing.T) {
 	var tests = []struct {
 		gm     GetMapRequest
 		result string
@@ -663,7 +663,7 @@ func TestGetMapValidate(t *testing.T) {
 // Benchmarks
 // ----------
 
-func BenchmarkGetMapBuildKVP(b *testing.B) {
+func BenchmarkGetMapToQueryParameters(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",
@@ -701,7 +701,7 @@ func BenchmarkGetMapBuildKVP(b *testing.B) {
 	}
 }
 
-func BenchmarkGetMapBuildXML(b *testing.B) {
+func BenchmarkGetMapToXML(b *testing.B) {
 	gm := GetMapRequest{
 		BaseRequest: BaseRequest{
 			Version: "1.3.0",

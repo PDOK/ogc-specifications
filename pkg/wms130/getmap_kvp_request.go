@@ -69,7 +69,7 @@ func (gmkvp *getMapKVPRequest) parseGetMapRequest(gm GetMapRequest) Exceptions {
 	gmkvp.layers = gm.StyledLayerDescriptor.getLayerKVPValue()
 	gmkvp.styles = gm.StyledLayerDescriptor.getStyleKVPValue()
 	gmkvp.crs = gm.CRS.String()
-	gmkvp.bbox = gm.BoundingBox.BuildQueryParameters()
+	gmkvp.bbox = gm.BoundingBox.ToQueryParameters()
 	gmkvp.width = strconv.Itoa(gm.Output.Size.Width)
 	gmkvp.height = strconv.Itoa(gm.Output.Size.Height)
 	gmkvp.format = gm.Output.Format

@@ -133,7 +133,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildKVP(t *testing.T) {
+func TestGetCapabilitiesToQueryParameters(t *testing.T) {
 	var tests = []struct {
 		Object    GetCapabilitiesRequest
 		Excepted  url.Values
@@ -168,7 +168,7 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 	}
 }
 
-func TestGetCapabilitiesBuildXML(t *testing.T) {
+func TestGetCapabilitiesToXML(t *testing.T) {
 	var tests = []struct {
 		gc     GetCapabilitiesRequest
 		result string
@@ -191,14 +191,14 @@ func TestGetCapabilitiesBuildXML(t *testing.T) {
 // Benchmarks
 // ----------
 
-func BenchmarkGetCapabilitiesBuildKVP(b *testing.B) {
+func BenchmarkGetCapabilitiesToQueryParameters(b *testing.B) {
 	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
 	for i := 0; i < b.N; i++ {
 		gc.ToQueryParameters()
 	}
 }
 
-func BenchmarkGetCapabilitiesBuildXML(b *testing.B) {
+func BenchmarkGetCapabilitiesToXML(b *testing.B) {
 	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
 	for i := 0; i < b.N; i++ {
 		gc.ToXML()

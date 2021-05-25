@@ -65,8 +65,8 @@ func (gc *GetCapabilitiesRequest) ParseKVP(query url.Values) wsc110.Exceptions {
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
-func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
+// ToQueryParameters  builds a new query string that will be proxied
+func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}
@@ -75,8 +75,8 @@ func (gc *GetCapabilitiesRequest) BuildKVP() url.Values {
 	return querystring
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilitiesRequest) BuildXML() []byte {
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func (gc *GetCapabilitiesRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

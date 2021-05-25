@@ -109,7 +109,7 @@ func (gfikvp *getFeatureInfoKVPRequest) parseGetFeatureInfoRequest(gfi GetFeatur
 	gfikvp.layers = gfi.StyledLayerDescriptor.getLayerKVPValue()
 	gfikvp.styles = gfi.StyledLayerDescriptor.getStyleKVPValue()
 	gfikvp.crs = gfi.CRS
-	gfikvp.bbox = gfi.BoundingBox.BuildQueryParameters()
+	gfikvp.bbox = gfi.BoundingBox.ToQueryParameters()
 	gfikvp.width = strconv.Itoa(gfi.Size.Width)
 	gfikvp.height = strconv.Itoa(gfi.Size.Height)
 

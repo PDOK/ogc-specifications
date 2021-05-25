@@ -72,7 +72,7 @@ func (gc *GetCapabilitiesRequest) parseKVP(gckvp getCapabilitiesKVPRequest) Exce
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gc GetCapabilitiesRequest) ToQueryParameters() url.Values {
 	gckvp := getCapabilitiesKVPRequest{}
 	gckvp.parseGetCapabilitiesRequest(gc)
@@ -81,7 +81,7 @@ func (gc GetCapabilitiesRequest) ToQueryParameters() url.Values {
 	return q
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (gc *GetCapabilitiesRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)

@@ -9,7 +9,7 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
-func TestGetFeatureInfoBuildKVP(t *testing.T) {
+func TestGetFeatureInfoToQueryParameters(t *testing.T) {
 	var tests = []struct {
 		object    GetFeatureInfoRequest
 		excepted  url.Values
@@ -80,7 +80,7 @@ func TestGetFeatureInfoBuildKVP(t *testing.T) {
 	}
 }
 
-func TestGetFeatureInfoBuildXML(t *testing.T) {
+func TestGetFeatureInfoToXML(t *testing.T) {
 	var tests = []struct {
 		gfi    GetFeatureInfoRequest
 		result string
@@ -429,7 +429,7 @@ func compareGetFeatureInfoObject(result, expected GetFeatureInfoRequest, t *test
 // Benchmarks
 // ----------
 
-func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
+func BenchmarkGetFeatureInfoToQueryParameters(b *testing.B) {
 	gfi := GetFeatureInfoRequest{
 		XMLName: xml.Name{Local: `GetFeatureInfo`},
 		BaseRequest: BaseRequest{
@@ -457,7 +457,7 @@ func BenchmarkGetFeatureInfoBuildKVP(b *testing.B) {
 	}
 }
 
-func BenchmarkGetFeatureInfoBuildXML(b *testing.B) {
+func BenchmarkGetFeatureInfoToXML(b *testing.B) {
 	gfi := GetFeatureInfoRequest{
 		XMLName: xml.Name{Local: `GetFeatureInfo`},
 		BaseRequest: BaseRequest{

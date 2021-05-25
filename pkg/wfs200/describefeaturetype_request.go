@@ -117,8 +117,8 @@ func (dft *DescribeFeatureTypeRequest) parseKVP(dftkvp describeFeatureTypeKVPReq
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
-func (dft *DescribeFeatureTypeRequest) BuildKVP() url.Values {
+// ToQueryParameters  builds a new query string that will be proxied
+func (dft *DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{dft.XMLName.Local}
 	querystring[SERVICE] = []string{dft.BaseRequest.Service}
@@ -132,8 +132,8 @@ func (dft *DescribeFeatureTypeRequest) BuildKVP() url.Values {
 	return querystring
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (dft *DescribeFeatureTypeRequest) BuildXML() []byte {
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func (dft *DescribeFeatureTypeRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(dft, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

@@ -42,7 +42,7 @@ type GetMapRequest struct {
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
 	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
-	// Time                  *string               `xml:"Time" yaml:"time"`BuildKVP
+	// Time                  *string               `xml:"Time" yaml:"time"`
 }
 
 // Validate returns GetMap
@@ -136,7 +136,7 @@ func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gm GetMapRequest) ToQueryParameters() url.Values {
 	gmkvp := getMapKVPRequest{}
 	gmkvp.parseGetMapRequest(gm)
@@ -145,7 +145,7 @@ func (gm GetMapRequest) ToQueryParameters() url.Values {
 	return q
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (gm *GetMapRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gm, "", " ")
 	return append([]byte(xml.Header), si...)

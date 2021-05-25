@@ -114,7 +114,7 @@ func (gf *GetFeatureRequest) ParseQueryParameters(query url.Values) []wsc110.Exc
 	return nil
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
 // TODO: In the Filter>Query>... the content of the GeometryOperand (Point,Line,Polygon,...) is the raw xml (text)
 func (gf *GetFeatureRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gf, "", " ")
@@ -156,7 +156,7 @@ func (gf *GetFeatureRequest) parseKVP(gfkvp getFeatureKVPRequest) []wsc110.Excep
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
+// ToQueryParameters builds a new query string that will be proxied
 func (gf GetFeatureRequest) ToQueryParameters() url.Values {
 	gmkvp := getFeatureKVPRequest{}
 	gmkvp.parseGetFeatureRequest(gf)

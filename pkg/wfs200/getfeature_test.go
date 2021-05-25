@@ -24,7 +24,7 @@ func TestGetFeatureType(t *testing.T) {
 	}
 }
 
-func TestGetFeatureBuildXML(t *testing.T) {
+func TestGetFeatureToXML(t *testing.T) {
 	var tests = []struct {
 		gf     GetFeatureRequest
 		result string
@@ -425,7 +425,7 @@ func TestMergeResourceIDGroups(t *testing.T) {
 	}
 }
 
-func TestGetFeatureBuildKVP(t *testing.T) {
+func TestGetFeatureToQueryParameters(t *testing.T) {
 	var tests = []struct {
 		getfeature    GetFeatureRequest
 		expectedquery url.Values
@@ -548,14 +548,14 @@ func TestMarshalTextGeoBOXX(t *testing.T) {
 // Benchmarks
 // ----------
 
-func BenchmarkGetFeatureBuildKVP(b *testing.B) {
+func BenchmarkGetFeatureToQueryParameters(b *testing.B) {
 	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
 		gf.ToQueryParameters()
 	}
 }
 
-func BenchmarkGetFeatureBuildXML(b *testing.B) {
+func BenchmarkGetFeatureToXML(b *testing.B) {
 	gf := GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{SpatialOperator: SpatialOperator{BBOX: &GEOBBOX{Envelope: Envelope{LowerCorner: wsc110.Position{1, 1}, UpperCorner: wsc110.Position{2, 2}}}}, ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}, {Rid: "three"}}}}, BaseRequest: BaseRequest{Version: Version}}
 	for i := 0; i < b.N; i++ {
 		gf.ToXML()
