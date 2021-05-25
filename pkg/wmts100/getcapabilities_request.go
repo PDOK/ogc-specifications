@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -19,15 +19,15 @@ const (
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilitiesRequest struct {
-	XMLName xml.Name            `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string              `xml:"service,attr" yaml:"service"`
-	Version string              `xml:"version,attr" yaml:"version"`
-	Attr    common.XMLAttribute `xml:",attr"`
+	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string             `xml:"service,attr" yaml:"service"`
+	Version string             `xml:"version,attr" yaml:"version"`
+	Attr    utils.XMLAttribute `xml:",attr"`
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
 func (gc *GetCapabilitiesRequest) ParseXML(body []byte) wsc110.Exceptions {
-	var xmlattributes common.XMLAttribute
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return wsc110.Exceptions{wsc110.MissingParameterValue()}
 	}
@@ -44,7 +44,7 @@ func (gc *GetCapabilitiesRequest) ParseXML(body []byte) wsc110.Exceptions {
 		}
 	}
 
-	gc.Attr = common.StripDuplicateAttr(n)
+	gc.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 

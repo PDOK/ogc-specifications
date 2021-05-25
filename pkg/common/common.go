@@ -1,7 +1,6 @@
 package common
 
 import (
-	"encoding/xml"
 	"regexp"
 	"strconv"
 	"strings"
@@ -16,20 +15,6 @@ const (
 // Keywords in struct for repeatability
 type Keywords struct {
 	Keyword []string `xml:"Keyword" yaml:"keyword"`
-}
-
-// StripDuplicateAttr removes the duplicate Attributes from a []Attribute
-func StripDuplicateAttr(attr []xml.Attr) []xml.Attr {
-	attributemap := make(map[xml.Name]string)
-	for _, a := range attr {
-		attributemap[xml.Name{Space: a.Name.Space, Local: a.Name.Local}] = a.Value
-	}
-
-	var strippedAttr []xml.Attr
-	for k, v := range attributemap {
-		strippedAttr = append(strippedAttr, xml.Attr{Name: k, Value: v})
-	}
-	return strippedAttr
 }
 
 // CRS struct with namespace/authority/registry and code

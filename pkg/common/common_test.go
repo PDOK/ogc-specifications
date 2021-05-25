@@ -1,40 +1,8 @@
 package common
 
 import (
-	"encoding/xml"
 	"testing"
 )
-
-func TestStripDuplicateAttr(t *testing.T) {
-	var tests = []struct {
-		attributes []xml.Attr
-		expected   []xml.Attr
-	}{
-		0: {attributes: []xml.Attr{{Name: xml.Name{Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"}}, expected: []xml.Attr{{Name: xml.Name{Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"}}},
-		1: {attributes: []xml.Attr{{Name: xml.Name{Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"}, {Name: xml.Name{Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"}, {Name: xml.Name{Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"}},
-			expected: []xml.Attr{{Name: xml.Name{Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"}}},
-	}
-
-	for k, test := range tests {
-		stripped := StripDuplicateAttr(test.attributes)
-		if len(test.expected) != len(stripped) {
-			t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, stripped)
-		} else {
-			c := false
-			for _, exceptedAttr := range test.expected {
-				for _, result := range stripped {
-					if exceptedAttr == result {
-						c = true
-					}
-				}
-				if !c {
-					t.Errorf("test: %d, expected: %s,\n got: %s", k, test.expected, stripped)
-				}
-				c = false
-			}
-		}
-	}
-}
 
 func TestCRSParseString(t *testing.T) {
 	var tests = []struct {

@@ -175,47 +175,45 @@ func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) 
 	gfkvp.version = Version
 	gfkvp.service = Service
 
-	if gf.StandardPresentationParameters != nil {
-		if gf.Startindex != nil {
-			i := strconv.Itoa(*gf.Startindex)
-			if gfkvp.standardPresentationParameters != nil {
-				gfkvp.standardPresentationParameters.startindex = &i
-			} else {
-				spp := standardPresentationParameters{}
-				spp.startindex = &i
-				gfkvp.standardPresentationParameters = &spp
-			}
+	if gf.Startindex != nil {
+		i := strconv.Itoa(*gf.Startindex)
+		if gfkvp.standardPresentationParameters != nil {
+			gfkvp.standardPresentationParameters.startindex = &i
+		} else {
+			spp := standardPresentationParameters{}
+			spp.startindex = &i
+			gfkvp.standardPresentationParameters = &spp
 		}
+	}
 
-		if gf.Count != nil {
-			i := strconv.Itoa(*gf.Count)
-			if gfkvp.standardPresentationParameters != nil {
-				gfkvp.standardPresentationParameters.count = &i
-			} else {
-				spp := standardPresentationParameters{}
-				spp.count = &i
-				gfkvp.standardPresentationParameters = &spp
-			}
+	if gf.Count != nil {
+		i := strconv.Itoa(*gf.Count)
+		if gfkvp.standardPresentationParameters != nil {
+			gfkvp.standardPresentationParameters.count = &i
+		} else {
+			spp := standardPresentationParameters{}
+			spp.count = &i
+			gfkvp.standardPresentationParameters = &spp
 		}
+	}
 
-		if gf.OutputFormat != nil {
-			if gfkvp.standardPresentationParameters != nil {
-				gfkvp.standardPresentationParameters.outputformat = gf.OutputFormat
-			} else {
-				spp := standardPresentationParameters{}
-				spp.outputformat = gf.OutputFormat
-				gfkvp.standardPresentationParameters = &spp
-			}
+	if gf.OutputFormat != nil {
+		if gfkvp.standardPresentationParameters != nil {
+			gfkvp.standardPresentationParameters.outputformat = gf.OutputFormat
+		} else {
+			spp := standardPresentationParameters{}
+			spp.outputformat = gf.OutputFormat
+			gfkvp.standardPresentationParameters = &spp
 		}
+	}
 
-		if gf.ResultType != nil {
-			if gfkvp.standardPresentationParameters != nil {
-				gfkvp.standardPresentationParameters.resulttype = gf.ResultType
-			} else {
-				spp := standardPresentationParameters{}
-				spp.resulttype = gf.ResultType
-				gfkvp.standardPresentationParameters = &spp
-			}
+	if gf.ResultType != nil {
+		if gfkvp.standardPresentationParameters != nil {
+			gfkvp.standardPresentationParameters.resulttype = gf.ResultType
+		} else {
+			spp := standardPresentationParameters{}
+			spp.resulttype = gf.ResultType
+			gfkvp.standardPresentationParameters = &spp
 		}
 	}
 
@@ -252,7 +250,7 @@ func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) 
 			s := gf.Query.Filter.ResourceID.toString()
 			gfkvp.resourceid = &(s)
 		} else if gf.Query.Filter.BBOX != nil {
-			s := gf.Query.Filter.BBOX.toString()
+			s := gf.Query.Filter.BBOX.MarshalText()
 			gfkvp.bbox = &s
 		} else {
 			f := gf.Query.Filter.toString()

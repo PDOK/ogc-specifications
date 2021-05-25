@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -25,7 +25,7 @@ func (gc *GetCapabilitiesRequest) Validate(c wsc110.Capabilities) []wsc110.Excep
 
 // ParseXML builds a GetCapabilities object based on a XML document
 func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
-	var xmlattributes common.XMLAttribute
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return []wsc110.Exception{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
 	}
@@ -42,7 +42,7 @@ func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
 		}
 	}
 
-	gc.Attr = common.StripDuplicateAttr(n)
+	gc.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
@@ -95,8 +95,8 @@ func (gc *GetCapabilitiesRequest) ToXML() []byte {
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilitiesRequest struct {
-	XMLName xml.Name            `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string              `xml:"service,attr" yaml:"service"`
-	Version string              `xml:"version,attr" yaml:"version"`
-	Attr    common.XMLAttribute `xml:",attr"`
+	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string             `xml:"service,attr" yaml:"service"`
+	Version string             `xml:"version,attr" yaml:"version"`
+	Attr    utils.XMLAttribute `xml:",attr"`
 }

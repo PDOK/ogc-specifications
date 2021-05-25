@@ -55,5 +55,15 @@ func (dftkvp *describeFeatureTypeKVPRequest) parseDescribeFeatureTypeRequest(dft
 }
 
 func (dftkvp describeFeatureTypeKVPRequest) toQueryParameters() url.Values {
-	return nil
+	querystring := make(map[string][]string)
+	querystring[REQUEST] = []string{dftkvp.request}
+	querystring[SERVICE] = []string{dftkvp.service}
+	querystring[VERSION] = []string{dftkvp.version}
+	if dftkvp.typeName != nil {
+		querystring[TYPENAME] = []string{*dftkvp.typeName}
+	}
+	if dftkvp.outputFormat != nil {
+		querystring[OUTPUTFORMAT] = []string{*dftkvp.outputFormat}
+	}
+	return querystring
 }

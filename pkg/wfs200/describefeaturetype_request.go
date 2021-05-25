@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"net/url"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 
 	"regexp"
@@ -28,7 +28,7 @@ func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) []wsc110.Excepti
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
 func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) []wsc110.Exception {
-	var xmlattributes common.XMLAttribute
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
@@ -47,7 +47,7 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) []wsc110.Exception {
 		}
 	}
 
-	dft.Attr = common.StripDuplicateAttr(n)
+	dft.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
@@ -95,18 +95,13 @@ func (dft *DescribeFeatureTypeRequest) parseKVPRequest(dftkvp describeFeatureTyp
 }
 
 // ToQueryParameters  builds a new query string that will be proxied
-func (dft *DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
-	querystring := make(map[string][]string)
-	querystring[REQUEST] = []string{dft.XMLName.Local}
-	querystring[SERVICE] = []string{dft.BaseRequest.Service}
-	querystring[VERSION] = []string{dft.BaseRequest.Version}
-	if dft.BaseDescribeFeatureTypeRequest.TypeName != nil {
-		querystring[TYPENAME] = []string{*dft.BaseDescribeFeatureTypeRequest.TypeName}
-	}
-	if dft.BaseDescribeFeatureTypeRequest.OutputFormat != nil {
-		querystring[OUTPUTFORMAT] = []string{*dft.BaseDescribeFeatureTypeRequest.OutputFormat}
-	}
-	return querystring
+func (dft DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
+
+	dftkvp := describeFeatureTypeKVPRequest{}
+	dftkvp.parseDescribeFeatureTypeRequest(dft)
+
+	q := dftkvp.toQueryParameters()
+	return q
 }
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document

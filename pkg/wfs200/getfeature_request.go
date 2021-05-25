@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -44,7 +44,7 @@ const (
 type GetFeatureRequest struct {
 	XMLName xml.Name `xml:"GetFeature" yaml:"getfeature"`
 	BaseRequest
-	*StandardPresentationParameters
+	StandardPresentationParameters
 	*StandardResolveParameters
 	Query Query `xml:"Query" yaml:"query"`
 }
@@ -62,17 +62,17 @@ func (gf *GetFeatureRequest) Validate(c wsc110.Capabilities) []wsc110.Exception 
 }
 
 // WFS tables as map[string]bool, where the key (string) is the TOKEN and the bool if its a mandatory (true) or optional (false) attribute
-var table5 = map[string]bool{STARTINDEX: false, COUNT: false, OUTPUTFORMAT: false, RESULTTYPE: false}
+//var table5 = map[string]bool{STARTINDEX: false, COUNT: false, OUTPUTFORMAT: false, RESULTTYPE: false}
 
 //var table6 = map[string]bool{RESOLVE: false, RESOLVEDEPTH: false, RESOLVETIMEOUT: false}
-var table7 = map[string]bool{NAMESPACES: false} //VSPs (<- vendor specific parameters)
+//var table7 = map[string]bool{NAMESPACES: false} //VSPs (<- vendor specific parameters)
 var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FILTER: false, FILTERLANGUAGE: false, RESOURCEID: false, BBOX: false, SORTBY: false}
 
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
 // ParseXML builds a GetCapabilities object based on a XML document
 func (gf *GetFeatureRequest) ParseXML(doc []byte) []wsc110.Exception {
-	var xmlattributes common.XMLAttribute
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
@@ -89,7 +89,7 @@ func (gf *GetFeatureRequest) ParseXML(doc []byte) []wsc110.Exception {
 			n = append(n, a)
 		}
 	}
-	gf.BaseRequest.Attr = common.StripDuplicateAttr(n)
+	gf.BaseRequest.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
@@ -137,7 +137,7 @@ func (gf *GetFeatureRequest) parseKVPRequest(gfkvp getFeatureKVPRequest) []wsc11
 		return exceptions
 	}
 
-	gf.StandardPresentationParameters = &spp
+	gf.StandardPresentationParameters = spp
 
 	// Table 7
 	if gfkvp.commonKeywords != nil {
@@ -194,10 +194,10 @@ func procesNamespaces(namespace string) []xml.Attr {
 
 // StandardPresentationParameters struct used by GetFeature
 type StandardPresentationParameters struct {
-	ResultType   *string `xml:"resultType,attr" yaml:"resulttype"`     // enum: "results" or "hits"
-	OutputFormat *string `xml:"outputFormat,attr" yaml:"outputformat"` // default "application/gml+xml; version=3.2"
-	Count        *int    `xml:"count,attr" yaml:"count"`
-	Startindex   *int    `xml:"startindex,attr" yaml:"startindex"` // default 0
+	ResultType   *string `xml:"resultType,attr,omitempty" yaml:"resulttype"`     // enum: "results" or "hits"
+	OutputFormat *string `xml:"outputFormat,attr,omitempty" yaml:"outputformat"` // default "application/gml+xml; version=3.2"
+	Count        *int    `xml:"count,attr,omitempty" yaml:"count"`
+	Startindex   *int    `xml:"startindex,attr,omitempty" yaml:"startindex"` // default 0
 }
 
 func (b *StandardPresentationParameters) parseKVPRequest(gfkvp getFeatureKVPRequest) []wsc110.Exception {
@@ -235,37 +235,10 @@ func (b *StandardPresentationParameters) parseKVPRequest(gfkvp getFeatureKVPRequ
 	return nil
 }
 
-// // BuildQueryString for BaseGetFeatureRequest struct
-// func (b *StandardPresentationParameters) BuildQueryString() url.Values {
-// 	querystring := make(map[string][]string)
-
-// 	for k := range table5 {
-// 		switch k {
-// 		case STARTINDEX:
-// 			if b.Startindex != nil {
-// 				querystring[STARTINDEX] = []string{strconv.Itoa(*b.Startindex)}
-// 			}
-// 		case COUNT:
-// 			if b.Count != nil {
-// 				querystring[COUNT] = []string{strconv.Itoa(*b.Count)}
-// 			}
-// 		case OUTPUTFORMAT:
-// 			if b.OutputFormat != nil {
-// 				querystring[OUTPUTFORMAT] = []string{*b.OutputFormat}
-// 			}
-// 		case RESULTTYPE:
-// 			if b.ResultType != nil {
-// 				querystring[RESULTTYPE] = []string{*b.ResultType}
-// 			}
-// 		}
-// 	}
-// 	return querystring
-// }
-
 type StandardResolveParameters struct {
-	Resolve        *string `xml:"Resolve" yaml:"resolve"` //can be one of: local, remote, all, none
-	ResolveDepth   *int    `xml:"ResolveDepth" yaml:"resolvedepth"`
-	ResolveTimeout *int    `xml:"ResolveTimeout" yaml:"resolvetimeout"`
+	Resolve        *string `xml:"Resolve,omitempty" yaml:"resolve"` //can be one of: local, remote, all, none
+	ResolveDepth   *int    `xml:"ResolveDepth,omitempty" yaml:"resolvedepth"`
+	ResolveTimeout *int    `xml:"ResolveTimeout,omitempty" yaml:"resolvetimeout"`
 }
 
 // Query struct for parsing the WFS filter xml
@@ -745,7 +718,7 @@ func (gb *GEOBBOX) parseKVPRequest(q string) []wsc110.Exception {
 }
 
 // MarshalText build a KVP string of a GEOBBOX object
-func (gb *GEOBBOX) toString() string {
+func (gb *GEOBBOX) MarshalText() string {
 	regex := regexp.MustCompile(` `)
 	var str string
 	if len(gb.Envelope.LowerCorner) >= 2 && len(gb.Envelope.UpperCorner) >= 2 && gb.Envelope.LowerCorner != gb.Envelope.UpperCorner {
@@ -777,8 +750,8 @@ func (s SortBy) toString() string {
 
 // SortProperty for SortBy
 type SortProperty struct {
-	ValueReference string  `xml:"ValueReference", yaml:"valuereference"`
-	SortOrder      *string `xml:"SortOrder", yaml:"sortorder"` // ASC,DESC
+	ValueReference string  `xml:"ValueReference" yaml:"valuereference"`
+	SortOrder      *string `xml:"SortOrder" yaml:"sortorder"` // ASC,DESC
 }
 
 // ProjectionClause based on Table 9 WFS2.0.0 spec
