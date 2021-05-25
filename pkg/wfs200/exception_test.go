@@ -67,15 +67,15 @@ func TestWFSException(t *testing.T) {
 
 func TestReport(t *testing.T) {
 	var tests = []struct {
-		exceptions Exceptions
+		exceptions wsc110.Exceptions
 		result     []byte
 	}{
-		0: {exceptions: Exceptions{exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
+		0: {exceptions: []wsc110.Exception{exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd" version="2.0.0" xml:lang="en">
  <ows:Exception exceptionCode=""></ows:Exception>
 </ows:ExceptionReport>`)},
-		1: {exceptions: Exceptions{
+		1: {exceptions: []wsc110.Exception{
 			CannotLockAllFeatures(),
 			DuplicateStoredQueryIDValue(),
 		},
@@ -87,7 +87,7 @@ func TestReport(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		r := test.exceptions.ToReport().ToBytes()
+		r := test.exceptions.ToReport(Version).ToBytes()
 
 		if string(r) != string(test.result) {
 			t.Errorf("test: %d, expected: %s\n got: %s", k, test.result, r)
