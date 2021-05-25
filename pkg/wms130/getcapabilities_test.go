@@ -70,7 +70,7 @@ func TestGetCapabilitiesParseKVP(t *testing.T) {
 			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: Service, Version: Version}}},
 		// Missing mandatory SERVICE attribute
 		1: {query: map[string][]string{"Request": {"GetCapabilities"}},
-			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}}},
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: Service}}},
 		// Missing optional VERSION attribute
 		2: {query: map[string][]string{"SERVICE": {"wms"}, "Request": {"GetCapabilities"}},
 			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, BaseRequest: BaseRequest{Service: Service}}},
