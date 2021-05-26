@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	wmsReport := wms130.Exceptions{wms130.MissingParameterValue(wms130.Version), wms130.OperationNotSupported(`Unknown Operation`)}
+	wmsReport := wms130.Exceptions{wms130.MissingParameterValue(wms130.VERSION), wms130.OperationNotSupported(`Unknown Operation`)}
 
 	wfsReport := wsc110.Exceptions{wsc110.MissingParameterValue(wfs200.SERVICE), wfs200.FeaturesNotLocked()}
 
