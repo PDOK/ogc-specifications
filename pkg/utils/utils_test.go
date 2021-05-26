@@ -38,7 +38,7 @@ func TestIdentifyRequest(t *testing.T) {
 		errors  error
 	}{
 		0: {doc: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-		<Mekker/>`), request: `Mekker`},
+		<UnknownOperation/>`), request: `UnknownOperation`},
 		1: {doc: []byte(`<GetCapabilities/>`), request: `GetCapabilities`},
 		2: {doc: []byte(`<ogc:GetMap xmlns:ogc="http://www.opengis.net/ows"
 		xmlns:gml="http://www.opengis.net/gml"
@@ -85,7 +85,7 @@ func TestIdentifyRequestKVP(t *testing.T) {
 		request string
 		errors  error
 	}{
-		0: {url: map[string][]string{REQUEST: {`Mekker`}}, request: `Mekker`},
+		0: {url: map[string][]string{REQUEST: {`UnknownOperation`}}, request: `UnknownOperation`},
 		1: {url: map[string][]string{REQUEST: {`GetCapabilities`}}, request: `GetCapabilities`},
 		2: {url: map[string][]string{`SERVICE`: {`NoREQUESTKey`}}, errors: errors.New(`unknown REQUEST parameter`)},
 		3: {url: map[string][]string{}, errors: errors.New(`unknown REQUEST parameter`)},

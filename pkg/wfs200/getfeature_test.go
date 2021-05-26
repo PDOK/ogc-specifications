@@ -300,8 +300,8 @@ func TestGetFeatureParseQueryParameters(t *testing.T) {
 				BaseRequest: BaseRequest{Service: Service, Version: Version}},
 		},
 		// // Complex Filter
-		// 0: {QueryParams: map[string][]string{FILTER: []string{`<Filter><OR><AND><PropertyIsLike wildcard='*' singleChar='.' escape='!'><PropertyName>NAME</PropertyName><Literal>Syd*</Literal></PropertyIsLike><PropertyIsEqualTo><PropertyName>POPULATION</PropertyName><Literal>4250065</Literal></PropertyIsEqualTo></AND><DWithin><PropertyName>Geometry</PropertyName><Point srsName="mekker"><coordinates>135.500000,34.666667</coordinates></Point><Distance units='m'>10000</Distance></DWithin></OR></Filter>`}, SRSNAME: []string{"srsname"}},
-		// 	Result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{}}, BaseRequest: BaseRequest{Version: Version}}},
+		// 0: {QueryParams: map[string][]string{FILTER: []string{`<Filter><OR><AND><PropertyIsLike wildcard='*' singleChar='.' escape='!'><PropertyName>NAME</PropertyName><Literal>Syd*</Literal></PropertyIsLike><PropertyIsEqualTo><PropertyName>POPULATION</PropertyName><Literal>4250065</Literal></PropertyIsEqualTo></AND><DWithin><PropertyName>Geometry</PropertyName><Point srsName=""><coordinates>135.500000,34.666667</coordinates></Point><Distance units='m'>10000</Distance></DWithin></OR></Filter>`}, SRSNAME: []string{"srsname"}},
+		// 	Result: GetFeatureRequest{Query: Query{SrsName: sp("srsname"), Filter: &Filter{}}, BaseRequest: BaseRequest{Version: Version}}}
 		9: {queryParams: map[string][]string{BBOX: {`1,1,2,2`}, FILTER: {`<Filter><ResourceId rid="one"/><ResourceId rid="two"/><ResourceId rid="three"/></Filter>`}, SRSNAME: {"srsname"}, VERSION: {Version}},
 			exception: wsc110.NoApplicableCode(`Only one of the following selectionclauses can be used FILTER,BBOX`),
 		},
