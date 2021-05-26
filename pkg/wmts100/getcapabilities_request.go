@@ -17,7 +17,7 @@ const (
 	VERSION = `VERSION`
 )
 
-// GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
+// GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilitiesRequest struct {
 	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
 	Service string             `xml:"service,attr" yaml:"service"`
@@ -49,7 +49,7 @@ func (gc *GetCapabilitiesRequest) ParseXML(body []byte) wsc110.Exceptions {
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gc GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
+func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.Exceptions {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -65,8 +65,8 @@ func (gc GetCapabilitiesRequest) ParseQueryParameters(query url.Values) wsc110.E
 	return nil
 }
 
-// ToQueryParameters  builds a new query string that will be proxied
-func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
+// ToQueryParameters builds a new query string that will be proxied
+func (gc GetCapabilitiesRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}
@@ -76,7 +76,7 @@ func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
 }
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilitiesRequest) ToXML() []byte {
+func (gc GetCapabilitiesRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))

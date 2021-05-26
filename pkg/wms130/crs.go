@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Default values used by the CRS struct
 const (
 	codeSpace = `urn:ogc:def:crs:EPSG::`
 	EPSG      = `EPSG`

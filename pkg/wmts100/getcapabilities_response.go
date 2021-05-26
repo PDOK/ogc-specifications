@@ -8,33 +8,33 @@ import (
 )
 
 // Type function needed for the interface
-func (gc *GetCapabilitiesResponse) Type() string {
+func (gc GetCapabilitiesResponse) Type() string {
 	return getcapabilities
 }
 
 // Service function needed for the interface
-func (gc *GetCapabilitiesResponse) Service() string {
+func (gc GetCapabilitiesResponse) Service() string {
 	return Service
 }
 
 // Version function needed for the interface
-func (gc *GetCapabilitiesResponse) Version() string {
+func (gc GetCapabilitiesResponse) Version() string {
 	return Version
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilitiesResponse) Validate() wsc110.Exceptions {
+func (gc GetCapabilitiesResponse) Validate() wsc110.Exceptions {
 	return nil
 }
 
 // ToXML builds a GetCapabilities response object
-func (gc *GetCapabilitiesResponse) ToXML() []byte {
+func (gc GetCapabilitiesResponse) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
-// GetCapabilities base struct
+// GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`

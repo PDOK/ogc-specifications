@@ -28,13 +28,13 @@ func (gc *GetCapabilitiesResponse) Validate() Exceptions {
 }
 
 // ToXML builds a GetCapabilities response object
-func (gc *GetCapabilitiesResponse) ToXML() []byte {
+func (gc GetCapabilitiesResponse) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
-// GetCapabilities base struct
+// GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
 	XMLName      xml.Name `xml:"WMS_Capabilities"`
 	Namespaces   `yaml:"namespaces"`

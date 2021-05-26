@@ -52,11 +52,11 @@ type adhocQueryKeywords struct {
 	aliases   *string `yaml:"aliases,omitempty"`
 	srsname   *string `yaml:"srsname,omitempty"`
 	// Projection_clause not implemented
-	filter          *string `yaml:"filter,omitempty"`
-	filter_language *string `yaml:"filter_language,omitempty"`
-	resourceid      *string `yaml:"resourceid,omitempty"`
-	bbox            *string `yaml:"bbox,omitempty"`
-	sortby          *string `yaml:"sortby,omitempty"`
+	filter         *string `yaml:"filter,omitempty"`
+	filterlanguage *string `yaml:"filter_language,omitempty"`
+	resourceid     *string `yaml:"resourceid,omitempty"`
+	bbox           *string `yaml:"bbox,omitempty"`
+	sortby         *string `yaml:"sortby,omitempty"`
 }
 
 // StoredQueryKeywords struct
@@ -146,7 +146,7 @@ func (fpv *getFeatureParameterValueRequest) parseQueryParameters(query url.Value
 				fpv.adhocQueryKeywords.filter = &vp
 			case FILTERLANGUAGE:
 				vp := v[0]
-				fpv.adhocQueryKeywords.filter_language = &vp
+				fpv.adhocQueryKeywords.filterlanguage = &vp
 			case RESOURCEID:
 				vp := v[0]
 				fpv.adhocQueryKeywords.resourceid = &vp

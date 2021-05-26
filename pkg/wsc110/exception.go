@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 )
 
+// Exception interface
 type Exception interface {
 	Error() string
 	Code() string
@@ -11,7 +12,7 @@ type Exception interface {
 	ToExceptions() []Exception
 }
 
-// wsc110exception
+// exception
 type exception struct {
 	XMLName       xml.Name `xml:"ows:Exception"`
 	ExceptionText string   `xml:",chardata" yaml:"exception"`
@@ -19,6 +20,7 @@ type exception struct {
 	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locationcode"`
 }
 
+// ExceptionReport struct
 type ExceptionReport struct {
 	XMLName        xml.Name   `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
 	Ows            string     `xml:"xmlns:ows,attr,omitempty"`
@@ -29,8 +31,10 @@ type ExceptionReport struct {
 	Exception      Exceptions `xml:"ows:Exception"`
 }
 
+// Exceptions is a array of the Exception interface
 type Exceptions []Exception
 
+// ToReport builds a ExceptionReport from an array of Exceptions
 func (e Exceptions) ToReport(version string) ExceptionReport {
 	r := ExceptionReport{}
 	r.SchemaLocation = `http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd`
@@ -42,11 +46,13 @@ func (e Exceptions) ToReport(version string) ExceptionReport {
 	return r
 }
 
+// ToBytes makes from a ExceptionReport a []byte
 func (r ExceptionReport) ToBytes() []byte {
 	si, _ := xml.MarshalIndent(r, "", " ")
 	return append([]byte(xml.Header), si...)
 }
 
+// ToExceptions promotes a single exception to an array of one
 func (e exception) ToExceptions() []Exception {
 	return Exceptions{e}
 }

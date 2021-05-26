@@ -4,6 +4,7 @@ import (
 	"net/url"
 )
 
+// OperationRequest interface used by the wms130 packages
 type OperationRequest interface {
 	Validate(Capabilities) Exceptions
 

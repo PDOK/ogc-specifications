@@ -412,7 +412,10 @@ func TestGetMapToXML(t *testing.T) {
 			result: `<?xml version="1.0" encoding="UTF-8"?>
 <GetMap service="" version="">
  <StyledLayerDescriptor version=""></StyledLayerDescriptor>
- <CRS></CRS>
+ <CRS>
+  <Namespace></Namespace>
+  <Code>0</Code>
+ </CRS>
  <BoundingBox>
   <LowerCorner>0.000000 0.000000</LowerCorner>
   <UpperCorner>0.000000 0.000000</UpperCorner>

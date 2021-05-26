@@ -40,7 +40,7 @@ const (
 	STOREDQUERYID = `STOREDQUERY_ID`
 )
 
-// GetFeature struct with the needed parameters/attributes needed for making a GetFeature request
+// GetFeatureRequest struct with the needed parameters/attributes needed for making a GetFeature request
 type GetFeatureRequest struct {
 	XMLName xml.Name `xml:"GetFeature" yaml:"getfeature"`
 	BaseRequest
@@ -235,6 +235,8 @@ func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureParameter
 	return nil
 }
 
+// StandardResolveParameters struct used by GetFeature
+// contains the resolve information of a GetFeauter request
 type StandardResolveParameters struct {
 	Resolve        *string `xml:"Resolve,omitempty" yaml:"resolve"` //can be one of: local, remote, all, none
 	ResolveDepth   *int    `xml:"ResolveDepth,omitempty" yaml:"resolvedepth"`
@@ -407,6 +409,9 @@ type NOT struct {
 	SpatialOperator
 }
 
+// ResourceIDs struct used in the Filter
+// one of the three filter options
+// that are mutually exclusive
 type ResourceIDs []ResourceID
 
 func (r ResourceIDs) toString() string {

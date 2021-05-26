@@ -18,17 +18,17 @@ const (
 )
 
 // Type returns GetCapabilities
-func (gc *GetCapabilities) Type() string {
+func (gc *GetCapabilitiesRequest) Type() string {
 	return getcapabilities
 }
 
 // Validate validates the GetCapabilities struct
-func (gc *GetCapabilities) Validate(c Capabilities) []wsc200.Exception {
+func (gc *GetCapabilitiesRequest) Validate(c Capabilities) []wsc200.Exception {
 	return nil
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) []wsc200.Exception {
+func (gc *GetCapabilitiesRequest) ParseXML(body []byte) []wsc200.Exception {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return wsc200.MissingParameterValue().ToExceptions()
@@ -51,7 +51,7 @@ func (gc *GetCapabilities) ParseXML(body []byte) []wsc200.Exception {
 }
 
 // QueryParameters builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) QueryParameters(query url.Values) []wsc200.Exception {
+func (gc *GetCapabilitiesRequest) QueryParameters(query url.Values) []wsc200.Exception {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -68,7 +68,7 @@ func (gc *GetCapabilities) QueryParameters(query url.Values) []wsc200.Exception 
 }
 
 // ToQueryParameters builds a new query string that will be proxied
-func (gc *GetCapabilities) ToQueryParameters() url.Values {
+func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}
@@ -78,14 +78,14 @@ func (gc *GetCapabilities) ToQueryParameters() url.Values {
 }
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilities) ToXML() []byte {
+func (gc GetCapabilitiesRequest) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
-// GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
-type GetCapabilities struct {
+// GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
+type GetCapabilitiesRequest struct {
 	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
 	Service string             `xml:"service,attr" yaml:"service"`
 	Version string             `xml:"version,attr" yaml:"version"`

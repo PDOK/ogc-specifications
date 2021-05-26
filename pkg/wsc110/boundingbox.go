@@ -17,6 +17,7 @@ type BoundingBoxUnmarshal struct {
 	UpperCorner Position `xml:"UpperCorner" yaml:"uppercorner"`
 }
 
+// BoundingBox struct
 type BoundingBox struct {
 	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
 	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`

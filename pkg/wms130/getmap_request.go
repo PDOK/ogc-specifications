@@ -30,7 +30,7 @@ const (
 	// ELEVATION   = `ELEVATION`
 )
 
-// GetMap struct with the needed parameters/attributes needed for making a GetMap request
+// GetMapRequest struct with the needed parameters/attributes needed for making a GetMap request
 // Struct based on http://schemas.opengis.net/sld/1.1/example_getmap.xml
 type GetMapRequest struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
@@ -45,8 +45,8 @@ type GetMapRequest struct {
 	// Time                  *string               `xml:"Time" yaml:"time"`
 }
 
-// Validate returns GetMap
-func (m *GetMapRequest) Validate(c Capabilities) Exceptions {
+// Validate validates a GetMapRequest
+func (m GetMapRequest) Validate(c Capabilities) Exceptions {
 	var exceptions Exceptions
 
 	exceptions = append(exceptions, m.StyledLayerDescriptor.Validate(c)...)
@@ -147,7 +147,7 @@ func (m GetMapRequest) ToQueryParameters() url.Values {
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (m GetMapRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(&m, "", " ")
+	si, _ := xml.MarshalIndent(m, "", " ")
 	return append([]byte(xml.Header), si...)
 }
 

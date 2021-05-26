@@ -2,6 +2,7 @@ package wfs200
 
 import "encoding/xml"
 
+// Schema struct
 // TODO build struct based on the capabilities and additional featureinfo
 type Schema struct {
 	XMLName                     xml.Name `xml:"schema"`

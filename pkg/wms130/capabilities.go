@@ -53,7 +53,7 @@ type Request struct {
 	GetFeatureInfo  *RequestType `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
 }
 
-// Exception struct containing the different available exceptions, should be filled from the template
+// ExceptionType struct containing the different available exceptions, should be filled from the template
 // default: XML
 // other commonly used: BLANK, INIMAGE and JSON
 type ExceptionType struct {
