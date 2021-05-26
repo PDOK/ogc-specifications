@@ -1,4 +1,4 @@
-package common
+package wsc110
 
 import (
 	"encoding/xml"

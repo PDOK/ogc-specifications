@@ -33,11 +33,11 @@ func ParsePostRequest(body []byte) (OperationRequest, Exceptions) {
 
 	var request OperationRequest
 	switch strings.ToLower(requestType) {
-	case "getcapabilities":
+	case getcapabilities:
 		request = &GetCapabilitiesRequest{}
-	case "getmap":
+	case getmap:
 		request = &GetMapRequest{}
-	case "getfeatureinfo":
+	case getfeatureinfo:
 		request = &GetFeatureInfoRequest{}
 	default:
 		return nil, OperationNotSupported(requestType).ToExceptions()
@@ -54,11 +54,11 @@ func ParseGetRequest(queryParameters url.Values) (OperationRequest, Exceptions) 
 
 	var request OperationRequest
 	switch strings.ToLower(requestType) {
-	case "getcapabilities":
+	case getcapabilities:
 		request = &GetCapabilitiesRequest{}
-	case "getmap":
+	case getmap:
 		request = &GetMapRequest{}
-	case "getfeatureinfo":
+	case getfeatureinfo:
 		request = &GetFeatureInfoRequest{}
 	default:
 		return nil, OperationNotSupported(requestType).ToExceptions()

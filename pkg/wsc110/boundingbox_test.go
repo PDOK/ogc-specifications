@@ -2,8 +2,6 @@ package wsc110
 
 import (
 	"testing"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 func TestBoundingBoxBuildQueryString(t *testing.T) {
@@ -27,7 +25,7 @@ func TestBuildBoundingBox(t *testing.T) {
 	var tests = []struct {
 		boundingbox string
 		bbox        BoundingBox
-		exception   common.Exception
+		exception   Exception
 	}{
 		0: {boundingbox: "0,0,100,100", bbox: BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{100, 100}}},
 		1: {boundingbox: "0,0,-100,-100", bbox: BoundingBox{LowerCorner: [2]float64{0, 0}, UpperCorner: [2]float64{-100, -100}}}, // while this isn't correct, this will be 'addressed' in the validation step

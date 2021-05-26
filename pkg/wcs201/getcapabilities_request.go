@@ -6,9 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
-	"github.com/pdok/ogc-specifications/pkg/wsc110"
+	"github.com/pdok/ogc-specifications/pkg/wsc200"
 )
 
 // WCS 2.0.1 Tokens
@@ -24,18 +23,18 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate validates the GetCapabilities struct
-func (gc *GetCapabilities) Validate(c Capabilities) common.Exceptions {
+func (gc *GetCapabilities) Validate(c Capabilities) []wsc200.Exception {
 	return nil
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
+func (gc *GetCapabilities) ParseXML(body []byte) []wsc200.Exception {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return common.Exceptions{wsc110.MissingParameterValue()}
+		return wsc200.MissingParameterValue().ToExceptions()
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return common.Exceptions{wsc110.MissingParameterValue("REQUEST")}
+		return wsc200.MissingParameterValue(REQUEST).ToExceptions()
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -52,7 +51,7 @@ func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
 }
 
 // QueryParameters builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) QueryParameters(query url.Values) common.Exceptions {
+func (gc *GetCapabilities) QueryParameters(query url.Values) []wsc200.Exception {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:

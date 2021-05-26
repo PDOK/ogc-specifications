@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"regexp"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -66,7 +65,7 @@ type ServiceIdentification struct {
 	XMLName     xml.Name         `xml:"ows:ServiceIdentification"`
 	Title       string           `xml:"ows:Title" yaml:"title"`
 	Abstract    string           `xml:"ows:Abstract" yaml:"abstract"`
-	Keywords    *common.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	Keywords    *wsc110.Keywords `xml:"ows:Keywords" yaml:"keywords"`
 	ServiceType struct {
 		Text      string `xml:",chardata" yaml:"text"`
 		CodeSpace string `xml:"codeSpace,attr" yaml:"codespace"`

@@ -3,7 +3,6 @@ package wfs200
 import (
 	"encoding/xml"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -109,9 +108,9 @@ type FeatureType struct {
 	Name          string           `xml:"wfs:Name" yaml:"name"`
 	Title         string           `xml:"wfs:Title" yaml:"title"`
 	Abstract      string           `xml:"wfs:Abstract" yaml:"abstract"`
-	Keywords      *common.Keywords `xml:"ows:Keywords" yaml:"keywords"`
-	DefaultCRS    *common.CRS      `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
-	OtherCRS      *[]common.CRS    `xml:"wfs:OtherCRS" yaml:"othercrs"`
+	Keywords      *wsc110.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	DefaultCRS    *wsc110.CRS      `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
+	OtherCRS      *[]wsc110.CRS    `xml:"wfs:OtherCRS" yaml:"othercrs"`
 	OutputFormats struct {
 		Format []string `xml:"wfs:Format" yaml:"format"`
 	} `xml:"wfs:OutputFormats" yaml:"outputformats"`

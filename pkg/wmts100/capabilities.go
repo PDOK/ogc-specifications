@@ -1,7 +1,6 @@
 package wmts100
 
 import (
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -59,7 +58,7 @@ type Style struct {
 	Identifier string           `xml:"ows:Identifier" yaml:"identifier"`
 	Title      *string          `xml:"ows:Title,omitempty" yaml:"title"`
 	Abstract   *string          `xml:"ows:Abstract,omitempty" yaml:"abstract"`
-	Keywords   *common.Keywords `xml:"Keywords,omitempty" yaml:"keywords"`
+	Keywords   *wsc110.Keywords `xml:"Keywords,omitempty" yaml:"keywords"`
 	LegendURL  []*LegendURL     `xml:"LegendURL,omitempty" yaml:"legendurl"`
 	IsDefault  *bool            `xml:"isDefault,attr,omitempty" yaml:"isdefault"`
 }

@@ -1,4 +1,4 @@
-package common
+package wsc110
 
 import (
 	"regexp"
@@ -11,11 +11,6 @@ const (
 	codeSpace = `urn:ogc:def:crs:EPSG::`
 	EPSG      = `EPSG`
 )
-
-// Keywords in struct for repeatability
-type Keywords struct {
-	Keyword []string `xml:"Keyword" yaml:"keyword"`
-}
 
 // CRS struct with namespace/authority/registry and code
 type CRS struct {

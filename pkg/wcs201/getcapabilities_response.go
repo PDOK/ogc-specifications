@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"regexp"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
+	"github.com/pdok/ogc-specifications/pkg/wsc200"
 )
 
 // Type function needed for the interface
@@ -20,11 +20,6 @@ func (gc *GetCapabilitiesResponse) Service() string {
 // Version function needed for the interface
 func (gc *GetCapabilitiesResponse) Version() string {
 	return Version
-}
-
-// Validate function of the wfs200 spec
-func (gc *GetCapabilitiesResponse) Validate() common.Exceptions {
-	return nil
 }
 
 // ToXML builds a GetCapabilities response object
@@ -65,7 +60,7 @@ type Namespaces struct {
 type ServiceIdentification struct {
 	Title       string           `xml:"ows:Title" yaml:"title"`
 	Abstract    string           `xml:"ows:Abstract" yaml:"abstract"`
-	Keywords    *common.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	Keywords    *wsc200.Keywords `xml:"ows:Keywords" yaml:"keywords"`
 	ServiceType struct {
 		Text      string `xml:",chardata" yaml:"text"`
 		CodeSpace string `xml:"codeSpace,attr" yaml:"codespace"`

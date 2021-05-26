@@ -96,7 +96,6 @@ func (d *DescribeFeatureTypeRequest) parseDescribeFeatureTypeParameterValueReque
 
 // ToQueryParameters  builds a new query string that will be proxied
 func (d DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
-
 	dpv := describeFeatureTypeParameterValueRequest{}
 	dpv.parseDescribeFeatureTypeRequest(d)
 

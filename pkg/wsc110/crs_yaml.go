@@ -1,4 +1,4 @@
-package common
+package wsc110
 
 // UnmarshalYAML CRS
 func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {
