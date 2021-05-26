@@ -110,7 +110,7 @@ func (d DescribeFeatureTypeRequest) ToXML() []byte {
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
-// DescribeFeatureType struct with the needed parameters/attributes needed for making a DescribeFeatureType request
+// DescribeFeatureTypeRequest struct with the needed parameters/attributes needed for making a DescribeFeatureType request
 type DescribeFeatureTypeRequest struct {
 	XMLName xml.Name `xml:"DescribeFeatureType" yaml:"describefeaturetype"`
 	BaseRequest

@@ -4,6 +4,7 @@ import (
 	"net/url"
 )
 
+// OperationRequest interface used by the wfs200 and wmts100 packages
 type OperationRequest interface {
 	Validate(Capabilities) []Exception
 

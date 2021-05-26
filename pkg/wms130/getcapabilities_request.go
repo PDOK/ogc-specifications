@@ -9,7 +9,7 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
-// GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
+// GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilitiesRequest struct {
 	XMLName xml.Name `xml:"GetCapabilities" yaml:"getcapabilities"`
 	BaseRequest

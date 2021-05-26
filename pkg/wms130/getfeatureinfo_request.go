@@ -22,7 +22,7 @@ const (
 	FEATURECOUNT = `FEATURE_COUNT`
 )
 
-// GetFeatureInfo struct with the needed parameters/attributes needed for making a GetFeatureInfo request
+// GetFeatureInfoRequest struct with the needed parameters/attributes needed for making a GetFeatureInfo request
 type GetFeatureInfoRequest struct {
 	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
 	BaseRequest
@@ -143,9 +143,8 @@ func (i *GetFeatureInfoRequest) parseGetFeatureInfoParameterValueRequest(ipv get
 
 	if len(exceptions) > 0 {
 		return exceptions
-	} else {
-		return nil
 	}
+	return nil
 }
 
 // ParseQueryParameters builds a GetFeatureInfo object based on the available query parameters
@@ -182,7 +181,7 @@ func (i GetFeatureInfoRequest) ToQueryParameters() url.Values {
 // good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.
 func (i GetFeatureInfoRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(&i, "", " ")
+	si, _ := xml.MarshalIndent(i, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
