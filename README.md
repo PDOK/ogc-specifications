@@ -24,12 +24,12 @@ It will provide the user with OperationRequest, OperationResponse and Capabiliti
 
 This is still a 'work-in-progress' with the following major to do's:
 
-- [ ] Validation support
-- [ ] YAML parser
-- [ ] WMTS support
-- [ ] WCS support
-- [ ] OGC response support (at least for the metadata calls like DescribeFeatureType)
-- [ ] WFS StoredQuery
+- [ ] WFS StoredQuery support
+- [ ] WMTS GetTile support
+- [ ] WCS GetCoverage support
+- [ ] OGC response support for metadata calls like GetCapabilities and DescribeFeatureType
+- [ ] Sufficent validation support
+- [ ] cleanup YAML parser
 - [ ] WMS Time & Elevation parameters
 
 ## Installation
