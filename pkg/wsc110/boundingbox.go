@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // BoundingBoxUnmarshal struct
@@ -34,13 +32,13 @@ type WGS84BoundingBox BoundingBox
 // Position type
 type Position [2]float64
 
-// BuildKVP function for getting a KVP Query BBOX value
-func (b *BoundingBox) BuildKVP() string {
+// ToQueryParameters function for getting a string value from a Query BBOX
+func (b *BoundingBox) ToQueryParameters() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
 //ParseString builds a BoundingBox based on a string
-func (b *BoundingBox) ParseString(boundingbox string) common.Exception {
+func (b *BoundingBox) ParseString(boundingbox string) Exception {
 	result := strings.Split(boundingbox, ",")
 	var lx, ly, ux, uy float64
 	var err error

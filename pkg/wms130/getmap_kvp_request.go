@@ -6,43 +6,17 @@ import (
 	"strings"
 )
 
-//GetMapKVP struct
-type GetMapKVP struct {
+//getMapParameterValueRequest struct
+type getMapParameterValueRequest struct {
 	// Table 8 - The Parameters of a GetMap request
-	Service string `yaml:"service,omitempty"`
-	BaseRequestKVP
-	GetMapKVPMandatory
-	GetMapKVPOptional
+	service string `yaml:"service,omitempty"`
+	baseParameterValueRequest
+	getMapParameterValueMandatory
+	getMapParameterValueOptional
 }
 
-// StyledLayer struct
-type StyledLayer struct {
-	Layers string `yaml:"layers,omitempty"`
-	Styles string `yaml:"styles,omitempty"`
-}
-
-// GetMapKVPMandatory struct containing the mandatory WMS request KVP
-type GetMapKVPMandatory struct {
-	StyledLayer
-	CRS    string `yaml:"crs,omitempty"`
-	Bbox   string `yaml:"bbox,omitempty"`
-	Width  string `yaml:"width,omitempty"`
-	Height string `yaml:"height,omitempty"`
-	Format string `yaml:"format,omitempty"`
-}
-
-// GetMapKVPOptional struct containing the optional WMS request KVP
-type GetMapKVPOptional struct {
-	Transparent *string `yaml:"transparent,omitempty"`
-	BGColor     *string `yaml:"bgcolor,omitempty"`
-	Exceptions  *string `yaml:"exceptions,omitempty"`
-	// TODO: something with Time & Elevation
-	// Time        *string `yaml:"time,omitempty"`
-	// Elevation   *string `yaml:"elevation,omitempty"`
-}
-
-// ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gmkvp *GetMapKVP) ParseQueryParameters(query url.Values) Exceptions {
+// parseQueryParameters builds a getMapParameterValueRequest object based on the available query parameters
+func (mpv *getMapParameterValueRequest) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
@@ -50,31 +24,31 @@ func (gmkvp *GetMapKVP) ParseQueryParameters(query url.Values) Exceptions {
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
-				gmkvp.Service = strings.ToUpper(v[0])
+				mpv.service = strings.ToUpper(v[0])
 			case VERSION:
-				gmkvp.BaseRequestKVP.Version = v[0]
+				mpv.baseParameterValueRequest.version = v[0]
 			case REQUEST:
-				gmkvp.BaseRequestKVP.Request = v[0]
+				mpv.baseParameterValueRequest.request = v[0]
 			case LAYERS:
-				gmkvp.GetMapKVPMandatory.Layers = v[0]
+				mpv.getMapParameterValueMandatory.layers = v[0]
 			case STYLES:
-				gmkvp.GetMapKVPMandatory.Styles = v[0]
+				mpv.getMapParameterValueMandatory.styles = v[0]
 			case "CRS":
-				gmkvp.GetMapKVPMandatory.CRS = v[0]
+				mpv.getMapParameterValueMandatory.crs = v[0]
 			case BBOX:
-				gmkvp.GetMapKVPMandatory.Bbox = v[0]
+				mpv.getMapParameterValueMandatory.bbox = v[0]
 			case WIDTH:
-				gmkvp.GetMapKVPMandatory.Width = v[0]
+				mpv.getMapParameterValueMandatory.width = v[0]
 			case HEIGHT:
-				gmkvp.GetMapKVPMandatory.Height = v[0]
+				mpv.getMapParameterValueMandatory.height = v[0]
 			case FORMAT:
-				gmkvp.GetMapKVPMandatory.Format = v[0]
+				mpv.getMapParameterValueMandatory.format = v[0]
 			case TRANSPARENT:
-				gmkvp.GetMapKVPOptional.Transparent = &(v[0])
+				mpv.getMapParameterValueOptional.transparent = &(v[0])
 			case BGCOLOR:
-				gmkvp.GetMapKVPOptional.BGColor = &(v[0])
+				mpv.getMapParameterValueOptional.bgcolor = &(v[0])
 			case EXCEPTIONS:
-				gmkvp.GetMapKVPOptional.Exceptions = &(v[0])
+				mpv.getMapParameterValueOptional.exceptions = &(v[0])
 			}
 		}
 	}
@@ -86,105 +60,130 @@ func (gmkvp *GetMapKVP) ParseQueryParameters(query url.Values) Exceptions {
 	return nil
 }
 
-// ParseOperationRequest builds a GetMapKVP object based on a GetMap struct
-func (gmkvp *GetMapKVP) ParseOperationRequest(or OperationRequest) Exceptions {
-	gm := or.(*GetMapRequest)
+// parseGetMapRequest builds a getMapParameterValueRequest object based on a GetMap struct
+func (mpv *getMapParameterValueRequest) parseGetMapRequest(m GetMapRequest) Exceptions {
 
-	gmkvp.Request = getmap
-	gmkvp.Version = Version
-	gmkvp.Service = Service
-	gmkvp.Layers = gm.StyledLayerDescriptor.getLayerKVPValue()
-	gmkvp.Styles = gm.StyledLayerDescriptor.getStyleKVPValue()
-	gmkvp.CRS = gm.CRS.String()
-	gmkvp.Bbox = gm.BoundingBox.BuildQueryParameters()
-	gmkvp.Width = strconv.Itoa(gm.Output.Size.Width)
-	gmkvp.Height = strconv.Itoa(gm.Output.Size.Height)
-	gmkvp.Format = gm.Output.Format
+	mpv.request = getmap
+	mpv.version = Version
+	mpv.service = Service
+	mpv.layers = m.StyledLayerDescriptor.getLayerParameterValue()
+	mpv.styles = m.StyledLayerDescriptor.getStyleParameterValue()
+	mpv.crs = m.CRS.String()
+	mpv.bbox = m.BoundingBox.ToQueryParameters()
+	mpv.width = strconv.Itoa(m.Output.Size.Width)
+	mpv.height = strconv.Itoa(m.Output.Size.Height)
+	mpv.format = m.Output.Format
 
-	if gm.Output.Transparent != nil {
-		t := *gm.Output.Transparent
+	if m.Output.Transparent != nil {
+		t := *m.Output.Transparent
 		tp := strconv.FormatBool(t)
-		gmkvp.Transparent = &tp
+		mpv.transparent = &tp
 	}
 
-	if gm.Output.BGcolor != nil {
-		gmkvp.BGColor = gm.Output.BGcolor
+	if m.Output.BGcolor != nil {
+		mpv.bgcolor = m.Output.BGcolor
 	}
 
 	// TODO: something with Time & Elevation
-	// gmkvp.Time = gm.Time
-	// gmkvp.Elevation = gm.Elevation
+	// mpv.Time = m.Time
+	// mpv.Elevation = m.Elevation
 
-	gmkvp.Exceptions = gm.Exceptions
+	mpv.exceptions = m.Exceptions
 
 	return nil
 }
 
-// BuildOutput builds a Output struct from the KVP information
-func (gmkvp *GetMapKVP) buildOutput() (Output, Exceptions) {
+// BuildOutput builds a Output struct from the getMapParameterValueRequest information
+func (mpv *getMapParameterValueRequest) buildOutput() (Output, Exceptions) {
 	output := Output{}
 
-	h, err := strconv.Atoi(gmkvp.Height)
+	h, err := strconv.Atoi(mpv.height)
 	if err != nil {
-		return output, InvalidParameterValue(HEIGHT, gmkvp.Height).ToExceptions()
+		return output, InvalidParameterValue(HEIGHT, mpv.height).ToExceptions()
 	}
-	w, err := strconv.Atoi(gmkvp.Width)
+	w, err := strconv.Atoi(mpv.width)
 	if err != nil {
-		return output, InvalidParameterValue(WIDTH, gmkvp.Width).ToExceptions()
+		return output, InvalidParameterValue(WIDTH, mpv.width).ToExceptions()
 	}
 
 	output.Size = Size{Height: h, Width: w}
-	output.Format = gmkvp.Format
-	if b, err := strconv.ParseBool(*gmkvp.Transparent); err == nil {
+	output.Format = mpv.format
+	if b, err := strconv.ParseBool(*mpv.transparent); err == nil {
 		output.Transparent = &b
 	}
-	output.BGcolor = gmkvp.BGColor
+	output.BGcolor = mpv.bgcolor
 
 	return output, nil
 }
 
-// BuildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the KVP information
-func (sl *StyledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, Exceptions) {
+// StyledLayer struct
+type styledLayer struct {
+	layers string `yaml:"layers,omitempty"`
+	styles string `yaml:"styles,omitempty"`
+}
+
+// buildStyledLayerDescriptor builds a StyledLayerDescriptor struct from the parameter value information
+func (sl *styledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, Exceptions) {
 	var layers, styles []string
-	if sl.Layers != `` {
-		layers = strings.Split(sl.Layers, ",")
+	if sl.layers != `` {
+		layers = strings.Split(sl.layers, ",")
 	}
-	if sl.Styles != `` {
-		styles = strings.Split(sl.Styles, ",")
+	if sl.styles != `` {
+		styles = strings.Split(sl.styles, ",")
 	}
 
-	sld, err := buildStyledLayerDescriptor(layers, styles)
-	if err != nil {
-		return sld, err
+	sld, exceptions := buildStyledLayerDescriptor(layers, styles)
+	if exceptions != nil {
+		return sld, exceptions
 	}
 
 	return sld, nil
 }
 
-// BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gmkvp *GetMapKVP) ToQueryParameters() url.Values {
+// toQueryParameters builds a url.Values query from a getMapParameterValueRequest struct
+func (mpv *getMapParameterValueRequest) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
-	query[SERVICE] = []string{gmkvp.Service}
-	query[VERSION] = []string{gmkvp.Version}
-	query[REQUEST] = []string{gmkvp.Request}
-	query[LAYERS] = []string{gmkvp.Layers}
-	query[STYLES] = []string{gmkvp.Styles}
-	query["CRS"] = []string{gmkvp.CRS}
-	query[BBOX] = []string{gmkvp.Bbox}
-	query[WIDTH] = []string{gmkvp.Width}
-	query[HEIGHT] = []string{gmkvp.Height}
-	query[FORMAT] = []string{gmkvp.Format}
+	query[SERVICE] = []string{mpv.service}
+	query[VERSION] = []string{mpv.version}
+	query[REQUEST] = []string{mpv.request}
+	query[LAYERS] = []string{mpv.layers}
+	query[STYLES] = []string{mpv.styles}
+	query["CRS"] = []string{mpv.crs}
+	query[BBOX] = []string{mpv.bbox}
+	query[WIDTH] = []string{mpv.width}
+	query[HEIGHT] = []string{mpv.height}
+	query[FORMAT] = []string{mpv.format}
 
-	if gmkvp.Transparent != nil {
-		query[TRANSPARENT] = []string{*gmkvp.Transparent}
+	if mpv.transparent != nil {
+		query[TRANSPARENT] = []string{*mpv.transparent}
 	}
-	if gmkvp.BGColor != nil {
-		query[BGCOLOR] = []string{*gmkvp.BGColor}
+	if mpv.bgcolor != nil {
+		query[BGCOLOR] = []string{*mpv.bgcolor}
 	}
-	if gmkvp.Exceptions != nil {
-		query[EXCEPTIONS] = []string{*gmkvp.Exceptions}
+	if mpv.exceptions != nil {
+		query[EXCEPTIONS] = []string{*mpv.exceptions}
 	}
 
 	return query
+}
+
+// getMapParameterValueMandatory struct containing the mandatory WMS request Parameter Value
+type getMapParameterValueMandatory struct {
+	styledLayer
+	crs    string `yaml:"crs,omitempty"`
+	bbox   string `yaml:"bbox,omitempty"`
+	width  string `yaml:"width,omitempty"`
+	height string `yaml:"height,omitempty"`
+	format string `yaml:"format,omitempty"`
+}
+
+// getMapParameterValueOptional struct containing the optional WMS request Parameter Value
+type getMapParameterValueOptional struct {
+	transparent *string `yaml:"transparent,omitempty"`
+	bgcolor     *string `yaml:"bgcolor,omitempty"`
+	exceptions  *string `yaml:"exceptions,omitempty"`
+	// TODO: something with Time & Elevation
+	// Time        *string `yaml:"time,omitempty"`
+	// Elevation   *string `yaml:"elevation,omitempty"`
 }

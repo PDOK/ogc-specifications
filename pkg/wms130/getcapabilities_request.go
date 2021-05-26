@@ -16,18 +16,18 @@ type GetCapabilitiesRequest struct {
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Validate(c Capabilities) Exceptions {
+func (g *GetCapabilitiesRequest) Validate(c Capabilities) Exceptions {
 	var exceptions Exceptions
 	return exceptions
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilitiesRequest) ParseXML(body []byte) Exceptions {
+func (g *GetCapabilitiesRequest) ParseXML(body []byte) Exceptions {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
-	if err := xml.Unmarshal(body, &gc); err != nil {
+	if err := xml.Unmarshal(body, &g); err != nil {
 		return Exceptions{MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
@@ -40,51 +40,50 @@ func (gc *GetCapabilitiesRequest) ParseXML(body []byte) Exceptions {
 		}
 	}
 
-	gc.Attr = utils.StripDuplicateAttr(n)
+	g.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Exceptions {
+func (g *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty SERVICE and REQUEST parameter is missing.
 		return Exceptions{MissingParameterValue(SERVICE), MissingParameterValue(REQUEST)}
 	}
 
-	gckvp := GetCapabilitiesKVP{}
-	if err := gckvp.ParseQueryParameters(query); err != nil {
-		return err
+	gpv := getCapabilitiesParameterValueRequest{}
+	if exception := gpv.parseQueryParameters(query); exception != nil {
+		return exception
 	}
 
-	if err := gc.ParseOperationRequestKVP(&gckvp); err != nil {
-		return err
+	if exception := g.parseGetCapabilitiesParameterValueRequest(gpv); exception != nil {
+		return exception
 	}
 
 	return nil
 }
 
-// ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilitiesRequest) ParseOperationRequestKVP(orkvp OperationRequestKVP) Exceptions {
-	gckvp := orkvp.(*GetCapabilitiesKVP)
+// parseGetCapabilitiesParameterValueRequest process the simple struct to a complex struct
+func (g *GetCapabilitiesRequest) parseGetCapabilitiesParameterValueRequest(gpv getCapabilitiesParameterValueRequest) Exceptions {
 
-	gc.XMLName.Local = gckvp.Request
-	gc.BaseRequest.Build(gckvp.Service, gckvp.Version)
+	g.XMLName.Local = gpv.request
+	g.BaseRequest.parseBaseParameterValueRequest(gpv.baseParameterValueRequest)
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
-func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
-	gckvp := GetCapabilitiesKVP{}
-	gckvp.ParseOperationRequest(gc)
+// ToQueryParameters builds a new query string that will be proxied
+func (g GetCapabilitiesRequest) ToQueryParameters() url.Values {
+	gpv := getCapabilitiesParameterValueRequest{}
+	gpv.parseGetCapabilitiesRequest(g)
 
-	kvp := gckvp.ToQueryParameters()
-	return kvp
+	q := gpv.toQueryParameters()
+	return q
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilitiesRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(gc, "", "")
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func (g GetCapabilitiesRequest) ToXML() []byte {
+	si, _ := xml.MarshalIndent(&g, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }

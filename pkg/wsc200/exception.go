@@ -1,4 +1,4 @@
-package wsc110
+package wsc200
 
 import (
 	"encoding/xml"

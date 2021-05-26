@@ -23,10 +23,10 @@ const (
 	VERSION = `VERSION`
 )
 
-// BaseRequestKVP struct
-type BaseRequestKVP struct {
-	Version string `yaml:"version,omitempty"`
-	Request string `yaml:"request,omitempty"`
+// baseParameterValueRequest struct
+type baseParameterValueRequest struct {
+	version string `yaml:"version,omitempty"`
+	request string `yaml:"request,omitempty"`
 }
 
 // BaseRequest based on the SLD 1.1 spec 'containing' example implementation of a POST WMS 1.3.0 request
@@ -56,14 +56,13 @@ func (b *BaseRequest) ParseQueryParameters(q url.Values) Exceptions {
 	return nil
 }
 
-// Build builds a BaseRequest struct
-func (b *BaseRequest) Build(service, version string) Exceptions {
-	if service != `` {
-		// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
-		b.Service = service
-	}
-	if version != `` {
-		b.Version = version
+// parseBaseParameterValueRequest builds a BaseRequest struct
+func (b *BaseRequest) parseBaseParameterValueRequest(bpv baseParameterValueRequest) Exceptions {
+	// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
+	b.Service = Service
+
+	if bpv.version != `` {
+		b.Version = bpv.version
 	} else {
 		// Version is mandatory
 		return Exceptions{MissingParameterValue(VERSION)}

@@ -2,21 +2,68 @@ package wfs200
 
 import (
 	"net/url"
+	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-type DescribeFeatureTypeKVP struct {
+type describeFeatureTypeParameterValueRequest struct {
+	service string `yaml:"service"`
+	baseParameterValueRequest
+
+	typeName     *string `yaml:"typename"`     // [0..*]
+	outputFormat *string `yaml:"outputformat"` // default: "text/xml; subtype=gml/3.2"
 }
 
-func (dftkvp *DescribeFeatureTypeKVP) ParseKVP(query url.Values) wsc110.Exceptions {
+func (dpv *describeFeatureTypeParameterValueRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
+	var exceptions []wsc110.Exception
+	for k, v := range query {
+		if len(v) != 1 {
+			exceptions = append(exceptions, wsc110.InvalidParameterValue(k, strings.Join(v, ",")))
+		} else {
+			switch strings.ToUpper(k) {
+			case SERVICE:
+				dpv.service = strings.ToUpper(v[0])
+			case VERSION:
+				dpv.baseParameterValueRequest.version = v[0]
+			case REQUEST:
+				dpv.baseParameterValueRequest.request = v[0]
+			case TYPENAME:
+				vp := v[0]
+				dpv.typeName = &vp
+			case OUTPUTFORMAT:
+				vp := v[0]
+				dpv.outputFormat = &vp
+			}
+		}
+	}
+
+	if len(exceptions) > 0 {
+		return exceptions
+	}
+
 	return nil
 }
 
-func (dftkvp *DescribeFeatureTypeKVP) ParseOperationRequest(or wsc110.OperationRequest) wsc110.Exceptions {
+func (dpv *describeFeatureTypeParameterValueRequest) parseDescribeFeatureTypeRequest(dft DescribeFeatureTypeRequest) []wsc110.Exception {
+	dpv.request = describefeaturetype
+	dpv.version = dft.Version
+	dpv.service = dft.Service
+	dpv.typeName = dft.TypeName
+	dpv.outputFormat = dft.OutputFormat
 	return nil
 }
 
-func (dftkvp *DescribeFeatureTypeKVP) BuildKVP() url.Values {
-	return nil
+func (dpv describeFeatureTypeParameterValueRequest) toQueryParameters() url.Values {
+	querystring := make(map[string][]string)
+	querystring[REQUEST] = []string{dpv.request}
+	querystring[SERVICE] = []string{dpv.service}
+	querystring[VERSION] = []string{dpv.version}
+	if dpv.typeName != nil {
+		querystring[TYPENAME] = []string{*dpv.typeName}
+	}
+	if dpv.outputFormat != nil {
+		querystring[OUTPUTFORMAT] = []string{*dpv.outputFormat}
+	}
+	return querystring
 }

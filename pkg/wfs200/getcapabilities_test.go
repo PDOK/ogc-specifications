@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -18,13 +17,13 @@ func TestGetCapabilitiesType(t *testing.T) {
 
 func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
-		Body   []byte
-		Result GetCapabilitiesRequest
-		Error  wsc110.Exception
+		body      []byte
+		result    GetCapabilitiesRequest
+		exception wsc110.Exception
 	}{
 		// Lots of attribute declarations
-		0: {Body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"/>`),
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
+		0: {body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"/>`),
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"},
 					{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows/1.1"},
@@ -34,109 +33,111 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "inspire_common"}, Value: "http://inspire.ec.europa.eu/schemas/common/1.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "inspire_dls"}, Value: "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
-					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}},
+					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: wsc110.Exception{ExceptionText: "This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>"}},
+		1: {body: []byte("<Unknown/>"),
+			exception: wsc110.NoApplicableCode("This service does not know the operation: expected element type <GetCapabilities> but have <Unknown>")},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}},
+		2: {body: []byte("no XML document, just a string"),
+			exception: wsc110.NoApplicableCode("Could not process XML, is it XML?")},
 		// document at all
-		3: {Error: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}},
+		3: {exception: wsc110.NoApplicableCode("Could not process XML, is it XML?")},
 		// Duplicate attributes in XML message with the same value
-		4: {Body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
+		4: {body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}},
 		// Duplicate attributes in XML message with different values
-		5: {Body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/ows/1.1"  xmlns:wfs="http://www.w3.org/2001/XMLSchema-instance" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
+		5: {body: []byte(`<GetCapabilities service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/ows/1.1"  xmlns:wfs="http://www.w3.org/2001/XMLSchema-instance" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var gc GetCapabilitiesRequest
-		err := gc.ParseXML(n.Body)
-		if err != nil {
-			if err[0].Error() != n.Error.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+		exception := gc.ParseXML(test.body)
+		if exception != nil {
+			if exception[0].Error() != test.exception.Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
 			}
 		} else {
-			if gc.Service != n.Result.Service {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result, gc)
+			if gc.Service != test.result.Service {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result, gc)
 			}
-			if gc.Version != n.Result.Version {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result, gc)
+			if gc.Version != test.result.Version {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result, gc)
 			}
-			if len(n.Result.Attr) == len(gc.Attr) {
+			if len(test.result.Attr) == len(gc.Attr) {
 				c := false
-				for _, expected := range n.Result.Attr {
+				for _, expected := range test.result.Attr {
 					for _, result := range gc.Attr {
 						if result.Name.Local == expected.Name.Local && result.Value == expected.Value {
 							c = true
 						}
 					}
 					if !c {
-						t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.Attr, gc.Attr)
+						t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Attr, gc.Attr)
 					}
 					c = false
 				}
 			} else {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.Attr, gc.Attr)
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Attr, gc.Attr)
 			}
 		}
 	}
 }
 
-func TestGetCapabilitiesParseKVP(t *testing.T) {
+func TestGetCapabilitiesParseQueryParameters(t *testing.T) {
 	var tests = []struct {
-		Query  url.Values
-		Result GetCapabilitiesRequest
-		Error  wsc110.Exception
+		query      url.Values
+		result     GetCapabilitiesRequest
+		exceptions []wsc110.Exception
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
-		0: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"2.0.0"}},
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "2.0.0"}},
+		0: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"2.0.0"}},
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "2.0.0"}},
 		// Missing mandatory SERVICE attribute
-		1: {Query: map[string][]string{"Request": {"GetCapabilities"}},
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}}},
+		1: {query: map[string][]string{"Request": {"GetCapabilities"}},
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}}},
 		// Missing optional VERSION attribute
-		2: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}},
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS"}},
+		2: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}},
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS"}},
 		// Unknown optional VERSION attribute
-		3: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"3.4.5"}},
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "3.4.5"}},
-		4: {Query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"no version found"}},
-			Result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "NO VERSION FOUND"}},
+		3: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"3.4.5"}},
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "3.4.5"}},
+		4: {query: map[string][]string{"SERVICE": {"wfs"}, "Request": {"GetCapabilities"}, "version": {"no version found"}},
+			result: GetCapabilitiesRequest{XMLName: xml.Name{Local: "GetCapabilities"}, Service: "WFS", Version: "no version found"}},
 		// No mandatory SERVICE, REQUEST attribute only optional VERSION
 		5: {
-			Error: wsc110.Exception{ExceptionText: "Failed to parse the operation, found: "},
+			exceptions: []wsc110.Exception{wsc110.MissingParameterValue(SERVICE), wsc110.MissingParameterValue(REQUEST)},
 		},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var gc GetCapabilitiesRequest
-		err := gc.ParseQueryParameters(n.Query)
-		if err != nil {
-			if err[0].Error() != n.Error.Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+		exception := gc.ParseQueryParameters(test.query)
+		if exception != nil {
+			if exception[0].Error() != test.exceptions[0].Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exceptions, exception)
 			}
 		} else {
-			if n.Result.XMLName.Local != gc.XMLName.Local {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.XMLName.Local, gc.XMLName.Local)
+			if test.result.XMLName.Local != gc.XMLName.Local {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.XMLName.Local, gc.XMLName.Local)
 			}
-			if n.Result.Service != gc.Service {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.Service, gc.Service)
+			if test.result.Service != gc.Service {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Service, gc.Service)
 			}
-			if n.Result.Version != gc.Version {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.Version, gc.Version)
+			if test.result.Version != gc.Version {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.Version, gc.Version)
 			}
 		}
 	}
 }
 
-func TestGetCapabilitiesBuildKVP(t *testing.T) {
+func TestGetCapabilitiesToQueryParameters(t *testing.T) {
 	var tests = []struct {
-		Object   GetCapabilitiesRequest
-		Excepted url.Values
-		Error    common.Exception
+		Object    GetCapabilitiesRequest
+		Excepted  url.Values
+		Exception wsc110.Exception
 	}{
 		0: {Object: GetCapabilitiesRequest{Service: Service, Version: Version, XMLName: xml.Name{Local: `GetCapabilities`}},
 			Excepted: map[string][]string{
@@ -146,28 +147,28 @@ func TestGetCapabilitiesBuildKVP(t *testing.T) {
 			}},
 	}
 
-	for k, n := range tests {
-		url := n.Object.ToQueryParameters()
-		if len(n.Excepted) != len(url) {
-			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+	for k, test := range tests {
+		url := test.Object.ToQueryParameters()
+		if len(test.Excepted) != len(url) {
+			t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.Excepted, url)
 		} else {
 			for _, rid := range url {
 				found := false
-				for _, erid := range n.Excepted {
+				for _, erid := range test.Excepted {
 					if rid[0] == erid[0] {
 						found = true
 						break
 					}
 				}
 				if !found {
-					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, n.Excepted, url)
+					t.Errorf("test: %d, expected: %+v,\n got: %+v: ", k, test.Excepted, url)
 				}
 			}
 		}
 	}
 }
 
-func TestGetCapabilitiesBuildXML(t *testing.T) {
+func TestGetCapabilitiesToXML(t *testing.T) {
 	var tests = []struct {
 		gc     GetCapabilitiesRequest
 		result string
@@ -183,23 +184,5 @@ func TestGetCapabilitiesBuildXML(t *testing.T) {
 		if string(body) != v.result {
 			t.Errorf("test: %d, Expected body %s but was not \n got: %s", k, v.result, string(body))
 		}
-	}
-}
-
-// ----------
-// Benchmarks
-// ----------
-
-func BenchmarkGetCapabilitiesBuildKVP(b *testing.B) {
-	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
-	for i := 0; i < b.N; i++ {
-		gc.ToQueryParameters()
-	}
-}
-
-func BenchmarkGetCapabilitiesBuildXML(b *testing.B) {
-	gc := GetCapabilitiesRequest{XMLName: xml.Name{Local: getcapabilities}, Service: Service, Version: Version}
-	for i := 0; i < b.N; i++ {
-		gc.ToXML()
 	}
 }

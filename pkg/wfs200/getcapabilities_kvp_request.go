@@ -7,27 +7,26 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-//GetCapabilitiesKVP struct
-type GetCapabilitiesKVP struct {
-	// Table 8 - The Parameters of a GetMap request
-	Service string `yaml:"service,omitempty"`
-	BaseRequestKVP
+//getCapabilitiesParameterValueRequest struct
+type getCapabilitiesParameterValueRequest struct {
+	service string `yaml:"service,omitempty"`
+	baseParameterValueRequest
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gckvp *GetCapabilitiesKVP) ParseQueryParameters(query url.Values) wsc110.Exceptions {
-	var exceptions wsc110.Exceptions
+func (gpv *getCapabilitiesParameterValueRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
+	var exceptions []wsc110.Exception
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, wsc110.InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
-				gckvp.Service = strings.ToUpper(v[0])
+				gpv.service = strings.ToUpper(v[0])
 			case VERSION:
-				gckvp.BaseRequestKVP.Version = v[0]
+				gpv.baseParameterValueRequest.version = v[0]
 			case REQUEST:
-				gckvp.BaseRequestKVP.Request = v[0]
+				gpv.baseParameterValueRequest.request = v[0]
 			}
 		}
 	}
@@ -39,28 +38,26 @@ func (gckvp *GetCapabilitiesKVP) ParseQueryParameters(query url.Values) wsc110.E
 	return nil
 }
 
-// ParseOperationRequest builds a GetCapabilitiesKVP object based on a GetCapabilities struct
+// parseGetCapabilitiesRequest builds a getCapabilitiesParameterValueRequest object based on a GetCapabilities struct
 // This is a 'dummy' implementation, because for a GetCapabilities request it will always be
 // Mandatory:  REQUEST=GetCapabilities
 //             SERVICE=WFS
 // Optional:   VERSION=2.0.0
-func (gckvp *GetCapabilitiesKVP) ParseOperationRequest(or wsc110.OperationRequest) wsc110.Exceptions {
-	gc := or.(*GetCapabilitiesRequest)
-
-	gckvp.Request = getcapabilities
-	gckvp.Version = gc.Version
-	gckvp.Service = gc.Service
+func (gpv *getCapabilitiesParameterValueRequest) parseGetCapabilitiesRequest(gc GetCapabilitiesRequest) []wsc110.Exception {
+	gpv.request = getcapabilities
+	gpv.version = gc.Version
+	gpv.service = gc.Service
 
 	return nil
 }
 
-// ToQueryParameters builds a url.Values query from a GetCapabilitiesKVP struct
-func (gckvp *GetCapabilitiesKVP) ToQueryParameters() url.Values {
+// toQueryParameters builds a url.Values query from a getCapabilitiesParameterValueRequest struct
+func (gpv getCapabilitiesParameterValueRequest) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
-	query[SERVICE] = []string{gckvp.Service}
-	query[VERSION] = []string{gckvp.Version}
-	query[REQUEST] = []string{gckvp.Request}
+	query[SERVICE] = []string{gpv.service}
+	query[VERSION] = []string{gpv.version}
+	query[REQUEST] = []string{gpv.request}
 
 	return query
 }

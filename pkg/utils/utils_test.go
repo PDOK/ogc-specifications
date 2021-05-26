@@ -7,26 +7,26 @@ import (
 )
 
 func TestKeysToUpper(t *testing.T) {
-	var testkeysToUpperQuerys = []struct {
+	var tests = []struct {
 		query         url.Values
-		expectedQuery url.Values
+		expectedquery url.Values
 	}{
 		// Default GetCapbilities request
-		0: {query: map[string][]string{"SERVICE": {"WFS"}, "REQUEST": {"GetCapabilities"}, "VERSION": {"2.0.0"}}, expectedQuery: map[string][]string{"SERVICE": {"WFS"}, "REQUEST": {"GetCapabilities"}, "VERSION": {"2.0.0"}}},
+		0: {query: map[string][]string{"SERVICE": {"WFS"}, "REQUEST": {"GetCapabilities"}, "VERSION": {"2.0.0"}}, expectedquery: map[string][]string{"SERVICE": {"WFS"}, "REQUEST": {"GetCapabilities"}, "VERSION": {"2.0.0"}}},
 		// UPPER, lower, MiXeDcAsE GetCapbilities request
-		1: {query: map[string][]string{"SERVICE": {"WFS"}, "request": {"GetCapabilities"}, "VeRsIoN": {"2.0.0"}}, expectedQuery: map[string][]string{"SERVICE": {"WFS"}, "REQUEST": {"GetCapabilities"}, "VERSION": {"2.0.0"}}},
+		1: {query: map[string][]string{"SERVICE": {"WFS"}, "request": {"GetCapabilities"}, "VeRsIoN": {"2.0.0"}}, expectedquery: map[string][]string{"SERVICE": {"WFS"}, "REQUEST": {"GetCapabilities"}, "VERSION": {"2.0.0"}}},
 		// empty request
-		2: {query: map[string][]string{}, expectedQuery: map[string][]string{}},
+		2: {query: map[string][]string{}, expectedquery: map[string][]string{}},
 		// nothing in nothing out same as empty request
 		3: {},
 		// Multiple parameters
-		4: {query: map[string][]string{"SERVICE": {"WFS"}, "SeRvIcE": {"WMS"}, "service": {"wmts"}}, expectedQuery: map[string][]string{"SERVICE": {"WFS", "wmts", "WMS"}}},
+		4: {query: map[string][]string{"SERVICE": {"WFS"}, "SeRvIcE": {"WMS"}, "service": {"wmts"}}, expectedquery: map[string][]string{"SERVICE": {"WFS", "wmts", "WMS"}}},
 	}
 
-	for k, tq := range testkeysToUpperQuerys {
-		q := KeysToUpper(tq.query)
-		if len(q) != len(tq.expectedQuery) {
-			t.Errorf("test: %d, expected: %s \ngot: %s", k, tq.expectedQuery, q)
+	for k, test := range tests {
+		q := KeysToUpper(test.query)
+		if len(q) != len(test.expectedquery) {
+			t.Errorf("test: %d, expected: %s \ngot: %s", k, test.expectedquery, q)
 		}
 	}
 }
@@ -38,7 +38,7 @@ func TestIdentifyRequest(t *testing.T) {
 		errors  error
 	}{
 		0: {doc: []byte(`<?xml version="1.0" encoding="UTF-8"?>
-		<Mekker/>`), request: `Mekker`},
+		<UnknownOperation/>`), request: `UnknownOperation`},
 		1: {doc: []byte(`<GetCapabilities/>`), request: `GetCapabilities`},
 		2: {doc: []byte(`<ogc:GetMap xmlns:ogc="http://www.opengis.net/ows"
 		xmlns:gml="http://www.opengis.net/gml"
@@ -65,18 +65,17 @@ func TestIdentifyRequest(t *testing.T) {
 		5: {doc: nil, errors: errors.New(`unknown REQUEST parameter`)},
 	}
 
-	for k, i := range tests {
-		request, errs := IdentifyRequest(i.doc)
+	for k, test := range tests {
+		request, errs := IdentifyRequest(test.doc)
 		if errs != nil {
-			if errs.Error() != i.errors.Error() {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors.Error(), errs.Error())
+			if errs.Error() != test.errors.Error() {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.errors.Error(), errs.Error())
 			}
 		} else {
-			if request != i.request {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.request, request)
+			if request != test.request {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.request, request)
 			}
 		}
-
 	}
 }
 
@@ -86,22 +85,22 @@ func TestIdentifyRequestKVP(t *testing.T) {
 		request string
 		errors  error
 	}{
-		0: {url: map[string][]string{REQUEST: {`Mekker`}}, request: `Mekker`},
+		0: {url: map[string][]string{REQUEST: {`UnknownOperation`}}, request: `UnknownOperation`},
 		1: {url: map[string][]string{REQUEST: {`GetCapabilities`}}, request: `GetCapabilities`},
 		2: {url: map[string][]string{`SERVICE`: {`NoREQUESTKey`}}, errors: errors.New(`unknown REQUEST parameter`)},
 		3: {url: map[string][]string{}, errors: errors.New(`unknown REQUEST parameter`)},
 		4: {url: nil, errors: errors.New(`unknown REQUEST parameter`)},
 	}
 
-	for k, i := range tests {
-		request, errs := IdentifyRequestKVP(i.url)
+	for k, test := range tests {
+		request, errs := IdentifyRequestKVP(test.url)
 		if errs != nil {
-			if errs.Error() != i.errors.Error() {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.errors.Error(), errs.Error())
+			if errs.Error() != test.errors.Error() {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.errors.Error(), errs.Error())
 			}
 		} else {
-			if request != i.request {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, i.request, request)
+			if request != test.request {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, test.request, request)
 			}
 		}
 	}

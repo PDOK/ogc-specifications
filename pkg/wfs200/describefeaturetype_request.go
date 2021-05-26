@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"net/url"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 
@@ -14,27 +13,28 @@ import (
 
 //
 const (
-	TYPENAME = `TYPENAME` //NOTE: TYPENAME for KVP encoding & typeNames for XML encoding
+	TYPENAME = `TYPENAME` //NOTE: TYPENAME for Parameter Value encoding & typeNames for XML encoding
 )
 
 // Type returns DescribeFeatureType
-func (dft *DescribeFeatureTypeRequest) Type() string {
+func (d DescribeFeatureTypeRequest) Type() string {
 	return describefeaturetype
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) common.Exceptions {
+func (d DescribeFeatureTypeRequest) Validate(c Capabilities) []wsc110.Exception {
 	return nil
 }
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
-func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
-	var xmlattributes common.XMLAttribute
+func (d *DescribeFeatureTypeRequest) ParseXML(doc []byte) []wsc110.Exception {
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
-		return common.Exceptions{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
+		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
-	if err := xml.Unmarshal(doc, &dft); err != nil {
-		return common.Exceptions{wsc110.OperationNotSupported(err.Error())}
+	if err := xml.Unmarshal(doc, &d); err != nil {
+		// TODO fix with pretty exception message
+		return wsc110.NoApplicableCode(err.Error()).ToExceptions()
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -47,60 +47,65 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) common.Exceptions {
 		}
 	}
 
-	dft.Attr = common.StripDuplicateAttr(n)
+	d.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
-// ParseKVP builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureTypeRequest) ParseKVP(query url.Values) wsc110.Exceptions {
+// ParseQueryParameters builds a DescribeFeatureType object based on the available query parameters
+func (d *DescribeFeatureTypeRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
 		return wsc110.MissingParameterValue(VERSION).ToExceptions()
 	}
 
-	q := utils.KeysToUpper(query)
+	dpv := describeFeatureTypeParameterValueRequest{}
+
+	if exceptions := dpv.parseQueryParameters(query); exceptions != nil {
+		return exceptions
+	}
+
+	if exceptions := d.parseDescribeFeatureTypeParameterValueRequest(dpv); exceptions != nil {
+		return exceptions
+	}
+	return nil
+}
+
+func (d *DescribeFeatureTypeRequest) parseDescribeFeatureTypeParameterValueRequest(dpv describeFeatureTypeParameterValueRequest) []wsc110.Exception {
+
+	// Base
+	d.XMLName.Local = describefeaturetype
 
 	var br BaseRequest
-	if err := br.parseQueryParameters(q); err != nil {
-		return err
+	if exceptions := br.parseBaseParameterValueRequest(dpv.baseParameterValueRequest); exceptions != nil {
+		return exceptions
 	}
-	dft.BaseRequest = br
+	d.BaseRequest = br
 
-	for k, v := range query {
-		switch strings.ToUpper(k) {
-		case REQUEST:
-			if strings.EqualFold(v[0], describefeaturetype) {
-				dft.XMLName.Local = describefeaturetype
-			}
-		case TYPENAME:
-			dft.BaseDescribeFeatureTypeRequest.TypeName = &v[0] //TODO maybe process as a comma separated list
-		case OUTPUTFORMAT:
-			// TODO nothing for now always assume the default text/xml; subtype=gml/3.2
-		}
+	d.TypeName = dpv.typeName
+
+	if dpv.outputFormat != nil {
+		d.OutputFormat = dpv.outputFormat
+	} else {
+		s := gml32
+		d.OutputFormat = &(s)
 	}
 
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
-func (dft *DescribeFeatureTypeRequest) BuildKVP() url.Values {
-	querystring := make(map[string][]string)
-	querystring[REQUEST] = []string{dft.XMLName.Local}
-	querystring[SERVICE] = []string{dft.BaseRequest.Service}
-	querystring[VERSION] = []string{dft.BaseRequest.Version}
-	if dft.BaseDescribeFeatureTypeRequest.TypeName != nil {
-		querystring[TYPENAME] = []string{*dft.BaseDescribeFeatureTypeRequest.TypeName}
-	}
-	if dft.BaseDescribeFeatureTypeRequest.OutputFormat != nil {
-		querystring[OUTPUTFORMAT] = []string{*dft.BaseDescribeFeatureTypeRequest.OutputFormat}
-	}
-	return querystring
+// ToQueryParameters  builds a new query string that will be proxied
+func (d DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
+	dpv := describeFeatureTypeParameterValueRequest{}
+	dpv.parseDescribeFeatureTypeRequest(d)
+
+	q := dpv.toQueryParameters()
+	return q
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (dft *DescribeFeatureTypeRequest) BuildXML() []byte {
-	si, _ := xml.MarshalIndent(dft, "", "")
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func (d DescribeFeatureTypeRequest) ToXML() []byte {
+	si, _ := xml.MarshalIndent(&d, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }

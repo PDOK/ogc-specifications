@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
-	"github.com/pdok/ogc-specifications/pkg/wsc110"
+	"github.com/pdok/ogc-specifications/pkg/utils"
+	"github.com/pdok/ogc-specifications/pkg/wsc200"
 )
 
 // WCS 2.0.1 Tokens
@@ -23,18 +23,18 @@ func (gc *GetCapabilities) Type() string {
 }
 
 // Validate validates the GetCapabilities struct
-func (gc *GetCapabilities) Validate(c Capabilities) common.Exceptions {
+func (gc *GetCapabilities) Validate(c Capabilities) []wsc200.Exception {
 	return nil
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
-	var xmlattributes common.XMLAttribute
+func (gc *GetCapabilities) ParseXML(body []byte) []wsc200.Exception {
+	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
-		return common.Exceptions{wsc110.MissingParameterValue()}
+		return wsc200.MissingParameterValue().ToExceptions()
 	}
 	if err := xml.Unmarshal(body, &gc); err != nil {
-		return common.Exceptions{wsc110.MissingParameterValue("REQUEST")}
+		return wsc200.MissingParameterValue(REQUEST).ToExceptions()
 	}
 	var n []xml.Attr
 	for _, a := range xmlattributes {
@@ -46,12 +46,12 @@ func (gc *GetCapabilities) ParseXML(body []byte) common.Exceptions {
 		}
 	}
 
-	gc.Attr = common.StripDuplicateAttr(n)
+	gc.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
 // QueryParameters builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilities) QueryParameters(query url.Values) common.Exceptions {
+func (gc *GetCapabilities) QueryParameters(query url.Values) []wsc200.Exception {
 	for k, v := range query {
 		switch strings.ToUpper(k) {
 		case REQUEST:
@@ -67,8 +67,8 @@ func (gc *GetCapabilities) QueryParameters(query url.Values) common.Exceptions {
 	return nil
 }
 
-// BuildKVP builds a new query string that will be proxied
-func (gc *GetCapabilities) BuildKVP() url.Values {
+// ToQueryParameters builds a new query string that will be proxied
+func (gc *GetCapabilities) ToQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{gc.XMLName.Local}
 	querystring[SERVICE] = []string{gc.Service}
@@ -77,8 +77,8 @@ func (gc *GetCapabilities) BuildKVP() url.Values {
 	return querystring
 }
 
-// BuildXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilities) BuildXML() []byte {
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func (gc *GetCapabilities) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
@@ -86,8 +86,8 @@ func (gc *GetCapabilities) BuildXML() []byte {
 
 // GetCapabilities struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilities struct {
-	XMLName xml.Name            `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string              `xml:"service,attr" yaml:"service"`
-	Version string              `xml:"version,attr" yaml:"version"`
-	Attr    common.XMLAttribute `xml:",attr"`
+	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string             `xml:"service,attr" yaml:"service"`
+	Version string             `xml:"version,attr" yaml:"version"`
+	Attr    utils.XMLAttribute `xml:",attr"`
 }

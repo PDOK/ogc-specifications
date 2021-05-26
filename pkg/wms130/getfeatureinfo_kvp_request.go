@@ -6,32 +6,18 @@ import (
 	"strings"
 )
 
-//GetFeatureInfoKVP struct
-type GetFeatureInfoKVP struct {
+//getFeatureInfoParameterValueRequest struct
+type getFeatureInfoParameterValueRequest struct {
 	// Table 8 - The Parameters of a GetFeatureInfo request
-	Service string `yaml:"service,omitempty"`
-	BaseRequestKVP
-	GetMapKVPMandatory
-	GetFeatureInfoKVPMandatory
-	GetFeatureInfoKVPOptional
+	service string `yaml:"service,omitempty"`
+	baseParameterValueRequest
+	getMapParameterValueMandatory
+	getFeatureInfoParameterValueMandatory
+	getFeatureInfoParameterValueOptional
 }
 
-// GetFeatureInfoKVPMandatory struct containing the mandatory WMS request KVP
-type GetFeatureInfoKVPMandatory struct {
-	QueryLayers string `yaml:"query_layers,omitempty"`
-	InfoFormat  string `yaml:"info_format,omitempty"`
-	I           string `yaml:"i,omitempty"`
-	J           string `yaml:"j,omitempty"`
-}
-
-// GetFeatureInfoKVPOptional struct containing the optional WMS request KVP
-type GetFeatureInfoKVPOptional struct {
-	FeatureCount *string `yaml:"feature_count,omitempty"`
-	Exceptions   *string `yaml:"exceptions,omitempty"`
-}
-
-// ParseKVP builds a GetMapKVP object based on the available query parameters
-func (gfikvp *GetFeatureInfoKVP) ParseQueryParameters(query url.Values) Exceptions {
+// parseQueryParameters builds a getFeatureInfoParameterValueRequest object based on the available query parameters
+func (ipv *getFeatureInfoParameterValueRequest) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
@@ -39,37 +25,37 @@ func (gfikvp *GetFeatureInfoKVP) ParseQueryParameters(query url.Values) Exceptio
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
-				gfikvp.Service = strings.ToUpper(v[0])
+				ipv.service = strings.ToUpper(v[0])
 			case VERSION:
-				gfikvp.BaseRequestKVP.Version = v[0]
+				ipv.baseParameterValueRequest.version = v[0]
 			case REQUEST:
-				gfikvp.BaseRequestKVP.Request = v[0]
+				ipv.baseParameterValueRequest.request = v[0]
 			case LAYERS:
-				gfikvp.GetMapKVPMandatory.Layers = v[0]
+				ipv.getMapParameterValueMandatory.layers = v[0]
 			case STYLES:
-				gfikvp.GetMapKVPMandatory.Styles = v[0]
+				ipv.getMapParameterValueMandatory.styles = v[0]
 			case "CRS":
-				gfikvp.GetMapKVPMandatory.CRS = v[0]
+				ipv.getMapParameterValueMandatory.crs = v[0]
 			case BBOX:
-				gfikvp.GetMapKVPMandatory.Bbox = v[0]
+				ipv.getMapParameterValueMandatory.bbox = v[0]
 			case WIDTH:
-				gfikvp.GetMapKVPMandatory.Width = v[0]
+				ipv.getMapParameterValueMandatory.width = v[0]
 			case HEIGHT:
-				gfikvp.GetMapKVPMandatory.Height = v[0]
+				ipv.getMapParameterValueMandatory.height = v[0]
 			case FORMAT:
-				gfikvp.GetMapKVPMandatory.Format = v[0]
+				ipv.getMapParameterValueMandatory.format = v[0]
 			case QUERYLAYERS:
-				gfikvp.GetFeatureInfoKVPMandatory.QueryLayers = v[0]
+				ipv.getFeatureInfoParameterValueMandatory.querylayers = v[0]
 			case INFOFORMAT:
-				gfikvp.GetFeatureInfoKVPMandatory.InfoFormat = v[0]
+				ipv.getFeatureInfoParameterValueMandatory.infoformat = v[0]
 			case I:
-				gfikvp.GetFeatureInfoKVPMandatory.I = v[0]
+				ipv.getFeatureInfoParameterValueMandatory.i = v[0]
 			case J:
-				gfikvp.GetFeatureInfoKVPMandatory.J = v[0]
+				ipv.getFeatureInfoParameterValueMandatory.j = v[0]
 			case FEATURECOUNT:
-				gfikvp.GetFeatureInfoKVPOptional.FeatureCount = &(v[0])
+				ipv.getFeatureInfoParameterValueOptional.featurecount = &(v[0])
 			case EXCEPTIONS:
-				gfikvp.GetFeatureInfoKVPOptional.Exceptions = &(v[0])
+				ipv.getFeatureInfoParameterValueOptional.exceptions = &(v[0])
 			}
 		}
 	}
@@ -81,64 +67,79 @@ func (gfikvp *GetFeatureInfoKVP) ParseQueryParameters(query url.Values) Exceptio
 	return nil
 }
 
-// BuildKVP builds a url.Values query from a GetMapKVP struct
-func (gfikvp *GetFeatureInfoKVP) ToQueryParameters() url.Values {
+// ToQueryParameters builds a url.Values query from a getFeatureInfoParameterValueRequest struct
+func (ipv getFeatureInfoParameterValueRequest) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
-	query[SERVICE] = []string{gfikvp.Service}
-	query[VERSION] = []string{gfikvp.Version}
-	query[REQUEST] = []string{gfikvp.Request}
-	query[LAYERS] = []string{gfikvp.Layers}
-	query[STYLES] = []string{gfikvp.Styles}
-	query["CRS"] = []string{gfikvp.CRS}
-	query[BBOX] = []string{gfikvp.Bbox}
-	query[WIDTH] = []string{gfikvp.Width}
-	query[HEIGHT] = []string{gfikvp.Height}
+	query[SERVICE] = []string{ipv.service}
+	query[VERSION] = []string{ipv.version}
+	query[REQUEST] = []string{ipv.request}
+	query[LAYERS] = []string{ipv.layers}
+	query[STYLES] = []string{ipv.styles}
+	query["CRS"] = []string{ipv.crs}
+	query[BBOX] = []string{ipv.bbox}
+	query[WIDTH] = []string{ipv.width}
+	query[HEIGHT] = []string{ipv.height}
 
-	if gfikvp.Format != `` {
-		query[FORMAT] = []string{gfikvp.Format}
+	if ipv.format != `` {
+		query[FORMAT] = []string{ipv.format}
 	}
 
-	query[QUERYLAYERS] = []string{gfikvp.QueryLayers}
-	query[INFOFORMAT] = []string{gfikvp.InfoFormat}
-	query[I] = []string{gfikvp.I}
-	query[J] = []string{gfikvp.J}
+	query[QUERYLAYERS] = []string{ipv.querylayers}
+	query[INFOFORMAT] = []string{ipv.infoformat}
+	query[I] = []string{ipv.i}
+	query[J] = []string{ipv.j}
 
-	if gfikvp.FeatureCount != nil {
-		query[FEATURECOUNT] = []string{*gfikvp.FeatureCount}
+	if ipv.featurecount != nil {
+		query[FEATURECOUNT] = []string{*ipv.featurecount}
 	}
-	if gfikvp.Exceptions != nil {
-		query[EXCEPTIONS] = []string{*gfikvp.Exceptions}
+	if ipv.exceptions != nil {
+		query[EXCEPTIONS] = []string{*ipv.exceptions}
 	}
 
 	return query
 }
 
-// ParseOperationRequest builds a GetFeatureInfoKVP object based on a GetFeatureInfo struct
-func (gfirkvp *GetFeatureInfoKVP) ParseOperationRequest(or OperationRequest) Exceptions {
-	gfi := or.(*GetFeatureInfoRequest)
-	gfikvp := gfirkvp
-	gfikvp.Request = getfeatureinfo
-	gfikvp.Version = Version
-	gfikvp.Service = Service
-	gfikvp.Layers = gfi.StyledLayerDescriptor.getLayerKVPValue()
-	gfikvp.Styles = gfi.StyledLayerDescriptor.getStyleKVPValue()
-	gfikvp.CRS = gfi.CRS
-	gfikvp.Bbox = gfi.BoundingBox.BuildQueryParameters()
-	gfikvp.Width = strconv.Itoa(gfi.Size.Width)
-	gfikvp.Height = strconv.Itoa(gfi.Size.Height)
+// parseGetFeatureInfoRequest builds a getFeatureInfoParameterValueRequest object based on a GetFeatureInfoRequest struct
+func (ipv *getFeatureInfoParameterValueRequest) parseGetFeatureInfoRequest(i GetFeatureInfoRequest) Exceptions {
 
-	gfikvp.QueryLayers = strings.Join(gfi.QueryLayers, ",")
-	gfikvp.InfoFormat = gfi.InfoFormat
-	gfikvp.I = strconv.Itoa(gfi.I)
-	gfikvp.J = strconv.Itoa(gfi.J)
+	ipv.request = getfeatureinfo
+	ipv.version = Version
+	ipv.service = Service
+	ipv.layers = i.StyledLayerDescriptor.getLayerParameterValue()
+	ipv.styles = i.StyledLayerDescriptor.getStyleParameterValue()
+	ipv.crs = i.CRS
+	ipv.bbox = i.BoundingBox.ToQueryParameters()
+	ipv.width = strconv.Itoa(i.Size.Width)
+	ipv.height = strconv.Itoa(i.Size.Height)
 
-	gfikvp.Format = gfi.Format
+	ipv.querylayers = strings.Join(i.QueryLayers, ",")
+	ipv.infoformat = i.InfoFormat
+	ipv.i = strconv.Itoa(i.I)
+	ipv.j = strconv.Itoa(i.J)
 
-	fcp := strconv.Itoa(gfi.FeatureCount)
-	gfikvp.FeatureCount = &fcp
+	ipv.format = i.Format
 
-	gfikvp.Exceptions = gfi.Exceptions
+	if i.FeatureCount != nil {
+		fcp := strconv.Itoa(*i.FeatureCount)
+		ipv.featurecount = &fcp
+	}
+
+	ipv.exceptions = i.Exceptions
 
 	return nil
+}
+
+// GetFeatureInfoParameterValueMandatory struct containing the mandatory WMS request Parameter Value
+type getFeatureInfoParameterValueMandatory struct {
+	querylayers string `yaml:"query_layers,omitempty"`
+	infoformat  string `yaml:"info_format,omitempty"`
+	i           string `yaml:"i,omitempty"`
+	j           string `yaml:"j,omitempty"`
+}
+
+// GetFeatureInfoParameterValueOptional struct containing the optional WMS request Parameter Value
+type getFeatureInfoParameterValueOptional struct {
+	featurecount *string `yaml:"feature_count,omitempty"`
+	exceptions   *string `yaml:"exceptions,omitempty"`
 }

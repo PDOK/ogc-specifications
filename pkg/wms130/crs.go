@@ -29,11 +29,6 @@ func (c *CRS) Identifier() string {
 	return codeSpace + strconv.Itoa(c.Code)
 }
 
-// ParseString build CRS struct from input string
-func (c *CRS) ParseString(s string) {
-	c.parseString(s)
-}
-
 func (c *CRS) parseString(s string) {
 	regex := regexp.MustCompile(`(^.*):([0-9]+)`)
 	code := regex.FindStringSubmatch(s)

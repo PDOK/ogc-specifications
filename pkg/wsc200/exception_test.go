@@ -1,4 +1,4 @@
-package wsc110
+package wsc200
 
 import (
 	"testing"
@@ -51,11 +51,7 @@ func TestOWSException(t *testing.T) {
 		7: {exception: InvalidUpdateSequence(),
 			exceptionCode: "InvalidUpdateSequence",
 		},
-		// TODO: ...
-		8: {exception: OptionNotSupported(),
-			exceptionCode: "OptionNotSupported",
-		},
-		9: {exception: NoApplicableCode("No other exceptionCode specified by this service"),
+		8: {exception: NoApplicableCode("No other exceptionCode specified by this service"),
 			exceptionText: "No other exceptionCode specified by this service",
 			exceptionCode: "NoApplicableCode",
 		},

@@ -1,6 +1,8 @@
 package utils
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+)
 
 // XMLAttribute wrapper around the array of xml.Attr
 type XMLAttribute []xml.Attr

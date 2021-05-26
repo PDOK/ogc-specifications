@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"regexp"
 
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -26,12 +25,12 @@ func (gc *GetCapabilitiesResponse) Version() string {
 }
 
 // Validate function of the wfs200 spec
-func (gc *GetCapabilitiesResponse) Validate() wsc110.Exceptions {
+func (gc *GetCapabilitiesResponse) Validate() []wsc110.Exception {
 	return nil
 }
 
-// BuildXML builds a GetCapabilities response object
-func (gc *GetCapabilitiesResponse) BuildXML() []byte {
+// ToXML builds a GetCapabilities response object
+func (gc *GetCapabilitiesResponse) ToXML() []byte {
 	si, _ := xml.MarshalIndent(gc, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
@@ -66,7 +65,7 @@ type ServiceIdentification struct {
 	XMLName     xml.Name         `xml:"ows:ServiceIdentification"`
 	Title       string           `xml:"ows:Title" yaml:"title"`
 	Abstract    string           `xml:"ows:Abstract" yaml:"abstract"`
-	Keywords    *common.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	Keywords    *wsc110.Keywords `xml:"ows:Keywords" yaml:"keywords"`
 	ServiceType struct {
 		Text      string `xml:",chardata" yaml:"text"`
 		CodeSpace string `xml:"codeSpace,attr" yaml:"codespace"`

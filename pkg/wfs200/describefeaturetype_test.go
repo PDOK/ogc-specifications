@@ -17,13 +17,13 @@ func TestDescribeFeatureTypeType(t *testing.T) {
 
 func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	var tests = []struct {
-		Body   []byte
-		Result DescribeFeatureTypeRequest
-		Error  wsc110.Exceptions
+		body      []byte
+		result    DescribeFeatureTypeRequest
+		exception []wsc110.Exception
 	}{
 		// Lots of attribute declarations
-		0: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"/>`),
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
+		0: {body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xmlns:kadastralekaartv4="http://kadastralekaartv4.geonovum.nl" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"/>`),
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "gml"}, Value: "http://www.opengis.net/gml/3.2"},
 					{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "ows"}, Value: "http://www.opengis.net/ows/1.1"},
@@ -33,127 +33,129 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 					{Name: xml.Name{Space: "xmlns", Local: "inspire_common"}, Value: "http://inspire.ec.europa.eu/schemas/common/1.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "inspire_dls"}, Value: "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0"},
 					{Name: xml.Name{Space: "xmlns", Local: "kadastralekaartv4"}, Value: "http://kadastralekaartv4.geonovum.nl"},
-					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/common.xsd"}}}}},
+					{Name: xml.Name{Space: "http://www.w3.org/2001/XMLSchema-instance", Local: "schemaLocation"}, Value: "http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd http://inspire.ec.europa.eu/schemas/common/1.0 http://inspire.ec.europa.eu/schemas/common/1.0/commotest.xsd"}}}}},
 		// Unknown XML document
-		1: {Body: []byte("<Unknown/>"), Error: wsc110.Exception{ExceptionText: "This service does not know the operation: expected element type <DescribeFeatureType> but have <Unknown>"}.ToExceptions()},
+		1: {body: []byte("<Unknown/>"),
+			exception: exception{ExceptionText: "expected element type <DescribeFeatureType> but have <Unknown>"}.ToExceptions()},
 		// no XML document
-		2: {Body: []byte("no XML document, just a string"), Error: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
+		2: {body: []byte("no XML document, just a string"),
+			exception: exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
 		// document at all
-		3: {Error: wsc110.Exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
+		3: {exception: exception{ExceptionText: "Could not process XML, is it XML?"}.ToExceptions()},
 		// Duplicate attributes in XML message with the same value
-		4: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
+		4: {body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"  xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}}},
 		// Duplicate attributes in XML message with different values
-		5: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/ows/1.1"  xmlns:wfs="http://www.w3.org/2001/XMLSchema-instance" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
+		5: {body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" xmlns:wfs="http://www.opengis.net/ows/1.1"  xmlns:wfs="http://www.w3.org/2001/XMLSchema-instance" xmlns:wfs="http://www.opengis.net/wfs/2.0"/>`),
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "wfs", Version: "2.0.0",
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}}},
-		6: {Body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" typeName="acme:anvils"/>`),
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
+		6: {body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" typeName="acme:anvils"/>`),
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: "wfs", Version: "2.0.0"}}},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var dft DescribeFeatureTypeRequest
-		err := dft.ParseXML(n.Body)
-		if err != nil {
-			if n.Error != nil {
-				if err[0].Error() != n.Error[0].Error() {
-					t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Error, err)
+		exception := dft.ParseXML(test.body)
+		if exception != nil {
+			if test.exception != nil {
+				if exception[0].Error() != test.exception[0].Error() {
+					t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
 				}
 			} else {
-				t.Errorf("test: %d, expected NO error,\n got: %s", k, err)
+				t.Errorf("test: %d, expected NO exception,\n got: %s", k, exception)
 			}
 
 		} else {
-			if dft.BaseRequest.Service != n.Result.BaseRequest.Service {
-				t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, n.Result, dft)
+			if dft.BaseRequest.Service != test.result.BaseRequest.Service {
+				t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, test.result, dft)
 			}
-			if dft.BaseRequest.Version != n.Result.BaseRequest.Version {
-				t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, n.Result, dft)
+			if dft.BaseRequest.Version != test.result.BaseRequest.Version {
+				t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, test.result, dft)
 			}
 			if dft.BaseDescribeFeatureTypeRequest.TypeName != nil {
-				if *dft.BaseDescribeFeatureTypeRequest.TypeName != *n.Result.BaseDescribeFeatureTypeRequest.TypeName {
-					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *n.Result.BaseDescribeFeatureTypeRequest.TypeName, *dft.BaseDescribeFeatureTypeRequest.TypeName)
+				if *dft.BaseDescribeFeatureTypeRequest.TypeName != *test.result.BaseDescribeFeatureTypeRequest.TypeName {
+					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *test.result.BaseDescribeFeatureTypeRequest.TypeName, *dft.BaseDescribeFeatureTypeRequest.TypeName)
 				}
 			}
-			if len(n.Result.BaseRequest.Attr) == len(dft.BaseRequest.Attr) {
+			if len(test.result.BaseRequest.Attr) == len(dft.BaseRequest.Attr) {
 				c := false
-				for _, expected := range n.Result.BaseRequest.Attr {
+				for _, expected := range test.result.BaseRequest.Attr {
 					for _, result := range dft.BaseRequest.Attr {
 						if result.Name.Local == expected.Name.Local && result.Value == expected.Value {
 							c = true
 						}
 					}
 					if !c {
-						t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.BaseRequest.Attr, dft.BaseRequest.Attr)
+						t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.BaseRequest.Attr, dft.BaseRequest.Attr)
 					}
 					c = false
 				}
 			} else {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.BaseRequest.Attr, dft.BaseRequest.Attr)
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.BaseRequest.Attr, dft.BaseRequest.Attr)
 			}
 		}
 	}
 }
 
-func TestDescribeFeatureTypeParseKVP(t *testing.T) {
+func TestDescribeFeatureTypeParseQueryParameters(t *testing.T) {
 	var tests = []struct {
-		Query     url.Values
-		Result    DescribeFeatureTypeRequest
-		Exception wsc110.Exceptions
+		query     url.Values
+		result    DescribeFeatureTypeRequest
+		exception []wsc110.Exception
 	}{
 		// "Normal" query request with UPPER/lower/MiXeD case
-		0: {Query: map[string][]string{"SERVICE": {Service}, "Request": {describefeaturetype}, "version": {"2.0.0"}},
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
+		0: {query: map[string][]string{"SERVICE": {Service}, "Request": {describefeaturetype}, "version": {"2.0.0"}},
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
 		// Missing mandatory SERVICE attribute
-		1: {Query: map[string][]string{"Request": {describefeaturetype}},
-			Exception: wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)}},
+		1: {query: map[string][]string{"Request": {describefeaturetype}},
+			exception: []wsc110.Exception{wsc110.MissingParameterValue(VERSION)}},
 		// Missing optional VERSION attribute
-		2: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "Version": {"2.0.0"}},
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: Version}}},
+		2: {query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "Version": {"2.0.0"}},
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: Version}}},
 		// Unknown optional VERSION attribute
-		3: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"no version supplied"}},
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "no version supplied"}}},
+		3: {query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"no version supplied"}},
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "no version supplied"}}},
 		// Not configured optional VERSION attribute
-		4: {Query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"1.1.0"}},
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "1.1.0"}}},
-		5: {Query: map[string][]string{VERSION: {Version}, SERVICE: {Service}, REQUEST: {describefeaturetype}, TYPENAME: {"acme:anvils"}},
-			Result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
+		4: {query: map[string][]string{"SERVICE": {"WFS"}, "Request": {describefeaturetype}, "version": {"1.1.0"}},
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "1.1.0"}}},
+		5: {query: map[string][]string{VERSION: {Version}, SERVICE: {Service}, REQUEST: {describefeaturetype}, TYPENAME: {"acme:anvils"}},
+			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
 				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: Service, Version: Version}}},
-		6: {Query: map[string][]string{},
-			Exception: wsc110.Exceptions{wsc110.MissingParameterValue(VERSION)},
+		6: {query: map[string][]string{},
+			exception: []wsc110.Exception{wsc110.MissingParameterValue(VERSION)},
 		},
 	}
 
-	for k, n := range tests {
+	for k, test := range tests {
 		var dft DescribeFeatureTypeRequest
-		err := dft.ParseKVP(n.Query)
-		if err != nil {
-			if err[0].Error() != n.Exception[0].Error() {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, n.Exception, err)
+		exception := dft.ParseQueryParameters(test.query)
+		if exception != nil {
+			if exception[0].Error() != test.exception[0].Error() {
+				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.exception, exception)
 			}
 		} else {
-			if n.Result.XMLName.Local != dft.XMLName.Local {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.XMLName.Local, dft.XMLName.Local)
+			if test.result.XMLName.Local != dft.XMLName.Local {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.XMLName.Local, dft.XMLName.Local)
 			}
-			if n.Result.BaseRequest.Service != dft.BaseRequest.Service {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.BaseRequest.Service, dft.BaseRequest.Service)
+			if test.result.BaseRequest.Service != dft.BaseRequest.Service {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.BaseRequest.Service, dft.BaseRequest.Service)
 			}
-			if n.Result.BaseRequest.Version != dft.BaseRequest.Version {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, n.Result.BaseRequest.Version, dft.BaseRequest.Version)
+			if test.result.BaseRequest.Version != dft.BaseRequest.Version {
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.BaseRequest.Version, dft.BaseRequest.Version)
 			}
 			if dft.BaseDescribeFeatureTypeRequest.TypeName != nil {
-				if *dft.BaseDescribeFeatureTypeRequest.TypeName != *n.Result.BaseDescribeFeatureTypeRequest.TypeName {
-					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *n.Result.BaseDescribeFeatureTypeRequest.TypeName, *dft.BaseDescribeFeatureTypeRequest.TypeName)
+				if *dft.BaseDescribeFeatureTypeRequest.TypeName != *test.result.BaseDescribeFeatureTypeRequest.TypeName {
+					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *test.result.BaseDescribeFeatureTypeRequest.TypeName, *dft.BaseDescribeFeatureTypeRequest.TypeName)
 				}
 			}
 		}
 	}
 }
-func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
+func TestDescribeFeatureTypeToQueryParameters(t *testing.T) {
 	var tests = []struct {
 		dft   DescribeFeatureTypeRequest
 		query url.Values
@@ -168,24 +170,24 @@ func TestDescribeFeatureTypeBuildKVP(t *testing.T) {
 		},
 	}
 
-	for k, v := range tests {
-		values := v.dft.BuildKVP()
+	for k, test := range tests {
+		values := test.dft.ToQueryParameters()
 		c := false
 		for _, value := range values {
-			for _, q := range v.query {
+			for _, q := range test.query {
 				if value[0] == q[0] {
 					c = true
 				}
 			}
 			if !c {
-				t.Errorf("test: %d, expected: %s ,\n got: %s", k, v.query, values)
+				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.query, values)
 			}
 			c = false
 		}
 	}
 }
 
-func TestDescribeFeatureTypeBuildXML(t *testing.T) {
+func TestDescribeFeatureTypeToXML(t *testing.T) {
 	var tests = []struct {
 		dft  DescribeFeatureTypeRequest
 		body string
@@ -200,38 +202,10 @@ func TestDescribeFeatureTypeBuildXML(t *testing.T) {
 <DescribeFeatureType service="WFS" version="2.0.0" outputFormat="application/json" typeNames="example:example"/>`,
 		},
 	}
-	for k, v := range tests {
-		b := string(v.dft.BuildXML())
-		if b != v.body {
-			t.Errorf("test: %d, expected: %s ,\n got: %s", k, v.body, b)
+	for k, test := range tests {
+		b := string(test.dft.ToXML())
+		if b != test.body {
+			t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.body, b)
 		}
-	}
-}
-
-// ----------
-// Benchmarks
-// ----------
-
-func BenchmarkDescribeFeatureTypeBuildKVP(b *testing.B) {
-	df := DescribeFeatureTypeRequest{
-		XMLName:     xml.Name{Local: `DescribeFeatureType`},
-		BaseRequest: BaseRequest{Version: Version, Service: Service},
-		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
-			OutputFormat: sp(`application/json`),
-			TypeName:     sp(`example:example`)}}
-	for i := 0; i < b.N; i++ {
-		df.BuildKVP()
-	}
-}
-
-func BenchmarkDescribeFeatureTypeBuildXML(b *testing.B) {
-	df := DescribeFeatureTypeRequest{
-		XMLName:     xml.Name{Local: `DescribeFeatureType`},
-		BaseRequest: BaseRequest{Version: Version, Service: Service},
-		BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
-			OutputFormat: sp(`application/json`),
-			TypeName:     sp(`example:example`)}}
-	for i := 0; i < b.N; i++ {
-		df.BuildXML()
 	}
 }

@@ -41,16 +41,16 @@ func TestUnMarshalXMLBoundingBox(t *testing.T) {
 			corrupt xml"`,
 			exception: errors.New("XML syntax error on line 4: unexpected EOF")},
 	}
-	for k, a := range tests {
+	for k, test := range tests {
 		var bbox BoundingBox
-		if err := xml.Unmarshal([]byte(a.xmlraw), &bbox); err != nil {
-			if err.Error() != a.exception.Error() {
+		if err := xml.Unmarshal([]byte(test.xmlraw), &bbox); err != nil {
+			if err.Error() != test.exception.Error() {
 				t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
 			}
 
 		} else {
-			if a.boundingbox != bbox {
-				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.boundingbox, bbox)
+			if test.boundingbox != bbox {
+				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.boundingbox, bbox)
 			}
 		}
 	}
@@ -64,14 +64,14 @@ func TestMarshalXMLPosition(t *testing.T) {
 		0: {position: Position{}, xml: "<Position>0.000000 0.000000</Position>"},
 		1: {position: Position{-180.0, 90.0}, xml: "<Position>-180.000000 90.000000</Position>"},
 	}
-	for k, a := range tests {
-		d, err := xml.Marshal(&a.position)
+	for k, test := range tests {
+		d, err := xml.Marshal(&test.position)
 		if err != nil {
 			t.Errorf("xml.Marshal failed with '%s'\n", err)
 		}
 		str := string(d)
-		if str != a.xml {
-			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.xml, str)
+		if str != test.xml {
+			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.xml, str)
 		}
 	}
 }
@@ -87,16 +87,16 @@ func TestUnMarshalXMLPosition(t *testing.T) {
 		2: {position: Position{}, xml: "<Position/>", exception: errors.New("")},
 		3: {position: Position{}, xml: "EOF", exception: errors.New("EOF")},
 	}
-	for k, a := range tests {
+	for k, test := range tests {
 		var position Position
-		if err := xml.Unmarshal([]byte(a.xml), &position); err != nil {
-			if err.Error() != a.exception.Error() {
+		if err := xml.Unmarshal([]byte(test.xml), &position); err != nil {
+			if err.Error() != test.exception.Error() {
 				t.Errorf("test: %d, expected no error,\n got: %s", k, err.Error())
 			}
 
 		} else {
-			if a.position != position {
-				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, a.position, position)
+			if test.position != position {
+				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.position, position)
 			}
 		}
 	}

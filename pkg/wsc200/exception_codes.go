@@ -1,4 +1,4 @@
-package wsc110
+package wsc200
 
 import (
 	"fmt"
@@ -47,19 +47,6 @@ func VersionNegotiationFailed(version string) Exception {
 func InvalidUpdateSequence() Exception {
 	return exception{
 		ExceptionCode: `InvalidUpdateSequence`,
-	}
-}
-
-// OptionNotSupported exception
-func OptionNotSupported(s ...string) Exception {
-	if len(s) == 1 {
-		return exception{
-			ExceptionText: s[0],
-			ExceptionCode: `OptionNotSupported`,
-		}
-	}
-	return exception{
-		ExceptionCode: `OptionNotSupported`,
 	}
 }
 

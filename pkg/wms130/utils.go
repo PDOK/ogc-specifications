@@ -26,46 +26,46 @@ type identify struct {
 }
 
 func ParsePostRequest(body []byte) (OperationRequest, Exceptions) {
-	requestType, error := IdentifyPostRequest(body)
-	if error != nil {
-		return nil, error
+	requestType, exception := IdentifyPostRequest(body)
+	if exception != nil {
+		return nil, exception
 	}
 
 	var request OperationRequest
 	switch strings.ToLower(requestType) {
-	case "getcapabilities":
+	case getcapabilities:
 		request = &GetCapabilitiesRequest{}
-	case "getmap":
+	case getmap:
 		request = &GetMapRequest{}
-	case "getfeatureinfo":
+	case getfeatureinfo:
 		request = &GetFeatureInfoRequest{}
 	default:
 		return nil, OperationNotSupported(requestType).ToExceptions()
 	}
-	error = request.ParseXML(body)
-	return request, error
+	exception = request.ParseXML(body)
+	return request, exception
 }
 
 func ParseGetRequest(queryParameters url.Values) (OperationRequest, Exceptions) {
-	requestType, error := IdentifyGetRequest(queryParameters)
-	if error != nil {
-		return nil, error
+	requestType, exception := IdentifyGetRequest(queryParameters)
+	if exception != nil {
+		return nil, exception
 	}
 
 	var request OperationRequest
 	switch strings.ToLower(requestType) {
-	case "getcapabilities":
+	case getcapabilities:
 		request = &GetCapabilitiesRequest{}
-	case "getmap":
+	case getmap:
 		request = &GetMapRequest{}
-	case "getfeatureinfo":
+	case getfeatureinfo:
 		request = &GetFeatureInfoRequest{}
 	default:
 		return nil, OperationNotSupported(requestType).ToExceptions()
 	}
 
-	error = request.ParseQueryParameters(queryParameters)
-	return request, error
+	exception = request.ParseQueryParameters(queryParameters)
+	return request, exception
 }
 
 func IdentifyPostRequest(doc []byte) (string, Exceptions) {
