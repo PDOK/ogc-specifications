@@ -5,11 +5,11 @@ import (
 )
 
 type OperationRequest interface {
-	Validate(Capabilities) Exceptions
+	Validate(Capabilities) []Exception
 
-	ParseQueryParameters(url.Values) Exceptions
+	ParseQueryParameters(url.Values) []Exception
 	ToQueryParameters() url.Values
 
-	ParseXML([]byte) Exceptions
+	ParseXML([]byte) []Exception
 	ToXML() []byte
 }
