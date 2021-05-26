@@ -8,10 +8,10 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-// getFeatureKVPRequest struct
-type getFeatureKVPRequest struct {
+// getFeatureParameterValueRequest struct
+type getFeatureParameterValueRequest struct {
 	service string `yaml:"service,omitempty"`
-	baseRequestKVP
+	baseParameterValueRequest
 	// Table 17 — Keywords for GetFeature KVP-encoding
 	*commonKeywords
 	*standardPresentationParameters
@@ -66,7 +66,7 @@ type storedQueryKeywords struct {
 	// storedquery_parameter not implemented
 }
 
-func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
+func (fpv *getFeatureParameterValueRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
 		if len(v) != 1 {
@@ -74,90 +74,90 @@ func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) []wsc1
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
-				gfkvp.service = strings.ToUpper(v[0])
+				fpv.service = strings.ToUpper(v[0])
 			case VERSION:
-				gfkvp.baseRequestKVP.version = v[0]
+				fpv.baseParameterValueRequest.version = v[0]
 			case REQUEST:
-				gfkvp.baseRequestKVP.request = v[0]
+				fpv.baseParameterValueRequest.request = v[0]
 			case STARTINDEX:
 				vp := v[0]
-				if gfkvp.standardPresentationParameters != nil {
-					gfkvp.standardPresentationParameters.startindex = &vp
+				if fpv.standardPresentationParameters != nil {
+					fpv.standardPresentationParameters.startindex = &vp
 				} else {
 					spp := standardPresentationParameters{}
 					spp.startindex = &vp
-					gfkvp.standardPresentationParameters = &spp
+					fpv.standardPresentationParameters = &spp
 				}
 			case COUNT:
 				vp := v[0]
-				if gfkvp.standardPresentationParameters != nil {
-					gfkvp.standardPresentationParameters.count = &vp
+				if fpv.standardPresentationParameters != nil {
+					fpv.standardPresentationParameters.count = &vp
 				} else {
 					spp := standardPresentationParameters{}
 					spp.count = &vp
-					gfkvp.standardPresentationParameters = &spp
+					fpv.standardPresentationParameters = &spp
 				}
 			case OUTPUTFORMAT:
 				vp := v[0]
-				if gfkvp.standardPresentationParameters != nil {
-					gfkvp.standardPresentationParameters.outputformat = &vp
+				if fpv.standardPresentationParameters != nil {
+					fpv.standardPresentationParameters.outputformat = &vp
 				} else {
 					spp := standardPresentationParameters{}
 					spp.outputformat = &vp
-					gfkvp.standardPresentationParameters = &spp
+					fpv.standardPresentationParameters = &spp
 				}
 			case RESULTTYPE:
 				vp := v[0]
-				if gfkvp.standardPresentationParameters != nil {
-					gfkvp.standardPresentationParameters.resulttype = &vp
+				if fpv.standardPresentationParameters != nil {
+					fpv.standardPresentationParameters.resulttype = &vp
 				} else {
 					spp := standardPresentationParameters{}
 					spp.resulttype = &vp
-					gfkvp.standardPresentationParameters = &spp
+					fpv.standardPresentationParameters = &spp
 				}
 			case RESOLVE:
 				vp := v[0]
-				gfkvp.standardResolveParameters.resolve = &vp
+				fpv.standardResolveParameters.resolve = &vp
 			case RESOLVEDEPTH:
 				vp := v[0]
-				gfkvp.standardResolveParameters.resolvedepth = &vp
+				fpv.standardResolveParameters.resolvedepth = &vp
 			case RESOLVETIMEOUT:
 				vp := v[0]
-				gfkvp.standardResolveParameters.resolvetimeout = &vp
+				fpv.standardResolveParameters.resolvetimeout = &vp
 			case NAMESPACES:
 				vp := v[0]
-				if gfkvp.commonKeywords != nil {
-					gfkvp.commonKeywords.namespaces = &vp
+				if fpv.commonKeywords != nil {
+					fpv.commonKeywords.namespaces = &vp
 				} else {
 					ck := commonKeywords{}
 					ck.namespaces = &vp
-					gfkvp.commonKeywords = &ck
+					fpv.commonKeywords = &ck
 				}
 			case TYPENAMES:
-				gfkvp.adhocQueryKeywords.typenames = v[0]
+				fpv.adhocQueryKeywords.typenames = v[0]
 			case ALIASES:
 				vp := v[0]
-				gfkvp.adhocQueryKeywords.aliases = &vp
+				fpv.adhocQueryKeywords.aliases = &vp
 			case SRSNAME:
 				vp := v[0]
-				gfkvp.adhocQueryKeywords.srsname = &vp
+				fpv.adhocQueryKeywords.srsname = &vp
 			case FILTER:
 				vp := v[0]
-				gfkvp.adhocQueryKeywords.filter = &vp
+				fpv.adhocQueryKeywords.filter = &vp
 			case FILTERLANGUAGE:
 				vp := v[0]
-				gfkvp.adhocQueryKeywords.filter_language = &vp
+				fpv.adhocQueryKeywords.filter_language = &vp
 			case RESOURCEID:
 				vp := v[0]
-				gfkvp.adhocQueryKeywords.resourceid = &vp
+				fpv.adhocQueryKeywords.resourceid = &vp
 			case BBOX:
 				vp := v[0]
-				gfkvp.adhocQueryKeywords.bbox = &vp
+				fpv.adhocQueryKeywords.bbox = &vp
 			case SORTBY:
 				vp := v[0]
-				gfkvp.adhocQueryKeywords.sortby = &vp
+				fpv.adhocQueryKeywords.sortby = &vp
 			case STOREDQUERYID:
-				gfkvp.storedQueryKeywords.storedqueryid = v[0]
+				fpv.storedQueryKeywords.storedqueryid = v[0]
 			}
 		}
 	}
@@ -169,182 +169,182 @@ func (gfkvp *getFeatureKVPRequest) parseQueryParameters(query url.Values) []wsc1
 	return nil
 }
 
-func (gfkvp *getFeatureKVPRequest) parseGetFeatureRequest(gf GetFeatureRequest) []wsc110.Exception {
+func (fpv *getFeatureParameterValueRequest) parseGetFeatureRequest(f GetFeatureRequest) []wsc110.Exception {
 
-	gfkvp.request = getfeature
-	gfkvp.version = Version
-	gfkvp.service = Service
+	fpv.request = getfeature
+	fpv.version = Version
+	fpv.service = Service
 
-	if gf.Startindex != nil {
-		i := strconv.Itoa(*gf.Startindex)
-		if gfkvp.standardPresentationParameters != nil {
-			gfkvp.standardPresentationParameters.startindex = &i
+	if f.Startindex != nil {
+		i := strconv.Itoa(*f.Startindex)
+		if fpv.standardPresentationParameters != nil {
+			fpv.standardPresentationParameters.startindex = &i
 		} else {
 			spp := standardPresentationParameters{}
 			spp.startindex = &i
-			gfkvp.standardPresentationParameters = &spp
+			fpv.standardPresentationParameters = &spp
 		}
 	}
 
-	if gf.Count != nil {
-		i := strconv.Itoa(*gf.Count)
-		if gfkvp.standardPresentationParameters != nil {
-			gfkvp.standardPresentationParameters.count = &i
+	if f.Count != nil {
+		i := strconv.Itoa(*f.Count)
+		if fpv.standardPresentationParameters != nil {
+			fpv.standardPresentationParameters.count = &i
 		} else {
 			spp := standardPresentationParameters{}
 			spp.count = &i
-			gfkvp.standardPresentationParameters = &spp
+			fpv.standardPresentationParameters = &spp
 		}
 	}
 
-	if gf.OutputFormat != nil {
-		if gfkvp.standardPresentationParameters != nil {
-			gfkvp.standardPresentationParameters.outputformat = gf.OutputFormat
+	if f.OutputFormat != nil {
+		if fpv.standardPresentationParameters != nil {
+			fpv.standardPresentationParameters.outputformat = f.OutputFormat
 		} else {
 			spp := standardPresentationParameters{}
-			spp.outputformat = gf.OutputFormat
-			gfkvp.standardPresentationParameters = &spp
+			spp.outputformat = f.OutputFormat
+			fpv.standardPresentationParameters = &spp
 		}
 	}
 
-	if gf.ResultType != nil {
-		if gfkvp.standardPresentationParameters != nil {
-			gfkvp.standardPresentationParameters.resulttype = gf.ResultType
+	if f.ResultType != nil {
+		if fpv.standardPresentationParameters != nil {
+			fpv.standardPresentationParameters.resulttype = f.ResultType
 		} else {
 			spp := standardPresentationParameters{}
-			spp.resulttype = gf.ResultType
-			gfkvp.standardPresentationParameters = &spp
+			spp.resulttype = f.ResultType
+			fpv.standardPresentationParameters = &spp
 		}
 	}
 
-	if gf.StandardResolveParameters != nil {
-		if gf.Resolve != nil {
-			gfkvp.standardResolveParameters.resolve = gf.Resolve
+	if f.StandardResolveParameters != nil {
+		if f.Resolve != nil {
+			fpv.standardResolveParameters.resolve = f.Resolve
 		}
 
-		if gf.ResolveDepth != nil {
-			i := strconv.Itoa(*gf.ResolveDepth)
-			gfkvp.standardResolveParameters.resolvedepth = &i
+		if f.ResolveDepth != nil {
+			i := strconv.Itoa(*f.ResolveDepth)
+			fpv.standardResolveParameters.resolvedepth = &i
 		}
 
-		if gf.ResolveTimeout != nil {
-			i := strconv.Itoa(*gf.ResolveTimeout)
-			gfkvp.standardResolveParameters.resolvetimeout = &i
+		if f.ResolveTimeout != nil {
+			i := strconv.Itoa(*f.ResolveTimeout)
+			fpv.standardResolveParameters.resolvetimeout = &i
 		}
 	}
 
 	// TODO: extract namespaces from dataset specific and with inspire/ogc
-	// gfkvp.commonKeywords.namespaces = &vp
+	// fpv.commonKeywords.namespaces = &vp
 
-	gfkvp.adhocQueryKeywords.typenames = gf.Query.TypeNames
+	fpv.adhocQueryKeywords.typenames = f.Query.TypeNames
 
 	// TODO
-	// gfkvp.adhocQueryKeywords.aliases = &vp
+	// fpv.adhocQueryKeywords.aliases = &vp
 
-	if gf.Query.SrsName != nil {
-		gfkvp.srsname = gf.Query.SrsName
+	if f.Query.SrsName != nil {
+		fpv.srsname = f.Query.SrsName
 	}
 
-	if gf.Query.Filter != nil {
-		if gf.Query.Filter.ResourceID != nil {
-			s := gf.Query.Filter.ResourceID.toString()
-			gfkvp.resourceid = &(s)
-		} else if gf.Query.Filter.BBOX != nil {
-			s := gf.Query.Filter.BBOX.MarshalText()
-			gfkvp.bbox = &s
+	if f.Query.Filter != nil {
+		if f.Query.Filter.ResourceID != nil {
+			s := f.Query.Filter.ResourceID.toString()
+			fpv.resourceid = &(s)
+		} else if f.Query.Filter.BBOX != nil {
+			s := f.Query.Filter.BBOX.MarshalText()
+			fpv.bbox = &s
 		} else {
-			f := gf.Query.Filter.toString()
-			gfkvp.filter = &f
+			f := f.Query.Filter.toString()
+			fpv.filter = &f
 		}
 	}
 
 	// TODO
-	// gfkvp.adhocQueryKeywords.filter_language = &vp
+	// fpv.adhocQueryKeywords.filter_language = &vp
 
-	if gf.Query.SortBy != nil {
-		s := gf.Query.SortBy.toString()
-		gfkvp.adhocQueryKeywords.sortby = &s
+	if f.Query.SortBy != nil {
+		s := f.Query.SortBy.toString()
+		fpv.adhocQueryKeywords.sortby = &s
 	}
 
 	// TODO
-	// gfkvp.storedQueryKeywords.storedqueryid = v[0]
+	// fpv.storedQueryKeywords.storedqueryid = v[0]
 
 	return nil
 }
 
-func (gfkvp getFeatureKVPRequest) toQueryParameters() url.Values {
+func (fpv getFeatureParameterValueRequest) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
-	query[SERVICE] = []string{gfkvp.service}
-	query[VERSION] = []string{gfkvp.version}
-	query[REQUEST] = []string{gfkvp.request}
+	query[SERVICE] = []string{fpv.service}
+	query[VERSION] = []string{fpv.version}
+	query[REQUEST] = []string{fpv.request}
 
 	// commonKeywords
-	if gfkvp.commonKeywords != nil {
-		if gfkvp.namespaces != nil {
-			query[NAMESPACES] = []string{*gfkvp.namespaces}
+	if fpv.commonKeywords != nil {
+		if fpv.namespaces != nil {
+			query[NAMESPACES] = []string{*fpv.namespaces}
 		}
 	}
 
 	// standardPresentationParameters
-	if gfkvp.standardPresentationParameters != nil {
-		if gfkvp.startindex != nil {
-			query[STARTINDEX] = []string{*gfkvp.startindex}
+	if fpv.standardPresentationParameters != nil {
+		if fpv.startindex != nil {
+			query[STARTINDEX] = []string{*fpv.startindex}
 		}
-		if gfkvp.count != nil {
-			query[COUNT] = []string{*gfkvp.count}
+		if fpv.count != nil {
+			query[COUNT] = []string{*fpv.count}
 		}
-		if gfkvp.outputformat != nil {
-			query[OUTPUTFORMAT] = []string{*gfkvp.outputformat}
+		if fpv.outputformat != nil {
+			query[OUTPUTFORMAT] = []string{*fpv.outputformat}
 		}
-		if gfkvp.resulttype != nil {
-			query[RESULTTYPE] = []string{*gfkvp.resulttype}
+		if fpv.resulttype != nil {
+			query[RESULTTYPE] = []string{*fpv.resulttype}
 		}
 	}
 
 	// standardResolveParameters
-	if gfkvp.standardResolveParameters != nil {
-		if gfkvp.resolve != nil {
-			query[RESOLVE] = []string{*gfkvp.resolve}
+	if fpv.standardResolveParameters != nil {
+		if fpv.resolve != nil {
+			query[RESOLVE] = []string{*fpv.resolve}
 		}
-		if gfkvp.resolvedepth != nil {
-			query[RESOLVEDEPTH] = []string{*gfkvp.resolvedepth}
+		if fpv.resolvedepth != nil {
+			query[RESOLVEDEPTH] = []string{*fpv.resolvedepth}
 		}
-		if gfkvp.resolvetimeout != nil {
-			query[RESOLVETIMEOUT] = []string{*gfkvp.resolvetimeout}
+		if fpv.resolvetimeout != nil {
+			query[RESOLVETIMEOUT] = []string{*fpv.resolvetimeout}
 		}
 	}
 
 	// // adhocQueryKeywords
-	query[TYPENAMES] = []string{gfkvp.typenames}
+	query[TYPENAMES] = []string{fpv.typenames}
 
-	if gfkvp.aliases != nil {
-		query[ALIASES] = []string{*gfkvp.aliases}
+	if fpv.aliases != nil {
+		query[ALIASES] = []string{*fpv.aliases}
 	}
 
-	if gfkvp.srsname != nil {
-		query[SRSNAME] = []string{*gfkvp.srsname}
+	if fpv.srsname != nil {
+		query[SRSNAME] = []string{*fpv.srsname}
 	}
 	// // Projection_clause not implemented
 
-	if gfkvp.filter != nil {
-		query[FILTER] = []string{*gfkvp.filter}
-	} else if gfkvp.resourceid != nil {
-		query[RESOURCEID] = []string{*gfkvp.resourceid}
-	} else if gfkvp.bbox != nil {
-		query[BBOX] = []string{*gfkvp.bbox}
+	if fpv.filter != nil {
+		query[FILTER] = []string{*fpv.filter}
+	} else if fpv.resourceid != nil {
+		query[RESOURCEID] = []string{*fpv.resourceid}
+	} else if fpv.bbox != nil {
+		query[BBOX] = []string{*fpv.bbox}
 	}
 
 	// filter_language *string `yaml:"filter_language,omitempty"`
 
 	// sortby          *string `yaml:"sortby,omitempty"`
-	if gfkvp.sortby != nil {
-		query[SORTBY] = []string{*gfkvp.sortby}
+	if fpv.sortby != nil {
+		query[SORTBY] = []string{*fpv.sortby}
 	}
 
 	// storedQueryKeywords
-	if gfkvp.storedQueryKeywords != nil {
-		query[STOREDQUERYID] = []string{gfkvp.storedqueryid}
+	if fpv.storedQueryKeywords != nil {
+		query[STOREDQUERYID] = []string{fpv.storedqueryid}
 	}
 
 	return query

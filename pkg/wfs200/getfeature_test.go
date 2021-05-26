@@ -602,11 +602,11 @@ func BenchmarkGetFeatureToXML(b *testing.B) {
 }
 
 func BenchmarkGetFeatureParseQueryParameters(b *testing.B) {
-	kvp := map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}}
+	pv := map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, OUTPUTFORMAT: {"application/xml"}, TYPENAMES: {"dummy"}, COUNT: {"3"}}
 
 	for i := 0; i < b.N; i++ {
-		gm := GetFeatureRequest{}
-		gm.ParseQueryParameters(kvp)
+		f := GetFeatureRequest{}
+		f.ParseQueryParameters(pv)
 	}
 }
 

@@ -46,84 +46,84 @@ type GetMapRequest struct {
 }
 
 // Validate returns GetMap
-func (gm *GetMapRequest) Validate(c Capabilities) Exceptions {
+func (m *GetMapRequest) Validate(c Capabilities) Exceptions {
 	var exceptions Exceptions
 
-	exceptions = append(exceptions, gm.StyledLayerDescriptor.Validate(c)...)
-	exceptions = append(exceptions, gm.Output.Validate(c)...)
+	exceptions = append(exceptions, m.StyledLayerDescriptor.Validate(c)...)
+	exceptions = append(exceptions, m.Output.Validate(c)...)
 
-	for _, sld := range gm.StyledLayerDescriptor.NamedLayer {
+	for _, sld := range m.StyledLayerDescriptor.NamedLayer {
 		layer, layerexception := c.GetLayer(sld.Name)
 		if layerexception != nil {
 			exceptions = append(exceptions, layerexception...)
 		}
-		if CRSException := checkCRS(gm.CRS, layer.CRS); CRSException != nil {
-			exceptions = append(exceptions, InvalidCRS(gm.CRS.String(), sld.Name))
+		if CRSException := checkCRS(m.CRS, layer.CRS); CRSException != nil {
+			exceptions = append(exceptions, InvalidCRS(m.CRS.String(), sld.Name))
 		}
 	}
 
 	return exceptions
 }
 
-// ParseOperationRequestKVP process the simple struct to a complex struct
-func (gm *GetMapRequest) parseKVPRequest(gmkvp getMapKVPRequest) Exceptions {
-	gm.XMLName.Local = getmap
-	gm.BaseRequest.parseKVPRequest(gmkvp.baseRequestKVP)
-
-	sld, exceptions := gmkvp.buildStyledLayerDescriptor()
-	if exceptions != nil {
-		return exceptions
-	}
-	gm.StyledLayerDescriptor = sld
-
-	var crs CRS
-	crs.parseString(gmkvp.crs)
-	gm.CRS = crs
-
-	var bbox BoundingBox
-	if exceptions := bbox.parseString(gmkvp.bbox); exceptions != nil {
-		return exceptions
-	}
-	gm.BoundingBox = bbox
-
-	output, exceptions := gmkvp.buildOutput()
-	if exceptions != nil {
-		return exceptions
-	}
-	gm.Output = output
-
-	gm.Exceptions = gmkvp.exceptions
-
-	return nil
-}
-
 // ParseQueryParameters builds a GetMap object based on the available query parameters
-func (gm *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
+func (m *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query values we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
 		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
-	gmkvp := getMapKVPRequest{}
-	if exceptions := gmkvp.parseQueryParameters(query); exceptions != nil {
+	mpv := getMapParameterValueRequest{}
+	if exceptions := mpv.parseQueryParameters(query); exceptions != nil {
 		return exceptions
 	}
 
-	if exceptions := gm.parseKVPRequest(gmkvp); exceptions != nil {
+	if exceptions := m.parseGetMapParameterValueRequest(mpv); exceptions != nil {
 		return exceptions
 	}
 
 	return nil
 }
 
+// parseGetMapParameterValueRequest process the simple struct to a complex struct
+func (m *GetMapRequest) parseGetMapParameterValueRequest(mpv getMapParameterValueRequest) Exceptions {
+	m.XMLName.Local = getmap
+	m.BaseRequest.parseBaseParameterValueRequest(mpv.baseParameterValueRequest)
+
+	sld, exceptions := mpv.buildStyledLayerDescriptor()
+	if exceptions != nil {
+		return exceptions
+	}
+	m.StyledLayerDescriptor = sld
+
+	var crs CRS
+	crs.parseString(mpv.crs)
+	m.CRS = crs
+
+	var bbox BoundingBox
+	if exceptions := bbox.parseString(mpv.bbox); exceptions != nil {
+		return exceptions
+	}
+	m.BoundingBox = bbox
+
+	output, exceptions := mpv.buildOutput()
+	if exceptions != nil {
+		return exceptions
+	}
+	m.Output = output
+
+	m.Exceptions = mpv.exceptions
+
+	return nil
+}
+
 // ParseXML builds a GetMap object based on a XML document
-func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
+func (m *GetMapRequest) ParseXML(body []byte) Exceptions {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
-	xml.Unmarshal(body, &gm) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
+	xml.Unmarshal(body, &m) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
 	var n []xml.Attr
 	for _, a := range xmlattributes {
 		switch strings.ToUpper(a.Name.Local) {
@@ -132,22 +132,22 @@ func (gm *GetMapRequest) ParseXML(body []byte) Exceptions {
 			n = append(n, a)
 		}
 	}
-	gm.BaseRequest.Attr = utils.StripDuplicateAttr(n)
+	m.BaseRequest.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
 // ToQueryParameters builds a new query string that will be proxied
-func (gm GetMapRequest) ToQueryParameters() url.Values {
-	gmkvp := getMapKVPRequest{}
-	gmkvp.parseGetMapRequest(gm)
+func (m GetMapRequest) ToQueryParameters() url.Values {
+	mpv := getMapParameterValueRequest{}
+	mpv.parseGetMapRequest(m)
 
-	q := gmkvp.toQueryParameters()
+	q := mpv.toQueryParameters()
 	return q
 }
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gm *GetMapRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(gm, "", " ")
+func (m GetMapRequest) ToXML() []byte {
+	si, _ := xml.MarshalIndent(&m, "", " ")
 	return append([]byte(xml.Header), si...)
 }
 
@@ -248,11 +248,11 @@ func (sld StyledLayerDescriptor) Validate(c Capabilities) Exceptions {
 
 // TODO maybe 'merge' both func in a single one with 2 outputs
 // so their are 'in sync' ...?
-func (sld *StyledLayerDescriptor) getLayerKVPValue() string {
+func (sld *StyledLayerDescriptor) getLayerParameterValue() string {
 	return strings.Join(sld.getNamedLayers(), ",")
 }
 
-func (sld *StyledLayerDescriptor) getStyleKVPValue() string {
+func (sld *StyledLayerDescriptor) getStyleParameterValue() string {
 	return strings.Join(sld.getNamedStyles(), ",")
 }
 
@@ -310,7 +310,7 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 	// 4. cnt(LAYERS) != cnt(STYLES) -> raise error Style not defined/Styles do not correspond with layers
 	//    normally when 4 would occur this could be done in the validate step... but,..
 	//    with the serialization -> struct it would become a valid object (yes!?.. YES!)
-	//    That is because POST xml and GET KVP handle this 'different' (at least not in the same way...)
+	//    That is because POST xml and GET Parameter Value request handle this 'different' (at least not in the same way...)
 	//    When 3 is hit the validation at the Validation step wil resolve this
 
 	// 1.

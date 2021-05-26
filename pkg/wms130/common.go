@@ -23,8 +23,8 @@ const (
 	VERSION = `VERSION`
 )
 
-// BaseRequestKVP struct
-type baseRequestKVP struct {
+// baseParameterValueRequest struct
+type baseParameterValueRequest struct {
 	version string `yaml:"version,omitempty"`
 	request string `yaml:"request,omitempty"`
 }
@@ -56,13 +56,13 @@ func (b *BaseRequest) ParseQueryParameters(q url.Values) Exceptions {
 	return nil
 }
 
-// parseKVP builds a BaseRequest struct
-func (b *BaseRequest) parseKVPRequest(bskvp baseRequestKVP) Exceptions {
+// parseBaseParameterValueRequest builds a BaseRequest struct
+func (b *BaseRequest) parseBaseParameterValueRequest(bpv baseParameterValueRequest) Exceptions {
 	// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
 	b.Service = Service
 
-	if bskvp.version != `` {
-		b.Version = bskvp.version
+	if bpv.version != `` {
+		b.Version = bpv.version
 	} else {
 		// Version is mandatory
 		return Exceptions{MissingParameterValue(VERSION)}

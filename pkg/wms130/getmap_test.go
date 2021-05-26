@@ -188,7 +188,7 @@ func TestGetMapParseXML(t *testing.T) {
 	}
 }
 
-func TestGetLayerKVPValue(t *testing.T) {
+func TestGetLayerParameterValue(t *testing.T) {
 	var tests = []struct {
 		styledLayerDescriptor StyledLayerDescriptor
 		excepted              string
@@ -210,14 +210,14 @@ func TestGetLayerKVPValue(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		result := test.styledLayerDescriptor.getLayerKVPValue()
+		result := test.styledLayerDescriptor.getLayerParameterValue()
 		if test.excepted != result {
 			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, test.excepted, result)
 		}
 	}
 }
 
-func TestGetStyleKVPValue(t *testing.T) {
+func TestGetStyleParameterValue(t *testing.T) {
 	var tests = []struct {
 		styledLayerDescriptor StyledLayerDescriptor
 		excepted              string
@@ -249,7 +249,7 @@ func TestGetStyleKVPValue(t *testing.T) {
 	}
 
 	for k, test := range tests {
-		result := test.styledLayerDescriptor.getStyleKVPValue()
+		result := test.styledLayerDescriptor.getStyleParameterValue()
 		if test.excepted != result {
 			t.Errorf("test Exceptions: %d, expected: %v+ ,\n got: %v+", k, test.excepted, result)
 		}
@@ -740,7 +740,7 @@ func BenchmarkGetMapToXML(b *testing.B) {
 }
 
 func BenchmarkGetMapParseQueryParameters(b *testing.B) {
-	kvp := map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
+	mpv := map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 		LAYERS:      {`Rivers,Roads,Houses`},
 		STYLES:      {`CenterLine,CenterLine,Outline`},
 		"CRS":       {`EPSG:4326`},
@@ -755,7 +755,7 @@ func BenchmarkGetMapParseQueryParameters(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		gm := GetMapRequest{}
-		gm.ParseQueryParameters(kvp)
+		gm.ParseQueryParameters(mpv)
 	}
 }
 

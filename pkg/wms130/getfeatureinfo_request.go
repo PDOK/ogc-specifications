@@ -48,11 +48,11 @@ type GetFeatureInfoRequest struct {
 }
 
 // Validate returns GetFeatureInfo
-func (gfi *GetFeatureInfoRequest) Validate(c Capabilities) Exceptions {
+func (i *GetFeatureInfoRequest) Validate(c Capabilities) Exceptions {
 	var exceptions Exceptions
 
-	exceptions = append(exceptions, gfi.StyledLayerDescriptor.Validate(c)...)
-	// exceptions = append(exceptions, gfi.Output.Validate(wmsCapabilities)...)
+	exceptions = append(exceptions, i.StyledLayerDescriptor.Validate(c)...)
+	// exceptions = append(exceptions, i.Output.Validate(wmsCapabilities)...)
 
 	return exceptions
 }
@@ -61,12 +61,12 @@ func (gfi *GetFeatureInfoRequest) Validate(c Capabilities) Exceptions {
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
+func (i *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
-	if err := xml.Unmarshal(body, &gfi); err != nil {
+	if err := xml.Unmarshal(body, &i); err != nil {
 		return Exceptions{MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
@@ -79,66 +79,66 @@ func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 		}
 	}
 
-	gfi.Attr = utils.StripDuplicateAttr(n)
+	i.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
-// ParseOperationRequestKVP process the simple struct to a complex struct
-func (gfi *GetFeatureInfoRequest) parseKVPRequest(gfikvp getFeatureInfoKVPRequest) Exceptions {
+// parseGetFeatureInfoParameterValueRequest process the simple struct to a complex struct
+func (i *GetFeatureInfoRequest) parseGetFeatureInfoParameterValueRequest(ipv getFeatureInfoParameterValueRequest) Exceptions {
 
 	var exceptions Exceptions
 
-	gfi.XMLName.Local = getfeatureinfo
-	gfi.BaseRequest.parseKVPRequest(gfikvp.baseRequestKVP)
+	i.XMLName.Local = getfeatureinfo
+	i.BaseRequest.parseBaseParameterValueRequest(ipv.baseParameterValueRequest)
 
-	sld, ex := gfikvp.buildStyledLayerDescriptor()
+	sld, ex := ipv.buildStyledLayerDescriptor()
 	if ex != nil {
 		exceptions = append(exceptions, ex...)
 	}
-	gfi.StyledLayerDescriptor = sld
+	i.StyledLayerDescriptor = sld
 
-	gfi.CRS = gfikvp.crs
+	i.CRS = ipv.crs
 
 	var bbox BoundingBox
-	if ex := bbox.parseString(gfikvp.bbox); ex != nil {
+	if ex := bbox.parseString(ipv.bbox); ex != nil {
 		exceptions = append(exceptions, ex...)
 	}
-	gfi.BoundingBox = bbox
+	i.BoundingBox = bbox
 
-	gfi.CRS = gfikvp.crs
+	i.CRS = ipv.crs
 
-	w, err := strconv.Atoi(gfikvp.width)
+	w, err := strconv.Atoi(ipv.width)
 	if err != nil {
-		exceptions = append(exceptions, Exceptions{MissingParameterValue(WIDTH, gfikvp.width)}...)
+		exceptions = append(exceptions, Exceptions{MissingParameterValue(WIDTH, ipv.width)}...)
 	}
-	gfi.Size.Width = w
+	i.Size.Width = w
 
-	h, err := strconv.Atoi(gfikvp.height)
+	h, err := strconv.Atoi(ipv.height)
 	if err != nil {
-		exceptions = append(exceptions, Exceptions{MissingParameterValue(HEIGHT, gfikvp.height)}...)
+		exceptions = append(exceptions, Exceptions{MissingParameterValue(HEIGHT, ipv.height)}...)
 	}
-	gfi.Size.Height = h
+	i.Size.Height = h
 
-	gfi.QueryLayers = strings.Split(gfikvp.querylayers, ",")
+	i.QueryLayers = strings.Split(ipv.querylayers, ",")
 
-	if exps := gfi.parseIJ(gfikvp.i, gfikvp.j); exps != nil {
+	if exps := i.parseIJ(ipv.i, ipv.j); exps != nil {
 		exceptions = append(exceptions, exps...)
 	}
 
-	gfi.InfoFormat = gfikvp.infoformat
+	i.InfoFormat = ipv.infoformat
 
 	// Optional keys
-	if gfikvp.featurecount != nil {
-		fc, err := strconv.Atoi(*gfikvp.featurecount)
+	if ipv.featurecount != nil {
+		fc, err := strconv.Atoi(*ipv.featurecount)
 		if err != nil {
 			exceptions = append(exceptions, NoApplicableCode("Unknown FEATURE_COUNT value"))
 		}
 
-		gfi.FeatureCount = &fc
+		i.FeatureCount = &fc
 	}
 
-	if gfikvp.exceptions != nil {
-		gfi.Exceptions = gfikvp.exceptions
+	if ipv.exceptions != nil {
+		i.Exceptions = ipv.exceptions
 	}
 
 	if len(exceptions) > 0 {
@@ -149,19 +149,19 @@ func (gfi *GetFeatureInfoRequest) parseKVPRequest(gfikvp getFeatureInfoKVPReques
 }
 
 // ParseQueryParameters builds a GetFeatureInfo object based on the available query parameters
-func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exceptions {
+func (i *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
 		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
-	gfikvp := getFeatureInfoKVPRequest{}
-	if exceptions := gfikvp.parseQueryParameters(query); len(exceptions) != 0 {
+	ipv := getFeatureInfoParameterValueRequest{}
+	if exceptions := ipv.parseQueryParameters(query); len(exceptions) != 0 {
 		return exceptions
 	}
 
-	if exceptions := gfi.parseKVPRequest(gfikvp); len(exceptions) != 0 {
+	if exceptions := i.parseGetFeatureInfoParameterValueRequest(ipv); len(exceptions) != 0 {
 		return exceptions
 	}
 
@@ -169,11 +169,11 @@ func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Excepti
 }
 
 // ToQueryParameters  builds a new query string that will be proxied
-func (gfi GetFeatureInfoRequest) ToQueryParameters() url.Values {
-	gfikvp := getFeatureInfoKVPRequest{}
-	gfikvp.parseGetFeatureInfoRequest(gfi)
+func (i GetFeatureInfoRequest) ToQueryParameters() url.Values {
+	ipv := getFeatureInfoParameterValueRequest{}
+	ipv.parseGetFeatureInfoRequest(i)
 
-	q := gfikvp.toQueryParameters()
+	q := ipv.toQueryParameters()
 	return q
 }
 
@@ -181,24 +181,24 @@ func (gfi GetFeatureInfoRequest) ToQueryParameters() url.Values {
 // Note: this GetFeatureInfo XML body is a interpretation and there isn't a
 // good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.
-func (gfi *GetFeatureInfoRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(gfi, "", " ")
+func (i GetFeatureInfoRequest) ToXML() []byte {
+	si, _ := xml.MarshalIndent(&i, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
-func (gfi *GetFeatureInfoRequest) parseIJ(I, J string) Exceptions {
-	i, err := strconv.Atoi(I)
+func (i *GetFeatureInfoRequest) parseIJ(I, J string) Exceptions {
+	ii, err := strconv.Atoi(I)
 	if err != nil {
 		return InvalidPoint(I, J).ToExceptions()
 	}
-	gfi.I = i
+	i.I = ii
 
 	j, err := strconv.Atoi(J)
 	if err != nil {
 		return InvalidPoint(I, J).ToExceptions()
 	}
-	gfi.J = j
+	i.J = j
 
 	return nil
 }

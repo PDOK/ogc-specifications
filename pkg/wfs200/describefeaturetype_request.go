@@ -13,26 +13,26 @@ import (
 
 //
 const (
-	TYPENAME = `TYPENAME` //NOTE: TYPENAME for KVP encoding & typeNames for XML encoding
+	TYPENAME = `TYPENAME` //NOTE: TYPENAME for Parameter Value encoding & typeNames for XML encoding
 )
 
 // Type returns DescribeFeatureType
-func (dft *DescribeFeatureTypeRequest) Type() string {
+func (d DescribeFeatureTypeRequest) Type() string {
 	return describefeaturetype
 }
 
 // Validate returns GetCapabilities
-func (dft *DescribeFeatureTypeRequest) Validate(c Capabilities) []wsc110.Exception {
+func (d DescribeFeatureTypeRequest) Validate(c Capabilities) []wsc110.Exception {
 	return nil
 }
 
 // ParseXML builds a DescribeFeatureType object based on a XML document
-func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) []wsc110.Exception {
+func (d *DescribeFeatureTypeRequest) ParseXML(doc []byte) []wsc110.Exception {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
-	if err := xml.Unmarshal(doc, &dft); err != nil {
+	if err := xml.Unmarshal(doc, &d); err != nil {
 		// TODO fix with pretty exception message
 		return wsc110.NoApplicableCode(err.Error()).ToExceptions()
 	}
@@ -47,66 +47,66 @@ func (dft *DescribeFeatureTypeRequest) ParseXML(doc []byte) []wsc110.Exception {
 		}
 	}
 
-	dft.Attr = utils.StripDuplicateAttr(n)
+	d.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseQueryParameters builds a DescribeFeatureType object based on the available query parameters
-func (dft *DescribeFeatureTypeRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
+func (d *DescribeFeatureTypeRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION parameter is missing.
 		return wsc110.MissingParameterValue(VERSION).ToExceptions()
 	}
 
-	dftkvp := describeFeatureTypeKVPRequest{}
+	dpv := describeFeatureTypeParameterValueRequest{}
 
-	if exceptions := dftkvp.parseQueryParameters(query); exceptions != nil {
+	if exceptions := dpv.parseQueryParameters(query); exceptions != nil {
 		return exceptions
 	}
 
-	if exceptions := dft.parseKVPRequest(dftkvp); exceptions != nil {
+	if exceptions := d.parseDescribeFeatureTypeParameterValueRequest(dpv); exceptions != nil {
 		return exceptions
 	}
 	return nil
 }
 
-func (dft *DescribeFeatureTypeRequest) parseKVPRequest(dftkvp describeFeatureTypeKVPRequest) []wsc110.Exception {
+func (d *DescribeFeatureTypeRequest) parseDescribeFeatureTypeParameterValueRequest(dpv describeFeatureTypeParameterValueRequest) []wsc110.Exception {
 
 	// Base
-	dft.XMLName.Local = describefeaturetype
+	d.XMLName.Local = describefeaturetype
 
 	var br BaseRequest
-	if exceptions := br.parseKVPRequest(dftkvp.baseRequestKVP); exceptions != nil {
+	if exceptions := br.parseBaseParameterValueRequest(dpv.baseParameterValueRequest); exceptions != nil {
 		return exceptions
 	}
-	dft.BaseRequest = br
+	d.BaseRequest = br
 
-	dft.TypeName = dftkvp.typeName
+	d.TypeName = dpv.typeName
 
-	if dftkvp.outputFormat != nil {
-		dft.OutputFormat = dftkvp.outputFormat
+	if dpv.outputFormat != nil {
+		d.OutputFormat = dpv.outputFormat
 	} else {
 		s := gml32
-		dft.OutputFormat = &(s)
+		d.OutputFormat = &(s)
 	}
 
 	return nil
 }
 
 // ToQueryParameters  builds a new query string that will be proxied
-func (dft DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
+func (d DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
 
-	dftkvp := describeFeatureTypeKVPRequest{}
-	dftkvp.parseDescribeFeatureTypeRequest(dft)
+	dpv := describeFeatureTypeParameterValueRequest{}
+	dpv.parseDescribeFeatureTypeRequest(d)
 
-	q := dftkvp.toQueryParameters()
+	q := dpv.toQueryParameters()
 	return q
 }
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
-func (dft *DescribeFeatureTypeRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(dft, "", "")
+func (d DescribeFeatureTypeRequest) ToXML() []byte {
+	si, _ := xml.MarshalIndent(&d, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }

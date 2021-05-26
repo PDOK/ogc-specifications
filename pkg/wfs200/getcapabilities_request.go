@@ -13,23 +13,23 @@ import (
 // Contains the GetCapabilities struct and specific functions for building a GetCapabilities request
 
 // Type returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Type() string {
+func (g GetCapabilitiesRequest) Type() string {
 	return getcapabilities
 }
 
 // Validate returns GetCapabilities
-func (gc *GetCapabilitiesRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
+func (g GetCapabilitiesRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	return exceptions
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document
-func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
+func (g *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return []wsc110.Exception{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
 	}
-	if err := xml.Unmarshal(doc, &gc); err != nil {
+	if err := xml.Unmarshal(doc, &g); err != nil {
 		return []wsc110.Exception{wsc110.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
 	}
 	var n []xml.Attr
@@ -42,12 +42,12 @@ func (gc *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
 		}
 	}
 
-	gc.Attr = utils.StripDuplicateAttr(n)
+	g.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
+func (g *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty SERVICE and REQUEST parameter is missing.
@@ -56,39 +56,39 @@ func (gc *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) []wsc11
 		return exceptions
 	}
 
-	gckvp := getCapabilitiesKVPRequest{}
-	if exception := gckvp.parseQueryParameters(query); exception != nil {
+	gpv := getCapabilitiesParameterValueRequest{}
+	if exception := gpv.parseQueryParameters(query); exception != nil {
 		return exception
 	}
 
-	if exception := gc.parseKVPRequest(gckvp); exception != nil {
+	if exception := g.parseGetCapabilitiesParameterValueRequest(gpv); exception != nil {
 		return exception
 	}
 
 	return nil
 }
 
-// ParseOperationRequestKVP process the simple struct to a complex struct
-func (gc *GetCapabilitiesRequest) parseKVPRequest(gckvp getCapabilitiesKVPRequest) []wsc110.Exception {
-	gc.XMLName.Local = gckvp.request
-	gc.Service = gckvp.service
-	gc.Version = gckvp.version
+// parseGetCapabilitiesParameterValueRequest process the simple struct to a complex struct
+func (g *GetCapabilitiesRequest) parseGetCapabilitiesParameterValueRequest(gpv getCapabilitiesParameterValueRequest) []wsc110.Exception {
+	g.XMLName.Local = gpv.request
+	g.Service = gpv.service
+	g.Version = gpv.version
 
 	return nil
 }
 
 // ToQueryParameters builds a new query string that will be proxied
-func (gc GetCapabilitiesRequest) ToQueryParameters() url.Values {
-	gckvp := getCapabilitiesKVPRequest{}
-	gckvp.parseGetCapabilitiesRequest(gc)
+func (g GetCapabilitiesRequest) ToQueryParameters() url.Values {
+	gpv := getCapabilitiesParameterValueRequest{}
+	gpv.parseGetCapabilitiesRequest(g)
 
-	q := gckvp.toQueryParameters()
+	q := gpv.toQueryParameters()
 	return q
 }
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
-func (gc *GetCapabilitiesRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(gc, "", "")
+func (g GetCapabilitiesRequest) ToXML() []byte {
+	si, _ := xml.MarshalIndent(&g, "", "")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }

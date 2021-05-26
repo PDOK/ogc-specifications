@@ -5,15 +5,15 @@ import (
 	"strings"
 )
 
-//getCapabilitiesKVPRequest struct
-type getCapabilitiesKVPRequest struct {
+//getCapabilitiesParameterValueRequest struct
+type getCapabilitiesParameterValueRequest struct {
 	// Table 8 - The Parameters of a GetMap request
 	service string `yaml:"service,omitempty"`
-	baseRequestKVP
+	baseParameterValueRequest
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-func (gckvp *getCapabilitiesKVPRequest) parseQueryParameters(query url.Values) Exceptions {
+func (gpv *getCapabilitiesParameterValueRequest) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
@@ -21,11 +21,11 @@ func (gckvp *getCapabilitiesKVPRequest) parseQueryParameters(query url.Values) E
 		} else {
 			switch strings.ToUpper(k) {
 			case SERVICE:
-				gckvp.service = strings.ToUpper(v[0])
+				gpv.service = strings.ToUpper(v[0])
 			case VERSION:
-				gckvp.baseRequestKVP.version = v[0]
+				gpv.baseParameterValueRequest.version = v[0]
 			case REQUEST:
-				gckvp.baseRequestKVP.request = v[0]
+				gpv.baseParameterValueRequest.request = v[0]
 			}
 		}
 	}
@@ -37,26 +37,26 @@ func (gckvp *getCapabilitiesKVPRequest) parseQueryParameters(query url.Values) E
 	return nil
 }
 
-// ParseOperationRequest builds a GetCapabilitiesKVP object based on a GetCapabilities struct
+// ParseOperationRequest builds a getCapabilitiesParameterValueRequest object based on a GetCapabilities struct
 // This is a 'dummy' implementation, because for a GetCapabilities request it will always be
 // Mandatory:  REQUEST=GetCapabilities
 //             SERVICE=WMS
 // Optional:   VERSION=1.3.0
-func (gckvp *getCapabilitiesKVPRequest) parseGetCapabilitiesRequest(gc GetCapabilitiesRequest) Exceptions {
-	gckvp.request = getcapabilities
-	gckvp.version = gc.Version
-	gckvp.service = gc.Service
+func (gpv *getCapabilitiesParameterValueRequest) parseGetCapabilitiesRequest(g GetCapabilitiesRequest) Exceptions {
+	gpv.request = getcapabilities
+	gpv.version = g.Version
+	gpv.service = g.Service
 
 	return nil
 }
 
-// toQueryParameters  builds a url.Values query from a GetMapKVP struct
-func (gckvp *getCapabilitiesKVPRequest) toQueryParameters() url.Values {
+// toQueryParameters builds a url.Values query from a getCapabilitiesParameterValueRequest struct
+func (gpv getCapabilitiesParameterValueRequest) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
-	query[SERVICE] = []string{gckvp.service}
-	query[VERSION] = []string{gckvp.version}
-	query[REQUEST] = []string{gckvp.request}
+	query[SERVICE] = []string{gpv.service}
+	query[VERSION] = []string{gpv.version}
+	query[REQUEST] = []string{gpv.request}
 
 	return query
 }

@@ -42,8 +42,8 @@ const (
 	gml32 string = `text/xml' subtype=gml/3.2`
 )
 
-// BaseRequestKVP struct
-type baseRequestKVP struct {
+// baseParameterValueRequest struct
+type baseParameterValueRequest struct {
 	version string `yaml:"version,omitempty"`
 	request string `yaml:"request,omitempty"`
 }
@@ -56,13 +56,13 @@ type BaseRequest struct {
 	Attr    utils.XMLAttribute `xml:",attr"`
 }
 
-// parseQueryParameters builds a BaseRequest Struct based on the given parameters
-func (b *BaseRequest) parseKVPRequest(bskvp baseRequestKVP) []wsc110.Exception {
+// parseBaseParameterValueRequest builds a BaseRequest Struct based on the given parameters
+func (b *BaseRequest) parseBaseParameterValueRequest(bpv baseParameterValueRequest) []wsc110.Exception {
 	// Service is optional, because it's implicit for a GetFeature request
 	b.Service = Service
 
-	if bskvp.version != `` {
-		b.Version = bskvp.version
+	if bpv.version != `` {
+		b.Version = bpv.version
 	} else {
 		// Version is mandatory
 		return wsc110.MissingParameterValue(VERSION).ToExceptions()
