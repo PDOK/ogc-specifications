@@ -2,7 +2,7 @@ package wmts100
 
 import "github.com/pdok/ogc-specifications/pkg/wsc110"
 
-// CannotLockAllFeatures exception
+// TileOutOfRange exception
 func TileOutOfRange() wsc110.Exception {
 	return exception{
 		ExceptionCode: "TileOutOfRange",
