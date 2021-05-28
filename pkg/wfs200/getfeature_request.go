@@ -102,13 +102,13 @@ func (f *GetFeatureRequest) ParseQueryParameters(query url.Values) []wsc110.Exce
 		return []wsc110.Exception{wsc110.MissingParameterValue(VERSION)}
 	}
 
-	fpv := getFeatureParameterValueRequest{}
+	fpv := getFeatureRequestParameterValue{}
 
 	if exceptions := fpv.parseQueryParameters(query); exceptions != nil {
 		return exceptions
 	}
 
-	if exceptions := f.parseGetFeatureParameterValueRequest(fpv); exceptions != nil {
+	if exceptions := f.parsegetFeatureRequestParameterValue(fpv); exceptions != nil {
 		return exceptions
 	}
 	return nil
@@ -121,7 +121,7 @@ func (f GetFeatureRequest) ToXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func (f *GetFeatureRequest) parseGetFeatureParameterValueRequest(fpv getFeatureParameterValueRequest) []wsc110.Exception {
+func (f *GetFeatureRequest) parsegetFeatureRequestParameterValue(fpv getFeatureRequestParameterValue) []wsc110.Exception {
 	// Base
 	f.XMLName.Local = getfeature
 
@@ -158,7 +158,7 @@ func (f *GetFeatureRequest) parseGetFeatureParameterValueRequest(fpv getFeatureP
 
 // ToQueryParameters builds a new query string that will be proxied
 func (f GetFeatureRequest) ToQueryParameters() url.Values {
-	fpv := getFeatureParameterValueRequest{}
+	fpv := getFeatureRequestParameterValue{}
 	fpv.parseGetFeatureRequest(f)
 
 	q := fpv.toQueryParameters()
@@ -200,7 +200,7 @@ type StandardPresentationParameters struct {
 	Startindex   *int    `xml:"startindex,attr,omitempty" yaml:"startindex"` // default 0
 }
 
-func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureParameterValueRequest) []wsc110.Exception {
+func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 
 	if fpv.standardPresentationParameters != nil {
@@ -252,7 +252,7 @@ type Query struct {
 	PropertyName *[]string `xml:"PropertyName" yaml:"propertyname"`
 }
 
-func (q *Query) parseKVPRequest(fpv getFeatureParameterValueRequest) []wsc110.Exception {
+func (q *Query) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 
 	q.TypeNames = fpv.typenames

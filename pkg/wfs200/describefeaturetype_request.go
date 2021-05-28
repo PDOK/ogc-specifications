@@ -59,19 +59,19 @@ func (d *DescribeFeatureTypeRequest) ParseQueryParameters(query url.Values) []ws
 		return wsc110.MissingParameterValue(VERSION).ToExceptions()
 	}
 
-	dpv := describeFeatureTypeParameterValueRequest{}
+	dpv := describeFeatureTypeRequestParameterValue{}
 
 	if exceptions := dpv.parseQueryParameters(query); exceptions != nil {
 		return exceptions
 	}
 
-	if exceptions := d.parseDescribeFeatureTypeParameterValueRequest(dpv); exceptions != nil {
+	if exceptions := d.parsedescribeFeatureTypeRequestParameterValue(dpv); exceptions != nil {
 		return exceptions
 	}
 	return nil
 }
 
-func (d *DescribeFeatureTypeRequest) parseDescribeFeatureTypeParameterValueRequest(dpv describeFeatureTypeParameterValueRequest) []wsc110.Exception {
+func (d *DescribeFeatureTypeRequest) parsedescribeFeatureTypeRequestParameterValue(dpv describeFeatureTypeRequestParameterValue) []wsc110.Exception {
 
 	// Base
 	d.XMLName.Local = describefeaturetype
@@ -96,7 +96,7 @@ func (d *DescribeFeatureTypeRequest) parseDescribeFeatureTypeParameterValueReque
 
 // ToQueryParameters  builds a new query string that will be proxied
 func (d DescribeFeatureTypeRequest) ToQueryParameters() url.Values {
-	dpv := describeFeatureTypeParameterValueRequest{}
+	dpv := describeFeatureTypeRequestParameterValue{}
 	dpv.parseDescribeFeatureTypeRequest(d)
 
 	q := dpv.toQueryParameters()

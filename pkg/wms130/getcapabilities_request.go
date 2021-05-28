@@ -52,20 +52,20 @@ func (g *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Exceptio
 		return Exceptions{MissingParameterValue(SERVICE), MissingParameterValue(REQUEST)}
 	}
 
-	gpv := getCapabilitiesParameterValueRequest{}
+	gpv := getCapabilitiesRequestParameterValue{}
 	if exception := gpv.parseQueryParameters(query); exception != nil {
 		return exception
 	}
 
-	if exception := g.parseGetCapabilitiesParameterValueRequest(gpv); exception != nil {
+	if exception := g.parsegetCapabilitiesRequestParameterValue(gpv); exception != nil {
 		return exception
 	}
 
 	return nil
 }
 
-// parseGetCapabilitiesParameterValueRequest process the simple struct to a complex struct
-func (g *GetCapabilitiesRequest) parseGetCapabilitiesParameterValueRequest(gpv getCapabilitiesParameterValueRequest) Exceptions {
+// parsegetCapabilitiesRequestParameterValue process the simple struct to a complex struct
+func (g *GetCapabilitiesRequest) parsegetCapabilitiesRequestParameterValue(gpv getCapabilitiesRequestParameterValue) Exceptions {
 
 	g.XMLName.Local = gpv.request
 	g.BaseRequest.parseBaseParameterValueRequest(gpv.baseParameterValueRequest)
@@ -74,7 +74,7 @@ func (g *GetCapabilitiesRequest) parseGetCapabilitiesParameterValueRequest(gpv g
 
 // ToQueryParameters builds a new query string that will be proxied
 func (g GetCapabilitiesRequest) ToQueryParameters() url.Values {
-	gpv := getCapabilitiesParameterValueRequest{}
+	gpv := getCapabilitiesRequestParameterValue{}
 	gpv.parseGetCapabilitiesRequest(g)
 
 	q := gpv.toQueryParameters()

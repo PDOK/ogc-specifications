@@ -83,8 +83,8 @@ func (i *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 	return nil
 }
 
-// parseGetFeatureInfoParameterValueRequest process the simple struct to a complex struct
-func (i *GetFeatureInfoRequest) parseGetFeatureInfoParameterValueRequest(ipv getFeatureInfoParameterValueRequest) Exceptions {
+// parsegetFeatureInfoRequestParameterValue process the simple struct to a complex struct
+func (i *GetFeatureInfoRequest) parsegetFeatureInfoRequestParameterValue(ipv getFeatureInfoRequestParameterValue) Exceptions {
 
 	var exceptions Exceptions
 
@@ -155,12 +155,12 @@ func (i *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exception
 		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
-	ipv := getFeatureInfoParameterValueRequest{}
+	ipv := getFeatureInfoRequestParameterValue{}
 	if exceptions := ipv.parseQueryParameters(query); len(exceptions) != 0 {
 		return exceptions
 	}
 
-	if exceptions := i.parseGetFeatureInfoParameterValueRequest(ipv); len(exceptions) != 0 {
+	if exceptions := i.parsegetFeatureInfoRequestParameterValue(ipv); len(exceptions) != 0 {
 		return exceptions
 	}
 
@@ -169,7 +169,7 @@ func (i *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exception
 
 // ToQueryParameters  builds a new query string that will be proxied
 func (i GetFeatureInfoRequest) ToQueryParameters() url.Values {
-	ipv := getFeatureInfoParameterValueRequest{}
+	ipv := getFeatureInfoRequestParameterValue{}
 	ipv.parseGetFeatureInfoRequest(i)
 
 	q := ipv.toQueryParameters()
