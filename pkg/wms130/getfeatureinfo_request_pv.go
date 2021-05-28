@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-//getFeatureInfoParameterValueRequest struct
-type getFeatureInfoParameterValueRequest struct {
+//getFeatureInfoRequestParameterValue struct
+type getFeatureInfoRequestParameterValue struct {
 	// Table 8 - The Parameters of a GetFeatureInfo request
 	service string `yaml:"service,omitempty"`
 	baseParameterValueRequest
@@ -16,8 +16,8 @@ type getFeatureInfoParameterValueRequest struct {
 	getFeatureInfoParameterValueOptional
 }
 
-// parseQueryParameters builds a getFeatureInfoParameterValueRequest object based on the available query parameters
-func (ipv *getFeatureInfoParameterValueRequest) parseQueryParameters(query url.Values) Exceptions {
+// parseQueryParameters builds a getFeatureInfoRequestParameterValue object based on the available query parameters
+func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
@@ -67,8 +67,8 @@ func (ipv *getFeatureInfoParameterValueRequest) parseQueryParameters(query url.V
 	return nil
 }
 
-// ToQueryParameters builds a url.Values query from a getFeatureInfoParameterValueRequest struct
-func (ipv getFeatureInfoParameterValueRequest) toQueryParameters() url.Values {
+// ToQueryParameters builds a url.Values query from a getFeatureInfoRequestParameterValue struct
+func (ipv getFeatureInfoRequestParameterValue) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
 	query[SERVICE] = []string{ipv.service}
@@ -100,8 +100,8 @@ func (ipv getFeatureInfoParameterValueRequest) toQueryParameters() url.Values {
 	return query
 }
 
-// parseGetFeatureInfoRequest builds a getFeatureInfoParameterValueRequest object based on a GetFeatureInfoRequest struct
-func (ipv *getFeatureInfoParameterValueRequest) parseGetFeatureInfoRequest(i GetFeatureInfoRequest) Exceptions {
+// parseGetFeatureInfoRequest builds a getFeatureInfoRequestParameterValue object based on a GetFeatureInfoRequest struct
+func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i GetFeatureInfoRequest) Exceptions {
 
 	ipv.request = getfeatureinfo
 	ipv.version = Version

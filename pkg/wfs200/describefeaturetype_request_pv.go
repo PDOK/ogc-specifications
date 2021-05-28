@@ -7,7 +7,7 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-type describeFeatureTypeParameterValueRequest struct {
+type describeFeatureTypeRequestParameterValue struct {
 	service string `yaml:"service"`
 	baseParameterValueRequest
 
@@ -15,7 +15,7 @@ type describeFeatureTypeParameterValueRequest struct {
 	outputFormat *string `yaml:"outputformat"` // default: "text/xml; subtype=gml/3.2"
 }
 
-func (dpv *describeFeatureTypeParameterValueRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
+func (dpv *describeFeatureTypeRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
 		if len(v) != 1 {
@@ -45,7 +45,7 @@ func (dpv *describeFeatureTypeParameterValueRequest) parseQueryParameters(query 
 	return nil
 }
 
-func (dpv *describeFeatureTypeParameterValueRequest) parseDescribeFeatureTypeRequest(dft DescribeFeatureTypeRequest) []wsc110.Exception {
+func (dpv *describeFeatureTypeRequestParameterValue) parseDescribeFeatureTypeRequest(dft DescribeFeatureTypeRequest) []wsc110.Exception {
 	dpv.request = describefeaturetype
 	dpv.version = dft.Version
 	dpv.service = dft.Service
@@ -54,7 +54,7 @@ func (dpv *describeFeatureTypeParameterValueRequest) parseDescribeFeatureTypeReq
 	return nil
 }
 
-func (dpv describeFeatureTypeParameterValueRequest) toQueryParameters() url.Values {
+func (dpv describeFeatureTypeRequestParameterValue) toQueryParameters() url.Values {
 	querystring := make(map[string][]string)
 	querystring[REQUEST] = []string{dpv.request}
 	querystring[SERVICE] = []string{dpv.service}

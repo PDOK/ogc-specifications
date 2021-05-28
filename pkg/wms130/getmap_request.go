@@ -73,20 +73,20 @@ func (m *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
 	}
 
-	mpv := getMapParameterValueRequest{}
+	mpv := getMapRequestParameterValue{}
 	if exceptions := mpv.parseQueryParameters(query); exceptions != nil {
 		return exceptions
 	}
 
-	if exceptions := m.parseGetMapParameterValueRequest(mpv); exceptions != nil {
+	if exceptions := m.parsegetMapRequestParameterValue(mpv); exceptions != nil {
 		return exceptions
 	}
 
 	return nil
 }
 
-// parseGetMapParameterValueRequest process the simple struct to a complex struct
-func (m *GetMapRequest) parseGetMapParameterValueRequest(mpv getMapParameterValueRequest) Exceptions {
+// parsegetMapRequestParameterValue process the simple struct to a complex struct
+func (m *GetMapRequest) parsegetMapRequestParameterValue(mpv getMapRequestParameterValue) Exceptions {
 	m.XMLName.Local = getmap
 	m.BaseRequest.parseBaseParameterValueRequest(mpv.baseParameterValueRequest)
 
@@ -138,7 +138,7 @@ func (m *GetMapRequest) ParseXML(body []byte) Exceptions {
 
 // ToQueryParameters builds a new query string that will be proxied
 func (m GetMapRequest) ToQueryParameters() url.Values {
-	mpv := getMapParameterValueRequest{}
+	mpv := getMapRequestParameterValue{}
 	mpv.parseGetMapRequest(m)
 
 	q := mpv.toQueryParameters()

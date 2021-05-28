@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-//getMapParameterValueRequest struct
-type getMapParameterValueRequest struct {
+//getMapRequestParameterValue struct
+type getMapRequestParameterValue struct {
 	// Table 8 - The Parameters of a GetMap request
 	service string `yaml:"service,omitempty"`
 	baseParameterValueRequest
@@ -15,8 +15,8 @@ type getMapParameterValueRequest struct {
 	getMapParameterValueOptional
 }
 
-// parseQueryParameters builds a getMapParameterValueRequest object based on the available query parameters
-func (mpv *getMapParameterValueRequest) parseQueryParameters(query url.Values) Exceptions {
+// parseQueryParameters builds a getMapRequestParameterValue object based on the available query parameters
+func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {
 		if len(v) != 1 {
@@ -60,8 +60,8 @@ func (mpv *getMapParameterValueRequest) parseQueryParameters(query url.Values) E
 	return nil
 }
 
-// parseGetMapRequest builds a getMapParameterValueRequest object based on a GetMap struct
-func (mpv *getMapParameterValueRequest) parseGetMapRequest(m GetMapRequest) Exceptions {
+// parseGetMapRequest builds a getMapRequestParameterValue object based on a GetMap struct
+func (mpv *getMapRequestParameterValue) parseGetMapRequest(m GetMapRequest) Exceptions {
 
 	mpv.request = getmap
 	mpv.version = Version
@@ -93,8 +93,8 @@ func (mpv *getMapParameterValueRequest) parseGetMapRequest(m GetMapRequest) Exce
 	return nil
 }
 
-// BuildOutput builds a Output struct from the getMapParameterValueRequest information
-func (mpv *getMapParameterValueRequest) buildOutput() (Output, Exceptions) {
+// BuildOutput builds a Output struct from the getMapRequestParameterValue information
+func (mpv *getMapRequestParameterValue) buildOutput() (Output, Exceptions) {
 	output := Output{}
 
 	h, err := strconv.Atoi(mpv.height)
@@ -140,8 +140,8 @@ func (sl *styledLayer) buildStyledLayerDescriptor() (StyledLayerDescriptor, Exce
 	return sld, nil
 }
 
-// toQueryParameters builds a url.Values query from a getMapParameterValueRequest struct
-func (mpv *getMapParameterValueRequest) toQueryParameters() url.Values {
+// toQueryParameters builds a url.Values query from a getMapRequestParameterValue struct
+func (mpv *getMapRequestParameterValue) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
 	query[SERVICE] = []string{mpv.service}

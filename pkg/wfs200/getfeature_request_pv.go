@@ -8,8 +8,8 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-// getFeatureParameterValueRequest struct
-type getFeatureParameterValueRequest struct {
+// getFeatureRequestParameterValue struct
+type getFeatureRequestParameterValue struct {
 	service string `yaml:"service,omitempty"`
 	baseParameterValueRequest
 	// Table 17 — Keywords for GetFeature KVP-encoding
@@ -66,7 +66,7 @@ type storedQueryKeywords struct {
 	// storedquery_parameter not implemented
 }
 
-func (fpv *getFeatureParameterValueRequest) parseQueryParameters(query url.Values) []wsc110.Exception {
+func (fpv *getFeatureRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
 		if len(v) != 1 {
@@ -169,7 +169,7 @@ func (fpv *getFeatureParameterValueRequest) parseQueryParameters(query url.Value
 	return nil
 }
 
-func (fpv *getFeatureParameterValueRequest) parseGetFeatureRequest(f GetFeatureRequest) []wsc110.Exception {
+func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureRequest) []wsc110.Exception {
 
 	fpv.request = getfeature
 	fpv.version = Version
@@ -272,7 +272,7 @@ func (fpv *getFeatureParameterValueRequest) parseGetFeatureRequest(f GetFeatureR
 	return nil
 }
 
-func (fpv getFeatureParameterValueRequest) toQueryParameters() url.Values {
+func (fpv getFeatureRequestParameterValue) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
 	query[SERVICE] = []string{fpv.service}
