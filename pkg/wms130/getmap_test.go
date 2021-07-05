@@ -302,6 +302,21 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 					BGcolor:     sp(`0x7F7F7F`)},
 				Exceptions: sp("XML"),
 			}},
+		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=zzzz&EXCEPTIONS=XML
+		3: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
+			LAYERS:      {`Rivers,Roads,Houses`},
+			STYLES:      {`CenterLine,CenterLine,Outline`},
+			"CRS":       {`EPSG:4326`},
+			BBOX:        {`-180.0,-90.0,180.0,90.0`},
+			WIDTH:       {`1024`},
+			HEIGHT:      {`512`},
+			FORMAT:      {`image/jpeg`},
+			TRANSPARENT: {`zzzz`},
+			EXCEPTIONS:  {`XML`},
+			BGCOLOR:     {`0x7F7F7F`},
+		},
+			exception: InvalidParameterValue(`zzzz`, TRANSPARENT),
+			},
 	}
 	for k, test := range tests {
 		var gm GetMapRequest
