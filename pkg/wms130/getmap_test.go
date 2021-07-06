@@ -262,8 +262,20 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 		excepted  GetMapRequest
 		exception exception
 	}{
-		0: {query: map[string][]string{REQUEST: {getmap}, "CRS": {`CRS:84`}, SERVICE: {Service}, VERSION: {Version}},
-			exception: InvalidParameterValue(``, `boundingbox`),
+		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=invalid&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
+		0: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
+			LAYERS:      {`Rivers,Roads,Houses`},
+			STYLES:      {`CenterLine,CenterLine,Outline`},
+			"CRS":       {`EPSG:4326`},
+			BBOX:        {`invalid`},
+			WIDTH:       {`1024`},
+			HEIGHT:      {`512`},
+			FORMAT:      {`image/jpeg`},
+			TRANSPARENT: {`FALSE`},
+			EXCEPTIONS:  {`XML`},
+			BGCOLOR:     {`0x7F7F7F`},
+		},
+			exception: InvalidParameterValue(`invalid`, `boundingbox`),
 		},
 		1: {query: url.Values{},
 			exception: MissingParameterValue(VERSION)},

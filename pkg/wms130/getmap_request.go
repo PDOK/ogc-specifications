@@ -67,12 +67,6 @@ func (m GetMapRequest) Validate(c Capabilities) Exceptions {
 
 // ParseQueryParameters builds a GetMap object based on the available query parameters
 func (m *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
-	if len(query) == 0 {
-		// When there are no query values we know that at least
-		// the manadorty VERSION and REQUEST parameter is missing.
-		return Exceptions{MissingParameterValue(VERSION), MissingParameterValue(REQUEST)}
-	}
-
 	mpv := getMapRequestParameterValue{}
 	if exceptions := mpv.parseQueryParameters(query); exceptions != nil {
 		return exceptions

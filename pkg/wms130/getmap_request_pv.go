@@ -52,11 +52,36 @@ func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) E
 			}
 		}
 	}
-
+	if mpv.baseParameterValueRequest.version == "" {
+		exceptions = append(exceptions, MissingParameterValue(VERSION))
+	}
+	if mpv.baseParameterValueRequest.request == "" {
+		exceptions = append(exceptions, MissingParameterValue(REQUEST))
+	}
+	if mpv.getMapParameterValueMandatory.layers == "" {
+		exceptions = append(exceptions, MissingParameterValue(LAYERS))
+	}
+	if mpv.getMapParameterValueMandatory.styles == "" {
+		exceptions = append(exceptions, MissingParameterValue(STYLES))
+	}
+	if mpv.getMapParameterValueMandatory.crs == "" {
+		exceptions = append(exceptions, MissingParameterValue("CRS"))
+	}
+	if mpv.getMapParameterValueMandatory.bbox == "" {
+		exceptions = append(exceptions, MissingParameterValue(BBOX))
+	}
+	if mpv.getMapParameterValueMandatory.width == "" {
+		exceptions = append(exceptions, MissingParameterValue(WIDTH))
+	}
+	if mpv.getMapParameterValueMandatory.height == "" {
+		exceptions = append(exceptions, MissingParameterValue(HEIGHT))
+	}
+	if mpv.getMapParameterValueMandatory.format == "" {
+		exceptions = append(exceptions, MissingParameterValue(FORMAT))
+	}
 	if len(exceptions) > 0 {
 		return exceptions
 	}
-
 	return nil
 }
 
