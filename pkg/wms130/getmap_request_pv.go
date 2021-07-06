@@ -108,11 +108,13 @@ func (mpv *getMapRequestParameterValue) buildOutput() (Output, Exceptions) {
 
 	output.Size = Size{Height: h, Width: w}
 	output.Format = mpv.format
-	b, err := strconv.ParseBool(*mpv.transparent);
-	if err != nil {
-		return output, InvalidParameterValue(*mpv.transparent, TRANSPARENT).ToExceptions()
+	if mpv.transparent != nil {
+		b, err := strconv.ParseBool(*mpv.transparent);
+		if err != nil {
+			return output, InvalidParameterValue(*mpv.transparent, TRANSPARENT).ToExceptions()
+		}
+		output.Transparent = &b
 	}
-	output.Transparent = &b
 	output.BGcolor = mpv.bgcolor
 
 	return output, nil

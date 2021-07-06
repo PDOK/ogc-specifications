@@ -317,6 +317,40 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 		},
 			exception: InvalidParameterValue(`zzzz`, TRANSPARENT),
 			},
+		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
+		4: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
+			LAYERS:      {`Rivers,Roads,Houses`},
+			STYLES:      {`CenterLine,CenterLine,Outline`},
+			"CRS":       {`EPSG:4326`},
+			BBOX:        {`-180.0,-90.0,180.0,90.0`},
+			WIDTH:       {`1024`},
+			HEIGHT:      {`512`},
+			FORMAT:      {`image/jpeg`},
+			EXCEPTIONS:  {`XML`},
+			BGCOLOR:     {`0x7F7F7F`},
+		},
+			excepted: GetMapRequest{
+				BaseRequest: BaseRequest{
+					Version: "1.3.0",
+				},
+				StyledLayerDescriptor: StyledLayerDescriptor{
+					NamedLayer: []NamedLayer{
+						{Name: "Rivers", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+						{Name: "Roads", NamedStyle: &NamedStyle{Name: "CenterLine"}},
+						{Name: "Houses", NamedStyle: &NamedStyle{Name: "Outline"}},
+					}},
+				CRS: CRS{Namespace: "EPSG", Code: 4326},
+				BoundingBox: BoundingBox{
+					LowerCorner: [2]float64{-180.0, -90.0},
+					UpperCorner: [2]float64{180.0, 90.0},
+				},
+				Output: Output{
+					Size:        Size{Width: 1024, Height: 512},
+					Format:      "image/jpeg",
+					Transparent: bp(false),
+					BGcolor:     sp(`0x7F7F7F`)},
+				Exceptions: sp("XML"),
+			}},
 	}
 	for k, test := range tests {
 		var gm GetMapRequest
