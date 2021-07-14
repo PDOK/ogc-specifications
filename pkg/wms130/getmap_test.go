@@ -363,6 +363,38 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 					BGcolor:     sp(`0x7F7F7F`)},
 				Exceptions: sp("XML"),
 			}},
+		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers&STYLES=&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
+		5: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
+			LAYERS:      {`Rivers`},
+			STYLES:      {``},
+			"CRS":       {`EPSG:4326`},
+			BBOX:        {`-180.0,-90.0,180.0,90.0`},
+			WIDTH:       {`1024`},
+			HEIGHT:      {`512`},
+			FORMAT:      {`image/jpeg`},
+			EXCEPTIONS:  {`XML`},
+			BGCOLOR:     {`0x7F7F7F`},
+		},
+			excepted: GetMapRequest{
+				BaseRequest: BaseRequest{
+					Version: "1.3.0",
+				},
+				StyledLayerDescriptor: StyledLayerDescriptor{
+					NamedLayer: []NamedLayer{
+						{Name: "Rivers"},
+					}},
+				CRS: CRS{Namespace: "EPSG", Code: 4326},
+				BoundingBox: BoundingBox{
+					LowerCorner: [2]float64{-180.0, -90.0},
+					UpperCorner: [2]float64{180.0, 90.0},
+				},
+				Output: Output{
+					Size:        Size{Width: 1024, Height: 512},
+					Format:      "image/jpeg",
+					Transparent: bp(false),
+					BGcolor:     sp(`0x7F7F7F`)},
+				Exceptions: sp("XML"),
+			}},
 	}
 	for k, test := range tests {
 		var gm GetMapRequest
@@ -584,8 +616,14 @@ func compareGetMapObject(result, expected GetMapRequest, t *testing.T, k int) {
 		for _, expected := range expected.StyledLayerDescriptor.NamedLayer {
 			for _, result := range result.StyledLayerDescriptor.NamedLayer {
 				if result.Name == expected.Name {
-					if result.NamedStyle.Name == expected.NamedStyle.Name {
-						c = true
+					if result.NamedStyle == nil {
+						if expected.NamedStyle == nil {
+							c = true
+						}
+					} else {
+						if result.NamedStyle.Name == expected.NamedStyle.Name {
+							c = true
+						}
 					}
 				}
 			}
