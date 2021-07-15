@@ -52,31 +52,31 @@ func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) E
 			}
 		}
 	}
-	if mpv.baseParameterValueRequest.version == "" {
+	if _, ok := query[VERSION]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(VERSION))
 	}
-	if mpv.baseParameterValueRequest.request == "" {
+	if _, ok := query[REQUEST]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(REQUEST))
 	}
-	if mpv.getMapParameterValueMandatory.layers == "" {
+	if _, ok := query[LAYERS]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(LAYERS))
 	}
-	if mpv.getMapParameterValueMandatory.styles == "" {
+	if _, ok := query[STYLES]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(STYLES))
 	}
-	if mpv.getMapParameterValueMandatory.crs == "" {
+	if _, ok := query["CRS"]; !ok {
 		exceptions = append(exceptions, MissingParameterValue("CRS"))
 	}
-	if mpv.getMapParameterValueMandatory.bbox == "" {
+	if _, ok := query[BBOX]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(BBOX))
 	}
-	if mpv.getMapParameterValueMandatory.width == "" {
+	if _, ok := query[WIDTH]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(WIDTH))
 	}
-	if mpv.getMapParameterValueMandatory.height == "" {
+	if _, ok := query[HEIGHT]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(HEIGHT))
 	}
-	if mpv.getMapParameterValueMandatory.format == "" {
+	if _, ok := query[FORMAT]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(FORMAT))
 	}
 	if len(exceptions) > 0 {
