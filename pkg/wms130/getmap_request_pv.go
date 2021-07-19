@@ -18,11 +18,14 @@ type getMapRequestParameterValue struct {
 // parseQueryParameters builds a getMapRequestParameterValue object based on the available query parameters
 func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
+	params := make(map[string]bool)
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, InvalidParameterValue(k, strings.Join(v, ",")))
 		} else {
-			switch strings.ToUpper(k) {
+			param := strings.ToUpper(k)
+			params[param] = true
+			switch param {
 			case SERVICE:
 				mpv.service = strings.ToUpper(v[0])
 			case VERSION:
@@ -52,31 +55,31 @@ func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) E
 			}
 		}
 	}
-	if _, ok := query[VERSION]; !ok {
+	if _, ok := params[VERSION]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(VERSION))
 	}
-	if _, ok := query[REQUEST]; !ok {
+	if _, ok := params[REQUEST]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(REQUEST))
 	}
-	if _, ok := query[LAYERS]; !ok {
+	if _, ok := params[LAYERS]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(LAYERS))
 	}
-	if _, ok := query[STYLES]; !ok {
+	if _, ok := params[STYLES]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(STYLES))
 	}
-	if _, ok := query["CRS"]; !ok {
+	if _, ok := params["CRS"]; !ok {
 		exceptions = append(exceptions, MissingParameterValue("CRS"))
 	}
-	if _, ok := query[BBOX]; !ok {
+	if _, ok := params[BBOX]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(BBOX))
 	}
-	if _, ok := query[WIDTH]; !ok {
+	if _, ok := params[WIDTH]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(WIDTH))
 	}
-	if _, ok := query[HEIGHT]; !ok {
+	if _, ok := params[HEIGHT]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(HEIGHT))
 	}
-	if _, ok := query[FORMAT]; !ok {
+	if _, ok := params[FORMAT]; !ok {
 		exceptions = append(exceptions, MissingParameterValue(FORMAT))
 	}
 	if len(exceptions) > 0 {
