@@ -34,10 +34,8 @@ type OperationsMetadata struct {
 	XMLName   xml.Name    `xml:"ows:OperationsMetadata"`
 	Operation []Operation `xml:"ows:Operation"`
 	Parameter struct {
-		Name          string `xml:"name,attr" yaml:"name"`
-		AllowedValues struct {
-			Value []string `xml:"ows:Value" yaml:"value"`
-		} `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+		Name          string         `xml:"name,attr" yaml:"name"`
+		AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedvalues"`
 	} `xml:"ows:Parameter" yaml:"parameter"`
 	Constraint           []Constraint          `xml:"ows:Constraint" yaml:"constraint"`
 	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedcapabilities"`
@@ -67,6 +65,11 @@ type Operation struct {
 			Value []string `xml:"ows:Value"`
 		} `xml:"ows:AllowedValues"`
 	} `xml:"ows:Parameter"`
+	Constraints []struct {
+		Name         string `xml:"name,attr" yaml:"name"`
+		NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
+		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultvalue"`
+	} `xml:"ows:Constraint" yaml:"constraint"`
 }
 
 // AllowedValues struct so it can be used as a pointer

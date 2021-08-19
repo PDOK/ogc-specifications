@@ -69,13 +69,16 @@ type Layer struct {
 	//Cascaded                *string                  `xml:"cascaded,attr" yaml:"cascaded"`
 	Name                    *string                  `xml:"Name" yaml:"name"`
 	Title                   string                   `xml:"Title" yaml:"title"`
-	Abstract                string                   `xml:"Abstract" yaml:"abstract"`
+	Abstract                string                   `xml:"Abstract,omitempty" yaml:"abstract,omitempty"`
 	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordlist"`
 	CRS                     []CRS                    `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
+	Dimension               []*Dimension             `xml:"Dimension" yaml:"dimension"`
 	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingbox"`
 	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
+	Attribution             *Attribution             `xml:"Attribution,omitempty" yaml:"attribution"`
 	Identifier              *Identifier              `xml:"Identifier" yaml:"identifier"`
+	FeatureListURL          *FeatureListURL          `xml:"FeatureListURL,omitempty" yaml:"featurelisturl"`
 	MetadataURL             []*MetadataURL           `xml:"MetadataURL" yaml:"metadataurl"`
 	Style                   []*Style                 `xml:"Style" yaml:"style"`
 	Layer                   []*Layer                 `xml:"Layer" yaml:"layer"`
@@ -217,6 +220,22 @@ type Identifier struct {
 	Value     string `xml:",chardata" yaml:"value"`
 }
 
+// Attribution in struct for repeatability
+type Attribution struct {
+	Title          string         `xml:"Title" yaml:"title"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	LogoURL        struct {
+		Format         *string        `xml:"Format" yaml:"format"`
+		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	} `xml:"LogoURL" yaml:"logourl"`
+}
+
+// Identifier in struct for repeatability
+type FeatureListURL struct {
+	Format         string         `xml:"Format" yaml:"format"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+}
+
 // MetadataURL in struct for repeatability
 type MetadataURL struct {
 	Type           *string        `xml:"type,attr" yaml:"type"`
@@ -262,18 +281,25 @@ type LayerBoundingBox struct {
 	Miny float64 `xml:"miny,attr" yaml:"miny"`
 	Maxx float64 `xml:"maxx,attr" yaml:"maxx"`
 	Maxy float64 `xml:"maxy,attr" yaml:"maxy"`
+	Resx float64 `xml:"resx,attr,omitempty" yaml:"resx,omitempty"`
+	Resy float64 `xml:"resy,attr,omitempty" yaml:"resy,omitempty"`
 }
 
 // Style in struct for repeatability
 type Style struct {
 	Name      string `xml:"Name" yaml:"name"`
 	Title     string `xml:"Title" yaml:"title"`
+	Abstract  string `xml:"Abstract,omitempty" yaml:"abstract"`
 	LegendURL struct {
 		Width          int            `xml:"width,attr" yaml:"width"`
 		Height         int            `xml:"height,attr" yaml:"height"`
 		Format         string         `xml:"Format" yaml:"format"`
 		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
 	} `xml:"LegendURL" yaml:"legendurl"`
+	StyleSheetURL *struct {
+		Format         string         `xml:"Format" yaml:"format"`
+		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	} `xml:"StyleSheetURL,omitempty" yaml:"stylesheeturl"`
 }
 
 // DCPType in struct for repeatability
@@ -294,4 +320,12 @@ type OnlineResource struct {
 	Xlink *string `xml:"xmlns:xlink,attr" yaml:"xlink"`
 	Type  *string `xml:"xlink:type,attr" yaml:"type"`
 	Href  *string `xml:"xlink:href,attr" yaml:"href"`
+}
+
+type Dimension struct {
+	Name         *string `xml:"name,attr" yaml:"name"`
+	Units        *string `xml:"units,attr" yaml:"units"`
+	Default      *string `xml:"default,attr,omitempty" yaml:"default"`
+	NearestValue *string `xml:"nearestValue,attr,omitempty" yaml:"nearestvalue"`
+	Value        *string `xml:",chardata" yaml:"value"`
 }
