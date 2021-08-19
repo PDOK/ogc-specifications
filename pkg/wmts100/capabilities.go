@@ -39,7 +39,7 @@ type Layer struct {
 	Identifier        string                  `xml:"ows:Identifier" yaml:"identifier"`
 	Metadata          *Metadata               `xml:"ows:Metadata,omitempty" yaml:"metadata"`
 	Style             []Style                 `xml:"Style" yaml:"style"`
-	Format            string                  `xml:"Format" yaml:"format"`
+	Format            []string                `xml:"Format" yaml:"format"`
 	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
 	ResourceURL       struct {
 		Format       string `xml:"format,attr" yaml:"format"`

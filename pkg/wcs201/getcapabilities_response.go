@@ -94,13 +94,13 @@ type ServiceProvider struct {
 				Country               string `xml:"ows:Country" yaml:"country"`
 				ElectronicMailAddress string `xml:"ows:ElectronicMailAddress" yaml:"electronicmailaddress"`
 			} `xml:"ows:Address" yaml:"address"`
-			OnlineResource struct {
-				Type string `xml:"xlink:type,attr" yaml:"type"`
-				Href string `xml:"xlink:href,attr" yaml:"href"`
-			} `xml:"ows:OnlineResource" yaml:"onlineresource"`
-			HoursOfService      string `xml:"ows:HoursOfService" yaml:"hoursofservice"`
-			ContactInstructions string `xml:"ows:ContactInstructions" yaml:"contactinstructions"`
+			OnlineResource *struct {
+				Type string `xml:"xlink:type,attr,omitempty" yaml:"type"`
+				Href string `xml:"xlink:href,attr,omitempty" yaml:"href"`
+			} `xml:"ows:OnlineResource,omitempty" yaml:"onlineresource"`
+			HoursOfService      string `xml:"ows:HoursOfService,omitempty" yaml:"hoursofservice"`
+			ContactInstructions string `xml:"ows:ContactInstructions,omitempty" yaml:"contactinstructions"`
 		} `xml:"ows:ContactInfo" yaml:"contactinfo"`
-		Role string `xml:"ows:Role" yaml:"role"`
+		Role string `xml:"ows:Role,omitempty" yaml:"role"`
 	} `xml:"ows:ServiceContact" yaml:"servicecontact"`
 }

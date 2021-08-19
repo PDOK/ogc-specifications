@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"regexp"
 
+	"github.com/pdok/ogc-specifications/pkg/wcs201"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -38,9 +39,11 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 type GetCapabilitiesResponse struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`
-	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	Contents              Contents              `xml:"Contents" yaml:"contents"`
-	ServiceMetadataURL    ServiceMetadataURL    `xml:"ServiceMetadataURL" yaml:"servicemetadataurl"`
+	ServiceIdentification ServiceIdentification  `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
+	ServiceProvider       wcs201.ServiceProvider `xml:"ows:ServiceProvider,omitempty" yaml:"serviceprovider"`
+	OperationsMetadata    *OperationsMetadata    `xml:"ows:OperationsMetadata,omitempty" yaml:"operationsmetadata"`
+	Contents              Contents               `xml:"Contents" yaml:"contents"`
+	ServiceMetadataURL    *ServiceMetadataURL    `xml:"ServiceMetadataURL,omitempty" yaml:"servicemetadataurl"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
@@ -54,14 +57,54 @@ type Namespaces struct {
 	SchemaLocation string `xml:"xsi:schemaLocation,attr" yaml:"schemalocation"`
 }
 
+type OperationsMetadata struct {
+	XMLName   xml.Name    `xml:"ows:OperationsMetadata"`
+	Operation []Operation `xml:"ows:Operation"`
+}
+
+// Operation struct for the WFS 2.0.0
+type Operation struct {
+	Name string `xml:"name,attr"`
+	DCP  struct {
+		HTTP struct {
+			Get  *Method `xml:"ows:Get,omitempty" yaml:"get,omitempty"`
+			Post *Method `xml:"ows:Post,omitempty" yaml:"post,omitempty"`
+		} `xml:"ows:HTTP" yaml:"http"`
+	} `xml:"ows:DCP" yaml:"dcp"`
+	Parameter []struct {
+		Name          string `xml:"name,attr"`
+		AllowedValues struct {
+			Value []string `xml:"ows:Value"`
+		} `xml:"ows:AllowedValues"`
+	} `xml:"ows:Parameter"`
+	Constraints []struct {
+		Name         string `xml:"name,attr" yaml:"name"`
+		NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
+		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultvalue"`
+	} `xml:"ows:Constraint" yaml:"constraint"`
+}
+
+// Method in separated struct so to use it as a Pointer
+type Method struct {
+	Type       string `xml:"xlink:type,attr" yaml:"type"`
+	Href       string `xml:"xlink:href,attr" yaml:"href"`
+	Constraint []struct {
+		Name          string `xml:"name,attr" yaml:"name"`
+		AllowedValues struct {
+			Value []string `xml:"ows:Value" yaml:"value"`
+		} `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+	} `xml:"ows:Constraint" yaml:"constraint"`
+}
+
 // ServiceIdentification struct should only be fill by the "template" configuration wmts100.yaml
 type ServiceIdentification struct {
-	Title              string `xml:"ows:Title" yaml:"title"`
-	Abstract           string `xml:"ows:Abstract" yaml:"abstract"`
-	ServiceType        string `xml:"ows:ServiceType" yaml:"servicetype"`
-	ServiceTypeVersion string `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
-	Fees               string `xml:"ows:Fees" yaml:"fees"`
-	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
+	Title              string          `xml:"ows:Title" yaml:"title"`
+	Abstract           string          `xml:"ows:Abstract" yaml:"abstract"`
+	Keywords           wsc110.Keywords `xml:"ows:Keywords,omitempty" yaml:"keywords"`
+	ServiceType        string          `xml:"ows:ServiceType" yaml:"servicetype"`
+	ServiceTypeVersion string          `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
+	Fees               string          `xml:"ows:Fees" yaml:"fees"`
+	AccessConstraints  string          `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
 }
 
 // ServiceMetadataURL in struct for repeatability
