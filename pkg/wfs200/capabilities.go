@@ -50,6 +50,19 @@ type Constraint struct {
 	AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedvalues"`
 }
 
+// when AllowedValues are defined, NoValues should not be present and vice versa
+func (c Constraint) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type constraint Constraint // prevent recursion
+	x := constraint(c)
+	if x.AllowedValues != nil {
+		x.NoValues = nil
+	} else {
+		s := ""
+		x.NoValues = &s
+	}
+	return e.EncodeElement(x, start)
+}
+
 // Operation struct for the WFS 2.0.0
 type Operation struct {
 	Name string `xml:"name,attr"`
