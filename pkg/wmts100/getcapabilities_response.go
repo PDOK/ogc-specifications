@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"regexp"
 
-	"github.com/pdok/ogc-specifications/pkg/wcs201"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -40,7 +39,7 @@ type GetCapabilitiesResponse struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification  `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	ServiceProvider       wcs201.ServiceProvider `xml:"ows:ServiceProvider,omitempty" yaml:"serviceprovider"`
+	ServiceProvider       wsc110.ServiceProvider `xml:"ows:ServiceProvider,omitempty" yaml:"serviceprovider"`
 	OperationsMetadata    *OperationsMetadata    `xml:"ows:OperationsMetadata,omitempty" yaml:"operationsmetadata"`
 	Contents              Contents               `xml:"Contents" yaml:"contents"`
 	ServiceMetadataURL    *ServiceMetadataURL    `xml:"ServiceMetadataURL,omitempty" yaml:"servicemetadataurl"`
