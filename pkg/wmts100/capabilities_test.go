@@ -39,7 +39,7 @@ var contentsWithLegend = Contents{
 					IsDefault: bp(true),
 				},
 			},
-			Format: "image/png",
+			Format: []string{"image/png"},
 			TileMatrixSetLink: []TileMatrixSetLink{
 				{
 					TileMatrixSet: "WholeWorld_CRS_84",
@@ -79,7 +79,7 @@ var contentsWithoutLegend = Contents{
 					IsDefault:  bp(true),
 				},
 			},
-			Format: "image/png",
+			Format: []string{"image/png"},
 			TileMatrixSetLink: []TileMatrixSetLink{
 				{
 					TileMatrixSet: "WholeWorld_CRS_84",
