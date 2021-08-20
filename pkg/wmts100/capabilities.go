@@ -41,11 +41,13 @@ type Layer struct {
 	Style             []Style                 `xml:"Style" yaml:"style"`
 	Format            []string                `xml:"Format" yaml:"format"`
 	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
-	ResourceURL       struct {
-		Format       string `xml:"format,attr" yaml:"format"`
-		ResourceType string `xml:"resourceType,attr" yaml:"resourcetype"`
-		Template     string `xml:"template,attr" yaml:"template"`
-	} `xml:"ResourceURL" yaml:"resourceurl"`
+	ResourceURL       *ResourceURL            `xml:"ResourceURL,omitempty" yaml:"resourceurl"`
+}
+
+type ResourceURL struct {
+	Format       string `xml:"format,attr" yaml:"format"`
+	ResourceType string `xml:"resourceType,attr" yaml:"resourcetype"`
+	Template     string `xml:"template,attr" yaml:"template"`
 }
 
 // Metadata  in struct for repeatability
@@ -55,10 +57,10 @@ type Metadata struct {
 
 // Style in struct for repeatability
 type Style struct {
-	Identifier string           `xml:"ows:Identifier" yaml:"identifier"`
 	Title      *string          `xml:"ows:Title,omitempty" yaml:"title"`
 	Abstract   *string          `xml:"ows:Abstract,omitempty" yaml:"abstract"`
 	Keywords   *wsc110.Keywords `xml:"Keywords,omitempty" yaml:"keywords"`
+	Identifier string           `xml:"ows:Identifier" yaml:"identifier"`
 	LegendURL  []*LegendURL     `xml:"LegendURL,omitempty" yaml:"legendurl"`
 	IsDefault  *bool            `xml:"isDefault,attr,omitempty" yaml:"isdefault"`
 }
