@@ -53,7 +53,6 @@ type Post struct {
 type ExtendedCapabilities struct {
 	ExtendedCapabilities struct {
 		MetadataURL struct {
-			Type      string `xml:"xsi:type,attr"`
 			URL       string `xml:"inspire_common:URL"`
 			MediaType string `xml:"inspire_common:MediaType"`
 		} `xml:"inspire_common:MetadataUrl"`
