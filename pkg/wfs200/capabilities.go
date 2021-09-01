@@ -19,7 +19,7 @@ func (c *Capabilities) ParseYAML(doc []byte) error {
 // Capabilities struct
 type Capabilities struct {
 	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
-	FeatureTypeList    FeatureTypeList    `xml:"wfs:FeatureTypeList" yaml:"featuretypelist"`
+	FeatureTypeList    FeatureTypeList    `xml:"FeatureTypeList" yaml:"featuretypelist"`
 	FilterCapabilities FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filtercapabilities"`
 }
 
@@ -115,25 +115,25 @@ type ExtendedCapabilities struct {
 
 // FeatureTypeList struct for the WFS 2.0.0
 type FeatureTypeList struct {
-	XMLName     xml.Name      `xml:"wfs:FeatureTypeList"`
-	FeatureType []FeatureType `xml:"wfs:FeatureType" yaml:"featuretype"`
+	XMLName     xml.Name      `xml:"FeatureTypeList"`
+	FeatureType []FeatureType `xml:"FeatureType" yaml:"featuretype"`
 }
 
 // FeatureType struct for the WFS 2.0.0
 type FeatureType struct {
-	Name          string           `xml:"wfs:Name" yaml:"name"`
-	Title         string           `xml:"wfs:Title" yaml:"title"`
-	Abstract      string           `xml:"wfs:Abstract" yaml:"abstract"`
+	Name          string           `xml:"Name" yaml:"name"`
+	Title         string           `xml:"Title" yaml:"title"`
+	Abstract      string           `xml:"Abstract" yaml:"abstract"`
 	Keywords      *wsc110.Keywords `xml:"ows:Keywords" yaml:"keywords"`
-	DefaultCRS    *wsc110.CRS      `xml:"wfs:DefaultCRS" yaml:"defaultcrs"`
-	OtherCRS      *[]wsc110.CRS    `xml:"wfs:OtherCRS" yaml:"othercrs"`
+	DefaultCRS    *wsc110.CRS      `xml:"DefaultCRS" yaml:"defaultcrs"`
+	OtherCRS      *[]wsc110.CRS    `xml:"OtherCRS" yaml:"othercrs"`
 	OutputFormats struct {
-		Format []string `xml:"wfs:Format" yaml:"format"`
-	} `xml:"wfs:OutputFormats" yaml:"outputformats"`
+		Format []string `xml:"Format" yaml:"format"`
+	} `xml:"OutputFormats" yaml:"outputformats"`
 	WGS84BoundingBox *wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
 	MetadataURL      struct {
 		Href string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"wfs:MetadataURL" yaml:"metadataurl"`
+	} `xml:"MetadataURL" yaml:"metadataurl"`
 }
 
 // FilterCapabilities struct for the WFS 2.0.0
