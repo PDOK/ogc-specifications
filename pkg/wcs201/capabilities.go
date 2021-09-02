@@ -60,6 +60,9 @@ type ExtendedCapabilities struct {
 			DefaultLanguage struct {
 				Language string `xml:"inspire_common:Language"`
 			} `xml:"inspire_common:DefaultLanguage"`
+			SupportedLanguage *[]struct {
+				Language string `xml:"inspire_common:Language" yaml:"language"`
+			} `xml:"inspire_common:SupportedLanguage" yaml:"supportedlanguage"`
 		} `xml:"inspire_common:SupportedLanguages"`
 		ResponseLanguage struct {
 			Language string `xml:"inspire_common:Language"`
