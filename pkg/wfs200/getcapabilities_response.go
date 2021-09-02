@@ -38,7 +38,7 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 
 // GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
-	XMLName               xml.Name `xml:"wfs:WFS_Capabilities"`
+	XMLName               xml.Name `xml:"WFS_Capabilities"`
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
 	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceprovider"`
@@ -48,7 +48,7 @@ type GetCapabilitiesResponse struct {
 // Namespaces struct containing the namespaces needed for the XML document
 type Namespaces struct {
 	XmlnsGML           string `xml:"xmlns:gml,attr" yaml:"gml"`                                          //http://www.opengis.net/gml/3.2
-	XmlnsWFS           string `xml:"xmlns:wfs,attr" yaml:"wfs"`                                          //http://www.opengis.net/wfs/2.0
+	XmlnsWFS           string `xml:"xmlns,attr" yaml:"wfs"`                                              //http://www.opengis.net/wfs/2.0
 	XmlnsOWS           string `xml:"xmlns:ows,attr" yaml:"common"`                                       //http://www.opengis.net/ows/1.1
 	XmlnsXlink         string `xml:"xmlns:xlink,attr" yaml:"xlink"`                                      //http://www.w3.org/1999/xlink
 	XmlnsXSI           string `xml:"xmlns:xsi,attr" yaml:"xsi"`                                          //http://www.w3.org/2001/XMLSchema-instance
