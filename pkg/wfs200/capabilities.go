@@ -123,12 +123,12 @@ type FeatureTypeList struct {
 
 // FeatureType struct for the WFS 2.0.0
 type FeatureType struct {
-	Name          string           `xml:"Name" yaml:"name"`
-	Title         string           `xml:"Title" yaml:"title"`
-	Abstract      string           `xml:"Abstract" yaml:"abstract"`
-	Keywords      *wsc110.Keywords `xml:"ows:Keywords" yaml:"keywords"`
-	DefaultCRS    *wsc110.CRS      `xml:"DefaultCRS" yaml:"defaultcrs"`
-	OtherCRS      *[]wsc110.CRS    `xml:"OtherCRS" yaml:"othercrs"`
+	Name          string             `xml:"Name" yaml:"name"`
+	Title         string             `xml:"Title" yaml:"title"`
+	Abstract      string             `xml:"Abstract" yaml:"abstract"`
+	Keywords      *[]wsc110.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	DefaultCRS    *CRS               `xml:"DefaultCRS" yaml:"defaultcrs"`
+	OtherCRS      *[]CRS             `xml:"OtherCRS" yaml:"othercrs"`
 	OutputFormats struct {
 		Format []string `xml:"Format" yaml:"format"`
 	} `xml:"OutputFormats" yaml:"outputformats"`
