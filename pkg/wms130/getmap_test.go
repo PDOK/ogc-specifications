@@ -328,18 +328,18 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 			BGCOLOR:     {`0x7F7F7F`},
 		},
 			exception: InvalidParameterValue(`zzzz`, TRANSPARENT),
-			},
+		},
 		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
 		4: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
-			LAYERS:      {`Rivers,Roads,Houses`},
-			STYLES:      {`CenterLine,CenterLine,Outline`},
-			"CRS":       {`EPSG:4326`},
-			BBOX:        {`-180.0,-90.0,180.0,90.0`},
-			WIDTH:       {`1024`},
-			HEIGHT:      {`512`},
-			FORMAT:      {`image/jpeg`},
-			EXCEPTIONS:  {`XML`},
-			BGCOLOR:     {`0x7F7F7F`},
+			LAYERS:     {`Rivers,Roads,Houses`},
+			STYLES:     {`CenterLine,CenterLine,Outline`},
+			"CRS":      {`EPSG:4326`},
+			BBOX:       {`-180.0,-90.0,180.0,90.0`},
+			WIDTH:      {`1024`},
+			HEIGHT:     {`512`},
+			FORMAT:     {`image/jpeg`},
+			EXCEPTIONS: {`XML`},
+			BGCOLOR:    {`0x7F7F7F`},
 		},
 			excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
@@ -365,15 +365,15 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 			}},
 		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers&STYLES=&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
 		5: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
-			LAYERS:      {`Rivers`},
-			STYLES:      {``},
-			"CRS":       {`EPSG:4326`},
-			BBOX:        {`-180.0,-90.0,180.0,90.0`},
-			WIDTH:       {`1024`},
-			HEIGHT:      {`512`},
-			FORMAT:      {`image/jpeg`},
-			EXCEPTIONS:  {`XML`},
-			BGCOLOR:     {`0x7F7F7F`},
+			LAYERS:     {`Rivers`},
+			STYLES:     {``},
+			"CRS":      {`EPSG:4326`},
+			BBOX:       {`-180.0,-90.0,180.0,90.0`},
+			WIDTH:      {`1024`},
+			HEIGHT:     {`512`},
+			FORMAT:     {`image/jpeg`},
+			EXCEPTIONS: {`XML`},
+			BGCOLOR:    {`0x7F7F7F`},
 		},
 			excepted: GetMapRequest{
 				BaseRequest: BaseRequest{
@@ -666,7 +666,7 @@ func TestGetMapValidate(t *testing.T) {
 			Request: Request{
 				GetMap: RequestType{
 					Format:  []string{`image/jpeg`},
-					DCPType: DCPType{},
+					DCPType: &DCPType{},
 				},
 			},
 			Layer: []Layer{
