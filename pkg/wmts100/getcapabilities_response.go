@@ -38,11 +38,11 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 type GetCapabilitiesResponse struct {
 	XMLName               xml.Name `xml:"Capabilities"`
 	Namespaces            `yaml:"namespaces"`
-	ServiceIdentification ServiceIdentification  `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	ServiceProvider       wsc110.ServiceProvider `xml:"ows:ServiceProvider,omitempty" yaml:"serviceprovider"`
-	OperationsMetadata    *OperationsMetadata    `xml:"ows:OperationsMetadata,omitempty" yaml:"operationsmetadata"`
-	Contents              Contents               `xml:"Contents" yaml:"contents"`
-	ServiceMetadataURL    *ServiceMetadataURL    `xml:"ServiceMetadataURL,omitempty" yaml:"servicemetadataurl"`
+	ServiceIdentification ServiceIdentification   `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
+	ServiceProvider       *wsc110.ServiceProvider `xml:"ows:ServiceProvider,omitempty" yaml:"serviceprovider"`
+	OperationsMetadata    *OperationsMetadata     `xml:"ows:OperationsMetadata,omitempty" yaml:"operationsmetadata"`
+	Contents              Contents                `xml:"Contents" yaml:"contents"`
+	ServiceMetadataURL    *ServiceMetadataURL     `xml:"ServiceMetadataURL,omitempty" yaml:"servicemetadataurl"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
@@ -97,13 +97,13 @@ type Method struct {
 
 // ServiceIdentification struct should only be fill by the "template" configuration wmts100.yaml
 type ServiceIdentification struct {
-	Title              string          `xml:"ows:Title" yaml:"title"`
-	Abstract           string          `xml:"ows:Abstract" yaml:"abstract"`
-	Keywords           wsc110.Keywords `xml:"ows:Keywords,omitempty" yaml:"keywords"`
-	ServiceType        string          `xml:"ows:ServiceType" yaml:"servicetype"`
-	ServiceTypeVersion string          `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
-	Fees               string          `xml:"ows:Fees" yaml:"fees"`
-	AccessConstraints  string          `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
+	Title              string           `xml:"ows:Title" yaml:"title"`
+	Abstract           string           `xml:"ows:Abstract" yaml:"abstract"`
+	Keywords           *wsc110.Keywords `xml:"ows:Keywords,omitempty" yaml:"keywords"`
+	ServiceType        string           `xml:"ows:ServiceType" yaml:"servicetype"`
+	ServiceTypeVersion string           `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
+	Fees               string           `xml:"ows:Fees" yaml:"fees"`
+	AccessConstraints  string           `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
 }
 
 // ServiceMetadataURL in struct for repeatability

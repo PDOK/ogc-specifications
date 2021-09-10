@@ -211,7 +211,7 @@ func (c *Capabilities) GetLayer(layername string) (Layer, Exceptions) {
 // RequestType containing the formats and DCPTypes available
 type RequestType struct {
 	Format  []string `xml:"Format" yaml:"format"`
-	DCPType DCPType  `xml:"DCPType" yaml:"dcptype"`
+	DCPType *DCPType `xml:"DCPType" yaml:"dcptype"`
 }
 
 // Identifier in struct for repeatability

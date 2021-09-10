@@ -159,7 +159,7 @@ func BenchmarkGetMapValidate(b *testing.B) {
 			Request: Request{
 				GetMap: RequestType{
 					Format:  []string{`image/jpeg`},
-					DCPType: DCPType{},
+					DCPType: &DCPType{},
 				},
 			},
 			Layer: []Layer{
@@ -251,7 +251,7 @@ func BenchmarkGetMapParseValidate(b *testing.B) {
 			Request: Request{
 				GetMap: RequestType{
 					Format:  []string{`image/jpeg`},
-					DCPType: DCPType{},
+					DCPType: &DCPType{},
 				},
 			},
 			Layer: []Layer{
