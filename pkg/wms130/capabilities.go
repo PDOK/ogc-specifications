@@ -73,14 +73,17 @@ type Layer struct {
 	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordlist"`
 	CRS                     []CRS                    `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
-	Dimension               []*Dimension             `xml:"Dimension" yaml:"dimension"`
 	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingbox"`
-	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
+	Dimension               []*Dimension             `xml:"Dimension" yaml:"dimension"`
 	Attribution             *Attribution             `xml:"Attribution,omitempty" yaml:"attribution"`
+	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
 	Identifier              *Identifier              `xml:"Identifier" yaml:"identifier"`
-	FeatureListURL          *FeatureListURL          `xml:"FeatureListURL,omitempty" yaml:"featurelisturl"`
 	MetadataURL             []*MetadataURL           `xml:"MetadataURL" yaml:"metadataurl"`
+	DataURL                 *URL                     `xml:"DataURL,omitempty" yaml:"dataurl"`
+	FeatureListURL          *URL                     `xml:"FeatureListURL,omitempty" yaml:"featurelisturl"`
 	Style                   []*Style                 `xml:"Style" yaml:"style"`
+	MinScaleDenominator     *float64                 `xml:"MinScaleDenominator,omitempty" yaml:"minscaledenominator"`
+	MaxScaleDenominator     *float64                 `xml:"MaxScaleDenominator,omitempty" yaml:"maxscaledenominator"`
 	Layer                   []*Layer                 `xml:"Layer" yaml:"layer"`
 }
 
@@ -231,8 +234,8 @@ type Attribution struct {
 }
 
 // Identifier in struct for repeatability
-type FeatureListURL struct {
-	Format         string         `xml:"Format" yaml:"format"`
+type URL struct {
+	Format         *string        `xml:"Format" yaml:"format"`
 	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
 }
 
