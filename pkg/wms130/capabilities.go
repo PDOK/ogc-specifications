@@ -295,7 +295,7 @@ type Style struct {
 	Name      string `xml:"Name" yaml:"name"`
 	Title     string `xml:"Title" yaml:"title"`
 	Abstract  string `xml:"Abstract,omitempty" yaml:"abstract"`
-	LegendURL struct {
+	LegendURL *struct {
 		Width          int            `xml:"width,attr" yaml:"width"`
 		Height         int            `xml:"height,attr" yaml:"height"`
 		Format         string         `xml:"Format" yaml:"format"`
