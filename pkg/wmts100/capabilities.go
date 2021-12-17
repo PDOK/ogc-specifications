@@ -42,7 +42,7 @@ type Layer struct {
 	Format            []string                `xml:"Format" yaml:"format"`
 	InfoFormat        []string                `xml:"InfoFormat" yaml:"infoformat"`
 	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
-	ResourceURL       *ResourceURL            `xml:"ResourceURL,omitempty" yaml:"resourceurl"`
+	ResourceURL       []ResourceURL           `xml:"ResourceURL" yaml:"resourceurl"`
 }
 
 type ResourceURL struct {
