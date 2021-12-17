@@ -40,6 +40,7 @@ type Layer struct {
 	Metadata          *Metadata               `xml:"ows:Metadata,omitempty" yaml:"metadata"`
 	Style             []Style                 `xml:"Style" yaml:"style"`
 	Format            []string                `xml:"Format" yaml:"format"`
+	InfoFormat        []string                `xml:"InfoFormat" yaml:"infoformat"`
 	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
 	ResourceURL       *ResourceURL            `xml:"ResourceURL,omitempty" yaml:"resourceurl"`
 }
