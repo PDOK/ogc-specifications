@@ -1,11 +1,14 @@
 # ogc-specifications
 
 ![GitHub license](https://img.shields.io/github/license/PDOK/ogc-specifications)
-[![GitHub release](https://img.shields.io/github/release/PDOK/ogc-specifications.svg)](https://github.com/PDOK/ogc-specifications/releases)
-[![Go Report Card](https://goreportcard.com/badge/PDOK/ogc-specifications)](https://goreportcard.com/report/PDOK/ogc-specifications)
+[![GitHub
+release](https://img.shields.io/github/release/PDOK/ogc-specifications.svg)](https://github.com/PDOK/ogc-specifications/releases)
+[![Go Report
+Card](https://goreportcard.com/badge/PDOK/ogc-specifications)](https://goreportcard.com/report/PDOK/ogc-specifications)
 
-The package ogc-specifications is a implementation of the OGC Web Service Specifications as defined by the [OGC](https://www.ogc.org/).
-This package has support for the following OGC Web Service Specifications Operations:
+The package ogc-specifications is a implementation of the OGC Web Service
+Specifications as defined by the [OGC](https://www.ogc.org/). This package has
+support for the following OGC Web Service Specifications Operations:
 
 | Spec | Version | Operation | Request | Response |
 | --- | --- | --- | --- | --- |
@@ -20,22 +23,32 @@ This package has support for the following OGC Web Service Specifications Operat
 
 ## Purpose
 
-It will provide the user with OperationRequest, Capabilities (and limited to GetCapabilities OperationResponse) structs for the different OGC specifications that can be used with in a developers application, so one doesn't needs to create/build those complex structs for 'every' application that has more then 'simple' interaction with a OGC Web Service. It will allow the developer to parse XML documents and query strings like they are defined in the OGC specification an build go structs with it and it will generate XML documents and KVP query strings based on those structs.
+It will provide the user with OperationRequest, Capabilities (and limited to
+GetCapabilities OperationResponse) structs for the different OGC specifications
+that can be used with in a developers application, so one doesn't needs to
+create/build those complex structs for 'every' application that has more then
+'simple' interaction with a OGC Web Service. It will allow the developer to
+parse XML documents and query strings like they are defined in the OGC
+specification an build go structs with it and it will generate XML documents and
+KVP query strings based on those structs.
 
-The different packages follow the same relations that are defined in the OGC specifications. For example the WFS 2.0.0 and the WMTS 1.0.0 share the underling WSC 1.1.0 package.
+The different packages follow the same relations that are defined in the OGC
+specifications. For example the WFS 2.0.0 and the WMTS 1.0.0 share the underling
+WSC 1.1.0 package.
 
 ### OGC package relations
 
-![ogc-spec-relations](images/relations.svg)
+![ogc-spec-relations](images/relations.drawio.svg)
 
 ## Notice
 
-This is still a 'work-in-progress' with the following major to do's:
+:warning: This is still a 'work-in-progress' with the following major to do's:
 
 - [ ] WFS StoredQuery support
 - [ ] WMTS GetTile support
 - [ ] WCS GetCoverage support
-- [ ] OGC response support for metadata calls like GetCapabilities and DescribeFeatureType
+- [ ] OGC response support for metadata calls like GetCapabilities and
+  DescribeFeatureType
 - [ ] Sufficient validation support
 - [ ] Cleanup YAML parser
 - [ ] WMS Time & Elevation parameters
@@ -78,10 +91,27 @@ For visualization use [pprof](https://github.com/google/pprof)
 - [Simple BBOX](./examples/simple-bbox/main.go)
 - [Exceptionreports](./examples/exceptionsreports/main.go)
 
+## Concept
+
+![concept](images/concept.drawio.svg)
+
+THe idea is that OGC Webservice requests, both GET and POST, can be deserialize
+to `structs`. Because the POST request contain a XML body they can be
+directly unmarshelled to the 'matching' `struct`. The GET request have a number
+of predefined Key Value Pairs (KVP) in their querystring that need to be
+consumed for building the `struct`.
+
+From the created struct one can:
+
+1. Validate the struct itself (**grammatically**)
+1. Validate the struct against a Capabilities document (**context**)
+1. Generate a new request object (**formatting**)
+
 ## How to Contribute
 
 Make a pull request...
 
 ## License
 
-Distributed under MIT License, please see license file within the code for more details.
+Distributed under MIT License, please see license file within the code for more
+details.
