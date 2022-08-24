@@ -3,27 +3,11 @@ package wmts100
 import (
 	"encoding/xml"
 	"net/url"
-	"regexp"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/utils"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
-
-// WMTS 1.0.0 Tokens
-const (
-	SERVICE = `SERVICE`
-	REQUEST = `REQUEST`
-	VERSION = `VERSION`
-)
-
-// GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
-type GetCapabilitiesRequest struct {
-	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
-	Service string             `xml:"service,attr" yaml:"service"`
-	Version string             `xml:"version,attr" yaml:"version"`
-	Attr    utils.XMLAttribute `xml:",attr"`
-}
 
 // ParseXML builds a GetCapabilities object based on a XML document
 func (gc *GetCapabilitiesRequest) ParseXML(body []byte) wsc110.Exceptions {
@@ -77,7 +61,13 @@ func (gc GetCapabilitiesRequest) ToQueryParameters() url.Values {
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (gc GetCapabilitiesRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(gc, "", "")
-	re := regexp.MustCompile(`><.*>`)
-	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
+	return utils.ToXML(gc)
+}
+
+// GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
+type GetCapabilitiesRequest struct {
+	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
+	Service string             `xml:"service,attr" yaml:"service"`
+	Version string             `xml:"version,attr" yaml:"version"`
+	Attr    utils.XMLAttribute `xml:",attr"`
 }

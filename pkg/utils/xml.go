@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/xml"
+	"regexp"
 )
 
 // XMLAttribute wrapper around the array of xml.Attr
@@ -43,4 +44,11 @@ func (xmlattr *XMLAttribute) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 			}
 		}
 	}
+}
+
+// ToXML builds a 'new' XML document 'based' on the 'original' XML document
+func ToXML(request interface{}) []byte {
+	si, _ := xml.MarshalIndent(request, "", "")
+	re := regexp.MustCompile(`><.*>`)
+	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }

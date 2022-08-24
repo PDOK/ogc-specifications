@@ -3,7 +3,6 @@ package wcs201
 import (
 	"encoding/xml"
 	"net/url"
-	"regexp"
 	"strings"
 
 	"github.com/pdok/ogc-specifications/pkg/utils"
@@ -79,9 +78,7 @@ func (gc *GetCapabilitiesRequest) ToQueryParameters() url.Values {
 
 // ToXML builds a 'new' XML document 'based' on the 'original' XML document
 func (gc GetCapabilitiesRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(gc, "", "")
-	re := regexp.MustCompile(`><.*>`)
-	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
+	return utils.ToXML(gc)
 }
 
 // GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
