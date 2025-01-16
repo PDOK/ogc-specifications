@@ -72,7 +72,7 @@ type ServiceIdentification struct {
 	} `xml:"ows:ServiceType"`
 	ServiceTypeVersion string `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
 	Fees               string `xml:"ows:Fees" yaml:"fees"`
-	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accesscontraints"`
+	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
 }
 
 // ServiceProvider struct containing the provider/organization information should only be fill by the "template" configuration wfs200.yaml
