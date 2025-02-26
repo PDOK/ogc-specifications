@@ -6,7 +6,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
-//
 const (
 	getcapabilities = `GetCapabilities`
 	getmap          = `GetMap`
@@ -35,7 +34,7 @@ type baseParameterValueRequest struct {
 type BaseRequest struct {
 	Service string             `xml:"service,attr" yaml:"service,omitempty"`
 	Version string             `xml:"version,attr" yaml:"version"`
-	Attr    utils.XMLAttribute `xml:",attr"`
+	Attr    utils.XMLAttribute `xml:",attr" yaml:"attr"`
 }
 
 // ParseQueryParameters builds a BaseRequest struct based on the given parameters

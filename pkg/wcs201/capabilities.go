@@ -12,15 +12,15 @@ func (c *Capabilities) ParseYAML(doc []byte) error {
 
 // Capabilities struct
 type Capabilities struct {
-	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
-	ServiceMetadata    ServiceMetadata    `xml:"wcs:ServiceMetadata" yaml:"servicemetadata"`
+	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
+	ServiceMetadata    ServiceMetadata    `xml:"wcs:ServiceMetadata" yaml:"serviceMetadata"`
 	Contents           Contents           `xml:"wcs:Contents" yaml:"contents"`
 }
 
 // OperationsMetadata struct for the WCS 2.0.1
 type OperationsMetadata struct {
 	Operation            []Operation           `xml:"ows:Operation" yaml:"operation"`
-	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedcapabilities"`
+	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedCapabilities"`
 }
 
 // Operation in struct for repeatability
@@ -45,7 +45,7 @@ type Post struct {
 		Name          string `xml:"name,attr" yaml:"name"`
 		AllowedValues struct {
 			Value []string `xml:"ows:Value" yaml:"value"`
-		} `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+		} `xml:"ows:AllowedValues" yaml:"allowedValues"`
 	} `xml:"ows:Constraint" yaml:"constraint"`
 }
 
@@ -53,46 +53,46 @@ type Post struct {
 type ExtendedCapabilities struct {
 	ExtendedCapabilities struct {
 		MetadataURL struct {
-			URL       string `xml:"inspire_common:URL"`
-			MediaType string `xml:"inspire_common:MediaType"`
+			URL       string `xml:"inspire_common:URL" yaml:"url"`
+			MediaType string `xml:"inspire_common:MediaType" yaml:"mediaType"`
 		} `xml:"inspire_common:MetadataUrl"`
 		SupportedLanguages struct {
 			DefaultLanguage struct {
-				Language string `xml:"inspire_common:Language"`
+				Language string `xml:"inspire_common:Language" yaml:"language"`
 			} `xml:"inspire_common:DefaultLanguage"`
 			SupportedLanguage *[]struct {
 				Language string `xml:"inspire_common:Language" yaml:"language"`
-			} `xml:"inspire_common:SupportedLanguage" yaml:"supportedlanguage"`
-		} `xml:"inspire_common:SupportedLanguages"`
+			} `xml:"inspire_common:SupportedLanguage" yaml:"supportedLanguage"`
+		} `xml:"inspire_common:SupportedLanguages" yaml:"supportedLanguages"`
 		ResponseLanguage struct {
 			Language string `xml:"inspire_common:Language"`
-		} `xml:"inspire_common:ResponseLanguage"`
+		} `xml:"inspire_common:ResponseLanguage" yaml:"responseLanguage"`
 		SpatialDataSetIdentifier struct {
-			Code string `xml:"Code"`
-		} `xml:"inspire_dls:SpatialDataSetIdentifier"`
-	} `xml:"inspire_dls:ExtendedCapabilities"`
+			Code string `xml:"Code" yaml:"code"`
+		} `xml:"inspire_dls:SpatialDataSetIdentifier" yaml:"spatialDataSetIdentifier"`
+	} `xml:"inspire_dls:ExtendedCapabilities" yaml:"extendedCapabilities"`
 }
 
 // ServiceMetadata struct for the WCS 2.0.1
 type ServiceMetadata struct {
-	FormatSupported []string `xml:"wcs:formatSupported"`
+	FormatSupported []string `xml:"wcs:formatSupported" yaml:"formatSupported"`
 	Extension       struct {
 		InterpolationMetadata struct {
-			InterpolationSupported []string `xml:"int:InterpolationSupported"`
-		} `xml:"int:InterpolationMetadata"`
+			InterpolationSupported []string `xml:"int:InterpolationSupported" yaml:"interpolationSupported"`
+		} `xml:"int:InterpolationMetadata" yaml:"interpolationMetadata"`
 		CrsMetadata struct {
-			CrsSupported []string `xml:"crs:crsSupported"`
-		} `xml:"crs:CrsMetadata"`
-	} `xml:"wcs:Extension"`
+			CrsSupported []string `xml:"crs:crsSupported" yaml:"crsSupported"`
+		} `xml:"crs:CrsMetadata" yaml:"crsMetadata"`
+	} `xml:"wcs:Extension" yaml:"extension"`
 }
 
 // Contents in struct for repeatability
 type Contents struct {
-	CoverageSummary []CoverageSummary `xml:"wcs:CoverageSummary"`
+	CoverageSummary []CoverageSummary `xml:"wcs:CoverageSummary" yaml:"coverageSummary"`
 }
 
 // CoverageSummary in struct for repeatability
 type CoverageSummary struct {
-	CoverageID      string `xml:"wcs:CoverageId"`
-	CoverageSubtype string `xml:"wcs:CoverageSubtype"`
+	CoverageID      string `xml:"wcs:CoverageId" yaml:"coverageId"`
+	CoverageSubtype string `xml:"wcs:CoverageSubtype" yaml:"coverageSubtype"`
 }

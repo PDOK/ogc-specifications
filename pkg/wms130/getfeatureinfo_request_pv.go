@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//getFeatureInfoRequestParameterValue struct
+// getFeatureInfoRequestParameterValue struct
 type getFeatureInfoRequestParameterValue struct {
 	// Table 8 - The Parameters of a GetFeatureInfo request
 	service string `yaml:"service,omitempty"`
@@ -132,14 +132,14 @@ func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i Get
 
 // GetFeatureInfoParameterValueMandatory struct containing the mandatory WMS request Parameter Value
 type getFeatureInfoParameterValueMandatory struct {
-	querylayers string `yaml:"query_layers,omitempty"`
-	infoformat  string `yaml:"info_format,omitempty"`
+	querylayers string `yaml:"queryLayers,omitempty"`
+	infoformat  string `yaml:"infoFormat,omitempty"`
 	i           string `yaml:"i,omitempty"`
 	j           string `yaml:"j,omitempty"`
 }
 
 // GetFeatureInfoParameterValueOptional struct containing the optional WMS request Parameter Value
 type getFeatureInfoParameterValueOptional struct {
-	featurecount *string `yaml:"feature_count,omitempty"`
+	featurecount *string `yaml:"featureCount,omitempty"`
 	exceptions   *string `yaml:"exceptions,omitempty"`
 }

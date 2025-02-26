@@ -36,7 +36,7 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 
 // GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
-	XMLName      xml.Name `xml:"WMS_Capabilities"`
+	XMLName      xml.Name `xml:"WMS_Capabilities" yaml:"wmsCapabilities"`
 	Namespaces   `yaml:"namespaces"`
 	WMSService   WMSService   `xml:"Service" yaml:"service"`
 	Capabilities Capabilities `xml:"Capability" yaml:"capability"`
@@ -48,10 +48,10 @@ type Namespaces struct {
 	XmlnsSLD           string `xml:"xmlns:sld,attr" yaml:"sld"`                                          //http://www.opengis.net/sld
 	XmlnsXlink         string `xml:"xmlns:xlink,attr" yaml:"xlink"`                                      //http://www.w3.org/1999/xlink
 	XmlnsXSI           string `xml:"xmlns:xsi,attr" yaml:"xsi"`                                          //http://www.w3.org/2001/XMLSchema-instance
-	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspirecommon,omitempty"` //http://inspire.ec.europa.eu/schemas/common/1.0
-	XmlnsInspireVs     string `xml:"xmlns:inspire_vs,attr,omitempty" yaml:"inspirevs,omitempty"`         //http://inspire.ec.europa.eu/schemas/inspire_vs/1.0
+	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspireCommon,omitempty"` //http://inspire.ec.europa.eu/schemas/common/1.0
+	XmlnsInspireVs     string `xml:"xmlns:inspire_vs,attr,omitempty" yaml:"inspireVs,omitempty"`         //http://inspire.ec.europa.eu/schemas/inspire_vs/1.0
 	Version            string `xml:"version,attr" yaml:"version"`
-	SchemaLocation     string `xml:"xsi:schemaLocation,attr" yaml:"schemalocation"`
+	SchemaLocation     string `xml:"xsi:schemaLocation,attr" yaml:"schemaLocation"`
 }
 
 // WMSService struct containing the base service information filled from the template
@@ -59,31 +59,31 @@ type WMSService struct {
 	Name           string    `xml:"Name" yaml:"name"`
 	Title          string    `xml:"Title" yaml:"title"`
 	Abstract       string    `xml:"Abstract" yaml:"abstract"`
-	KeywordList    *Keywords `xml:"KeywordList" yaml:"keywordlist"`
+	KeywordList    *Keywords `xml:"KeywordList" yaml:"keywordList"`
 	OnlineResource struct {
 		Xlink *string `xml:"xmlns:xlink,attr" yaml:"xlink"`
 		Type  *string `xml:"xlink:type,attr" yaml:"type"`
 		Href  *string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"OnlineResource" yaml:"onlineresource"`
+	} `xml:"OnlineResource" yaml:"onlineResource"`
 	ContactInformation struct {
 		ContactPersonPrimary struct {
-			ContactPerson       string `xml:"ContactPerson" yaml:"contactperson"`
-			ContactOrganization string `xml:"ContactOrganization" yaml:"contactorganization"`
-		} `xml:"ContactPersonPrimary" yaml:"contactpersonprimary"`
-		ContactPosition string `xml:"ContactPosition" yaml:"contactposition"`
+			ContactPerson       string `xml:"ContactPerson" yaml:"contactPerson"`
+			ContactOrganization string `xml:"ContactOrganization" yaml:"contactOrganization"`
+		} `xml:"ContactPersonPrimary" yaml:"contactPersonPrimary"`
+		ContactPosition string `xml:"ContactPosition" yaml:"contactPosition"`
 		ContactAddress  struct {
-			AddressType     string `xml:"AddressType" yaml:"addresstype"`
+			AddressType     string `xml:"AddressType" yaml:"addressType"`
 			Address         string `xml:"Address" yaml:"address"`
 			City            string `xml:"City" yaml:"city"`
-			StateOrProvince string `xml:"StateOrProvince" yaml:"stateorprovince"`
-			PostCode        string `xml:"PostCode" yaml:"postalcode"`
+			StateOrProvince string `xml:"StateOrProvince" yaml:"stateOrProvince"`
+			PostCode        string `xml:"PostCode" yaml:"postalCode"`
 			Country         string `xml:"Country" yaml:"country"`
-		} `xml:"ContactAddress" yaml:"contactaddress"`
-		ContactVoiceTelephone        string `xml:"ContactVoiceTelephone" yaml:"contactvoicetelephone"`
-		ContactFacsimileTelephone    string `xml:"ContactFacsimileTelephone" yaml:"contactfacsimiletelephone"`
-		ContactElectronicMailAddress string `xml:"ContactElectronicMailAddress" yaml:"contactelectronicmailaddress"`
-	} `xml:"ContactInformation"`
+		} `xml:"ContactAddress" yaml:"contactAddress"`
+		ContactVoiceTelephone        string `xml:"ContactVoiceTelephone" yaml:"contactVoiceTelephone"`
+		ContactFacsimileTelephone    string `xml:"ContactFacsimileTelephone" yaml:"contactFacsimileTelephone"`
+		ContactElectronicMailAddress string `xml:"ContactElectronicMailAddress" yaml:"contactElectronicMailAddress"`
+	} `xml:"ContactInformation" yaml:"contactInformation"`
 	Fees              string `xml:"Fees" yaml:"fees"`
-	AccessConstraints string `xml:"AccessConstraints" yaml:"accessconstraints"`
+	AccessConstraints string `xml:"AccessConstraints" yaml:"accessConstraints"`
 	OptionalConstraints
 }

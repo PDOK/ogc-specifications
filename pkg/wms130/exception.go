@@ -16,12 +16,12 @@ type Exceptions []exception
 
 // ServiceExceptionReport struct
 type ServiceExceptionReport struct {
-	XMLName          xml.Name   `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
+	XMLName          xml.Name   `xml:"ServiceExceptionReport" yaml:"serviceExceptionReport"`
 	Version          string     `xml:"version,attr" yaml:"version"`
-	Xmlns            string     `xml:"xmlns,attr,omitempty"`
-	Xsi              string     `xml:"xsi,attr,omitempty"`
-	SchemaLocation   string     `xml:"schemaLocation,attr,omitempty"`
-	ServiceException Exceptions `xml:"ServiceException"`
+	Xmlns            string     `xml:"xmlns,attr,omitempty" yaml:"xmlns"`
+	Xsi              string     `xml:"xsi,attr,omitempty" yaml:"xsi"`
+	SchemaLocation   string     `xml:"schemaLocation,attr,omitempty" yaml:"schemaLocation"`
+	ServiceException Exceptions `xml:"ServiceException" yaml:"serviceException"`
 }
 
 // ToReport builds a ServiceExceptionReport from an array of Exceptions

@@ -35,9 +35,9 @@ const (
 type GetMapRequest struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
 	BaseRequest
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledLayerDescriptor"`
 	CRS                   CRS                   `xml:"CRS" yaml:"crs"`
-	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
+	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingBox"`
 	Output                Output                `xml:"Output" yaml:"output"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
@@ -192,7 +192,7 @@ type Size struct {
 // StyledLayerDescriptor struct
 type StyledLayerDescriptor struct {
 	Version    string       `xml:"version,attr" yaml:"version"`
-	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedlayer"`
+	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedLayer"`
 }
 
 // Validate the StyledLayerDescriptor
@@ -277,7 +277,7 @@ func (sld *StyledLayerDescriptor) getNamedStyles() []string {
 // NamedLayer struct
 type NamedLayer struct {
 	Name       string      `xml:"Name" yaml:"name"`
-	NamedStyle *NamedStyle `xml:"NamedStyle" yaml:"namedstyle"`
+	NamedStyle *NamedStyle `xml:"NamedStyle" yaml:"namedStyle"`
 }
 
 // NamedStyle contains the style name that needs be applied
