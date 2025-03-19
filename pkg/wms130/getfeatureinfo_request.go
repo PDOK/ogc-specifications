@@ -24,26 +24,26 @@ const (
 
 // GetFeatureInfoRequest struct with the needed parameters/attributes needed for making a GetFeatureInfo request
 type GetFeatureInfoRequest struct {
-	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
+	XMLName xml.Name `xml:"GetFeatureInfo" yaml:"getFeatureInfo"`
 	BaseRequest
 
 	// <map_request_copy>
 	// These are the 'minimum' required GetMap parameters
 	// needed in a GetFeatureInfo request
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"` //TODO layers is need styles is not!
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledLayerDescriptor"` //TODO layers is need styles is not!
 	CRS                   string                `xml:"CRS" yaml:"crs"`
-	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
+	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingBox"`
 	// We skip the Output struct, because these are not required parameters
 	Size   Size   `xml:"Size" yaml:"size"`
 	Format string `xml:"Format,omitempty" yaml:"format,omitempty"`
 
-	QueryLayers []string `xml:"QueryLayers" yaml:"querylayers"`
+	QueryLayers []string `xml:"QueryLayers" yaml:"queryLayers"`
 	I           int      `xml:"I" yaml:"i"`
 	J           int      `xml:"J" yaml:"j"`
-	InfoFormat  string   `xml:"InfoFormat" yaml:"infoformat" default:"text/plain"` // default text/plain
+	InfoFormat  string   `xml:"InfoFormat" yaml:"infoFormat" default:"text/plain"` // default text/plain
 
 	// Optional Keys
-	FeatureCount *int    `xml:"FeatureCount,omitempty" yaml:"featurecount,omitempty" default:"1"` // default 1
+	FeatureCount *int    `xml:"FeatureCount,omitempty" yaml:"featureCount,omitempty" default:"1"` // default 1
 	Exceptions   *string `xml:"Exceptions" yaml:"exceptions"`
 }
 

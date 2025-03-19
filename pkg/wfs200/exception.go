@@ -9,8 +9,8 @@ import (
 type exception struct {
 	XMLName       xml.Name `xml:"ows:Exception"`
 	ExceptionText string   `xml:",chardata" yaml:"exception"`
-	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptioncode"`
-	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locationcode"`
+	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptionCode"`
+	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locatorCode"`
 }
 
 // ToExceptions promotes a single exception to an array of one

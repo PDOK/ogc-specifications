@@ -19,10 +19,10 @@ const (
 
 // GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilitiesRequest struct {
-	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
+	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getCapabilities"`
 	Service string             `xml:"service,attr" yaml:"service"`
 	Version string             `xml:"version,attr" yaml:"version"`
-	Attr    utils.XMLAttribute `xml:",attr"`
+	Attr    utils.XMLAttribute `xml:",attr" yaml:"attr"`
 }
 
 // ParseXML builds a GetCapabilities object based on a XML document

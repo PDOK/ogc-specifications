@@ -27,30 +27,30 @@ func (c *Capabilities) ParseYAML(doc []byte) error {
 
 // Capabilities struct needed for keeping all constraints and capabilities together
 type Capabilities struct {
-	WMSCapabilities     `xml:"WMSCapabilities" yaml:"wmscapabilities"`
-	OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalconstraints"`
+	WMSCapabilities     `xml:"WMSCapabilities" yaml:"wmsCapabilities"`
+	OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalConstraints"`
 }
 
 // WMSCapabilities base struct
 type WMSCapabilities struct {
 	Request              Request               `xml:"Request" yaml:"request"`
 	Exception            ExceptionType         `xml:"Exception" yaml:"exception"`
-	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedcapabilities"`
+	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedCapabilities"`
 	Layer                []Layer               `xml:"Layer" yaml:"layer"`
 }
 
 // OptionalConstraints struct
 type OptionalConstraints struct {
-	LayerLimit int `xml:"LayerLimit,omitempty" yaml:"layerlimit,omitempty"`
-	MaxWidth   int `xml:"MaxWidth,omitempty" yaml:"maxwidth,omitempty"`
-	MaxHeight  int `xml:"MaxHeight,omitempty" yaml:"maxheight,omitempty"`
+	LayerLimit int `xml:"LayerLimit,omitempty" yaml:"layerLimit,omitempty"`
+	MaxWidth   int `xml:"MaxWidth,omitempty" yaml:"maxWidth,omitempty"`
+	MaxHeight  int `xml:"MaxHeight,omitempty" yaml:"maxHeight,omitempty"`
 }
 
 // Request struct with the different operations, should be filled from the template
 type Request struct {
-	GetCapabilities RequestType  `xml:"GetCapabilities" yaml:"getcapabilities"`
-	GetMap          RequestType  `xml:"GetMap" yaml:"getmap"`
-	GetFeatureInfo  *RequestType `xml:"GetFeatureInfo" yaml:"getfeatureinfo"`
+	GetCapabilities RequestType  `xml:"GetCapabilities" yaml:"getCapabilities"`
+	GetMap          RequestType  `xml:"GetMap" yaml:"getMap"`
+	GetFeatureInfo  *RequestType `xml:"GetFeatureInfo" yaml:"getFeatureInfo"`
 }
 
 // ExceptionType struct containing the different available exceptions, should be filled from the template
@@ -70,20 +70,20 @@ type Layer struct {
 	Name                    *string                  `xml:"Name" yaml:"name"`
 	Title                   string                   `xml:"Title" yaml:"title"`
 	Abstract                string                   `xml:"Abstract,omitempty" yaml:"abstract,omitempty"`
-	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordlist"`
+	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordList"`
 	CRS                     []CRS                    `xml:"CRS" yaml:"crs"`
-	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exgeographicboundingbox"`
-	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingbox"`
+	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exGeographicBoundingBox"`
+	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingBox"`
 	Dimension               []*Dimension             `xml:"Dimension" yaml:"dimension"`
 	Attribution             *Attribution             `xml:"Attribution,omitempty" yaml:"attribution"`
-	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityurl"`
+	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityUrl"`
 	Identifier              *Identifier              `xml:"Identifier" yaml:"identifier"`
-	MetadataURL             []*MetadataURL           `xml:"MetadataURL" yaml:"metadataurl"`
-	DataURL                 *URL                     `xml:"DataURL,omitempty" yaml:"dataurl"`
-	FeatureListURL          *URL                     `xml:"FeatureListURL,omitempty" yaml:"featurelisturl"`
+	MetadataURL             []*MetadataURL           `xml:"MetadataURL" yaml:"metadataUrl"`
+	DataURL                 *URL                     `xml:"DataURL,omitempty" yaml:"dataUrl"`
+	FeatureListURL          *URL                     `xml:"FeatureListURL,omitempty" yaml:"featureListUrl"`
 	Style                   []*Style                 `xml:"Style" yaml:"style"`
-	MinScaleDenominator     *float64                 `xml:"MinScaleDenominator,omitempty" yaml:"minscaledenominator"`
-	MaxScaleDenominator     *float64                 `xml:"MaxScaleDenominator,omitempty" yaml:"maxscaledenominator"`
+	MinScaleDenominator     *float64                 `xml:"MinScaleDenominator,omitempty" yaml:"minScaleDenominator"`
+	MaxScaleDenominator     *float64                 `xml:"MaxScaleDenominator,omitempty" yaml:"maxScaleDenominator"`
 	Layer                   []*Layer                 `xml:"Layer" yaml:"layer"`
 }
 
@@ -214,7 +214,7 @@ func (c *Capabilities) GetLayer(layername string) (Layer, Exceptions) {
 // RequestType containing the formats and DCPTypes available
 type RequestType struct {
 	Format  []string `xml:"Format" yaml:"format"`
-	DCPType *DCPType `xml:"DCPType" yaml:"dcptype"`
+	DCPType *DCPType `xml:"DCPType" yaml:"dcpType"`
 }
 
 // Identifier in struct for repeatability
@@ -226,57 +226,57 @@ type Identifier struct {
 // Attribution in struct for repeatability
 type Attribution struct {
 	Title          string         `xml:"Title" yaml:"title"`
-	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
 	LogoURL        struct {
 		Format         *string        `xml:"Format" yaml:"format"`
-		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
 	} `xml:"LogoURL" yaml:"logourl"`
 }
 
 // Identifier in struct for repeatability
 type URL struct {
 	Format         *string        `xml:"Format" yaml:"format"`
-	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
 }
 
 // MetadataURL in struct for repeatability
 type MetadataURL struct {
 	Type           *string        `xml:"type,attr" yaml:"type"`
 	Format         *string        `xml:"Format" yaml:"format"`
-	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
 }
 
 // AuthorityURL in struct for repeatability
 type AuthorityURL struct {
 	Name           string         `xml:"name,attr" yaml:"name"`
-	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
 }
 
 // ExtendedCapabilities containing the inspire extendedcapabilities, when available
 type ExtendedCapabilities struct {
 	MetadataURL struct {
 		URL       string `xml:"inspire_common:URL" yaml:"url"`
-		MediaType string `xml:"inspire_common:MediaType" yaml:"mediatype"`
-	} `xml:"inspire_common:MetadataUrl" yaml:"metadataurl"`
+		MediaType string `xml:"inspire_common:MediaType" yaml:"mediaType"`
+	} `xml:"inspire_common:MetadataUrl" yaml:"metadataUrl"`
 	SupportedLanguages struct {
 		DefaultLanguage struct {
 			Language string `xml:"inspire_common:Language" yaml:"language"`
-		} `xml:"inspire_common:DefaultLanguage" yaml:"defaultlanguage"`
+		} `xml:"inspire_common:DefaultLanguage" yaml:"defaultLanguage"`
 		SupportedLanguage *[]struct {
 			Language string `xml:"inspire_common:Language" yaml:"language"`
-		} `xml:"inspire_common:SupportedLanguage" yaml:"supportedlanguage"`
-	} `xml:"inspire_common:SupportedLanguages" yaml:"supportedlanguages"`
+		} `xml:"inspire_common:SupportedLanguage" yaml:"supportedLanguage"`
+	} `xml:"inspire_common:SupportedLanguages" yaml:"supportedLanguages"`
 	ResponseLanguage struct {
 		Language string `xml:"inspire_common:Language" yaml:"language"`
-	} `xml:"inspire_common:ResponseLanguage" yaml:"responselanguage"`
+	} `xml:"inspire_common:ResponseLanguage" yaml:"responseLanguage"`
 }
 
 // EXGeographicBoundingBox in struct for repeatability
 type EXGeographicBoundingBox struct {
-	WestBoundLongitude float64 `xml:"westBoundLongitude" yaml:"westboundlongitude"`
-	EastBoundLongitude float64 `xml:"eastBoundLongitude" yaml:"eastboundlongitude"`
-	SouthBoundLatitude float64 `xml:"southBoundLatitude" yaml:"southboundlatitude"`
-	NorthBoundLatitude float64 `xml:"northBoundLatitude" yaml:"northboundlatitude"`
+	WestBoundLongitude float64 `xml:"westBoundLongitude" yaml:"westBoundLongitude"`
+	EastBoundLongitude float64 `xml:"eastBoundLongitude" yaml:"eastBoundLongitude"`
+	SouthBoundLatitude float64 `xml:"southBoundLatitude" yaml:"southBoundLatitude"`
+	NorthBoundLatitude float64 `xml:"northBoundLatitude" yaml:"northBoundLatitude"`
 }
 
 // LayerBoundingBox in struct for repeatability
@@ -299,12 +299,12 @@ type Style struct {
 		Width          int            `xml:"width,attr" yaml:"width"`
 		Height         int            `xml:"height,attr" yaml:"height"`
 		Format         string         `xml:"Format" yaml:"format"`
-		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
-	} `xml:"LegendURL" yaml:"legendurl"`
+		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
+	} `xml:"LegendURL" yaml:"legendUrl"`
 	StyleSheetURL *struct {
 		Format         string         `xml:"Format" yaml:"format"`
-		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
-	} `xml:"StyleSheetURL,omitempty" yaml:"stylesheeturl"`
+		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
+	} `xml:"StyleSheetURL,omitempty" yaml:"styleSheetUrl"`
 }
 
 // DCPType in struct for repeatability
@@ -317,7 +317,7 @@ type DCPType struct {
 
 // Method in struct for repeatability
 type Method struct {
-	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineresource"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
 }
 
 // OnlineResource in struct for repeatability
@@ -331,6 +331,6 @@ type Dimension struct {
 	Name         *string `xml:"name,attr" yaml:"name"`
 	Units        *string `xml:"units,attr" yaml:"units"`
 	Default      *string `xml:"default,attr,omitempty" yaml:"default"`
-	NearestValue *string `xml:"nearestValue,attr,omitempty" yaml:"nearestvalue"`
+	NearestValue *string `xml:"nearestValue,attr,omitempty" yaml:"nearestValue"`
 	Value        *string `xml:",chardata" yaml:"value"`
 }

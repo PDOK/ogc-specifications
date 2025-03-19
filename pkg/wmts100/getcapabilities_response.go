@@ -36,13 +36,13 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 
 // GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
-	XMLName               xml.Name `xml:"Capabilities"`
+	XMLName               xml.Name `xml:"Capabilities" yaml:"capabilities"`
 	Namespaces            `yaml:"namespaces"`
-	ServiceIdentification ServiceIdentification   `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	ServiceProvider       *wsc110.ServiceProvider `xml:"ows:ServiceProvider,omitempty" yaml:"serviceprovider"`
-	OperationsMetadata    *OperationsMetadata     `xml:"ows:OperationsMetadata,omitempty" yaml:"operationsmetadata"`
+	ServiceIdentification ServiceIdentification   `xml:"ows:ServiceIdentification" yaml:"serviceIdentification"`
+	ServiceProvider       *wsc110.ServiceProvider `xml:"ows:ServiceProvider,omitempty" yaml:"serviceProvider"`
+	OperationsMetadata    *OperationsMetadata     `xml:"ows:OperationsMetadata,omitempty" yaml:"operationsMetadata"`
 	Contents              Contents                `xml:"Contents" yaml:"contents"`
-	ServiceMetadataURL    *ServiceMetadataURL     `xml:"ServiceMetadataURL,omitempty" yaml:"servicemetadataurl"`
+	ServiceMetadataURL    *ServiceMetadataURL     `xml:"ServiceMetadataURL,omitempty" yaml:"serviceMetadataUrl"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
@@ -53,17 +53,17 @@ type Namespaces struct {
 	XmlnsXSI       string `xml:"xmlns:xsi,attr" yaml:"xsi"`     //http://www.w3.org/2001/XMLSchema-instance
 	XmlnsGml       string `xml:"xmlns:gml,attr" yaml:"gml"`     //http://www.opengis.net/gml
 	Version        string `xml:"version,attr" yaml:"version"`
-	SchemaLocation string `xml:"xsi:schemaLocation,attr" yaml:"schemalocation"`
+	SchemaLocation string `xml:"xsi:schemaLocation,attr" yaml:"schemaLocation"`
 }
 
 type OperationsMetadata struct {
-	XMLName   xml.Name    `xml:"ows:OperationsMetadata"`
-	Operation []Operation `xml:"ows:Operation"`
+	XMLName   xml.Name    `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
+	Operation []Operation `xml:"ows:Operation" yaml:"operation"`
 }
 
 // Operation struct for the WFS 2.0.0
 type Operation struct {
-	Name string `xml:"name,attr"`
+	Name string `xml:"name,attr" yaml:"name"`
 	DCP  struct {
 		HTTP struct {
 			Get  *Method `xml:"ows:Get,omitempty" yaml:"get,omitempty"`
@@ -71,15 +71,15 @@ type Operation struct {
 		} `xml:"ows:HTTP" yaml:"http"`
 	} `xml:"ows:DCP" yaml:"dcp"`
 	Parameter []struct {
-		Name          string `xml:"name,attr"`
+		Name          string `xml:"name,attr" yaml:"name"`
 		AllowedValues struct {
-			Value []string `xml:"ows:Value"`
-		} `xml:"ows:AllowedValues"`
-	} `xml:"ows:Parameter"`
+			Value []string `xml:"ows:Value" yaml:"value"`
+		} `xml:"ows:AllowedValues" yaml:"allowedValues"`
+	} `xml:"ows:Parameter" yaml:"parameter"`
 	Constraints []struct {
 		Name         string `xml:"name,attr" yaml:"name"`
-		NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
-		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultvalue"`
+		NoValues     string `xml:"ows:NoValues" yaml:"noValues"`
+		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultValue"`
 	} `xml:"ows:Constraint" yaml:"constraint"`
 }
 
@@ -91,7 +91,7 @@ type Method struct {
 		Name          string `xml:"name,attr" yaml:"name"`
 		AllowedValues struct {
 			Value []string `xml:"ows:Value" yaml:"value"`
-		} `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+		} `xml:"ows:AllowedValues" yaml:"allowedValues"`
 	} `xml:"ows:Constraint" yaml:"constraint"`
 }
 
@@ -100,10 +100,10 @@ type ServiceIdentification struct {
 	Title              string           `xml:"ows:Title" yaml:"title"`
 	Abstract           string           `xml:"ows:Abstract" yaml:"abstract"`
 	Keywords           *wsc110.Keywords `xml:"ows:Keywords,omitempty" yaml:"keywords"`
-	ServiceType        string           `xml:"ows:ServiceType" yaml:"servicetype"`
-	ServiceTypeVersion string           `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
+	ServiceType        string           `xml:"ows:ServiceType" yaml:"serviceType"`
+	ServiceTypeVersion string           `xml:"ows:ServiceTypeVersion" yaml:"serviceTypeVersion"`
 	Fees               string           `xml:"ows:Fees" yaml:"fees"`
-	AccessConstraints  string           `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
+	AccessConstraints  string           `xml:"ows:AccessConstraints" yaml:"accessConstraints"`
 }
 
 // ServiceMetadataURL in struct for repeatability

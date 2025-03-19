@@ -175,8 +175,8 @@ func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureR
 	fpv.version = Version
 	fpv.service = Service
 
-	if f.Startindex != nil {
-		i := strconv.Itoa(*f.Startindex)
+	if f.StartIndex != nil {
+		i := strconv.Itoa(*f.StartIndex)
 		if fpv.standardPresentationParameters != nil {
 			fpv.standardPresentationParameters.startindex = &i
 		} else {

@@ -14,7 +14,6 @@ import (
 
 // Contains the GetFeature struct and specific functions for building a GetFeature request
 
-//
 const (
 
 	// table5
@@ -64,8 +63,8 @@ func (f GetFeatureRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
 // WFS tables as map[string]bool, where the key (string) is the TOKEN and the bool if its a mandatory (true) or optional (false) attribute
 //var table5 = map[string]bool{STARTINDEX: false, COUNT: false, OUTPUTFORMAT: false, RESULTTYPE: false}
 
-//var table6 = map[string]bool{RESOLVE: false, RESOLVEDEPTH: false, RESOLVETIMEOUT: false}
-//var table7 = map[string]bool{NAMESPACES: false} //VSPs (<- vendor specific parameters)
+// var table6 = map[string]bool{RESOLVE: false, RESOLVEDEPTH: false, RESOLVETIMEOUT: false}
+// var table7 = map[string]bool{NAMESPACES: false} //VSPs (<- vendor specific parameters)
 var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FILTER: false, FILTERLANGUAGE: false, RESOURCEID: false, BBOX: false, SORTBY: false}
 
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
@@ -194,10 +193,10 @@ func procesNamespaces(namespace string) []xml.Attr {
 
 // StandardPresentationParameters struct used by GetFeature
 type StandardPresentationParameters struct {
-	ResultType   *string `xml:"resultType,attr,omitempty" yaml:"resulttype"`     // enum: "results" or "hits"
-	OutputFormat *string `xml:"outputFormat,attr,omitempty" yaml:"outputformat"` // default "application/gml+xml; version=3.2"
+	ResultType   *string `xml:"resultType,attr,omitempty" yaml:"resultType"`     // enum: "results" or "hits"
+	OutputFormat *string `xml:"outputFormat,attr,omitempty" yaml:"outputFormat"` // default "application/gml+xml; version=3.2"
 	Count        *int    `xml:"count,attr,omitempty" yaml:"count"`
-	Startindex   *int    `xml:"startindex,attr,omitempty" yaml:"startindex"` // default 0
+	StartIndex   *int    `xml:"startindex,attr,omitempty" yaml:"startIndex"` // default 0
 }
 
 func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Exception {
@@ -225,7 +224,7 @@ func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestPa
 			if err != nil {
 				exceptions = append(exceptions, wsc110.MissingParameterValue(STARTINDEX, *fpv.startindex))
 			}
-			b.Startindex = &startindex
+			b.StartIndex = &startindex
 		}
 	}
 

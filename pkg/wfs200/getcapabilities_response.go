@@ -90,7 +90,7 @@ type ServiceProvider struct {
 			Text  string `xml:",chardata"`
 			Phone struct {
 				Voice     string `xml:"ows:Voice" yaml:"voice"`
-				Facsimile string `xml:"ows:Facsimile" yaml:"facsmile"`
+				Facsimile string `xml:"ows:Facsimile" yaml:"facsimile"`
 			} `xml:"ows:Phone" yaml:"phone"`
 			Address struct {
 				DeliveryPoint         string `xml:"ows:DeliveryPoint" yaml:"deliverypoint"`

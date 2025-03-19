@@ -18,9 +18,9 @@ func (c *Capabilities) ParseYAML(doc []byte) error {
 
 // Capabilities struct
 type Capabilities struct {
-	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsmetadata"`
-	FeatureTypeList    FeatureTypeList    `xml:"FeatureTypeList" yaml:"featuretypelist"`
-	FilterCapabilities FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filtercapabilities"`
+	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
+	FeatureTypeList    FeatureTypeList    `xml:"FeatureTypeList" yaml:"featureTypeList"`
+	FilterCapabilities FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filterCapabilities"`
 }
 
 // Method in separated struct so to use it as a Pointer
@@ -31,23 +31,23 @@ type Method struct {
 
 // OperationsMetadata struct for the WFS 2.0.0
 type OperationsMetadata struct {
-	XMLName   xml.Name    `xml:"ows:OperationsMetadata"`
-	Operation []Operation `xml:"ows:Operation"`
+	XMLName   xml.Name    `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
+	Operation []Operation `xml:"ows:Operation" yaml:"operation"`
 	Parameter struct {
 		Name          string         `xml:"name,attr" yaml:"name"`
-		AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+		AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedValues"`
 	} `xml:"ows:Parameter" yaml:"parameter"`
 	Constraint           []Constraint          `xml:"ows:Constraint" yaml:"constraint"`
-	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedcapabilities"`
+	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedCapabilities"`
 }
 
 // Constraint struct for the WFS 2.0.0
 type Constraint struct {
-	Text          string         `xml:",chardata"`
+	Text          string         `xml:",chardata" yaml:"text"`
 	Name          string         `xml:"name,attr" yaml:"name"`
-	NoValues      *string        `xml:"ows:NoValues" yaml:"novalues"`
-	DefaultValue  *string        `xml:"ows:DefaultValue" yaml:"defaultvalue"`
-	AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedvalues"`
+	NoValues      *string        `xml:"ows:NoValues" yaml:"noValues"`
+	DefaultValue  *string        `xml:"ows:DefaultValue" yaml:"defaultValue"`
+	AllowedValues *AllowedValues `xml:"ows:AllowedValues" yaml:"allowedValues"`
 }
 
 // when AllowedValues are defined, NoValues should not be present and vice versa
@@ -65,7 +65,7 @@ func (c Constraint) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 
 // Operation struct for the WFS 2.0.0
 type Operation struct {
-	Name string `xml:"name,attr"`
+	Name string `xml:"name,attr" yaml:"name"`
 	DCP  struct {
 		HTTP struct {
 			Get  *Method `xml:"ows:Get,omitempty" yaml:"get,omitempty"`
@@ -73,11 +73,11 @@ type Operation struct {
 		} `xml:"ows:HTTP" yaml:"http"`
 	} `xml:"ows:DCP" yaml:"dcp"`
 	Parameter []struct {
-		Name          string `xml:"name,attr"`
+		Name          string `xml:"name,attr" yaml:"name"`
 		AllowedValues struct {
-			Value []string `xml:"ows:Value"`
-		} `xml:"ows:AllowedValues"`
-	} `xml:"ows:Parameter"`
+			Value []string `xml:"ows:Value" yaml:"value"`
+		} `xml:"ows:AllowedValues" yaml:"allowedValues"`
+	} `xml:"ows:Parameter" yaml:"parameter"`
 	Constraints []struct {
 		Name         string `xml:"name,attr" yaml:"name"`
 		NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
@@ -93,32 +93,32 @@ type AllowedValues struct {
 // ExtendedCapabilities struct for the WFS 2.0.0
 type ExtendedCapabilities struct {
 	ExtendedCapabilities struct {
-		Text        string `xml:",chardata"`
+		Text        string `xml:",chardata" yaml:"text"`
 		MetadataURL struct {
 			URL       string `xml:"inspire_common:URL" yaml:"url"`
-			MediaType string `xml:"inspire_common:MediaType" yaml:"mediatype"`
+			MediaType string `xml:"inspire_common:MediaType" yaml:"mediaType"`
 		} `xml:"inspire_common:MetadataUrl" yaml:"metadataurl"`
 		SupportedLanguages struct {
 			DefaultLanguage struct {
 				Language string `xml:"inspire_common:Language" yaml:"language"`
-			} `xml:"inspire_common:DefaultLanguage" yaml:"defaultlanguage"`
+			} `xml:"inspire_common:DefaultLanguage" yaml:"defaultLanguage"`
 			SupportedLanguage *[]struct {
 				Language string `xml:"inspire_common:Language" yaml:"language"`
-			} `xml:"inspire_common:SupportedLanguage" yaml:"supportedlanguage"`
-		} `xml:"inspire_common:SupportedLanguages" yaml:"supportedlanguages"`
+			} `xml:"inspire_common:SupportedLanguage" yaml:"supportedLanguage"`
+		} `xml:"inspire_common:SupportedLanguages" yaml:"supportedLanguages"`
 		ResponseLanguage struct {
 			Language string `xml:"inspire_common:Language" yaml:"language"`
-		} `xml:"inspire_common:ResponseLanguage" yaml:"responselanguage"`
+		} `xml:"inspire_common:ResponseLanguage" yaml:"responseLanguage"`
 		SpatialDataSetIdentifier struct {
 			Code string `xml:"inspire_common:Code" yaml:"code"`
-		} `xml:"inspire_dls:SpatialDataSetIdentifier" yaml:"spatialdatasetidentifier"`
-	} `xml:"inspire_dls:ExtendedCapabilities" yaml:"extendedcapabilities"`
+		} `xml:"inspire_dls:SpatialDataSetIdentifier" yaml:"spatialDataSetIdentifier"`
+	} `xml:"inspire_dls:ExtendedCapabilities" yaml:"extendedCapabilities"`
 }
 
 // FeatureTypeList struct for the WFS 2.0.0
 type FeatureTypeList struct {
-	XMLName     xml.Name      `xml:"FeatureTypeList"`
-	FeatureType []FeatureType `xml:"FeatureType" yaml:"featuretype"`
+	XMLName     xml.Name      `xml:"FeatureTypeList" yaml:"featureTypeList"`
+	FeatureType []FeatureType `xml:"FeatureType" yaml:"featureType"`
 }
 
 // FeatureType struct for the WFS 2.0.0
@@ -127,15 +127,15 @@ type FeatureType struct {
 	Title         string             `xml:"Title" yaml:"title"`
 	Abstract      string             `xml:"Abstract" yaml:"abstract"`
 	Keywords      *[]wsc110.Keywords `xml:"ows:Keywords" yaml:"keywords"`
-	DefaultCRS    *CRS               `xml:"DefaultCRS" yaml:"defaultcrs"`
-	OtherCRS      *[]CRS             `xml:"OtherCRS" yaml:"othercrs"`
+	DefaultCRS    *CRS               `xml:"DefaultCRS" yaml:"defaultCrs"`
+	OtherCRS      *[]CRS             `xml:"OtherCRS" yaml:"otherCrs"`
 	OutputFormats struct {
 		Format []string `xml:"Format" yaml:"format"`
-	} `xml:"OutputFormats" yaml:"outputformats"`
-	WGS84BoundingBox *wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	} `xml:"OutputFormats" yaml:"outputFormats"`
+	WGS84BoundingBox *wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84BoundingBox"`
 	MetadataURL      struct {
 		Href string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"MetadataURL" yaml:"metadataurl"`
+	} `xml:"MetadataURL" yaml:"metadataUrl"`
 }
 
 // FilterCapabilities struct for the WFS 2.0.0
@@ -143,37 +143,37 @@ type FilterCapabilities struct {
 	Conformance struct {
 		Constraint []struct {
 			Name         string `xml:"name,attr" yaml:"name"`
-			NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
-			DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultvalue"`
+			NoValues     string `xml:"ows:NoValues" yaml:"noValues"`
+			DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultValue"`
 		} `xml:"fes:Constraint" yaml:"constraint"`
 	} `xml:"fes:Conformance" yaml:"conformance"`
 	IDCapabilities struct {
 		ResourceIdentifier struct {
 			Name string `xml:"name,attr" yaml:"name"`
-		} `xml:"fes:ResourceIdentifier" yaml:"resourceidentifier"`
-	} `xml:"fes:Id_Capabilities" yaml:"idcapabilities"`
+		} `xml:"fes:ResourceIdentifier" yaml:"resourceIdentifier"`
+	} `xml:"fes:Id_Capabilities" yaml:"idCapabilities"`
 	ScalarCapabilities struct {
-		LogicalOperators    string `xml:"fes:LogicalOperators" yaml:"logicaloperators"`
+		LogicalOperators    string `xml:"fes:LogicalOperators" yaml:"logicalOperators"`
 		ComparisonOperators struct {
 			ComparisonOperator []struct {
 				Name string `xml:"name,attr"`
-			} `xml:"fes:ComparisonOperator" yaml:"comparisonoperator"`
-		} `xml:"fes:ComparisonOperators" yaml:"comparisonoperators"`
-	} `xml:"fes:Scalar_Capabilities" yaml:"scalarcapabilities"`
+			} `xml:"fes:ComparisonOperator" yaml:"comparisonOperator"`
+		} `xml:"fes:ComparisonOperators" yaml:"comparisonOperators"`
+	} `xml:"fes:Scalar_Capabilities" yaml:"scalarCapabilities"`
 	SpatialCapabilities struct {
 		GeometryOperands struct {
 			GeometryOperand []struct {
-				Name string `xml:"name,attr"`
-			} `xml:"fes:GeometryOperand"`
-		} `xml:"fes:GeometryOperands"`
+				Name string `xml:"name,attr" yaml:"name"`
+			} `xml:"fes:GeometryOperand" yaml:"geometryOperand"`
+		} `xml:"fes:GeometryOperands" yaml:"geometryOperands"`
 		SpatialOperators struct {
 			SpatialOperator []struct {
-				Name string `xml:"name,attr"`
-			} `xml:"fes:SpatialOperator"`
-		} `xml:"fes:SpatialOperators"`
-	} `xml:"fes:Spatial_Capabilities"`
+				Name string `xml:"name,attr" yaml:"name"`
+			} `xml:"fes:SpatialOperator" yaml:"spatialOperator"`
+		} `xml:"fes:SpatialOperators" yaml:"spatialOperators"`
+	} `xml:"fes:Spatial_Capabilities" yaml:"spatialCapabilities"`
 	// NO TemporalCapabilities!!!
-	TemporalCapabilities *TemporalCapabilities `xml:"fes:Temporal_Capabilities" yaml:"temporalcapabilities"`
+	TemporalCapabilities *TemporalCapabilities `xml:"fes:Temporal_Capabilities" yaml:"temporalCapabilities"`
 }
 
 // TemporalCapabilities define but not used
@@ -181,11 +181,11 @@ type TemporalCapabilities struct {
 	TemporalOperands struct {
 		TemporalOperand []struct {
 			Name string `xml:"name,attr" yaml:"name"`
-		} `xml:"fes:TemporalOperand" yaml:"temporaloperand"`
-	} `xml:"fes:TemporalOperands" yaml:"temporaloperands"`
+		} `xml:"fes:TemporalOperand" yaml:"temporalOperand"`
+	} `xml:"fes:TemporalOperands" yaml:"temporalOperands"`
 	TemporalOperators struct {
 		TemporalOperator []struct {
 			Name string `xml:"name,attr,omitempty" yaml:"name,omitempty"`
-		} `xml:"fes:TemporalOperator" yaml:"temporaloperator"`
-	} `xml:"fes:TemporalOperators" yaml:"temporaloperators"`
+		} `xml:"fes:TemporalOperator" yaml:"temporalOperator"`
+	} `xml:"fes:TemporalOperators" yaml:"temporalOperators"`
 }
