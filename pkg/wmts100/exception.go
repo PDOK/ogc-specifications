@@ -2,15 +2,14 @@ package wmts100
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/common"
 
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 type exception struct {
-	XMLName       xml.Name `xml:"ows:Exception"`
-	ExceptionText string   `xml:",chardata" yaml:"exception"`
-	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptionCode"`
-	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locatorCode"`
+	XMLName xml.Name `xml:"ows:Exception"`
+	common.ExceptionDetails
 }
 
 // ToExceptions promotes a single exception to an array of one

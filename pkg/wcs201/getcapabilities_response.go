@@ -31,11 +31,13 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 
 // GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
-	XMLName               xml.Name `xml:"wcs:Capabilities" yaml:"capabilities"`
-	Namespaces            `yaml:"namespaces"`
+	XMLName xml.Name `xml:"wcs:Capabilities" yaml:"wcsCapabilities"`
+	Namespaces
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceIdentification"`
 	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceProvider"`
-	Capabilities
+	OperationsMetadata    OperationsMetadata    `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
+	ServiceMetadata       ServiceMetadata       `xml:"wcs:ServiceMetadata" yaml:"serviceMetadata"`
+	Contents              Contents              `xml:"wcs:Contents" yaml:"contents"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document

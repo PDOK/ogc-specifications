@@ -2,12 +2,11 @@ package wfs200
 
 import (
 	"encoding/xml"
-
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
 type exception struct {
-	XMLName       xml.Name `xml:"ows:Exception"`
+	XMLName       xml.Name `xml:"ows:Exception" yaml:"owsException"`
 	ExceptionText string   `xml:",chardata" yaml:"exception"`
 	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptionCode"`
 	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locatorCode"`

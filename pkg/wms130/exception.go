@@ -2,13 +2,12 @@ package wms130
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // exception
 type exception struct {
-	ExceptionText string `xml:",chardata" yaml:"exception"`
-	ExceptionCode string `xml:"code,attr" yaml:"code"`
-	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locator,omitempty"`
+	common.ExceptionDetails
 }
 
 // Exceptions is a array of the Exception interface
