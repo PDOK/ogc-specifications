@@ -82,7 +82,7 @@ type ServiceProvider struct {
 	ProviderSite struct {
 		Type string `xml:"xlink:type,attr" yaml:"type"`
 		Href string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"ows:ProviderSite" yaml:"providersite"`
+	} `xml:"ows:ProviderSite" yaml:"providerSite"`
 	ServiceContact struct {
 		IndividualName string `xml:"ows:IndividualName" yaml:"individualName"`
 		PositionName   string `xml:"ows:PositionName" yaml:"positionName"`
