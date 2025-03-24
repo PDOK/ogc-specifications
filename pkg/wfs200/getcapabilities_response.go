@@ -69,7 +69,7 @@ type ServiceIdentification struct {
 	ServiceType struct {
 		Text      string `xml:",chardata" yaml:"text"`
 		CodeSpace string `xml:"codeSpace,attr" yaml:"codeSpace"`
-	} `xml:"ows:ServiceType"`
+	} `xml:"ows:ServiceType" yaml:"serviceType"`
 	ServiceTypeVersion string `xml:"ows:ServiceTypeVersion" yaml:"serviceTypeVersion"`
 	Fees               string `xml:"ows:Fees" yaml:"fees"`
 	AccessConstraints  string `xml:"ows:AccessConstraints" yaml:"accessConstraints"`
@@ -98,7 +98,7 @@ type ServiceProvider struct {
 				AdministrativeArea    string `xml:"ows:AdministrativeArea" yaml:"administrativeArea"`
 				PostalCode            string `xml:"ows:PostalCode" yaml:"postalCode"`
 				Country               string `xml:"ows:Country" yaml:"country"`
-				ElectronicMailAddress string `xml:"ows:ElectronicMailAddress" yaml:"electronicmailAddress"`
+				ElectronicMailAddress string `xml:"ows:ElectronicMailAddress" yaml:"electronicMailAddress"`
 			} `xml:"ows:Address" yaml:"address"`
 			OnlineResource struct {
 				Type string `xml:"xlink:type,attr" yaml:"type"`

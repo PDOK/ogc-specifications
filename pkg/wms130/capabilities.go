@@ -27,8 +27,8 @@ func (c *Capabilities) ParseYAML(doc []byte) error {
 
 // Capabilities struct needed for keeping all constraints and capabilities together
 type Capabilities struct {
-	WMSCapabilities     `xml:"WMSCapabilities"`
-	OptionalConstraints `xml:"OptionalConstraints"`
+	WMSCapabilities     `xml:"WMSCapabilities" yaml:"wmsCapabilities"`
+	OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalConstraints"`
 }
 
 // WMSCapabilities base struct
