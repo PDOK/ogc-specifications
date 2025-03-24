@@ -80,8 +80,8 @@ type Operation struct {
 	} `xml:"ows:Parameter" yaml:"parameter"`
 	Constraints []struct {
 		Name         string `xml:"name,attr" yaml:"name"`
-		NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
-		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultvalue"`
+		NoValues     string `xml:"ows:NoValues" yaml:"noValues"`
+		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultValue"`
 	} `xml:"ows:Constraint" yaml:"constraint"`
 }
 

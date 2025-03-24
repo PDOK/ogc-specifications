@@ -65,8 +65,8 @@ type ServiceIdentification struct {
 	Keywords    *wsc200.Keywords `xml:"ows:Keywords" yaml:"keywords"`
 	ServiceType struct {
 		Text      string `xml:",chardata" yaml:"text"`
-		CodeSpace string `xml:"codeSpace,attr" yaml:"codespace"`
-	} `xml:"ows:ServiceType" yaml:"servicetype"`
+		CodeSpace string `xml:"codeSpace,attr" yaml:"codeSpace"`
+	} `xml:"ows:ServiceType" yaml:"serviceType"`
 	ServiceTypeVersion []string `xml:"ows:ServiceTypeVersion" yaml:"serviceTypeVersion"`
 	Profile            []string `xml:"ows:Profile" yaml:"profile"`
 	Fees               string   `xml:"ows:Fees" yaml:"fees"`
@@ -79,7 +79,7 @@ type ServiceProvider struct {
 	ProviderSite struct {
 		Type string `xml:"xlink:type,attr" yaml:"type"`
 		Href string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"ows:ProviderSite" yaml:"providersite"`
+	} `xml:"ows:ProviderSite" yaml:"providerSite"`
 	ServiceContact struct {
 		IndividualName string `xml:"ows:IndividualName" yaml:"individualName"`
 		PositionName   string `xml:"ows:PositionName" yaml:"positionName"`

@@ -8,7 +8,7 @@ type Schema struct {
 	XMLName                     xml.Name `xml:"schema" json:"schema"`
 	Text                        string   `xml:",chardata" json:"text"`
 	Xsd                         string   `xml:"xsd,attr" json:"xsd"`
-	Digitaaltopografischbestand string   `xml:"digitaaltopografischbestand,attr" json:"digitaaltopografischbestandestand"`
+	Digitaaltopografischbestand string   `xml:"digitaaltopografischbestand,attr" json:"digitaaltopografischbestand"`
 	Gml                         string   `xml:"gml,attr" json:"gml"`
 	Wfs                         string   `xml:"wfs,attr" json:"wfs"`
 	ElementFormDefault          string   `xml:"elementFormDefault,attr" json:"elementFormDefault"`
