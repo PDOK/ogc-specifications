@@ -97,7 +97,7 @@ type ExtendedCapabilities struct {
 		MetadataURL struct {
 			URL       string `xml:"inspire_common:URL" yaml:"url"`
 			MediaType string `xml:"inspire_common:MediaType" yaml:"mediaType"`
-		} `xml:"inspire_common:MetadataUrl" yaml:"metadataurl"`
+		} `xml:"inspire_common:MetadataUrl" yaml:"metadataUrl"`
 		SupportedLanguages struct {
 			DefaultLanguage struct {
 				Language string `xml:"inspire_common:Language" yaml:"language"`
