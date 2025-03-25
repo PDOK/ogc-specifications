@@ -42,7 +42,7 @@ type GetCapabilitiesResponse struct {
 	Namespaces            `yaml:"namespaces"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceIdentification"`
 	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceProvider"`
-	Capabilities
+	Capabilities          `yaml:"capabilities"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document

@@ -76,7 +76,7 @@ type WMSService struct {
 			Address         string `xml:"Address" yaml:"address"`
 			City            string `xml:"City" yaml:"city"`
 			StateOrProvince string `xml:"StateOrProvince" yaml:"stateOrProvince"`
-			PostCode        string `xml:"PostCode" yaml:"postalCode"`
+			PostalCode      string `xml:"PostCode" yaml:"postalCode"`
 			Country         string `xml:"Country" yaml:"country"`
 		} `xml:"ContactAddress" yaml:"contactAddress"`
 		ContactVoiceTelephone        string `xml:"ContactVoiceTelephone" yaml:"contactVoiceTelephone"`
