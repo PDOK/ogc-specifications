@@ -83,7 +83,9 @@ type WMSService struct {
 		ContactFacsimileTelephone    string `xml:"ContactFacsimileTelephone" yaml:"contactFacsimileTelephone"`
 		ContactElectronicMailAddress string `xml:"ContactElectronicMailAddress" yaml:"contactElectronicMailAddress"`
 	} `xml:"ContactInformation" yaml:"contactInformation"`
-	Fees                string `xml:"Fees" yaml:"fees"`
-	AccessConstraints   string `xml:"AccessConstraints" yaml:"accessConstraints"`
-	OptionalConstraints `yaml:"optionalConstraints"`
+	Fees              string `xml:"Fees" yaml:"fees"`
+	AccessConstraints string `xml:"AccessConstraints" yaml:"accessConstraints"`
+	LayerLimit        int    `xml:"LayerLimit,omitempty" yaml:"layerLimit"`
+	MaxWidth          int    `xml:"MaxWidth,omitempty" yaml:"maxWidth"`
+	MaxHeight         int    `xml:"MaxHeight,omitempty" yaml:"maxHeight"`
 }
