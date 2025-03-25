@@ -230,7 +230,7 @@ type Attribution struct {
 	LogoURL        struct {
 		Format         *string        `xml:"Format" yaml:"format"`
 		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
-	} `xml:"LogoURL" yaml:"logourl"`
+	} `xml:"LogoURL" yaml:"logoUrl"`
 }
 
 // Identifier in struct for repeatability
