@@ -80,8 +80,8 @@ type Operation struct {
 	} `xml:"ows:Parameter" yaml:"parameter"`
 	Constraints []struct {
 		Name         string `xml:"name,attr" yaml:"name"`
-		NoValues     string `xml:"ows:NoValues" yaml:"novalues"`
-		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultvalue"`
+		NoValues     string `xml:"ows:NoValues" yaml:"noValues"`
+		DefaultValue string `xml:"ows:DefaultValue" yaml:"defaultValue"`
 	} `xml:"ows:Constraint" yaml:"constraint"`
 }
 
@@ -97,7 +97,7 @@ type ExtendedCapabilities struct {
 		MetadataURL struct {
 			URL       string `xml:"inspire_common:URL" yaml:"url"`
 			MediaType string `xml:"inspire_common:MediaType" yaml:"mediaType"`
-		} `xml:"inspire_common:MetadataUrl" yaml:"metadataurl"`
+		} `xml:"inspire_common:MetadataUrl" yaml:"metadataUrl"`
 		SupportedLanguages struct {
 			DefaultLanguage struct {
 				Language string `xml:"inspire_common:Language" yaml:"language"`

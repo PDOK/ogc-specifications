@@ -76,7 +76,7 @@ type WMSService struct {
 			Address         string `xml:"Address" yaml:"address"`
 			City            string `xml:"City" yaml:"city"`
 			StateOrProvince string `xml:"StateOrProvince" yaml:"stateOrProvince"`
-			PostCode        string `xml:"PostCode" yaml:"postalCode"`
+			PostalCode      string `xml:"PostCode" yaml:"postalCode"`
 			Country         string `xml:"Country" yaml:"country"`
 		} `xml:"ContactAddress" yaml:"contactAddress"`
 		ContactVoiceTelephone        string `xml:"ContactVoiceTelephone" yaml:"contactVoiceTelephone"`
@@ -85,5 +85,7 @@ type WMSService struct {
 	} `xml:"ContactInformation" yaml:"contactInformation"`
 	Fees              string `xml:"Fees" yaml:"fees"`
 	AccessConstraints string `xml:"AccessConstraints" yaml:"accessConstraints"`
-	OptionalConstraints
+	LayerLimit        int    `xml:"LayerLimit,omitempty" yaml:"layerLimit"`
+	MaxWidth          int    `xml:"MaxWidth,omitempty" yaml:"maxWidth"`
+	MaxHeight         int    `xml:"MaxHeight,omitempty" yaml:"maxHeight"`
 }

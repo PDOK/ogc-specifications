@@ -2,6 +2,7 @@ package wsc200
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // Exception interface
@@ -14,10 +15,8 @@ type Exception interface {
 
 // exception
 type exception struct {
-	XMLName       xml.Name `xml:"ows:Exception"`
-	ExceptionText string   `xml:",chardata" yaml:"exception"`
-	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptionCode"`
-	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locatorCode"`
+	XMLName xml.Name `xml:"ows:Exception"`
+	common.ExceptionDetails
 }
 
 // ExceptionReport struct
