@@ -77,7 +77,7 @@ func (c Constraint) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 type Operation struct {
 	Name        string            `xml:"name,attr" yaml:"name"`
 	DCP         DCP               `xml:"ows:DCP" yaml:"dcp"`
-	Parameter   Parameter         `xml:"ows:Parameter" yaml:"parameter"`
+	Parameter   []Parameter       `xml:"ows:Parameter" yaml:"parameter"`
 	Constraints []ValueConstraint `xml:"ows:Constraint" yaml:"constraint"`
 }
 
