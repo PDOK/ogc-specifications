@@ -190,7 +190,7 @@ type ScalarCapabilities struct {
 
 // ComparisonOperators struct for the WFS 2.0.0
 type ComparisonOperators struct {
-	ComparisonOperator []ComparisonOperatorName
+	ComparisonOperator []ComparisonOperatorName `xml:"fes:ComparisonOperator" yaml:"comparisonOperator"`
 }
 
 // ComparisonOperatorName struct for the WFS 2.0.0
