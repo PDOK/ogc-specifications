@@ -227,13 +227,16 @@ type Identifier struct {
 type Attribution struct {
 	Title          string         `xml:"Title" yaml:"title"`
 	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
-	LogoURL        struct {
-		Format         *string        `xml:"Format" yaml:"format"`
-		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
-	} `xml:"LogoURL" yaml:"logoUrl"`
+	LogoURL        LogoURL        `xml:"LogoURL" yaml:"logoUrl"`
 }
 
-// Identifier in struct for repeatability
+// LogoURL in struct for repeatability
+type LogoURL struct {
+	Format         *string        `xml:"Format" yaml:"format"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
+}
+
+// URL in struct for repeatability
 type URL struct {
 	Format         *string        `xml:"Format" yaml:"format"`
 	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
@@ -254,21 +257,26 @@ type AuthorityURL struct {
 
 // ExtendedCapabilities containing the inspire extendedcapabilities, when available
 type ExtendedCapabilities struct {
-	MetadataURL struct {
-		URL       string `xml:"inspire_common:URL" yaml:"url"`
-		MediaType string `xml:"inspire_common:MediaType" yaml:"mediaType"`
-	} `xml:"inspire_common:MetadataUrl" yaml:"metadataUrl"`
-	SupportedLanguages struct {
-		DefaultLanguage struct {
-			Language string `xml:"inspire_common:Language" yaml:"language"`
-		} `xml:"inspire_common:DefaultLanguage" yaml:"defaultLanguage"`
-		SupportedLanguage *[]struct {
-			Language string `xml:"inspire_common:Language" yaml:"language"`
-		} `xml:"inspire_common:SupportedLanguage" yaml:"supportedLanguage"`
-	} `xml:"inspire_common:SupportedLanguages" yaml:"supportedLanguages"`
-	ResponseLanguage struct {
-		Language string `xml:"inspire_common:Language" yaml:"language"`
-	} `xml:"inspire_common:ResponseLanguage" yaml:"responseLanguage"`
+	MetadataURL        ExtendedMetadataURL `xml:"inspire_common:MetadataUrl" yaml:"metadataUrl"`
+	SupportedLanguages SupportedLanguages  `xml:"inspire_common:SupportedLanguages" yaml:"supportedLanguages"`
+	ResponseLanguage   Language            `xml:"inspire_common:ResponseLanguage" yaml:"responseLanguage"`
+}
+
+// ExtendedMetadataURL struct for the WMS 1.3.0
+type ExtendedMetadataURL struct {
+	URL       string `xml:"inspire_common:URL" yaml:"url"`
+	MediaType string `xml:"inspire_common:MediaType" yaml:"mediaType"`
+}
+
+// SupportedLanguages struct for the WMS 1.3.0
+type SupportedLanguages struct {
+	DefaultLanguage   Language    `xml:"inspire_common:DefaultLanguage" yaml:"defaultLanguage"`
+	SupportedLanguage *[]Language `xml:"inspire_common:SupportedLanguage" yaml:"supportedLanguage"`
+}
+
+// Language struct for the WMS 1.3.0
+type Language struct {
+	Language string `xml:"inspire_common:Language" yaml:"language"`
 }
 
 // EXGeographicBoundingBox in struct for repeatability
@@ -292,19 +300,25 @@ type LayerBoundingBox struct {
 
 // Style in struct for repeatability
 type Style struct {
-	Name      string `xml:"Name" yaml:"name"`
-	Title     string `xml:"Title" yaml:"title"`
-	Abstract  string `xml:"Abstract,omitempty" yaml:"abstract"`
-	LegendURL *struct {
-		Width          int            `xml:"width,attr" yaml:"width"`
-		Height         int            `xml:"height,attr" yaml:"height"`
-		Format         string         `xml:"Format" yaml:"format"`
-		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
-	} `xml:"LegendURL" yaml:"legendUrl"`
-	StyleSheetURL *struct {
-		Format         string         `xml:"Format" yaml:"format"`
-		OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
-	} `xml:"StyleSheetURL,omitempty" yaml:"styleSheetUrl"`
+	Name          string         `xml:"Name" yaml:"name"`
+	Title         string         `xml:"Title" yaml:"title"`
+	Abstract      string         `xml:"Abstract,omitempty" yaml:"abstract"`
+	LegendURL     *LegendURL     `xml:"LegendURL" yaml:"legendUrl"`
+	StyleSheetURL *StyleSheetURL `xml:"StyleSheetURL,omitempty" yaml:"styleSheetUrl"`
+}
+
+// LegendURL struct for the WMS 1.3.0
+type LegendURL struct {
+	Width          int            `xml:"width,attr" yaml:"width"`
+	Height         int            `xml:"height,attr" yaml:"height"`
+	Format         string         `xml:"Format" yaml:"format"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
+}
+
+// StyleSheetURL struct for the WMS 1.3.0
+type StyleSheetURL struct {
+	Format         string         `xml:"Format" yaml:"format"`
+	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
 }
 
 // DCPType in struct for repeatability
