@@ -39,7 +39,7 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 // GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
 	XMLName               xml.Name `xml:"WFS_Capabilities" yaml:"-"`
-	Namespaces            `yaml:"namespaces"`
+	*Namespaces           `yaml:"namespaces,omitempty"`
 	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceIdentification"`
 	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceProvider"`
 	Capabilities          `yaml:"capabilities"`
@@ -112,7 +112,7 @@ type ContactInfo struct {
 
 // Phone struct containing the contact telephone or fax number
 type Phone struct {
-	Voice     *string `xml:"ows:Voice" yaml:"voice"`
+	Voice     *string `xml:"ows:Voice" yaml:"voice,omitempty"`
 	Facsimile *string `xml:"ows:Facsimile" yaml:"facsimile,omitempty"`
 }
 

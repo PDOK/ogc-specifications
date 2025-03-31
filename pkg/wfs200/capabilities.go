@@ -146,7 +146,7 @@ type FeatureType struct {
 	Abstract         string                   `xml:"Abstract" yaml:"abstract"`
 	Keywords         *[]wsc110.Keywords       `xml:"ows:Keywords" yaml:"keywords"`
 	DefaultCRS       *CRS                     `xml:"DefaultCRS" yaml:"defaultCrs"`
-	OtherCRS         *[]CRS                   `xml:"OtherCRS" yaml:"otherCrs"`
+	OtherCRS         []*CRS                   `xml:"OtherCRS" yaml:"otherCrs"`
 	OutputFormats    *OutputFormats           `xml:"OutputFormats" yaml:"outputFormats,omitempty"`
 	WGS84BoundingBox *wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84BoundingBox,omitempty"`
 	MetadataURL      MetadataHref             `xml:"MetadataURL" yaml:"metadataUrl"`
