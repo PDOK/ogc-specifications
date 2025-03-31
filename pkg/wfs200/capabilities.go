@@ -18,9 +18,9 @@ func (c *Capabilities) ParseYAML(doc []byte) error {
 
 // Capabilities struct
 type Capabilities struct {
-	OperationsMetadata OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
-	FeatureTypeList    FeatureTypeList    `xml:"FeatureTypeList" yaml:"featureTypeList"`
-	FilterCapabilities FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filterCapabilities"`
+	OperationsMetadata *OperationsMetadata `xml:"ows:OperationsMetadata" yaml:"operationsMetadata,omitempty"`
+	FeatureTypeList    FeatureTypeList     `xml:"FeatureTypeList" yaml:"featureTypeList"`
+	FilterCapabilities *FilterCapabilities `xml:"fes:Filter_Capabilities" yaml:"filterCapabilities,omitempty"`
 }
 
 // Method in separated struct so to use it as a Pointer
@@ -31,11 +31,11 @@ type Method struct {
 
 // OperationsMetadata struct for the WFS 2.0.0
 type OperationsMetadata struct {
-	XMLName              xml.Name              `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
-	Operation            []Operation           `xml:"ows:Operation" yaml:"operation"`
-	Parameter            Parameter             `xml:"ows:Parameter" yaml:"parameter"`
-	Constraint           []Constraint          `xml:"ows:Constraint" yaml:"constraint"`
-	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedCapabilities"`
+	XMLName              xml.Name              `xml:"ows:OperationsMetadata" yaml:"-"`
+	Operation            []Operation           `xml:"ows:Operation" yaml:"operation,omitempty"`
+	Parameter            *Parameter            `xml:"ows:Parameter" yaml:"parameter,omitempty"`
+	Constraint           []Constraint          `xml:"ows:Constraint" yaml:"constraint,omitempty"`
+	ExtendedCapabilities *ExtendedCapabilities `xml:"ows:ExtendedCapabilities" yaml:"extendedCapabilities,omitempty"`
 }
 
 // Parameter struct for the WFS 2.0.0
@@ -104,7 +104,7 @@ type ExtendedCapabilities struct {
 
 // NestedExtendedCapabilities struct for the WFS 2.0.0
 type NestedExtendedCapabilities struct {
-	Text                     string                   `xml:",chardata" yaml:"text"`
+	Text                     *string                  `xml:",chardata" yaml:"text,omitempty"`
 	MetadataURL              MetadataURL              `xml:"inspire_common:MetadataUrl" yaml:"metadataUrl"`
 	SupportedLanguages       SupportedLanguages       `xml:"inspire_common:SupportedLanguages" yaml:"supportedLanguages"`
 	ResponseLanguage         Language                 `xml:"inspire_common:ResponseLanguage" yaml:"responseLanguage"`
@@ -120,7 +120,7 @@ type MetadataURL struct {
 // SupportedLanguages struct for the WFS 2.0.0
 type SupportedLanguages struct {
 	DefaultLanguage   Language    `xml:"inspire_common:DefaultLanguage" yaml:"defaultLanguage"`
-	SupportedLanguage *[]Language `xml:"inspire_common:SupportedLanguage" yaml:"supportedLanguage"`
+	SupportedLanguage *[]Language `xml:"inspire_common:SupportedLanguage" yaml:"supportedLanguage,omitempty"`
 }
 
 // Language struct for the WFS 2.0.0
@@ -135,7 +135,7 @@ type SpatialDataSetIdentifier struct {
 
 // FeatureTypeList struct for the WFS 2.0.0
 type FeatureTypeList struct {
-	XMLName     xml.Name      `xml:"FeatureTypeList" yaml:"featureTypeList"`
+	XMLName     xml.Name      `xml:"FeatureTypeList" yaml:"-"`
 	FeatureType []FeatureType `xml:"FeatureType" yaml:"featureType"`
 }
 
@@ -147,8 +147,8 @@ type FeatureType struct {
 	Keywords         *[]wsc110.Keywords       `xml:"ows:Keywords" yaml:"keywords"`
 	DefaultCRS       *CRS                     `xml:"DefaultCRS" yaml:"defaultCrs"`
 	OtherCRS         *[]CRS                   `xml:"OtherCRS" yaml:"otherCrs"`
-	OutputFormats    OutputFormats            `xml:"OutputFormats" yaml:"outputFormats"`
-	WGS84BoundingBox *wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84BoundingBox"`
+	OutputFormats    *OutputFormats           `xml:"OutputFormats" yaml:"outputFormats,omitempty"`
+	WGS84BoundingBox *wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84BoundingBox,omitempty"`
 	MetadataURL      MetadataHref             `xml:"MetadataURL" yaml:"metadataUrl"`
 }
 
