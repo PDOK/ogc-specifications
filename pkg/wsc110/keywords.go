@@ -6,5 +6,5 @@ type Keywords struct {
 	Type    *struct {
 		Text      string  `xml:",chardata" yaml:"text"`
 		CodeSpace *string `xml:"codeSpace,attr,omitempty" yaml:"codeSpace"`
-	} `xml:"ows:Type" yaml:"type"`
+	} `xml:"ows:Type" yaml:"type,omitempty"`
 }

@@ -5,7 +5,6 @@ import (
 	"strconv"
 )
 
-//
 const (
 	codeSpace = `urn:ogc:def:crs:EPSG:`
 )

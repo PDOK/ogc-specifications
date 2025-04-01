@@ -58,3 +58,25 @@ othercrs:
 		}
 	}
 }
+
+func TestMarshalYAMLCrs(t *testing.T) {
+	var stringYAML = `urn:ogc:def:crs:EPSG::4326
+`
+	tests := []struct {
+		CRS          *CRS
+		expectedYAML string
+	}{
+		0: {CRS: &CRS{Code: 4326, Namespace: codeSpace}, expectedYAML: stringYAML},
+	}
+	for k, test := range tests {
+		yamlCRS, err := yaml.Marshal(test.CRS)
+		if err != nil {
+			t.Errorf("test: %d, yaml.Marshal failed with '%s'\n", k, err)
+		} else {
+			stringCRS := string(yamlCRS)
+			if stringCRS != test.expectedYAML {
+				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedYAML, stringCRS)
+			}
+		}
+	}
+}

@@ -56,36 +56,41 @@ type Namespaces struct {
 
 // WMSService struct containing the base service information filled from the template
 type WMSService struct {
-	Name           string    `xml:"Name" yaml:"name"`
-	Title          string    `xml:"Title" yaml:"title"`
-	Abstract       string    `xml:"Abstract" yaml:"abstract"`
-	KeywordList    *Keywords `xml:"KeywordList" yaml:"keywordList"`
-	OnlineResource struct {
-		Xlink *string `xml:"xmlns:xlink,attr" yaml:"xlink"`
-		Type  *string `xml:"xlink:type,attr" yaml:"type"`
-		Href  *string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"OnlineResource" yaml:"onlineResource"`
-	ContactInformation struct {
-		ContactPersonPrimary struct {
-			ContactPerson       string `xml:"ContactPerson" yaml:"contactPerson"`
-			ContactOrganization string `xml:"ContactOrganization" yaml:"contactOrganization"`
-		} `xml:"ContactPersonPrimary" yaml:"contactPersonPrimary"`
-		ContactPosition string `xml:"ContactPosition" yaml:"contactPosition"`
-		ContactAddress  struct {
-			AddressType     string `xml:"AddressType" yaml:"addressType"`
-			Address         string `xml:"Address" yaml:"address"`
-			City            string `xml:"City" yaml:"city"`
-			StateOrProvince string `xml:"StateOrProvince" yaml:"stateOrProvince"`
-			PostalCode      string `xml:"PostCode" yaml:"postalCode"`
-			Country         string `xml:"Country" yaml:"country"`
-		} `xml:"ContactAddress" yaml:"contactAddress"`
-		ContactVoiceTelephone        string `xml:"ContactVoiceTelephone" yaml:"contactVoiceTelephone"`
-		ContactFacsimileTelephone    string `xml:"ContactFacsimileTelephone" yaml:"contactFacsimileTelephone"`
-		ContactElectronicMailAddress string `xml:"ContactElectronicMailAddress" yaml:"contactElectronicMailAddress"`
-	} `xml:"ContactInformation" yaml:"contactInformation"`
-	Fees              string `xml:"Fees" yaml:"fees"`
-	AccessConstraints string `xml:"AccessConstraints" yaml:"accessConstraints"`
-	LayerLimit        int    `xml:"LayerLimit,omitempty" yaml:"layerLimit"`
-	MaxWidth          int    `xml:"MaxWidth,omitempty" yaml:"maxWidth"`
-	MaxHeight         int    `xml:"MaxHeight,omitempty" yaml:"maxHeight"`
+	Name               string             `xml:"Name" yaml:"name"`
+	Title              string             `xml:"Title" yaml:"title"`
+	Abstract           string             `xml:"Abstract" yaml:"abstract"`
+	KeywordList        *Keywords          `xml:"KeywordList" yaml:"keywordList"`
+	OnlineResource     OnlineResource     `xml:"OnlineResource" yaml:"onlineResource"`
+	ContactInformation ContactInformation `xml:"ContactInformation" yaml:"contactInformation"`
+	Fees               string             `xml:"Fees" yaml:"fees"`
+	AccessConstraints  string             `xml:"AccessConstraints" yaml:"accessConstraints"`
+	LayerLimit         int                `xml:"LayerLimit,omitempty" yaml:"layerLimit"`
+	MaxWidth           int                `xml:"MaxWidth,omitempty" yaml:"maxWidth"`
+	MaxHeight          int                `xml:"MaxHeight,omitempty" yaml:"maxHeight"`
+}
+
+// ContactInformation struct containing the information about a contact person for the service
+type ContactInformation struct {
+	ContactPersonPrimary         ContactPersonPrimary `xml:"ContactPersonPrimary" yaml:"contactPersonPrimary"`
+	ContactPosition              string               `xml:"ContactPosition" yaml:"contactPosition"`
+	ContactAddress               ContactAddress       `xml:"ContactAddress" yaml:"contactAddress"`
+	ContactVoiceTelephone        string               `xml:"ContactVoiceTelephone" yaml:"contactVoiceTelephone"`
+	ContactFacsimileTelephone    string               `xml:"ContactFacsimileTelephone" yaml:"contactFacsimileTelephone"`
+	ContactElectronicMailAddress string               `xml:"ContactElectronicMailAddress" yaml:"contactElectronicMailAddress"`
+}
+
+// ContactPersonPrimary struct containing information for the person to contact
+type ContactPersonPrimary struct {
+	ContactPerson       string `xml:"ContactPerson" yaml:"contactPerson"`
+	ContactOrganization string `xml:"ContactOrganization" yaml:"contactOrganization"`
+}
+
+// ContactAddress struct containing the address for the contact supplying the service
+type ContactAddress struct {
+	AddressType     string `xml:"AddressType" yaml:"addressType"`
+	Address         string `xml:"Address" yaml:"address"`
+	City            string `xml:"City" yaml:"city"`
+	StateOrProvince string `xml:"StateOrProvince" yaml:"stateOrProvince"`
+	PostalCode      string `xml:"PostCode" yaml:"postalCode"`
+	Country         string `xml:"Country" yaml:"country"`
 }
