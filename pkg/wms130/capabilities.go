@@ -69,7 +69,7 @@ type Layer struct {
 	//Cascaded                *string                  `xml:"cascaded,attr" yaml:"cascaded"`
 	Name                    *string                  `xml:"Name" yaml:"name"`
 	Title                   string                   `xml:"Title" yaml:"title"`
-	Abstract                string                   `xml:"Abstract,omitempty" yaml:"abstract,omitempty"`
+	Abstract                *string                  `xml:"Abstract,omitempty" yaml:"abstract,omitempty"`
 	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordList"`
 	CRS                     []CRS                    `xml:"CRS" yaml:"crs"`
 	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exGeographicBoundingBox"`
@@ -225,9 +225,9 @@ type Identifier struct {
 
 // Attribution in struct for repeatability
 type Attribution struct {
-	Title          string         `xml:"Title" yaml:"title"`
-	OnlineResource OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
-	LogoURL        LogoURL        `xml:"LogoURL" yaml:"logoUrl"`
+	Title          *string         `xml:"Title" yaml:"title"`
+	OnlineResource *OnlineResource `xml:"OnlineResource" yaml:"onlineResource"`
+	LogoURL        *LogoURL        `xml:"LogoURL" yaml:"logoUrl"`
 }
 
 // LogoURL in struct for repeatability
@@ -302,7 +302,7 @@ type LayerBoundingBox struct {
 type Style struct {
 	Name          string         `xml:"Name" yaml:"name"`
 	Title         string         `xml:"Title" yaml:"title"`
-	Abstract      string         `xml:"Abstract,omitempty" yaml:"abstract"`
+	Abstract      *string        `xml:"Abstract,omitempty" yaml:"abstract"`
 	LegendURL     *LegendURL     `xml:"LegendURL" yaml:"legendUrl"`
 	StyleSheetURL *StyleSheetURL `xml:"StyleSheetURL,omitempty" yaml:"styleSheetUrl"`
 }
@@ -324,7 +324,7 @@ type StyleSheetURL struct {
 // DCPType in struct for repeatability
 type DCPType struct {
 	HTTP struct {
-		Get  *Method `xml:"Get" yaml:"get"`
+		Get  Method  `xml:"Get" yaml:"get"`
 		Post *Method `xml:"Post" yaml:"post"`
 	} `xml:"HTTP" yaml:"http"`
 }
