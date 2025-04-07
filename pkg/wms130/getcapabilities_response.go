@@ -56,27 +56,27 @@ type Namespaces struct {
 
 // WMSService struct containing the base service information filled from the template
 type WMSService struct {
-	Name               string             `xml:"Name" yaml:"name"`
-	Title              string             `xml:"Title" yaml:"title"`
-	Abstract           string             `xml:"Abstract" yaml:"abstract"`
-	KeywordList        *Keywords          `xml:"KeywordList" yaml:"keywordList"`
-	OnlineResource     OnlineResource     `xml:"OnlineResource" yaml:"onlineResource"`
-	ContactInformation ContactInformation `xml:"ContactInformation" yaml:"contactInformation"`
-	Fees               string             `xml:"Fees" yaml:"fees"`
-	AccessConstraints  string             `xml:"AccessConstraints" yaml:"accessConstraints"`
-	LayerLimit         int                `xml:"LayerLimit,omitempty" yaml:"layerLimit"`
-	MaxWidth           int                `xml:"MaxWidth,omitempty" yaml:"maxWidth"`
-	MaxHeight          int                `xml:"MaxHeight,omitempty" yaml:"maxHeight"`
+	Name               string              `xml:"Name" yaml:"name"`
+	Title              string              `xml:"Title" yaml:"title"`
+	Abstract           *string             `xml:"Abstract" yaml:"abstract"`
+	KeywordList        *Keywords           `xml:"KeywordList" yaml:"keywordList"`
+	OnlineResource     OnlineResource      `xml:"OnlineResource" yaml:"onlineResource"`
+	ContactInformation *ContactInformation `xml:"ContactInformation" yaml:"contactInformation"`
+	Fees               *string             `xml:"Fees" yaml:"fees"`
+	AccessConstraints  *string             `xml:"AccessConstraints" yaml:"accessConstraints"`
+	LayerLimit         *int                `xml:"LayerLimit,omitempty" yaml:"layerLimit"`
+	MaxWidth           *int                `xml:"MaxWidth,omitempty" yaml:"maxWidth"`
+	MaxHeight          *int                `xml:"MaxHeight,omitempty" yaml:"maxHeight"`
 }
 
 // ContactInformation struct containing the information about a contact person for the service
 type ContactInformation struct {
-	ContactPersonPrimary         ContactPersonPrimary `xml:"ContactPersonPrimary" yaml:"contactPersonPrimary"`
-	ContactPosition              string               `xml:"ContactPosition" yaml:"contactPosition"`
-	ContactAddress               ContactAddress       `xml:"ContactAddress" yaml:"contactAddress"`
-	ContactVoiceTelephone        string               `xml:"ContactVoiceTelephone" yaml:"contactVoiceTelephone"`
-	ContactFacsimileTelephone    string               `xml:"ContactFacsimileTelephone" yaml:"contactFacsimileTelephone"`
-	ContactElectronicMailAddress string               `xml:"ContactElectronicMailAddress" yaml:"contactElectronicMailAddress"`
+	ContactPersonPrimary         *ContactPersonPrimary `xml:"ContactPersonPrimary" yaml:"contactPersonPrimary"`
+	ContactPosition              *string               `xml:"ContactPosition" yaml:"contactPosition"`
+	ContactAddress               *ContactAddress       `xml:"ContactAddress" yaml:"contactAddress"`
+	ContactVoiceTelephone        *string               `xml:"ContactVoiceTelephone" yaml:"contactVoiceTelephone"`
+	ContactFacsimileTelephone    *string               `xml:"ContactFacsimileTelephone" yaml:"contactFacsimileTelephone"`
+	ContactElectronicMailAddress *string               `xml:"ContactElectronicMailAddress" yaml:"contactElectronicMailAddress"`
 }
 
 // ContactPersonPrimary struct containing information for the person to contact
