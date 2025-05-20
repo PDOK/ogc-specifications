@@ -36,8 +36,8 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 
 // GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
-	XMLName      xml.Name `xml:"WMS_Capabilities" yaml:"wmsCapabilities"`
-	Namespaces   `yaml:"namespaces"`
+	XMLName      xml.Name     `xml:"WMS_Capabilities" yaml:"wmsCapabilities"`
+	Namespaces   *Namespaces  `yaml:"namespaces,omitempty"`
 	WMSService   WMSService   `xml:"Service" yaml:"service"`
 	Capabilities Capabilities `xml:"Capability" yaml:"capability"`
 }
@@ -56,17 +56,15 @@ type Namespaces struct {
 
 // WMSService struct containing the base service information filled from the template
 type WMSService struct {
-	Name               string              `xml:"Name" yaml:"name"`
-	Title              string              `xml:"Title" yaml:"title"`
-	Abstract           *string             `xml:"Abstract" yaml:"abstract"`
-	KeywordList        *Keywords           `xml:"KeywordList" yaml:"keywordList"`
-	OnlineResource     OnlineResource      `xml:"OnlineResource" yaml:"onlineResource"`
-	ContactInformation *ContactInformation `xml:"ContactInformation" yaml:"contactInformation"`
-	Fees               *string             `xml:"Fees" yaml:"fees"`
-	AccessConstraints  *string             `xml:"AccessConstraints" yaml:"accessConstraints"`
-	LayerLimit         *int                `xml:"LayerLimit,omitempty" yaml:"layerLimit"`
-	MaxWidth           *int                `xml:"MaxWidth,omitempty" yaml:"maxWidth"`
-	MaxHeight          *int                `xml:"MaxHeight,omitempty" yaml:"maxHeight"`
+	Name                string               `xml:"Name" yaml:"name"`
+	Title               string               `xml:"Title" yaml:"title"`
+	Abstract            *string              `xml:"Abstract" yaml:"abstract"`
+	KeywordList         *Keywords            `xml:"KeywordList" yaml:"keywordList"`
+	OnlineResource      OnlineResource       `xml:"OnlineResource" yaml:"onlineResource"`
+	ContactInformation  *ContactInformation  `xml:"ContactInformation" yaml:"contactInformation"`
+	Fees                *string              `xml:"Fees" yaml:"fees"`
+	AccessConstraints   *string              `xml:"AccessConstraints" yaml:"accessConstraints"`
+	OptionalConstraints *OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalConstraints,omitempty"`
 }
 
 // ContactInformation struct containing the information about a contact person for the service

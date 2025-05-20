@@ -27,15 +27,15 @@ func (c *Capabilities) ParseYAML(doc []byte) error {
 
 // Capabilities struct needed for keeping all constraints and capabilities together
 type Capabilities struct {
-	WMSCapabilities     `xml:"WMSCapabilities" yaml:"wmsCapabilities"`
-	OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalConstraints"`
+	WMSCapabilities      `xml:"WMSCapabilities" yaml:"wmsCapabilities"`
+	*OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalConstraints,omitempty"`
 }
 
 // WMSCapabilities base struct
 type WMSCapabilities struct {
 	Request              Request               `xml:"Request" yaml:"request"`
 	Exception            ExceptionType         `xml:"Exception" yaml:"exception"`
-	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedCapabilities"`
+	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedCapabilities,omitempty"`
 	Layer                []Layer               `xml:"Layer" yaml:"layer"`
 }
 
@@ -64,27 +64,27 @@ type ExceptionType struct {
 type Layer struct {
 	Queryable *int `xml:"queryable,attr" yaml:"queryable"`
 	// layer has a full/complete map coverage
-	Opaque *string `xml:"opaque,attr" yaml:"opaque"`
+	Opaque *string `xml:"opaque,attr" yaml:"opaque,omitempty"`
 	// no cascaded attr in Layer element, because we don't do cascaded services e.g. wms services "proxying" and/or combining other wms services
 	//Cascaded                *string                  `xml:"cascaded,attr" yaml:"cascaded"`
-	Name                    *string                  `xml:"Name" yaml:"name"`
+	Name                    *string                  `xml:"Name" yaml:"name,omitempty"`
 	Title                   string                   `xml:"Title" yaml:"title"`
 	Abstract                *string                  `xml:"Abstract,omitempty" yaml:"abstract,omitempty"`
-	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordList"`
-	CRS                     []CRS                    `xml:"CRS" yaml:"crs"`
-	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exGeographicBoundingBox"`
-	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingBox"`
-	Dimension               []*Dimension             `xml:"Dimension" yaml:"dimension"`
-	Attribution             *Attribution             `xml:"Attribution,omitempty" yaml:"attribution"`
-	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityUrl"`
-	Identifier              *Identifier              `xml:"Identifier" yaml:"identifier"`
-	MetadataURL             []*MetadataURL           `xml:"MetadataURL" yaml:"metadataUrl"`
-	DataURL                 *URL                     `xml:"DataURL,omitempty" yaml:"dataUrl"`
-	FeatureListURL          *URL                     `xml:"FeatureListURL,omitempty" yaml:"featureListUrl"`
-	Style                   []*Style                 `xml:"Style" yaml:"style"`
-	MinScaleDenominator     *float64                 `xml:"MinScaleDenominator,omitempty" yaml:"minScaleDenominator"`
-	MaxScaleDenominator     *float64                 `xml:"MaxScaleDenominator,omitempty" yaml:"maxScaleDenominator"`
-	Layer                   []*Layer                 `xml:"Layer" yaml:"layer"`
+	KeywordList             *Keywords                `xml:"KeywordList" yaml:"keywordList,omitempty"`
+	CRS                     []CRS                    `xml:"CRS" yaml:"crs,omitempty"`
+	EXGeographicBoundingBox *EXGeographicBoundingBox `xml:"EX_GeographicBoundingBox" yaml:"exGeographicBoundingBox,omitempty"`
+	BoundingBox             []*LayerBoundingBox      `xml:"BoundingBox" yaml:"boundingBox,omitempty"`
+	Dimension               []*Dimension             `xml:"Dimension" yaml:"dimension,omitempty"`
+	Attribution             *Attribution             `xml:"Attribution,omitempty" yaml:"attribution,omitempty"`
+	AuthorityURL            *AuthorityURL            `xml:"AuthorityURL" yaml:"authorityUrl,omitempty"`
+	Identifier              *Identifier              `xml:"Identifier" yaml:"identifier,omitempty"`
+	MetadataURL             []*MetadataURL           `xml:"MetadataURL" yaml:"metadataUrl,omitempty"`
+	DataURL                 *URL                     `xml:"DataURL,omitempty" yaml:"dataUrl,omitempty"`
+	FeatureListURL          *URL                     `xml:"FeatureListURL,omitempty" yaml:"featureListUrl,omitempty"`
+	Style                   []*Style                 `xml:"Style" yaml:"style,omitempty"`
+	MinScaleDenominator     *float64                 `xml:"MinScaleDenominator,omitempty" yaml:"minScaleDenominator,omitempty"`
+	MaxScaleDenominator     *float64                 `xml:"MaxScaleDenominator,omitempty" yaml:"maxScaleDenominator,omitempty"`
+	Layer                   []*Layer                 `xml:"Layer" yaml:"layer,omitempty"`
 }
 
 // StyleDefined checks if the style that is defined is available for the requested layer
@@ -302,9 +302,9 @@ type LayerBoundingBox struct {
 type Style struct {
 	Name          string         `xml:"Name" yaml:"name"`
 	Title         string         `xml:"Title" yaml:"title"`
-	Abstract      *string        `xml:"Abstract,omitempty" yaml:"abstract"`
+	Abstract      *string        `xml:"Abstract,omitempty" yaml:"abstract,omitempty"`
 	LegendURL     *LegendURL     `xml:"LegendURL" yaml:"legendUrl"`
-	StyleSheetURL *StyleSheetURL `xml:"StyleSheetURL,omitempty" yaml:"styleSheetUrl"`
+	StyleSheetURL *StyleSheetURL `xml:"StyleSheetURL,omitempty" yaml:"styleSheetUrl,omitempty"`
 }
 
 // LegendURL struct for the WMS 1.3.0
@@ -344,7 +344,7 @@ type OnlineResource struct {
 type Dimension struct {
 	Name         *string `xml:"name,attr" yaml:"name"`
 	Units        *string `xml:"units,attr" yaml:"units"`
-	Default      *string `xml:"default,attr,omitempty" yaml:"default"`
-	NearestValue *string `xml:"nearestValue,attr,omitempty" yaml:"nearestValue"`
+	Default      *string `xml:"default,attr,omitempty" yaml:"default,omitempty"`
+	NearestValue *string `xml:"nearestValue,attr,omitempty" yaml:"nearestValue,omitempty"`
 	Value        *string `xml:",chardata" yaml:"value"`
 }
