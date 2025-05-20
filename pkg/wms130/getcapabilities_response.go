@@ -64,7 +64,7 @@ type WMSService struct {
 	ContactInformation   *ContactInformation `xml:"ContactInformation" yaml:"contactInformation"`
 	Fees                 *string             `xml:"Fees" yaml:"fees"`
 	AccessConstraints    *string             `xml:"AccessConstraints" yaml:"accessConstraints"`
-	*OptionalConstraints `xml:"OptionalConstraints" yaml:"optionalConstraints,omitempty"`
+	*OptionalConstraints `yaml:"optionalConstraints,omitempty"`
 }
 
 // ContactInformation struct containing the information about a contact person for the service
