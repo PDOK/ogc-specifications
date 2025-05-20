@@ -712,7 +712,7 @@ func TestGetMapValidate(t *testing.T) {
 				},
 			},
 		},
-		OptionalConstraints: OptionalConstraints{LayerLimit: 1, MaxWidth: 2048, MaxHeight: 2048},
+		OptionalConstraints: &OptionalConstraints{LayerLimit: 1, MaxWidth: 2048, MaxHeight: 2048},
 	}
 
 	var tests = []struct {
