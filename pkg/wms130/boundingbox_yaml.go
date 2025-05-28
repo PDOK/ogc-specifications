@@ -1,4 +1,4 @@
-package wsc110
+package wms130
 
 import (
 	"fmt"
