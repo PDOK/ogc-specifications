@@ -1,7 +1,5 @@
 package wfs200
 
-import "strconv"
-
 // UnmarshalYAML CRS
 func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var s string
@@ -17,6 +15,6 @@ func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
-func (c *CRS) MarshalYAML() (interface{}, error) {
-	return codeSpace + ":" + strconv.Itoa(c.Code), nil
+func (c CRS) MarshalYAML() (interface{}, error) {
+	return c.String(), nil
 }
