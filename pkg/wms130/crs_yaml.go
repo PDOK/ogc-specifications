@@ -16,5 +16,5 @@ func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {
 }
 
 func (c CRS) MarshalYAML() (interface{}, error) {
-	return c.String(), nil
+	return c.Identifier(), nil
 }
