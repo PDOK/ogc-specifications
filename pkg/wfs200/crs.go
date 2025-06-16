@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	codeSpace = `urn:ogc:def:crs:EPSG:`
+	codeSpace = `urn:ogc:def:crs:EPSG::`
 )
 
 // CRS struct with namespace/authority/registry and code
