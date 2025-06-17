@@ -12,8 +12,8 @@ func TestCRSParseString(t *testing.T) {
 		expectedCRS CRS
 	}{
 		0: {}, // Empty input == empty struct
-		1: {input: `urn:ogc:def:crs:EPSG::4326`, expectedCRS: CRS{Code: 4326, Namespace: `urn:ogc:def:crs:EPSG::`}},
-		2: {input: `EPSG:4326`, expectedCRS: CRS{Code: 4326, Namespace: `urn:ogc:def:crs:EPSG::`}},
+		1: {input: `urn:ogc:def:crs:EPSG::4326`, expectedCRS: CRS{Code: 4326, Namespace: `urn:ogc:def:crs:EPSG:`}},
+		2: {input: `EPSG:4326`, expectedCRS: CRS{Code: 4326, Namespace: `urn:ogc:def:crs:EPSG:`}},
 	}
 
 	for k, test := range tests {

@@ -2,7 +2,6 @@ package wfs200
 
 import (
 	"encoding/xml"
-
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
