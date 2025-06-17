@@ -6,13 +6,20 @@ import (
 )
 
 const (
-	codeSpace = `urn:ogc:def:crs:EPSG::`
+	codeSpace = `urn:ogc:def:crs:EPSG:`
 )
 
 // CRS struct with namespace/authority/registry and code
 type CRS struct {
 	Namespace string //TODO maybe AuthorityType is a better name...?
 	Code      int
+}
+
+func NewCrsWithEpsgUrn(code int) *CRS {
+	return &CRS{
+		Namespace: codeSpace,
+		Code:      code,
+	}
 }
 
 // String of the EPSGCode
