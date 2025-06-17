@@ -15,13 +15,6 @@ type CRS struct {
 	Code      int
 }
 
-func NewCrsWithEpsgUrn(code int) *CRS {
-	return &CRS{
-		Namespace: codeSpace,
-		Code:      code,
-	}
-}
-
 // String of the EPSGCode
 func (c *CRS) String() string {
 	return c.Namespace + `:` + strconv.Itoa(c.Code)

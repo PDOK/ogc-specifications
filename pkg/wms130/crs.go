@@ -10,7 +10,7 @@ import (
 
 // Default values used by the CRS struct
 const (
-	codeSpace = `urn:ogc:def:crs:EPSG:`
+	codeSpace = `urn:ogc:def:crs:EPSG::`
 	EPSG      = `EPSG`
 )
 
