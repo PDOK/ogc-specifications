@@ -14,7 +14,6 @@ import (
 
 // Contains the GetFeature struct and specific functions for building a GetFeature request
 
-//
 const (
 
 	// table5
@@ -64,8 +63,8 @@ func (f GetFeatureRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
 // WFS tables as map[string]bool, where the key (string) is the TOKEN and the bool if its a mandatory (true) or optional (false) attribute
 //var table5 = map[string]bool{STARTINDEX: false, COUNT: false, OUTPUTFORMAT: false, RESULTTYPE: false}
 
-//var table6 = map[string]bool{RESOLVE: false, RESOLVEDEPTH: false, RESOLVETIMEOUT: false}
-//var table7 = map[string]bool{NAMESPACES: false} //VSPs (<- vendor specific parameters)
+// var table6 = map[string]bool{RESOLVE: false, RESOLVEDEPTH: false, RESOLVETIMEOUT: false}
+// var table7 = map[string]bool{NAMESPACES: false} //VSPs (<- vendor specific parameters)
 var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FILTER: false, FILTERLANGUAGE: false, RESOURCEID: false, BBOX: false, SORTBY: false}
 
 //var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
@@ -194,10 +193,10 @@ func procesNamespaces(namespace string) []xml.Attr {
 
 // StandardPresentationParameters struct used by GetFeature
 type StandardPresentationParameters struct {
-	ResultType   *string `xml:"resultType,attr,omitempty" yaml:"resulttype"`     // enum: "results" or "hits"
-	OutputFormat *string `xml:"outputFormat,attr,omitempty" yaml:"outputformat"` // default "application/gml+xml; version=3.2"
+	ResultType   *string `xml:"resultType,attr,omitempty" yaml:"resultType"`     // enum: "results" or "hits"
+	OutputFormat *string `xml:"outputFormat,attr,omitempty" yaml:"outputFormat"` // default "application/gml+xml; version=3.2"
 	Count        *int    `xml:"count,attr,omitempty" yaml:"count"`
-	Startindex   *int    `xml:"startindex,attr,omitempty" yaml:"startindex"` // default 0
+	StartIndex   *int    `xml:"startindex,attr,omitempty" yaml:"startIndex"` // default 0
 }
 
 func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Exception {
@@ -225,7 +224,7 @@ func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestPa
 			if err != nil {
 				exceptions = append(exceptions, wsc110.MissingParameterValue(STARTINDEX, *fpv.startindex))
 			}
-			b.Startindex = &startindex
+			b.StartIndex = &startindex
 		}
 	}
 
@@ -239,17 +238,17 @@ func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestPa
 // contains the resolve information of a GetFeauter request
 type StandardResolveParameters struct {
 	Resolve        *string `xml:"Resolve,omitempty" yaml:"resolve"` //can be one of: local, remote, all, none
-	ResolveDepth   *int    `xml:"ResolveDepth,omitempty" yaml:"resolvedepth"`
-	ResolveTimeout *int    `xml:"ResolveTimeout,omitempty" yaml:"resolvetimeout"`
+	ResolveDepth   *int    `xml:"ResolveDepth,omitempty" yaml:"resolveDepth"`
+	ResolveTimeout *int    `xml:"ResolveTimeout,omitempty" yaml:"resolveTimeout"`
 }
 
 // Query struct for parsing the WFS filter xml
 type Query struct {
-	TypeNames    string    `xml:"typeNames,attr" yaml:"typenames"`
-	SrsName      *string   `xml:"srsName,attr" yaml:"srsname"`
+	TypeNames    string    `xml:"typeNames,attr" yaml:"typeNames"`
+	SrsName      *string   `xml:"srsName,attr" yaml:"srsName"`
 	Filter       *Filter   `xml:"Filter" yaml:"filter"`
-	SortBy       *SortBy   `xml:"SortBy" yaml:"sortby"`
-	PropertyName *[]string `xml:"PropertyName" yaml:"propertyname"`
+	SortBy       *SortBy   `xml:"SortBy" yaml:"sortBy"`
+	PropertyName *[]string `xml:"PropertyName" yaml:"propertyName"`
 }
 
 func (q *Query) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Exception {
@@ -364,7 +363,7 @@ type Filter struct {
 	AND        *AND         `xml:"AND" yaml:"and"`
 	OR         *OR          `xml:"OR" yaml:"or"`
 	NOT        *NOT         `xml:"NOT" yaml:"not"`
-	ResourceID *ResourceIDs `xml:"ResourceId" yaml:"resourceid"`
+	ResourceID *ResourceIDs `xml:"ResourceId" yaml:"resourceId"`
 	ComparisonOperator
 	SpatialOperator
 }
@@ -442,21 +441,21 @@ type ResourceID struct {
 
 // ComparisonOperator struct for Filter
 type ComparisonOperator struct {
-	PropertyIsEqualTo              *[]PropertyIsEqualTo              `xml:"PropertyIsEqualTo" yaml:"propertyisequalto"`
-	PropertyIsNotEqualTo           *[]PropertyIsNotEqualTo           `xml:"PropertyIsNotEqualTo" yaml:"propertyisnotequalto"`
-	PropertyIsLessThan             *[]PropertyIsLessThan             `xml:"PropertyIsLessThan" yaml:"propertyislessthan"`
-	PropertyIsGreaterThan          *[]PropertyIsGreaterThan          `xml:"PropertyIsGreaterThan" yaml:"propertyisgreaterthan"`
-	PropertyIsLessThanOrEqualTo    *[]PropertyIsLessThanOrEqualTo    `xml:"PropertyIsLessThanOrEqualTo" yaml:"propertyislessthanorequalto"`
-	PropertyIsGreaterThanOrEqualTo *[]PropertyIsGreaterThanOrEqualTo `xml:"PropertyIsGreaterThanOrEqualTo" yaml:"propertyisgreaterthanorequalto"`
-	PropertyIsBetween              *[]PropertyIsBetween              `xml:"PropertyIsBetween" yaml:"propertyisbetween"`
-	PropertyIsLike                 *[]PropertyIsLike                 `xml:"PropertyIsLike" yaml:"propertyislike"`
+	PropertyIsEqualTo              *[]PropertyIsEqualTo              `xml:"PropertyIsEqualTo" yaml:"propertyIsEqualTo"`
+	PropertyIsNotEqualTo           *[]PropertyIsNotEqualTo           `xml:"PropertyIsNotEqualTo" yaml:"propertyIsNotEqualTo"`
+	PropertyIsLessThan             *[]PropertyIsLessThan             `xml:"PropertyIsLessThan" yaml:"propertyIsLessThan"`
+	PropertyIsGreaterThan          *[]PropertyIsGreaterThan          `xml:"PropertyIsGreaterThan" yaml:"propertyIsGreaterThan"`
+	PropertyIsLessThanOrEqualTo    *[]PropertyIsLessThanOrEqualTo    `xml:"PropertyIsLessThanOrEqualTo" yaml:"propertyIsLessThanOrEqualTo"`
+	PropertyIsGreaterThanOrEqualTo *[]PropertyIsGreaterThanOrEqualTo `xml:"PropertyIsGreaterThanOrEqualTo" yaml:"propertyIsGreaterThanOrEqualTo"`
+	PropertyIsBetween              *[]PropertyIsBetween              `xml:"PropertyIsBetween" yaml:"propertyIsBetween"`
+	PropertyIsLike                 *[]PropertyIsLike                 `xml:"PropertyIsLike" yaml:"propertyIsLike"`
 }
 
 // ComparisonOperatorAttribute struct for the ComparisonOperators
 type ComparisonOperatorAttribute struct {
-	MatchCase      *string `xml:"matchCase,attr" yaml:"matchcase"`
-	PropertyName   *string `xml:"PropertyName" yaml:"propertyname"`     // property i.e: id
-	ValueReference *string `xml:"ValueReference" yaml:"valuereference"` // path to a property i.e: the/path/to/a/id/in/a/document or just a id ...
+	MatchCase      *string `xml:"matchCase,attr" yaml:"matchCase"`
+	PropertyName   *string `xml:"PropertyName" yaml:"propertyName"`     // property i.e: id
+	ValueReference *string `xml:"ValueReference" yaml:"valueReference"` // path to a property i.e: the/path/to/a/id/in/a/document or just a id ...
 	Literal        string  `xml:"Literal" yaml:"literal"`
 }
 
@@ -494,38 +493,38 @@ type PropertyIsGreaterThanOrEqualTo struct {
 // wildcard='*' singleChar='.' escape='!'>
 type PropertyIsLike struct {
 	Wildcard   string `xml:"wildcard,attr" yaml:"wildcard"`
-	SingleChar string `xml:"singleChar,attr" yaml:"singlechar"`
+	SingleChar string `xml:"singleChar,attr" yaml:"singleChar"`
 	Escape     string `xml:"escape,attr" yaml:"escape"`
 	ComparisonOperatorAttribute
 }
 
 // PropertyIsBetween for ComparisonOperator
 type PropertyIsBetween struct {
-	PropertyName  string `xml:"PropertyName" yaml:"propertyname"`
-	LowerBoundary string `xml:"LowerBoundary" yaml:"lowerboundary"`
-	UpperBoundary string `xml:"UpperBoundary" yaml:"upperboundary"`
+	PropertyName  string `xml:"PropertyName" yaml:"propertyName"`
+	LowerBoundary string `xml:"LowerBoundary" yaml:"lowerBoundary"`
+	UpperBoundary string `xml:"UpperBoundary" yaml:"upperBoundary"`
 }
 
 // GeometryOperand struct for Filter
 type GeometryOperand struct {
 	Point           *Point           `xml:"Point" yaml:"point"`
-	MultiPoint      *MultiPoint      `xml:"MultiPoint" yaml:"multipoint"`
-	LineString      *LineString      `xml:"LineString" yaml:"linestring"`
-	MultiLineString *MultiLineString `xml:"MultiLineString" yaml:"multiLinestring"`
+	MultiPoint      *MultiPoint      `xml:"MultiPoint" yaml:"multiPoint"`
+	LineString      *LineString      `xml:"LineString" yaml:"lineString"`
+	MultiLineString *MultiLineString `xml:"MultiLineString" yaml:"multiLineString"`
 	Curve           *Curve           `xml:"Curve" yaml:"curve"`
-	MultiCurve      *MultiCurve      `xml:"MultiCurve" yaml:"multicurve"`
+	MultiCurve      *MultiCurve      `xml:"MultiCurve" yaml:"multiCurve"`
 	Polygon         *Polygon         `xml:"Polygon" yaml:"polygon"`
-	MultiPolygon    *MultiPolygon    `xml:"MultiPolygon" yaml:"multipolygon"`
+	MultiPolygon    *MultiPolygon    `xml:"MultiPolygon" yaml:"multiPolygon"`
 	Surface         *Surface         `xml:"Surface" yaml:"surface"`
-	MultiSurface    *MultiSurface    `xml:"MultiSurface" yaml:"multisurface"`
+	MultiSurface    *MultiSurface    `xml:"MultiSurface" yaml:"multiSurface"`
 	Box             *Box             `xml:"Box" yaml:"box"`
 	Envelope        *Envelope        `xml:"Envelope" yaml:"envelope"`
 }
 
 // Geometry struct for GeometryOperand geometries
 type Geometry struct {
-	SrsName string `xml:"srsName,attr" yaml:"srsname"`
-	Content string `xml:",innerxml"`
+	SrsName string `xml:"srsName,attr" yaml:"srsName"`
+	Content string `xml:",innerxml" yaml:"content"`
 }
 
 // Point struct for GeometryOperand
@@ -585,8 +584,8 @@ type Box struct {
 
 // Envelope struct for GeometryOperand
 type Envelope struct {
-	LowerCorner wsc110.Position `xml:"lowerCorner" yaml:"lowercorner"`
-	UpperCorner wsc110.Position `xml:"upperCorner" yaml:"uppercorner"`
+	LowerCorner wsc110.Position `xml:"lowerCorner" yaml:"lowerCorner"`
+	UpperCorner wsc110.Position `xml:"upperCorner" yaml:"upperCorner"`
 }
 
 // SpatialOperator struct for Filter
@@ -599,62 +598,62 @@ type SpatialOperator struct {
 	Crosses    *Crosses    `xml:"Crosses" yaml:"crosses"`
 	Intersects *Intersects `xml:"Intersects" yaml:"intersects"`
 	Contains   *Contains   `xml:"Contains" yaml:"contains"`
-	DWithin    *DWithin    `xml:"DWithin" yaml:"dwithin"`
+	DWithin    *DWithin    `xml:"DWithin" yaml:"dWithin"`
 	Beyond     *Beyond     `xml:"Beyond" yaml:"beyond"`
 	BBOX       *GEOBBOX    `xml:"BBOX" yaml:"bbox"`
 }
 
 // Equals for SpatialOperator
 type Equals struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // Disjoint for SpatialOperator
 type Disjoint struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // Touches for SpatialOperator
 type Touches struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // Within for SpatialOperator
 type Within struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // Overlaps for SpatialOperator
 type Overlaps struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // Crosses for SpatialOperator
 type Crosses struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // Intersects for SpatialOperator
 type Intersects struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // Contains for SpatialOperator
 type Contains struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 }
 
 // DWithin for SpatialOperator
 type DWithin struct {
-	PropertyName string `xml:"PropertyName" yaml:"propertyname"`
+	PropertyName string `xml:"PropertyName" yaml:"propertyName"`
 	GeometryOperand
 	Distance Distance `xml:"Distance" yaml:"distance"`
 }
@@ -669,14 +668,14 @@ type Beyond struct {
 // Distance for DWithin and Beyond
 type Distance struct {
 	Units string `xml:"units,attr" yaml:"unit"`
-	Text  string `xml:",chardata"`
+	Text  string `xml:",chardata" yaml:"text"`
 }
 
 // GEOBBOX for SpatialOperator
 type GEOBBOX struct {
 	Units          *string  `xml:"unit,attr" yaml:"unit"` // unit or units..
-	SrsName        *string  `xml:"srsName,attr" yaml:"srsname"`
-	ValueReference *string  `xml:"ValueReference" yaml:"valuereference"`
+	SrsName        *string  `xml:"srsName,attr" yaml:"srsName"`
+	ValueReference *string  `xml:"ValueReference" yaml:"valueReference"`
 	Envelope       Envelope `xml:"Envelope" yaml:"envelope"`
 	// Text           string   `xml:",chardata"`
 	// <fes:BBOX>
@@ -755,8 +754,8 @@ func (s SortBy) toString() string {
 
 // SortProperty for SortBy
 type SortProperty struct {
-	ValueReference string  `xml:"ValueReference" yaml:"valuereference"`
-	SortOrder      *string `xml:"SortOrder" yaml:"sortorder"` // ASC,DESC
+	ValueReference string  `xml:"ValueReference" yaml:"valueReference"`
+	SortOrder      *string `xml:"SortOrder" yaml:"sortOrder"` // ASC,DESC
 }
 
 // ProjectionClause based on Table 9 WFS2.0.0 spec

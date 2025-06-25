@@ -17,7 +17,7 @@ func (c *Contents) ParseYAML(doc []byte) error {
 // Contents struct for the WMTS 1.0.0
 type Contents struct {
 	Layer         []Layer         `xml:"Layer" yaml:"layer"`
-	TileMatrixSet []TileMatrixSet `xml:"TileMatrixSet" yaml:"tilematrixset"`
+	TileMatrixSet []TileMatrixSet `xml:"TileMatrixSet" yaml:"tileMatrixSet"`
 }
 
 // GetTilematrixsets helper function for collecting the provided TileMatrixSets, so th base can be cleanup for unused TileMatrixSets
@@ -35,19 +35,19 @@ func (c Contents) GetTilematrixsets() map[string]bool {
 type Layer struct {
 	Title             string                  `xml:"ows:Title" yaml:"title"`
 	Abstract          string                  `xml:"ows:Abstract" yaml:"abstract"`
-	WGS84BoundingBox  wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84boundingbox"`
+	WGS84BoundingBox  wsc110.WGS84BoundingBox `xml:"ows:WGS84BoundingBox" yaml:"wgs84BoundingBox"`
 	Identifier        string                  `xml:"ows:Identifier" yaml:"identifier"`
 	Metadata          *Metadata               `xml:"ows:Metadata,omitempty" yaml:"metadata"`
 	Style             []Style                 `xml:"Style" yaml:"style"`
 	Format            []string                `xml:"Format" yaml:"format"`
-	InfoFormat        []string                `xml:"InfoFormat" yaml:"infoformat"`
-	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tilematrixsetlink"`
-	ResourceURL       []ResourceURL           `xml:"ResourceURL" yaml:"resourceurl"`
+	InfoFormat        []string                `xml:"InfoFormat" yaml:"infoFormat"`
+	TileMatrixSetLink []TileMatrixSetLink     `xml:"TileMatrixSetLink" yaml:"tileMatrixSetLink"`
+	ResourceURL       []ResourceURL           `xml:"ResourceURL" yaml:"resourceUrl"`
 }
 
 type ResourceURL struct {
 	Format       string `xml:"format,attr" yaml:"format"`
-	ResourceType string `xml:"resourceType,attr" yaml:"resourcetype"`
+	ResourceType string `xml:"resourceType,attr" yaml:"resourceType"`
 	Template     string `xml:"template,attr" yaml:"template"`
 }
 
@@ -62,31 +62,31 @@ type Style struct {
 	Abstract   *string          `xml:"ows:Abstract,omitempty" yaml:"abstract"`
 	Keywords   *wsc110.Keywords `xml:"Keywords,omitempty" yaml:"keywords"`
 	Identifier string           `xml:"ows:Identifier" yaml:"identifier"`
-	LegendURL  []*LegendURL     `xml:"LegendURL,omitempty" yaml:"legendurl"`
-	IsDefault  *bool            `xml:"isDefault,attr,omitempty" yaml:"isdefault"`
+	LegendURL  []*LegendURL     `xml:"LegendURL,omitempty" yaml:"legendUrl"`
+	IsDefault  *bool            `xml:"isDefault,attr,omitempty" yaml:"isDefault"`
 }
 
 // TileMatrixSetLink in struct for repeatability
 type TileMatrixSetLink struct {
-	TileMatrixSet string `xml:"TileMatrixSet" yaml:"tilematrixset"`
+	TileMatrixSet string `xml:"TileMatrixSet" yaml:"tileMatrixSet"`
 }
 
 // TileMatrixSet in struct for repeatability
 type TileMatrixSet struct {
 	Identifier   string       `xml:"ows:Identifier" yaml:"identifier"`
-	SupportedCRS string       `xml:"ows:SupportedCRS" yaml:"supportedcrs"`
-	TileMatrix   []TileMatrix `xml:"TileMatrix" yaml:"tilematrix"`
+	SupportedCRS string       `xml:"ows:SupportedCRS" yaml:"supportedCrs"`
+	TileMatrix   []TileMatrix `xml:"TileMatrix" yaml:"tileMatrix"`
 }
 
 // TileMatrix in struct for repeatability
 type TileMatrix struct {
 	Identifier       string `xml:"ows:Identifier" yaml:"identifier"`
-	ScaleDenominator string `xml:"ScaleDenominator" yaml:"scaledenominator"`
-	TopLeftCorner    string `xml:"TopLeftCorner" yaml:"topleftcorner"`
-	TileWidth        string `xml:"TileWidth" yaml:"tilewidth"`
-	TileHeight       string `xml:"TileHeight" yaml:"tileheight"`
-	MatrixWidth      string `xml:"MatrixWidth" yaml:"matrixwidth"`
-	MatrixHeight     string `xml:"MatrixHeight" yaml:"matrixheight"`
+	ScaleDenominator string `xml:"ScaleDenominator" yaml:"scaleDenominator"`
+	TopLeftCorner    string `xml:"TopLeftCorner" yaml:"topLeftCorner"`
+	TileWidth        string `xml:"TileWidth" yaml:"tileWidth"`
+	TileHeight       string `xml:"TileHeight" yaml:"tileHeight"`
+	MatrixWidth      string `xml:"MatrixWidth" yaml:"matrixWidth"`
+	MatrixHeight     string `xml:"MatrixHeight" yaml:"matrixHeight"`
 }
 
 // LegendURL in struct for optionality

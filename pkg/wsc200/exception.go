@@ -2,6 +2,7 @@ package wsc200
 
 import (
 	"encoding/xml"
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // Exception interface
@@ -14,21 +15,19 @@ type Exception interface {
 
 // exception
 type exception struct {
-	XMLName       xml.Name `xml:"ows:Exception"`
-	ExceptionText string   `xml:",chardata" yaml:"exception"`
-	ExceptionCode string   `xml:"exceptionCode,attr" yaml:"exceptioncode"`
-	LocatorCode   string   `xml:"locator,attr,omitempty" yaml:"locationcode"`
+	XMLName xml.Name `xml:"ows:Exception"`
+	common.ExceptionDetails
 }
 
 // ExceptionReport struct
 type ExceptionReport struct {
-	XMLName        xml.Name   `xml:"ows:ExceptionReport" yaml:"exceptionreport"`
-	Ows            string     `xml:"xmlns:ows,attr,omitempty"`
-	Xsi            string     `xml:"xmlns:xsi,attr,omitempty"`
-	SchemaLocation string     `xml:"xsi:schemaLocation,attr,omitempty"`
-	Version        string     `xml:"version,attr" yaml:"version"`
+	XMLName        xml.Name   `xml:"ows:ExceptionReport" yaml:"exceptionReport"`
+	Ows            string     `xml:"xmlns:ows,attr,omitempty" yaml:"ows"`
+	Xsi            string     `xml:"xmlns:xsi,attr,omitempty" yaml:"xsi"`
+	SchemaLocation string     `xml:"xsi:schemaLocation,attr,omitempty" yaml:"schemaLocation"`
+	Version        string     `xml:"version,attr" yaml:"version" yaml:"version"`
 	Language       string     `xml:"xml:lang,attr,omitempty" yaml:"lang,omitempty"`
-	Exception      Exceptions `xml:"ows:Exception"`
+	Exception      Exceptions `xml:"ows:Exception" yaml:"exception"`
 }
 
 // Exceptions is a array of the Exception interface

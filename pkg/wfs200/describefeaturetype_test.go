@@ -52,7 +52,7 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 				Attr: []xml.Attr{{Name: xml.Name{Space: "xmlns", Local: "wfs"}, Value: "http://www.opengis.net/wfs/2.0"}}}}},
 		6: {body: []byte(`<DescribeFeatureType service="wfs" version="2.0.0" typeName="acme:anvils"/>`),
 			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
-				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
+				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeNames: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: "wfs", Version: "2.0.0"}}},
 	}
 
@@ -75,9 +75,9 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 			if dft.BaseRequest.Version != test.result.BaseRequest.Version {
 				t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, test.result, dft)
 			}
-			if dft.BaseDescribeFeatureTypeRequest.TypeName != nil {
-				if *dft.BaseDescribeFeatureTypeRequest.TypeName != *test.result.BaseDescribeFeatureTypeRequest.TypeName {
-					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *test.result.BaseDescribeFeatureTypeRequest.TypeName, *dft.BaseDescribeFeatureTypeRequest.TypeName)
+			if dft.BaseDescribeFeatureTypeRequest.TypeNames != nil {
+				if *dft.BaseDescribeFeatureTypeRequest.TypeNames != *test.result.BaseDescribeFeatureTypeRequest.TypeNames {
+					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *test.result.BaseDescribeFeatureTypeRequest.TypeNames, *dft.BaseDescribeFeatureTypeRequest.TypeNames)
 				}
 			}
 			if len(test.result.BaseRequest.Attr) == len(dft.BaseRequest.Attr) {
@@ -123,7 +123,7 @@ func TestDescribeFeatureTypeParseQueryParameters(t *testing.T) {
 			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype}, BaseRequest: BaseRequest{Service: "WFS", Version: "1.1.0"}}},
 		5: {query: map[string][]string{VERSION: {Version}, SERVICE: {Service}, REQUEST: {describefeaturetype}, TYPENAME: {"acme:anvils"}},
 			result: DescribeFeatureTypeRequest{XMLName: xml.Name{Local: describefeaturetype},
-				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeName: sp("acme:anvils")},
+				BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{TypeNames: sp("acme:anvils")},
 				BaseRequest:                    BaseRequest{Service: Service, Version: Version}}},
 		6: {query: map[string][]string{},
 			exception: []wsc110.Exception{wsc110.MissingParameterValue(VERSION)},
@@ -147,9 +147,9 @@ func TestDescribeFeatureTypeParseQueryParameters(t *testing.T) {
 			if test.result.BaseRequest.Version != dft.BaseRequest.Version {
 				t.Errorf("test: %d, expected: %s ,\n got: %s", k, test.result.BaseRequest.Version, dft.BaseRequest.Version)
 			}
-			if dft.BaseDescribeFeatureTypeRequest.TypeName != nil {
-				if *dft.BaseDescribeFeatureTypeRequest.TypeName != *test.result.BaseDescribeFeatureTypeRequest.TypeName {
-					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *test.result.BaseDescribeFeatureTypeRequest.TypeName, *dft.BaseDescribeFeatureTypeRequest.TypeName)
+			if dft.BaseDescribeFeatureTypeRequest.TypeNames != nil {
+				if *dft.BaseDescribeFeatureTypeRequest.TypeNames != *test.result.BaseDescribeFeatureTypeRequest.TypeNames {
+					t.Errorf("test: %d, expected: %+v ,\n got: %+v", k, *test.result.BaseDescribeFeatureTypeRequest.TypeNames, *dft.BaseDescribeFeatureTypeRequest.TypeNames)
 				}
 			}
 		}
@@ -165,7 +165,7 @@ func TestDescribeFeatureTypeToQueryParameters(t *testing.T) {
 			BaseRequest: BaseRequest{Version: Version, Service: Service},
 			BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
 				OutputFormat: sp(`application/json`),
-				TypeName:     sp(`example:example`)}},
+				TypeNames:    sp(`example:example`)}},
 			query: map[string][]string{"OUTPUTFORMAT": {"application/json"}, "VERSION": {`2.0.0`}, "REQUEST": {"DescribeFeatureType"}, "SERVICE": {"WFS"}, "TYPENAME": {"example:example"}},
 		},
 	}
@@ -197,7 +197,7 @@ func TestDescribeFeatureTypeToXML(t *testing.T) {
 			BaseRequest: BaseRequest{Version: Version, Service: Service},
 			BaseDescribeFeatureTypeRequest: BaseDescribeFeatureTypeRequest{
 				OutputFormat: sp(`application/json`),
-				TypeName:     sp(`example:example`)}},
+				TypeNames:    sp(`example:example`)}},
 			body: `<?xml version="1.0" encoding="UTF-8"?>
 <DescribeFeatureType service="WFS" version="2.0.0" outputFormat="application/json" typeNames="example:example"/>`,
 		},

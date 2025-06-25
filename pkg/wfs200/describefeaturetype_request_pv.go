@@ -8,11 +8,11 @@ import (
 )
 
 type describeFeatureTypeRequestParameterValue struct {
-	service string `yaml:"service"`
+	service string `yaml:"service" json:"service"`
 	baseParameterValueRequest
 
-	typeName     *string `yaml:"typename"`     // [0..*]
-	outputFormat *string `yaml:"outputformat"` // default: "text/xml; subtype=gml/3.2"
+	typeName     *string `yaml:"typeName" json:"typeName"`         // [0..*]
+	outputFormat *string `yaml:"outputFormat" json:"outputFormat"` // default: "text/xml; subtype=gml/3.2"
 }
 
 func (dpv *describeFeatureTypeRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
@@ -49,7 +49,7 @@ func (dpv *describeFeatureTypeRequestParameterValue) parseDescribeFeatureTypeReq
 	dpv.request = describefeaturetype
 	dpv.version = dft.Version
 	dpv.service = dft.Service
-	dpv.typeName = dft.TypeName
+	dpv.typeName = dft.TypeNames
 	dpv.outputFormat = dft.OutputFormat
 	return nil
 }

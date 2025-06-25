@@ -6,7 +6,6 @@ import (
 	"strings"
 )
 
-//
 const (
 	codeSpace = `urn:ogc:def:crs:EPSG::`
 	EPSG      = `EPSG`
