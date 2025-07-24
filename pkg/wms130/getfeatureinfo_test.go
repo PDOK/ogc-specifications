@@ -148,8 +148,8 @@ func TestGetFeatureInfoToXML(t *testing.T) {
 	for k, test := range tests {
 		body := test.gfi.ToXML()
 
-		x := strings.Replace(string(body), "\n", ``, -1)
-		y := strings.Replace(test.result, "\n", ``, -1)
+		x := strings.ReplaceAll(string(body), "\n", ``)
+		y := strings.ReplaceAll(test.result, "\n", ``)
 
 		if x != y {
 			t.Errorf("test: %d, Expected body: \n%s\nbut was not got: \n%s", k, y, x)

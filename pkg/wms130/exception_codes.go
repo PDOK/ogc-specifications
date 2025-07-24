@@ -17,7 +17,7 @@ func InvalidFormat(unknownformat string) exception {
 func InvalidCRS(s ...string) exception {
 	if len(s) == 1 {
 		return exception{ExceptionDetails: common.ExceptionDetails{
-			ExceptionText: fmt.Sprintf("CRS is not known by this service: %s", s[0]),
+			ExceptionText: "CRS is not known by this service: " + s[0],
 			ExceptionCode: `InvalidCRS`,
 		}}
 	}

@@ -18,7 +18,7 @@ func (g GetCapabilitiesRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (g GetCapabilitiesRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
+func (g GetCapabilitiesRequest) Validate(_ wsc110.Capabilities) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	return exceptions
 }

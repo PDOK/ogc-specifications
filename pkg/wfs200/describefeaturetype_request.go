@@ -21,7 +21,7 @@ func (d DescribeFeatureTypeRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (d DescribeFeatureTypeRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
+func (d DescribeFeatureTypeRequest) Validate(_ wsc110.Capabilities) []wsc110.Exception {
 	return nil
 }
 

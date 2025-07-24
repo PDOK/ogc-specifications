@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-//getCapabilitiesRequestParameterValue struct
+// getCapabilitiesRequestParameterValue struct
 type getCapabilitiesRequestParameterValue struct {
 	// Table 8 - The Parameters of a GetMap request
 	service string `yaml:"service,omitempty"`
@@ -40,14 +40,14 @@ func (gpv *getCapabilitiesRequestParameterValue) parseQueryParameters(query url.
 // ParseOperationRequest builds a getCapabilitiesRequestParameterValue object based on a GetCapabilities struct
 // This is a 'dummy' implementation, because for a GetCapabilities request it will always be
 // Mandatory:  REQUEST=GetCapabilities
-//             SERVICE=WMS
+//
+//	SERVICE=WMS
+//
 // Optional:   VERSION=1.3.0
-func (gpv *getCapabilitiesRequestParameterValue) parseGetCapabilitiesRequest(g GetCapabilitiesRequest) Exceptions {
+func (gpv *getCapabilitiesRequestParameterValue) parseGetCapabilitiesRequest(g GetCapabilitiesRequest) {
 	gpv.request = getcapabilities
 	gpv.version = g.Version
 	gpv.service = g.Service
-
-	return nil
 }
 
 // toQueryParameters builds a url.Values query from a getCapabilitiesRequestParameterValue struct

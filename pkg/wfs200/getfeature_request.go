@@ -54,7 +54,7 @@ func (f GetFeatureRequest) Type() string {
 }
 
 // Validate returns GetFeature
-func (f GetFeatureRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
+func (f GetFeatureRequest) Validate(_ wsc110.Capabilities) []wsc110.Exception {
 
 	//getfeaturecap := c.(capabilities.Capabilities)
 	return nil
@@ -75,7 +75,13 @@ func (f *GetFeatureRequest) ParseXML(doc []byte) []wsc110.Exception {
 	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
 		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
-	xml.Unmarshal(doc, &f) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
+
+	//When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
+	//if err := xml.Unmarshal(doc, &f); err != nil {
+	//	return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
+	//}
+	_ = xml.Unmarshal(doc, &f)
+
 	var n []xml.Attr
 	for _, a := range xmlattributes {
 		switch strings.ToUpper(a.Name.Local) {
@@ -272,7 +278,7 @@ func (q *Query) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Ex
 	}
 
 	if len(selectionclause) > 1 {
-		exceptions = append(exceptions, wsc110.NoApplicableCode(fmt.Sprintf(`Only one of the following selectionclauses can be used %s`, strings.Join(selectionclause, `,`))))
+		exceptions = append(exceptions, wsc110.NoApplicableCode(`Only one of the following selectionclauses can be used `+strings.Join(selectionclause, `,`)))
 	} else if len(selectionclause) == 1 {
 		switch selectionclause[0] {
 		case RESOURCEID:
@@ -424,14 +430,12 @@ func (r ResourceIDs) toString() string {
 	return strings.Join(rids, ",")
 }
 
-func (r *ResourceIDs) parseKVPRequest(resourceids string) []wsc110.Exception {
+func (r *ResourceIDs) parseKVPRequest(resourceids string) {
 	var rids ResourceIDs
 	for _, resourceid := range strings.Split(resourceids, `,`) {
 		rids = append(rids, ResourceID{Rid: resourceid})
 	}
 	*r = rids
-
-	return nil
 }
 
 // ResourceID struct for Filter

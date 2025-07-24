@@ -117,7 +117,9 @@ func (m *GetMapRequest) ParseXML(body []byte) Exceptions {
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
-	xml.Unmarshal(body, &m) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
+	//When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
+	_ = xml.Unmarshal(body, &m)
+
 	var n []xml.Attr
 	for _, a := range xmlattributes {
 		switch strings.ToUpper(a.Name.Local) {
@@ -307,29 +309,29 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 	//    That is because POST xml and GET Parameter Value request handle this 'different' (at least not in the same way...)
 	//    When 3 is hit the validation at the Validation step wil resolve this
 
+	switch {
 	// 1.
-	if len(styles) == 0 {
+	case len(styles) == 0:
 		var sld StyledLayerDescriptor
 		for _, layer := range layers {
 			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer})
 		}
 		sld.Version = "1.1.0"
 		return sld, nil
-		// 2.
-	} else if len(layers) == 0 {
+	// 2.
+	case len(layers) == 0:
 		// do nothing
 		// will be resolved during validation
-
-		// 3.
-	} else if len(layers) == len(styles) {
+	// 3.
+	case len(layers) == len(styles):
 		var sld StyledLayerDescriptor
 		for k, layer := range layers {
 			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer, NamedStyle: &NamedStyle{Name: styles[k]}})
 		}
 		sld.Version = "1.1.0"
 		return sld, nil
-		// 4.
-	} else if len(layers) != len(styles) {
+	// 4.
+	case len(layers) != len(styles):
 		return StyledLayerDescriptor{}, StyleNotDefined().ToExceptions()
 	}
 

@@ -25,7 +25,7 @@ type ExceptionReport struct {
 	Ows            string     `xml:"xmlns:ows,attr,omitempty" yaml:"ows"`
 	Xsi            string     `xml:"xmlns:xsi,attr,omitempty" yaml:"xsi"`
 	SchemaLocation string     `xml:"xsi:schemaLocation,attr,omitempty" yaml:"schemaLocation"`
-	Version        string     `xml:"version,attr" yaml:"version" yaml:"version"`
+	Version        string     `xml:"version,attr" yaml:"version"`
 	Language       string     `xml:"xml:lang,attr,omitempty" yaml:"lang,omitempty"`
 	Exception      Exceptions `xml:"ows:Exception" yaml:"exception"`
 }

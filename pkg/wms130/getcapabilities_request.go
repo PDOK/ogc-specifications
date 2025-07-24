@@ -16,7 +16,7 @@ type GetCapabilitiesRequest struct {
 }
 
 // Validate returns GetCapabilities
-func (g *GetCapabilitiesRequest) Validate(c Capabilities) Exceptions {
+func (g *GetCapabilitiesRequest) Validate(_ Capabilities) Exceptions {
 	var exceptions Exceptions
 	return exceptions
 }
