@@ -117,7 +117,7 @@ func (m *GetMapRequest) ParseXML(body []byte) Exceptions {
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
-	//When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
+	// When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
 	_ = xml.Unmarshal(body, &m)
 
 	var n []xml.Attr

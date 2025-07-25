@@ -7,10 +7,10 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
+//nolint:govet
 type describeFeatureTypeRequestParameterValue struct {
 	service string `yaml:"service" json:"service"`
 	baseParameterValueRequest
-
 	typeName     *string `yaml:"typeName" json:"typeName"`         // [0..*]
 	outputFormat *string `yaml:"outputFormat" json:"outputFormat"` // default: "text/xml; subtype=gml/3.2"
 }
@@ -45,13 +45,12 @@ func (dpv *describeFeatureTypeRequestParameterValue) parseQueryParameters(query 
 	return nil
 }
 
-func (dpv *describeFeatureTypeRequestParameterValue) parseDescribeFeatureTypeRequest(dft DescribeFeatureTypeRequest) []wsc110.Exception {
+func (dpv *describeFeatureTypeRequestParameterValue) parseDescribeFeatureTypeRequest(dft DescribeFeatureTypeRequest) {
 	dpv.request = describefeaturetype
 	dpv.version = dft.Version
 	dpv.service = dft.Service
 	dpv.typeName = dft.TypeNames
 	dpv.outputFormat = dft.OutputFormat
-	return nil
 }
 
 func (dpv describeFeatureTypeRequestParameterValue) toQueryParameters() url.Values {

@@ -2,6 +2,7 @@ package wfs200
 
 import (
 	"encoding/xml"
+
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
@@ -164,7 +165,7 @@ type MetadataHref struct {
 // FilterCapabilities struct for the WFS 2.0.0
 type FilterCapabilities struct {
 	Conformance         Conformance         `xml:"fes:Conformance" yaml:"conformance"`
-	IDCapabilities      IdCapabilities      `xml:"fes:Id_Capabilities" yaml:"idCapabilities"`
+	IDCapabilities      IDCapabilities      `xml:"fes:Id_Capabilities" yaml:"idCapabilities"`
 	ScalarCapabilities  ScalarCapabilities  `xml:"fes:Scalar_Capabilities" yaml:"scalarCapabilities"`
 	SpatialCapabilities SpatialCapabilities `xml:"fes:Spatial_Capabilities" yaml:"spatialCapabilities"`
 	// NO TemporalCapabilities!!!
@@ -176,8 +177,8 @@ type Conformance struct {
 	Constraint []ValueConstraint `xml:"fes:Constraint" yaml:"constraint"`
 }
 
-// IdCapabilities struct for the WFS 2.0.0
-type IdCapabilities struct {
+// IDCapabilities struct for the WFS 2.0.0
+type IDCapabilities struct {
 	ResourceIdentifier ResourceIdentifier `xml:"fes:ResourceIdentifier" yaml:"resourceIdentifier"`
 }
 

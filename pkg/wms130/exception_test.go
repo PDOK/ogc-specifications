@@ -1,18 +1,19 @@
 package wms130
 
 import (
-	"github.com/pdok/ogc-specifications/pkg/common"
 	"testing"
+
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 func TestWFSException(t *testing.T) {
 	var tests = []struct {
-		exception     exception
+		exception     Exception
 		exceptionText string
 		exceptionCode string
 		locatorCode   string
 	}{
-		0: {exception: exception{ExceptionDetails: common.ExceptionDetails{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
+		0: {exception: Exception{ExceptionDetails: common.ExceptionDetails{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			exceptionText: "",
 			exceptionCode: "",
 			locatorCode:   "",
@@ -80,7 +81,7 @@ func TestReport(t *testing.T) {
 		result     []byte
 		err        error
 	}{
-		0: {exceptions: Exceptions{exception{ExceptionDetails: common.ExceptionDetails{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}}},
+		0: {exceptions: Exceptions{Exception{ExceptionDetails: common.ExceptionDetails{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}}},
 			result: []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <ServiceExceptionReport version="1.3.0" xmlns="http://www.opengis.net/ogc" xsi="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd">
  <ServiceException code=""></ServiceException>

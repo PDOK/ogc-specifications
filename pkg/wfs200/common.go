@@ -5,7 +5,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-//
 const (
 	getcapabilities     = `GetCapabilities`
 	getfeature          = `GetFeature`

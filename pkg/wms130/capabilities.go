@@ -32,9 +32,11 @@ type Capabilities struct {
 }
 
 // WMSCapabilities base struct
+//
+//nolint:tagliatelle
 type WMSCapabilities struct {
 	Request              Request               `xml:"Request" yaml:"request"`
-	Exception            ExceptionType         `xml:"Exception" yaml:"exception"`
+	Exception            ExceptionType         `xml:"Exception" yaml:"Exception"`
 	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedCapabilities,omitempty"`
 	Layer                []Layer               `xml:"Layer" yaml:"layer"`
 }
@@ -66,7 +68,7 @@ type Layer struct {
 	// layer has a full/complete map coverage
 	Opaque *string `xml:"opaque,attr" yaml:"opaque,omitempty"`
 	// no cascaded attr in Layer element, because we don't do cascaded services e.g. wms services "proxying" and/or combining other wms services
-	//Cascaded                *string                  `xml:"cascaded,attr" yaml:"cascaded"`
+	// Cascaded                *string                  `xml:"cascaded,attr" yaml:"cascaded"`
 	Name                    *string                  `xml:"Name" yaml:"name,omitempty"`
 	Title                   string                   `xml:"Title" yaml:"title"`
 	Abstract                *string                  `xml:"Abstract,omitempty" yaml:"abstract,omitempty"`
@@ -178,7 +180,7 @@ func (l *Layer) findLayer(layername string) *Layer {
 }
 
 // GetLayer returns the Layer Capabilities from the Capabilities document.
-// when the requested Layer is not found a exception is thrown.
+// when the requested Layer is not found a Exception is thrown.
 func (c *Capabilities) GetLayer(layername string) (Layer, Exceptions) {
 	var layer Layer
 

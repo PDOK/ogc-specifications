@@ -2,6 +2,7 @@ package wms130
 
 import (
 	"encoding/xml"
+	"errors"
 	"net/url"
 	"strings"
 	"testing"
@@ -157,6 +158,7 @@ func TestGetFeatureInfoToXML(t *testing.T) {
 	}
 }
 
+//nolint:nestif
 func TestGetFeatureInfoParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query      url.Values
@@ -233,8 +235,8 @@ func TestGetFeatureInfoParseQueryParameters(t *testing.T) {
 			} else {
 				for _, exception := range exceptions {
 					found := false
-					for _, testexception := range test.exceptions {
-						if testexception == exception {
+					for _, testException := range test.exceptions {
+						if errors.Is(testException, exception) {
 							found = true
 						}
 					}
@@ -337,6 +339,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 	}
 }
 
+//nolint:cyclop
 func compareGetFeatureInfoObject(result, expected GetFeatureInfoRequest, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)

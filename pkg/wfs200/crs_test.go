@@ -68,13 +68,11 @@ func TestMarshalYAMLCrs(t *testing.T) {
 	}
 	for k, test := range tests {
 		yamlCRS, err := yaml.Marshal(test.CRS)
+
 		if err != nil {
 			t.Errorf("test: %d, yaml.Marshal failed with '%s'\n", k, err)
-		} else {
-			stringCRS := string(yamlCRS)
-			if stringCRS != test.expectedYAML {
-				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedYAML, stringCRS)
-			}
+		} else if stringCRS := string(yamlCRS); stringCRS != test.expectedYAML {
+			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedYAML, stringCRS)
 		}
 	}
 }

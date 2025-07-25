@@ -17,46 +17,47 @@ type getFeatureInfoRequestParameterValue struct {
 }
 
 // parseQueryParameters builds a getFeatureInfoRequestParameterValue object based on the available query parameters
-func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
-	var exceptions Exceptions
+//
+//nolint:cyclop
+func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.Values) (exceptions Exceptions) {
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, InvalidParameterValue(k, strings.Join(v, ",")))
-		} else {
-			switch strings.ToUpper(k) {
-			case SERVICE:
-				ipv.service = strings.ToUpper(v[0])
-			case VERSION:
-				ipv.baseParameterValueRequest.version = v[0]
-			case REQUEST:
-				ipv.baseParameterValueRequest.request = v[0]
-			case LAYERS:
-				ipv.getMapParameterValueMandatory.layers = v[0]
-			case STYLES:
-				ipv.getMapParameterValueMandatory.styles = v[0]
-			case "CRS":
-				ipv.getMapParameterValueMandatory.crs = v[0]
-			case BBOX:
-				ipv.getMapParameterValueMandatory.bbox = v[0]
-			case WIDTH:
-				ipv.getMapParameterValueMandatory.width = v[0]
-			case HEIGHT:
-				ipv.getMapParameterValueMandatory.height = v[0]
-			case FORMAT:
-				ipv.getMapParameterValueMandatory.format = v[0]
-			case QUERYLAYERS:
-				ipv.getFeatureInfoParameterValueMandatory.querylayers = v[0]
-			case INFOFORMAT:
-				ipv.getFeatureInfoParameterValueMandatory.infoformat = v[0]
-			case I:
-				ipv.getFeatureInfoParameterValueMandatory.i = v[0]
-			case J:
-				ipv.getFeatureInfoParameterValueMandatory.j = v[0]
-			case FEATURECOUNT:
-				ipv.getFeatureInfoParameterValueOptional.featurecount = &(v[0])
-			case EXCEPTIONS:
-				ipv.getFeatureInfoParameterValueOptional.exceptions = &(v[0])
-			}
+			continue
+		}
+		switch strings.ToUpper(k) {
+		case SERVICE:
+			ipv.service = strings.ToUpper(v[0])
+		case VERSION:
+			ipv.baseParameterValueRequest.version = v[0]
+		case REQUEST:
+			ipv.baseParameterValueRequest.request = v[0]
+		case LAYERS:
+			ipv.getMapParameterValueMandatory.layers = v[0]
+		case STYLES:
+			ipv.getMapParameterValueMandatory.styles = v[0]
+		case "CRS":
+			ipv.getMapParameterValueMandatory.crs = v[0]
+		case BBOX:
+			ipv.getMapParameterValueMandatory.bbox = v[0]
+		case WIDTH:
+			ipv.getMapParameterValueMandatory.width = v[0]
+		case HEIGHT:
+			ipv.getMapParameterValueMandatory.height = v[0]
+		case FORMAT:
+			ipv.getMapParameterValueMandatory.format = v[0]
+		case QUERYLAYERS:
+			ipv.getFeatureInfoParameterValueMandatory.querylayers = v[0]
+		case INFOFORMAT:
+			ipv.getFeatureInfoParameterValueMandatory.infoformat = v[0]
+		case I:
+			ipv.getFeatureInfoParameterValueMandatory.i = v[0]
+		case J:
+			ipv.getFeatureInfoParameterValueMandatory.j = v[0]
+		case FEATURECOUNT:
+			ipv.getFeatureInfoParameterValueOptional.featurecount = &(v[0])
+		case EXCEPTIONS:
+			ipv.getFeatureInfoParameterValueOptional.exceptions = &(v[0])
 		}
 	}
 

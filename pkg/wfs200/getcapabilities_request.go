@@ -25,15 +25,15 @@ func (g GetCapabilitiesRequest) Validate(_ wsc110.Capabilities) []wsc110.Excepti
 
 // ParseXML builds a GetCapabilities object based on a XML document
 func (g *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
-	var xmlattributes utils.XMLAttribute
-	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
+	var xmlAttributes utils.XMLAttribute
+	if err := xml.Unmarshal(doc, &xmlAttributes); err != nil {
 		return []wsc110.Exception{wsc110.NoApplicableCode("Could not process XML, is it XML?")}
 	}
 	if err := xml.Unmarshal(doc, &g); err != nil {
-		return []wsc110.Exception{wsc110.OperationNotSupported(err.Error())} //TODO Should be OperationParsingFailed
+		return []wsc110.Exception{wsc110.OperationNotSupported(err.Error())} // TODO Should be OperationParsingFailed
 	}
 	var n []xml.Attr
-	for _, a := range xmlattributes {
+	for _, a := range xmlAttributes {
 		switch strings.ToUpper(a.Name.Local) {
 		case VERSION:
 		case SERVICE:
@@ -50,7 +50,7 @@ func (g *GetCapabilitiesRequest) ParseXML(doc []byte) []wsc110.Exception {
 func (g *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) []wsc110.Exception {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
-		// the manadorty SERVICE and REQUEST parameter is missing.
+		// the mandatory SERVICE and REQUEST parameter is missing.
 		exceptions := wsc110.MissingParameterValue(SERVICE).ToExceptions()
 		exceptions = append(exceptions, wsc110.MissingParameterValue(REQUEST))
 		return exceptions
@@ -61,15 +61,15 @@ func (g *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) []wsc110
 		return exception
 	}
 
-	if exception := g.parsegetCapabilitiesRequestParameterValue(gpv); exception != nil {
+	if exception := g.parseGetCapabilitiesRequestParameterValue(gpv); exception != nil {
 		return exception
 	}
 
 	return nil
 }
 
-// parsegetCapabilitiesRequestParameterValue process the simple struct to a complex struct
-func (g *GetCapabilitiesRequest) parsegetCapabilitiesRequestParameterValue(gpv getCapabilitiesRequestParameterValue) []wsc110.Exception {
+// parseGetCapabilitiesRequestParameterValue process the simple struct to a complex struct
+func (g *GetCapabilitiesRequest) parseGetCapabilitiesRequestParameterValue(gpv getCapabilitiesRequestParameterValue) []wsc110.Exception {
 	g.XMLName.Local = gpv.request
 	g.Service = gpv.service
 	g.Version = gpv.version
