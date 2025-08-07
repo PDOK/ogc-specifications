@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//getMapRequestParameterValue struct
+// getMapRequestParameterValue struct
 type getMapRequestParameterValue struct {
 	// Table 8 - The Parameters of a GetMap request
 	service string `yaml:"service,omitempty"`
@@ -16,6 +16,8 @@ type getMapRequestParameterValue struct {
 }
 
 // parseQueryParameters builds a getMapRequestParameterValue object based on the available query parameters
+//
+//nolint:cyclop
 func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	params := make(map[string]bool)
@@ -89,7 +91,7 @@ func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) E
 }
 
 // parseGetMapRequest builds a getMapRequestParameterValue object based on a GetMap struct
-func (mpv *getMapRequestParameterValue) parseGetMapRequest(m GetMapRequest) Exceptions {
+func (mpv *getMapRequestParameterValue) parseGetMapRequest(m GetMapRequest) {
 
 	mpv.request = getmap
 	mpv.version = Version
@@ -117,8 +119,6 @@ func (mpv *getMapRequestParameterValue) parseGetMapRequest(m GetMapRequest) Exce
 	// mpv.Elevation = m.Elevation
 
 	mpv.exceptions = m.Exceptions
-
-	return nil
 }
 
 // BuildOutput builds a Output struct from the getMapRequestParameterValue information
@@ -137,7 +137,7 @@ func (mpv *getMapRequestParameterValue) buildOutput() (Output, Exceptions) {
 	output.Size = Size{Height: h, Width: w}
 	output.Format = mpv.format
 	if mpv.transparent != nil {
-		b, err := strconv.ParseBool(*mpv.transparent);
+		b, err := strconv.ParseBool(*mpv.transparent)
 		if err != nil {
 			return output, InvalidParameterValue(*mpv.transparent, TRANSPARENT).ToExceptions()
 		}

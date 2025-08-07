@@ -9,44 +9,40 @@ import (
 func TestUnmarshalYAMLPosition(t *testing.T) {
 
 	var tests = []struct {
-		positionstring   []byte
-		expectedposition Position
+		positionString   []byte
+		expectedPosition Position
 	}{
-		0: {positionstring: []byte(`2.52712538742158 50.2128625669452`), expectedposition: Position{2.52712538742158, 50.2128625669452}},
-		1: {positionstring: []byte(`7.37402550506231 55.7211602557705`), expectedposition: Position{7.37402550506231, 55.7211602557705}},
-		2: {positionstring: []byte(`7.37402550506231 55.7211602557705 0 1 2 3`), expectedposition: Position{7.37402550506231, 55.7211602557705}},
+		0: {positionString: []byte(`2.52712538742158 50.2128625669452`), expectedPosition: Position{2.52712538742158, 50.2128625669452}},
+		1: {positionString: []byte(`7.37402550506231 55.7211602557705`), expectedPosition: Position{7.37402550506231, 55.7211602557705}},
+		2: {positionString: []byte(`7.37402550506231 55.7211602557705 0 1 2 3`), expectedPosition: Position{7.37402550506231, 55.7211602557705}},
 	}
 
 	for k, test := range tests {
 		var pos Position
-		err := yaml.Unmarshal(test.positionstring, &pos)
+		err := yaml.Unmarshal(test.positionString, &pos)
 		if err != nil {
 			t.Errorf("test: %d, yaml.UnMarshal failed with '%s'\n", k, err)
-		} else {
-			if pos != test.expectedposition {
-				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedposition, pos)
-			}
+		} else if pos != test.expectedPosition {
+			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedPosition, pos)
 		}
 	}
 }
 
 func TestMarshalYAMLPosition(t *testing.T) {
 	var tests = []struct {
-		positionstring []byte
+		positionString []byte
 		position       Position
 	}{
-		0: {positionstring: []byte("2.52712538742158 50.2128625669452\n"), position: Position{2.52712538742158, 50.2128625669452}},
-		1: {positionstring: []byte("7.37402550506231 55.7211602557705\n"), position: Position{7.37402550506231, 55.7211602557705}},
+		0: {positionString: []byte("2.52712538742158 50.2128625669452\n"), position: Position{2.52712538742158, 50.2128625669452}},
+		1: {positionString: []byte("7.37402550506231 55.7211602557705\n"), position: Position{7.37402550506231, 55.7211602557705}},
 	}
 
 	for k, test := range tests {
 		pos, err := yaml.Marshal(test.position)
 		if err != nil {
 			t.Errorf("test: %d, yaml.Marshal failed with '%s'\n", k, err)
-		} else {
-			if string(pos) != string(test.positionstring) {
-				t.Errorf("test: %d, expected: %s,\n got: %s", k, test.positionstring, pos)
-			}
+		} else if string(pos) != string(test.positionString) {
+			t.Errorf("test: %d, expected: %s,\n got: %s", k, test.positionString, pos)
 		}
 	}
 }

@@ -54,30 +54,36 @@ func (f GetFeatureRequest) Type() string {
 }
 
 // Validate returns GetFeature
-func (f GetFeatureRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
+func (f GetFeatureRequest) Validate(_ wsc110.Capabilities) []wsc110.Exception {
 
-	//getfeaturecap := c.(capabilities.Capabilities)
+	// getfeaturecap := c.(capabilities.Capabilities)
 	return nil
 }
 
 // WFS tables as map[string]bool, where the key (string) is the TOKEN and the bool if its a mandatory (true) or optional (false) attribute
-//var table5 = map[string]bool{STARTINDEX: false, COUNT: false, OUTPUTFORMAT: false, RESULTTYPE: false}
+// var table5 = map[string]bool{STARTINDEX: false, COUNT: false, OUTPUTFORMAT: false, RESULTTYPE: false}
 
 // var table6 = map[string]bool{RESOLVE: false, RESOLVEDEPTH: false, RESOLVETIMEOUT: false}
 // var table7 = map[string]bool{NAMESPACES: false} //VSPs (<- vendor specific parameters)
 var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FILTER: false, FILTERLANGUAGE: false, RESOURCEID: false, BBOX: false, SORTBY: false}
 
-//var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
+// var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
 // ParseXML builds a GetCapabilities object based on a XML document
 func (f *GetFeatureRequest) ParseXML(doc []byte) []wsc110.Exception {
-	var xmlattributes utils.XMLAttribute
-	if err := xml.Unmarshal(doc, &xmlattributes); err != nil {
+	var xmlAttributes utils.XMLAttribute
+	if err := xml.Unmarshal(doc, &xmlAttributes); err != nil {
 		return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
 	}
-	xml.Unmarshal(doc, &f) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
+
+	// When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetFeature
+	// if err := xml.Unmarshal(doc, &f); err != nil {
+	// 	return wsc110.NoApplicableCode("Could not process XML, is it XML?").ToExceptions()
+	// }
+	_ = xml.Unmarshal(doc, &f)
+
 	var n []xml.Attr
-	for _, a := range xmlattributes {
+	for _, a := range xmlAttributes {
 		switch strings.ToUpper(a.Name.Local) {
 		case VERSION:
 		case SERVICE:
@@ -107,7 +113,7 @@ func (f *GetFeatureRequest) ParseQueryParameters(query url.Values) []wsc110.Exce
 		return exceptions
 	}
 
-	if exceptions := f.parsegetFeatureRequestParameterValue(fpv); exceptions != nil {
+	if exceptions := f.parseGetFeatureRequestParameterValue(fpv); exceptions != nil {
 		return exceptions
 	}
 	return nil
@@ -120,7 +126,7 @@ func (f GetFeatureRequest) ToXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-func (f *GetFeatureRequest) parsegetFeatureRequestParameterValue(fpv getFeatureRequestParameterValue) []wsc110.Exception {
+func (f *GetFeatureRequest) parseGetFeatureRequestParameterValue(fpv getFeatureRequestParameterValue) []wsc110.Exception {
 	// Base
 	f.XMLName.Local = getfeature
 
@@ -199,6 +205,7 @@ type StandardPresentationParameters struct {
 	StartIndex   *int    `xml:"startindex,attr,omitempty" yaml:"startIndex"` // default 0
 }
 
+//nolint:nestif
 func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 
@@ -220,11 +227,11 @@ func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestPa
 		}
 
 		if fpv.startindex != nil {
-			startindex, err := strconv.Atoi(*fpv.startindex)
+			startIndex, err := strconv.Atoi(*fpv.startindex)
 			if err != nil {
 				exceptions = append(exceptions, wsc110.MissingParameterValue(STARTINDEX, *fpv.startindex))
 			}
-			b.StartIndex = &startindex
+			b.StartIndex = &startIndex
 		}
 	}
 
@@ -237,7 +244,7 @@ func (b *StandardPresentationParameters) parseKVPRequest(fpv getFeatureRequestPa
 // StandardResolveParameters struct used by GetFeature
 // contains the resolve information of a GetFeauter request
 type StandardResolveParameters struct {
-	Resolve        *string `xml:"Resolve,omitempty" yaml:"resolve"` //can be one of: local, remote, all, none
+	Resolve        *string `xml:"Resolve,omitempty" yaml:"resolve"` // can be one of: local, remote, all, none
 	ResolveDepth   *int    `xml:"ResolveDepth,omitempty" yaml:"resolveDepth"`
 	ResolveTimeout *int    `xml:"ResolveTimeout,omitempty" yaml:"resolveTimeout"`
 }
@@ -260,21 +267,21 @@ func (q *Query) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Ex
 		q.SrsName = fpv.srsname
 	}
 
-	var selectionclause []string
+	var selectionClause []string
 	if fpv.resourceid != nil {
-		selectionclause = append(selectionclause, RESOURCEID)
+		selectionClause = append(selectionClause, RESOURCEID)
 	}
 	if fpv.filter != nil {
-		selectionclause = append(selectionclause, FILTER)
+		selectionClause = append(selectionClause, FILTER)
 	}
 	if fpv.bbox != nil {
-		selectionclause = append(selectionclause, BBOX)
+		selectionClause = append(selectionClause, BBOX)
 	}
 
-	if len(selectionclause) > 1 {
-		exceptions = append(exceptions, wsc110.NoApplicableCode(fmt.Sprintf(`Only one of the following selectionclauses can be used %s`, strings.Join(selectionclause, `,`))))
-	} else if len(selectionclause) == 1 {
-		switch selectionclause[0] {
+	if len(selectionClause) > 1 {
+		exceptions = append(exceptions, wsc110.NoApplicableCode(`Only one of the following selectionclauses can be used `+strings.Join(selectionClause, `,`)))
+	} else if len(selectionClause) == 1 {
+		switch selectionClause[0] {
 		case RESOURCEID:
 			f := Filter{}
 			var rids ResourceIDs
@@ -300,7 +307,7 @@ func (q *Query) parseKVPRequest(fpv getFeatureRequestParameterValue) []wsc110.Ex
 	// TODO aliases
 	// TODO filterlanguage
 
-	//q.SortBy = fpv.sortby
+	// q.SortBy = fpv.sortby
 
 	if len(exceptions) > 0 {
 		return exceptions
@@ -371,11 +378,11 @@ type Filter struct {
 func (f Filter) toString() string {
 	si, _ := xml.MarshalIndent(f, "", "")
 	re := regexp.MustCompile(`><.*>`)
-	return (xml.Header + re.ReplaceAllString(string(si), "/>"))
+	return xml.Header + re.ReplaceAllString(string(si), "/>")
 }
 
 func (f *Filter) parseKVPRequest(filter string) []wsc110.Exception {
-	if error := xml.Unmarshal([]byte(filter), &f); error != nil {
+	if err := xml.Unmarshal([]byte(filter), &f); err != nil {
 		return wsc110.NoApplicableCode(`Filter is not valid XML`).ToExceptions()
 	}
 	return nil
@@ -424,14 +431,12 @@ func (r ResourceIDs) toString() string {
 	return strings.Join(rids, ",")
 }
 
-func (r *ResourceIDs) parseKVPRequest(resourceids string) []wsc110.Exception {
+func (r *ResourceIDs) parseKVPRequest(resourceids string) {
 	var rids ResourceIDs
 	for _, resourceid := range strings.Split(resourceids, `,`) {
 		rids = append(rids, ResourceID{Rid: resourceid})
 	}
 	*r = rids
-
-	return nil
 }
 
 // ResourceID struct for Filter
@@ -691,31 +696,30 @@ type GEOBBOX struct {
 func (gb *GEOBBOX) parseKVPRequest(q string) []wsc110.Exception {
 	regex := regexp.MustCompile(`,`)
 	result := regex.Split(q, -1)
-	if len(result) == 4 || len(result) == 5 {
 
-		var lx, ly, ux, uy float64
-		var err error
-
-		if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
-			return InvalidValue(BBOX).ToExceptions()
-		}
-		if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
-			return InvalidValue(BBOX).ToExceptions()
-		}
-		if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
-			return InvalidValue(BBOX).ToExceptions()
-		}
-		if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
-			return InvalidValue(BBOX).ToExceptions()
-		}
-
-		gb.Envelope.LowerCorner = wsc110.Position{lx, ly}
-		gb.Envelope.UpperCorner = wsc110.Position{ux, uy}
-		if len(result) == 5 {
-			gb.SrsName = &result[4]
-		}
-	} else {
+	if len(result) != 4 && len(result) != 5 {
 		return wsc110.MissingParameterValue(BBOX, q).ToExceptions()
+	}
+	var lx, ly, ux, uy float64
+	var err error
+
+	if lx, err = strconv.ParseFloat(result[0], 64); err != nil {
+		return InvalidValue(BBOX).ToExceptions()
+	}
+	if ly, err = strconv.ParseFloat(result[1], 64); err != nil {
+		return InvalidValue(BBOX).ToExceptions()
+	}
+	if ux, err = strconv.ParseFloat(result[2], 64); err != nil {
+		return InvalidValue(BBOX).ToExceptions()
+	}
+	if uy, err = strconv.ParseFloat(result[3], 64); err != nil {
+		return InvalidValue(BBOX).ToExceptions()
+	}
+
+	gb.Envelope.LowerCorner = wsc110.Position{lx, ly}
+	gb.Envelope.UpperCorner = wsc110.Position{ux, uy}
+	if len(result) == 5 {
+		gb.SrsName = &result[4]
 	}
 
 	return nil

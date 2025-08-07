@@ -1,6 +1,5 @@
 package wcs201
 
-//
 const (
 	getcapabilities  = `GetCapabilities`
 	describecoverage = `DescribeCoverage`

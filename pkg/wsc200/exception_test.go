@@ -2,6 +2,7 @@ package wsc200
 
 import (
 	"github.com/pdok/ogc-specifications/pkg/common"
+
 	"testing"
 )
 

@@ -23,7 +23,7 @@ func (gc *GetCapabilitiesRequest) Type() string {
 }
 
 // Validate validates the GetCapabilities struct
-func (gc *GetCapabilitiesRequest) Validate(c Capabilities) []wsc200.Exception {
+func (gc *GetCapabilitiesRequest) Validate(_ Capabilities) []wsc200.Exception {
 	return nil
 }
 

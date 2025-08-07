@@ -87,7 +87,7 @@ func TestValidateStyledLayerDescriptor(t *testing.T) {
 					}
 				}
 				if !found {
-					t.Errorf("test exception: %d, expected one of: %s ,\n got: %s", k, test.exceptions, exception.Error())
+					t.Errorf("test Exception: %d, expected one of: %s ,\n got: %s", k, test.exceptions, exception.Error())
 				}
 			}
 		}
@@ -98,7 +98,7 @@ func TestGetMapParseXML(t *testing.T) {
 	var tests = []struct {
 		body      []byte
 		excepted  GetMapRequest
-		exception exception
+		exception Exception
 	}{
 		// GetMap http://schemas.opengis.net/sld/1.1.0/example_getmap.xml example request
 		0: {body: []byte(`<GetMap xmlns="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows" 
@@ -260,9 +260,9 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query     url.Values
 		excepted  GetMapRequest
-		exception exception
+		exception Exception
 	}{
-		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=invalid&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
+		// REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=invalid&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
 		0: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
 			STYLES:      {`CenterLine,CenterLine,Outline`},
@@ -279,7 +279,7 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 		},
 		1: {query: url.Values{},
 			exception: MissingParameterValue(VERSION)},
-		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
+		// REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=FALSE&EXCEPTIONS=XML
 		2: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
 			STYLES:      {`CenterLine,CenterLine,Outline`},
@@ -314,7 +314,7 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 					BGcolor:     sp(`0x7F7F7F`)},
 				Exceptions: sp("XML"),
 			}},
-		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=zzzz&EXCEPTIONS=XML
+		// REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&TRANSPARENT=zzzz&EXCEPTIONS=XML
 		3: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:      {`Rivers,Roads,Houses`},
 			STYLES:      {`CenterLine,CenterLine,Outline`},
@@ -329,7 +329,7 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 		},
 			exception: InvalidParameterValue(`zzzz`, TRANSPARENT),
 		},
-		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
+		// REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers,Roads,Houses&STYLES=CenterLine,CenterLine,Outline&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
 		4: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:     {`Rivers,Roads,Houses`},
 			STYLES:     {`CenterLine,CenterLine,Outline`},
@@ -363,7 +363,7 @@ func TestGetMapParseQueryParameters(t *testing.T) {
 					BGcolor:     sp(`0x7F7F7F`)},
 				Exceptions: sp("XML"),
 			}},
-		//REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers&STYLES=&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
+		// REQUEST=GetMap&SERVICE=WMS&VERSION=1.3.0&LAYERS=Rivers&STYLES=&CRS=EPSG:4326&BBOX=-180.0,-90.0,180.0,90.0&WIDTH=1024&HEIGHT=512&FORMAT=image/jpeg&EXCEPTIONS=XML
 		5: {query: map[string][]string{REQUEST: {getmap}, SERVICE: {Service}, VERSION: {Version},
 			LAYERS:     {`Rivers`},
 			STYLES:     {``},
@@ -413,7 +413,7 @@ func TestGetMapToQueryParameters(t *testing.T) {
 	var tests = []struct {
 		object    GetMapRequest
 		excepted  url.Values
-		exception exception
+		exception Exception
 	}{
 		0: {object: GetMapRequest{
 			XMLName: xml.Name{Local: "GetMap"},
@@ -590,6 +590,7 @@ func TestCheckCRS(t *testing.T) {
 	}
 }
 
+//nolint:cyclop,nestif
 func compareGetMapObject(result, expected GetMapRequest, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)

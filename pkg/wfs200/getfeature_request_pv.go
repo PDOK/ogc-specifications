@@ -46,6 +46,8 @@ type standardResolveParameters struct {
 
 // AdhocQueryKeywords struct
 // NOTE filter, resourceid and bbox are mutually exclusive
+//
+//nolint:tagliatelle
 type adhocQueryKeywords struct {
 	// Table 8
 	typenames string  `yaml:"typenames"`
@@ -66,6 +68,7 @@ type storedQueryKeywords struct {
 	// storedquery_parameter not implemented
 }
 
+//nolint:cyclop,nestif
 func (fpv *getFeatureRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
@@ -169,7 +172,8 @@ func (fpv *getFeatureRequestParameterValue) parseQueryParameters(query url.Value
 	return nil
 }
 
-func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureRequest) []wsc110.Exception {
+//nolint:cyclop,funlen
+func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureRequest) {
 
 	fpv.request = getfeature
 	fpv.version = Version
@@ -246,13 +250,14 @@ func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureR
 	}
 
 	if f.Query.Filter != nil {
-		if f.Query.Filter.ResourceID != nil {
+		switch {
+		case f.Query.Filter.ResourceID != nil:
 			s := f.Query.Filter.ResourceID.toString()
 			fpv.resourceid = &(s)
-		} else if f.Query.Filter.BBOX != nil {
+		case f.Query.Filter.BBOX != nil:
 			s := f.Query.Filter.BBOX.MarshalText()
 			fpv.bbox = &s
-		} else {
+		default:
 			f := f.Query.Filter.toString()
 			fpv.filter = &f
 		}
@@ -268,10 +273,9 @@ func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureR
 
 	// TODO
 	// fpv.storedQueryKeywords.storedqueryid = v[0]
-
-	return nil
 }
 
+//nolint:cyclop
 func (fpv getFeatureRequestParameterValue) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
@@ -327,11 +331,12 @@ func (fpv getFeatureRequestParameterValue) toQueryParameters() url.Values {
 	}
 	// // Projection_clause not implemented
 
-	if fpv.filter != nil {
+	switch {
+	case fpv.filter != nil:
 		query[FILTER] = []string{*fpv.filter}
-	} else if fpv.resourceid != nil {
+	case fpv.resourceid != nil:
 		query[RESOURCEID] = []string{*fpv.resourceid}
-	} else if fpv.bbox != nil {
+	case fpv.bbox != nil:
 		query[BBOX] = []string{*fpv.bbox}
 	}
 

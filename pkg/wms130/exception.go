@@ -2,16 +2,19 @@ package wms130
 
 import (
 	"encoding/xml"
+
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-// exception
-type exception struct {
+// Exception
+//
+//nolint:errname
+type Exception struct {
 	common.ExceptionDetails
 }
 
-// Exceptions is a array of the Exception interface
-type Exceptions []exception
+// Exceptions is an array of the Exception interface
+type Exceptions []Exception
 
 // ServiceExceptionReport struct
 type ServiceExceptionReport struct {
@@ -40,22 +43,22 @@ func (r ServiceExceptionReport) ToBytes() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-// ToExceptions promotes a single exception to an array of one
-func (e exception) ToExceptions() Exceptions {
+// ToExceptions promotes a single Exception to an array of one
+func (e Exception) ToExceptions() Exceptions {
 	return Exceptions{e}
 }
 
 // Error returns available ExceptionText
-func (e exception) Error() string {
+func (e Exception) Error() string {
 	return e.ExceptionText
 }
 
 // Code returns available ExceptionCode
-func (e exception) Code() string {
+func (e Exception) Code() string {
 	return e.ExceptionCode
 }
 
 // Locator returns available ExceptionCode
-func (e exception) Locator() string {
+func (e Exception) Locator() string {
 	return e.LocatorCode
 }

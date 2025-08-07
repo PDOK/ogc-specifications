@@ -30,7 +30,7 @@ type GetFeatureInfoRequest struct {
 	// <map_request_copy>
 	// These are the 'minimum' required GetMap parameters
 	// needed in a GetFeatureInfo request
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledLayerDescriptor"` //TODO layers is need styles is not!
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledLayerDescriptor"` // TODO layers is need styles is not!
 	CRS                   string                `xml:"CRS" yaml:"crs"`
 	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingBox"`
 	// We skip the Output struct, because these are not required parameters
@@ -48,11 +48,11 @@ type GetFeatureInfoRequest struct {
 }
 
 // Validate returns GetFeatureInfo
-func (i *GetFeatureInfoRequest) Validate(c Capabilities) Exceptions {
+func (gfi *GetFeatureInfoRequest) Validate(c Capabilities) Exceptions {
 	var exceptions Exceptions
 
-	exceptions = append(exceptions, i.StyledLayerDescriptor.Validate(c)...)
-	// exceptions = append(exceptions, i.Output.Validate(wmsCapabilities)...)
+	exceptions = append(exceptions, gfi.StyledLayerDescriptor.Validate(c)...)
+	// exceptions = append(exceptions, gfi.Output.Validate(wmsCapabilities)...)
 
 	return exceptions
 }
@@ -61,16 +61,16 @@ func (i *GetFeatureInfoRequest) Validate(c Capabilities) Exceptions {
 // Note: the XML GetFeatureInfo body that is consumed is a interpretation.
 // So we use the GetMap, that is a large part of this request, as a base
 // with the additional GetFeatureInfo parameters.
-func (i *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
-	var xmlattributes utils.XMLAttribute
-	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
+func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
+	var xmlAttributes utils.XMLAttribute
+	if err := xml.Unmarshal(body, &xmlAttributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
-	if err := xml.Unmarshal(body, &i); err != nil {
+	if err := xml.Unmarshal(body, &gfi); err != nil {
 		return Exceptions{MissingParameterValue("REQUEST")}
 	}
 	var n []xml.Attr
-	for _, a := range xmlattributes {
+	for _, a := range xmlAttributes {
 		switch strings.ToUpper(a.Name.Local) {
 		case VERSION:
 		case SERVICE:
@@ -79,53 +79,53 @@ func (i *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 		}
 	}
 
-	i.Attr = utils.StripDuplicateAttr(n)
+	gfi.Attr = utils.StripDuplicateAttr(n)
 	return nil
 }
 
-// parsegetFeatureInfoRequestParameterValue process the simple struct to a complex struct
-func (i *GetFeatureInfoRequest) parsegetFeatureInfoRequestParameterValue(ipv getFeatureInfoRequestParameterValue) Exceptions {
+// parseGetFeatureInfoRequestParameterValue process the simple struct to a complex struct
+func (gfi *GetFeatureInfoRequest) parseGetFeatureInfoRequestParameterValue(ipv getFeatureInfoRequestParameterValue) Exceptions {
 
 	var exceptions Exceptions
 
-	i.XMLName.Local = getfeatureinfo
-	i.BaseRequest.parseBaseParameterValueRequest(ipv.baseParameterValueRequest)
+	gfi.XMLName.Local = getfeatureinfo
+	gfi.BaseRequest.parseBaseParameterValueRequest(ipv.baseParameterValueRequest)
 
 	sld, ex := ipv.buildStyledLayerDescriptor()
 	if ex != nil {
 		exceptions = append(exceptions, ex...)
 	}
-	i.StyledLayerDescriptor = sld
+	gfi.StyledLayerDescriptor = sld
 
-	i.CRS = ipv.crs
+	gfi.CRS = ipv.crs
 
 	var bbox BoundingBox
 	if ex := bbox.parseString(ipv.bbox); ex != nil {
 		exceptions = append(exceptions, ex...)
 	}
-	i.BoundingBox = bbox
+	gfi.BoundingBox = bbox
 
-	i.CRS = ipv.crs
+	gfi.CRS = ipv.crs
 
 	w, err := strconv.Atoi(ipv.width)
 	if err != nil {
 		exceptions = append(exceptions, Exceptions{MissingParameterValue(WIDTH, ipv.width)}...)
 	}
-	i.Size.Width = w
+	gfi.Size.Width = w
 
 	h, err := strconv.Atoi(ipv.height)
 	if err != nil {
 		exceptions = append(exceptions, Exceptions{MissingParameterValue(HEIGHT, ipv.height)}...)
 	}
-	i.Size.Height = h
+	gfi.Size.Height = h
 
-	i.QueryLayers = strings.Split(ipv.querylayers, ",")
+	gfi.QueryLayers = strings.Split(ipv.querylayers, ",")
 
-	if exps := i.parseIJ(ipv.i, ipv.j); exps != nil {
+	if exps := gfi.parseIJ(ipv.i, ipv.j); exps != nil {
 		exceptions = append(exceptions, exps...)
 	}
 
-	i.InfoFormat = ipv.infoformat
+	gfi.InfoFormat = ipv.infoformat
 
 	// Optional keys
 	if ipv.featurecount != nil {
@@ -134,11 +134,11 @@ func (i *GetFeatureInfoRequest) parsegetFeatureInfoRequestParameterValue(ipv get
 			exceptions = append(exceptions, NoApplicableCode("Unknown FEATURE_COUNT value"))
 		}
 
-		i.FeatureCount = &fc
+		gfi.FeatureCount = &fc
 	}
 
 	if ipv.exceptions != nil {
-		i.Exceptions = ipv.exceptions
+		gfi.Exceptions = ipv.exceptions
 	}
 
 	if len(exceptions) > 0 {
@@ -148,7 +148,7 @@ func (i *GetFeatureInfoRequest) parsegetFeatureInfoRequestParameterValue(ipv get
 }
 
 // ParseQueryParameters builds a GetFeatureInfo object based on the available query parameters
-func (i *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exceptions {
+func (gfi *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exceptions {
 	if len(query) == 0 {
 		// When there are no query value we know that at least
 		// the manadorty VERSION and REQUEST parameter is missing.
@@ -160,7 +160,7 @@ func (i *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exception
 		return exceptions
 	}
 
-	if exceptions := i.parsegetFeatureInfoRequestParameterValue(ipv); len(exceptions) != 0 {
+	if exceptions := gfi.parseGetFeatureInfoRequestParameterValue(ipv); len(exceptions) != 0 {
 		return exceptions
 	}
 
@@ -168,9 +168,9 @@ func (i *GetFeatureInfoRequest) ParseQueryParameters(query url.Values) Exception
 }
 
 // ToQueryParameters  builds a new query string that will be proxied
-func (i GetFeatureInfoRequest) ToQueryParameters() url.Values {
+func (gfi *GetFeatureInfoRequest) ToQueryParameters() url.Values {
 	ipv := getFeatureInfoRequestParameterValue{}
-	ipv.parseGetFeatureInfoRequest(i)
+	ipv.parseGetFeatureInfoRequest(*gfi)
 
 	q := ipv.toQueryParameters()
 	return q
@@ -180,24 +180,24 @@ func (i GetFeatureInfoRequest) ToQueryParameters() url.Values {
 // Note: this GetFeatureInfo XML body is a interpretation and there isn't a
 // good/real OGC example request. So for now we use the GetMap, that is a large part
 // of this request, as a base with the additional GetFeatureInfo parameters.
-func (i GetFeatureInfoRequest) ToXML() []byte {
-	si, _ := xml.MarshalIndent(i, "", " ")
+func (gfi *GetFeatureInfoRequest) ToXML() []byte {
+	si, _ := xml.MarshalIndent(gfi, "", " ")
 	re := regexp.MustCompile(`><.*>`)
 	return []byte(xml.Header + re.ReplaceAllString(string(si), "/>"))
 }
 
-func (i *GetFeatureInfoRequest) parseIJ(I, J string) Exceptions {
-	ii, err := strconv.Atoi(I)
+func (gfi *GetFeatureInfoRequest) parseIJ(i string, j string) Exceptions {
+	ii, err := strconv.Atoi(i)
 	if err != nil {
-		return InvalidPoint(I, J).ToExceptions()
+		return InvalidPoint(i, j).ToExceptions()
 	}
-	i.I = ii
+	gfi.I = ii
 
-	j, err := strconv.Atoi(J)
+	jj, err := strconv.Atoi(j)
 	if err != nil {
-		return InvalidPoint(I, J).ToExceptions()
+		return InvalidPoint(i, j).ToExceptions()
 	}
-	i.J = j
+	gfi.J = jj
 
 	return nil
 }

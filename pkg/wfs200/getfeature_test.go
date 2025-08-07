@@ -80,6 +80,8 @@ func TestGetFeatureToXML(t *testing.T) {
 
 // TODO
 // Merge TestParseBodyGetFeature & TestParseQueryParameters GetFeature comporison into single func, like with WMS GetMap
+//
+//nolint:nestif
 func TestGetFeatureParseXML(t *testing.T) {
 	var tests = []struct {
 		body      []byte
@@ -214,7 +216,7 @@ func TestProcesNamespaces(t *testing.T) {
 			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://www.someserver.com/ns1"}}},
 		// Duplicate namespace with the different values
 		4: {namespace: "xmlns(ns1,http://www.someserver.com/ns1),xmlns(ns1,http://someserver.com/ns2)",
-			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://someserver.com/ns2"}}}, //takes the last matched result
+			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://someserver.com/ns2"}}}, // takes the last matched result
 		// A namespace with a trailing string outside the xmlns()
 		5: {namespace: "xmlns(ns1,http://www.someserver.com/ns1),not a correct,namespace query,string",
 			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://www.someserver.com/ns1"}}},
@@ -319,6 +321,7 @@ func TestGetFeatureParseQueryParameters(t *testing.T) {
 	}
 }
 
+//nolint:cyclop,nestif
 func compareGetFeatureQuery(result, expected GetFeatureRequest, tid int, t *testing.T) {
 	if result.BaseRequest.Service != expected.BaseRequest.Service || result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, expected.BaseRequest, result.BaseRequest)
@@ -366,10 +369,8 @@ func compareGetFeatureQuery(result, expected GetFeatureRequest, tid int, t *test
 	}
 
 	if expected.Query.Filter != nil {
-		if expected.Query.SrsName != nil {
-			if *expected.Query.SrsName != *result.Query.SrsName {
-				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, *expected.Query.SrsName, *result.Query.SrsName)
-			}
+		if expected.Query.SrsName != nil && *expected.Query.SrsName != *result.Query.SrsName {
+			t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, *expected.Query.SrsName, *result.Query.SrsName)
 		}
 		if expected.Query.Filter.ResourceID != nil {
 			for _, erid := range *expected.Query.Filter.ResourceID {

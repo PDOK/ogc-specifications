@@ -2,13 +2,14 @@ package wsc200
 
 import (
 	"fmt"
+
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
 // OperationNotSupported exception
 func OperationNotSupported(message string) Exception {
 	return exception{ExceptionDetails: common.ExceptionDetails{
-		ExceptionText: fmt.Sprintf("This service does not know the operation: %s", message),
+		ExceptionText: "This service does not know the operation: " + message,
 		ExceptionCode: `OperationNotSupported`,
 		LocatorCode:   message,
 	}}
@@ -20,7 +21,7 @@ func MissingParameterValue(s ...string) Exception {
 		return exception{ExceptionDetails: common.ExceptionDetails{ExceptionText: fmt.Sprintf("%s key got incorrect value: %s", s[0], s[1]), ExceptionCode: "MissingParameterValue", LocatorCode: s[0]}}
 	}
 	if len(s) == 1 {
-		return exception{ExceptionDetails: common.ExceptionDetails{ExceptionText: fmt.Sprintf("Missing key: %s", s[0]), ExceptionCode: "MissingParameterValue", LocatorCode: s[0]}}
+		return exception{ExceptionDetails: common.ExceptionDetails{ExceptionText: "Missing key: " + s[0], ExceptionCode: "MissingParameterValue", LocatorCode: s[0]}}
 	}
 
 	return exception{ExceptionDetails: common.ExceptionDetails{ExceptionText: `Could not determine REQUEST`, ExceptionCode: "MissingParameterValue", LocatorCode: "REQUEST"}}
@@ -38,7 +39,7 @@ func InvalidParameterValue(value, locator string) Exception {
 // VersionNegotiationFailed exception
 func VersionNegotiationFailed(version string) Exception {
 	return exception{ExceptionDetails: common.ExceptionDetails{
-		ExceptionText: fmt.Sprintf("%s is an invalid version number", version),
+		ExceptionText: version + " is an invalid version number",
 		ExceptionCode: `VersionNegotiationFailed`,
 		LocatorCode:   "VERSION",
 	}}
