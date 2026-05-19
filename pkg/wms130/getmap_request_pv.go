@@ -17,7 +17,7 @@ type getMapRequestParameterValue struct {
 
 // parseQueryParameters builds a getMapRequestParameterValue object based on the available query parameters
 //
-//nolint:cyclop
+//nolint:cyclop,staticcheck,goconst
 func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	params := make(map[string]bool)
@@ -49,11 +49,11 @@ func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) E
 			case FORMAT:
 				mpv.getMapParameterValueMandatory.format = v[0]
 			case TRANSPARENT:
-				mpv.getMapParameterValueOptional.transparent = &(v[0])
+				mpv.transparent = &(v[0])
 			case BGCOLOR:
-				mpv.getMapParameterValueOptional.bgcolor = &(v[0])
+				mpv.bgcolor = &(v[0])
 			case EXCEPTIONS:
-				mpv.getMapParameterValueOptional.exceptions = &(v[0])
+				mpv.exceptions = &(v[0])
 			}
 		}
 	}

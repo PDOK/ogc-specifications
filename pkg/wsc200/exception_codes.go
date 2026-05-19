@@ -16,6 +16,8 @@ func OperationNotSupported(message string) Exception {
 }
 
 // MissingParameterValue exception
+//
+//nolint:goconst
 func MissingParameterValue(s ...string) Exception {
 	if len(s) >= 2 {
 		return exception{ExceptionDetails: common.ExceptionDetails{ExceptionText: fmt.Sprintf("%s key got incorrect value: %s", s[0], s[1]), ExceptionCode: "MissingParameterValue", LocatorCode: s[0]}}
@@ -37,6 +39,8 @@ func InvalidParameterValue(value, locator string) Exception {
 }
 
 // VersionNegotiationFailed exception
+//
+//nolint:goconst
 func VersionNegotiationFailed(version string) Exception {
 	return exception{ExceptionDetails: common.ExceptionDetails{
 		ExceptionText: version + " is an invalid version number",

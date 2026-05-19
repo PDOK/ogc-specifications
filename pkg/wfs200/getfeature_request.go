@@ -70,6 +70,8 @@ var table8 = map[string]bool{TYPENAMES: true, ALIASES: false, SRSNAME: false, FI
 // var table10 = map[string]bool{STOREDQUERYID: true} //storedquery_parameter=value
 
 // ParseXML builds a GetCapabilities object based on a XML document
+//
+//nolint:staticcheck
 func (f *GetFeatureRequest) ParseXML(doc []byte) []wsc110.Exception {
 	var xmlAttributes utils.XMLAttribute
 	if err := xml.Unmarshal(doc, &xmlAttributes); err != nil {
@@ -126,6 +128,7 @@ func (f GetFeatureRequest) ToXML() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
+//nolint:staticcheck
 func (f *GetFeatureRequest) parseGetFeatureRequestParameterValue(fpv getFeatureRequestParameterValue) []wsc110.Exception {
 	// Base
 	f.XMLName.Local = getfeature

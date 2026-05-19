@@ -1,7 +1,7 @@
 package wfs200
 
 // UnmarshalYAML CRS
-func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (c *CRS) UnmarshalYAML(unmarshal func(any) error) error {
 	var s string
 	if err := unmarshal(&s); err != nil {
 		return err
@@ -15,6 +15,6 @@ func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
-func (c CRS) MarshalYAML() (interface{}, error) {
+func (c CRS) MarshalYAML() (any, error) {
 	return c.String(), nil
 }

@@ -6,6 +6,10 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
+const (
+	invalidValue = "InvalidValue"
+)
+
 // CannotLockAllFeatures exception
 func CannotLockAllFeatures() wsc110.Exception {
 	return exception{
@@ -45,11 +49,11 @@ func InvalidLockID() wsc110.Exception {
 func InvalidValue(s ...string) wsc110.Exception {
 	if len(s) == 1 {
 		return exception{ExceptionText: fmt.Sprintf("The parameter: %s, contains a InvalidValue", s[0]),
-			ExceptionCode: "InvalidValue",
+			ExceptionCode: invalidValue,
 			LocatorCode:   s[0]}
 	}
 	return exception{
-		ExceptionCode: "InvalidValue",
+		ExceptionCode: invalidValue,
 	}
 }
 

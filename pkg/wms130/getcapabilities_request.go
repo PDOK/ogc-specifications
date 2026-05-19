@@ -65,6 +65,8 @@ func (g *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Exceptio
 }
 
 // parseGetCapabilitiesRequestParameterValue process the simple struct to a complex struct
+//
+//nolint:staticcheck
 func (g *GetCapabilitiesRequest) parseGetCapabilitiesRequestParameterValue(gpv getCapabilitiesRequestParameterValue) Exceptions {
 
 	g.XMLName.Local = gpv.request
