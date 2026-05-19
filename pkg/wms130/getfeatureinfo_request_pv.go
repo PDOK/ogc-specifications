@@ -18,7 +18,7 @@ type getFeatureInfoRequestParameterValue struct {
 
 // parseQueryParameters builds a getFeatureInfoRequestParameterValue object based on the available query parameters
 //
-//nolint:cyclop
+//nolint:cyclop,staticcheck,goconst
 func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.Values) (exceptions Exceptions) {
 	for k, v := range query {
 		if len(v) != 1 {

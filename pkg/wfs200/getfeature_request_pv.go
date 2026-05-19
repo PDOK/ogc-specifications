@@ -68,7 +68,7 @@ type storedQueryKeywords struct {
 	// storedquery_parameter not implemented
 }
 
-//nolint:cyclop,nestif
+//nolint:cyclop,nestif,staticcheck
 func (fpv *getFeatureRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
@@ -172,7 +172,7 @@ func (fpv *getFeatureRequestParameterValue) parseQueryParameters(query url.Value
 	return nil
 }
 
-//nolint:cyclop,funlen
+//nolint:cyclop,funlen,staticcheck
 func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureRequest) {
 
 	fpv.request = getfeature

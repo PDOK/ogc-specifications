@@ -80,6 +80,8 @@ func (m *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 }
 
 // parsegetMapRequestParameterValue process the simple struct to a complex struct
+//
+//nolint:staticcheck
 func (m *GetMapRequest) parsegetMapRequestParameterValue(mpv getMapRequestParameterValue) Exceptions {
 	m.XMLName.Local = getmap
 	m.BaseRequest.parseBaseParameterValueRequest(mpv.baseParameterValueRequest)
@@ -112,6 +114,8 @@ func (m *GetMapRequest) parsegetMapRequestParameterValue(mpv getMapRequestParame
 }
 
 // ParseXML builds a GetMap object based on a XML document
+//
+//nolint:staticcheck
 func (m *GetMapRequest) ParseXML(body []byte) Exceptions {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
@@ -165,7 +169,7 @@ func (output *Output) Validate(c Capabilities) Exceptions {
 		exceptions = append(exceptions, NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
 	}
 
-	for _, format := range c.WMSCapabilities.Request.GetMap.Format {
+	for _, format := range c.Request.GetMap.Format {
 		found := false
 		if format == output.Format {
 			found = true
@@ -298,6 +302,7 @@ type Elevation struct {
 	} `xml:"Interval" yaml:"interval"`
 }
 
+//nolint:goconst
 func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, Exceptions) {
 	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
 	// 1. cnt(STYLE) == 0 -> Added LAYERS

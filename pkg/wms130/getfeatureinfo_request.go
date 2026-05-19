@@ -84,6 +84,8 @@ func (gfi *GetFeatureInfoRequest) ParseXML(body []byte) Exceptions {
 }
 
 // parseGetFeatureInfoRequestParameterValue process the simple struct to a complex struct
+//
+//nolint:staticcheck
 func (gfi *GetFeatureInfoRequest) parseGetFeatureInfoRequestParameterValue(ipv getFeatureInfoRequestParameterValue) Exceptions {
 
 	var exceptions Exceptions
