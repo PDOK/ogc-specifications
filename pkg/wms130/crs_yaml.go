@@ -1,7 +1,9 @@
 package wms130
 
 // UnmarshalYAML CRS
-func (c *CRS) UnmarshalYAML(unmarshal func(any) error) error {
+//
+//nolint:revive
+func (c *CRS) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var s string
 	if err := unmarshal(&s); err != nil {
 		return err
@@ -15,6 +17,7 @@ func (c *CRS) UnmarshalYAML(unmarshal func(any) error) error {
 	return nil
 }
 
-func (c CRS) MarshalYAML() (any, error) {
+//nolint:revive
+func (c CRS) MarshalYAML() (interface{}, error) {
 	return c.String(), nil
 }
