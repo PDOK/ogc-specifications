@@ -339,6 +339,7 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 	}
 }
 
+//nolint:cyclop
 func compareGetFeatureInfoObject(result, expected GetFeatureInfoRequest, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)

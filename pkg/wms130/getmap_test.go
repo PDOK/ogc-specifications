@@ -590,7 +590,7 @@ func TestCheckCRS(t *testing.T) {
 	}
 }
 
-//nolint:nestif
+//nolint:cyclop,nestif
 func compareGetMapObject(result, expected GetMapRequest, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)

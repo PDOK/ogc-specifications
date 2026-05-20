@@ -13,8 +13,6 @@ type getCapabilitiesRequestParameterValue struct {
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
-//
-//nolint:staticcheck
 func (gpv *getCapabilitiesRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	for k, v := range query {

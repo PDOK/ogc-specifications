@@ -321,7 +321,7 @@ func TestGetFeatureParseQueryParameters(t *testing.T) {
 	}
 }
 
-//nolint:nestif
+//nolint:cyclop,nestif
 func compareGetFeatureQuery(result, expected GetFeatureRequest, tid int, t *testing.T) {
 	if result.BaseRequest.Service != expected.BaseRequest.Service || result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, expected.BaseRequest, result.BaseRequest)

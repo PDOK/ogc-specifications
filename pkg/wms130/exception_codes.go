@@ -15,8 +15,6 @@ func InvalidFormat(unknownFormat string) Exception {
 }
 
 // InvalidCRS Exception
-//
-//nolint:goconst
 func InvalidCRS(s ...string) Exception {
 	if len(s) == 1 {
 		return Exception{ExceptionDetails: common.ExceptionDetails{
@@ -36,8 +34,6 @@ func InvalidCRS(s ...string) Exception {
 }
 
 // LayerNotDefined Exception
-//
-//nolint:goconst
 func LayerNotDefined(s ...string) Exception {
 	if len(s) == 1 {
 		return Exception{ExceptionDetails: common.ExceptionDetails{
@@ -51,8 +47,6 @@ func LayerNotDefined(s ...string) Exception {
 }
 
 // StyleNotDefined Exception
-//
-//nolint:goconst
 func StyleNotDefined(s ...string) Exception {
 	if len(s) == 2 {
 		return Exception{ExceptionDetails: common.ExceptionDetails{
@@ -68,8 +62,6 @@ func StyleNotDefined(s ...string) Exception {
 }
 
 // LayerNotQueryable Exception
-//
-//nolint:goconst
 func LayerNotQueryable(s ...string) Exception {
 	if len(s) == 1 {
 		return Exception{ExceptionDetails: common.ExceptionDetails{
@@ -122,8 +114,6 @@ func InvalidDimensionValue() Exception {
 }
 
 // MissingParameterValue Exception
-//
-//nolint:goconst
 func MissingParameterValue(s ...string) Exception {
 	if len(s) >= 2 {
 		return Exception{ExceptionDetails: common.ExceptionDetails{ExceptionText: fmt.Sprintf("%s key got incorrect value: %s", s[0], s[1]), ExceptionCode: "MissingParameterValue", LocatorCode: s[0]}}

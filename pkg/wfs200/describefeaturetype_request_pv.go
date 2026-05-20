@@ -7,15 +7,14 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-//nolint:govet,staticcheck
+//nolint:govet
 type describeFeatureTypeRequestParameterValue struct {
 	service string `yaml:"service" json:"service"`
 	baseParameterValueRequest
 	typeName     *string `yaml:"typeName" json:"typeName"`         // [0..*]
-	OutputFormat *string `yaml:"outputFormat" json:"outputFormat"` // default: "text/xml; subtype=gml/3.2"
+	outputFormat *string `yaml:"outputFormat" json:"outputFormat"` // default: "text/xml; subtype=gml/3.2"
 }
 
-//nolint:staticcheck
 func (dpv *describeFeatureTypeRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
@@ -34,7 +33,7 @@ func (dpv *describeFeatureTypeRequestParameterValue) parseQueryParameters(query 
 				dpv.typeName = &vp
 			case OUTPUTFORMAT:
 				vp := v[0]
-				dpv.OutputFormat = &vp
+				dpv.outputFormat = &vp
 			}
 		}
 	}
@@ -51,7 +50,7 @@ func (dpv *describeFeatureTypeRequestParameterValue) parseDescribeFeatureTypeReq
 	dpv.version = dft.Version
 	dpv.service = dft.Service
 	dpv.typeName = dft.TypeNames
-	dpv.OutputFormat = dft.OutputFormat
+	dpv.outputFormat = dft.OutputFormat
 }
 
 func (dpv describeFeatureTypeRequestParameterValue) toQueryParameters() url.Values {
@@ -62,8 +61,8 @@ func (dpv describeFeatureTypeRequestParameterValue) toQueryParameters() url.Valu
 	if dpv.typeName != nil {
 		querystring[TYPENAME] = []string{*dpv.typeName}
 	}
-	if dpv.OutputFormat != nil {
-		querystring[OUTPUTFORMAT] = []string{*dpv.OutputFormat}
+	if dpv.outputFormat != nil {
+		querystring[OUTPUTFORMAT] = []string{*dpv.outputFormat}
 	}
 	return querystring
 }

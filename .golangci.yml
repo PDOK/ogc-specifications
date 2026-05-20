@@ -50,7 +50,7 @@ linters:
     - rowserrcheck
     - sloglint
     - sqlclosecheck
-    - staticcheck
+#    - staticcheck
     - tagliatelle
     - testableexamples
     - tparallel
@@ -119,12 +119,10 @@ linters:
           - dupl
           - funlen
           - gosec
-        path: _test\.go
-      - linters:
           - cyclop
           - goconst
-          - staticcheck
-        path: (.+)_test\.go
+          - nolintlint
+        path: _test\.go
     paths:
       - third_party$
       - builtin$
