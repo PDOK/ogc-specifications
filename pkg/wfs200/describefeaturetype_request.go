@@ -83,8 +83,8 @@ func (d *DescribeFeatureTypeRequest) parsedescribeFeatureTypeRequestParameterVal
 
 	d.TypeNames = dpv.typeName
 
-	if dpv.OutputFormat != nil {
-		d.OutputFormat = dpv.OutputFormat
+	if dpv.outputFormat != nil {
+		d.OutputFormat = dpv.outputFormat
 	} else {
 		s := gml32
 		d.OutputFormat = &(s)

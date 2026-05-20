@@ -27,8 +27,6 @@ type ServiceExceptionReport struct {
 }
 
 // ToReport builds a ServiceExceptionReport from an array of Exceptions
-//
-//nolint:goconst
 func (e Exceptions) ToReport() ServiceExceptionReport {
 	r := ServiceExceptionReport{}
 	r.SchemaLocation = `http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd`
