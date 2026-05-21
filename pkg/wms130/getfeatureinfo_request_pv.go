@@ -101,7 +101,7 @@ func (ipv getFeatureInfoRequestParameterValue) toQueryParameters() url.Values {
 }
 
 // parseGetFeatureInfoRequest builds a getFeatureInfoRequestParameterValue object based on a GetFeatureInfoRequest struct
-func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i GetFeatureInfoRequest) {
+func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i GetFeatureInfoRequest) Exceptions {
 
 	ipv.request = getfeatureinfo
 	ipv.version = Version
@@ -126,6 +126,8 @@ func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i Get
 	}
 
 	ipv.exceptions = i.Exceptions
+
+	return nil
 }
 
 // GetFeatureInfoParameterValueMandatory struct containing the mandatory WMS request Parameter Value

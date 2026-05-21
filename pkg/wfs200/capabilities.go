@@ -6,12 +6,12 @@ import (
 )
 
 // ParseXML func
-func (c *Capabilities) ParseXML(_ []byte) error {
+func (c *Capabilities) ParseXML(doc []byte) error {
 	return nil
 }
 
 // ParseYAML func
-func (c *Capabilities) ParseYAML(_ []byte) error {
+func (c *Capabilities) ParseYAML(doc []byte) error {
 	return nil
 }
 

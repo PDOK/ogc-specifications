@@ -327,12 +327,11 @@ func (fpv getFeatureRequestParameterValue) toQueryParameters() url.Values {
 	}
 	// // Projection_clause not implemented
 
-	switch {
-	case fpv.filter != nil:
+	if fpv.filter != nil {
 		query[FILTER] = []string{*fpv.filter}
-	case fpv.resourceid != nil:
+	} else if fpv.resourceid != nil {
 		query[RESOURCEID] = []string{*fpv.resourceid}
-	case fpv.bbox != nil:
+	} else if fpv.bbox != nil {
 		query[BBOX] = []string{*fpv.bbox}
 	}
 
