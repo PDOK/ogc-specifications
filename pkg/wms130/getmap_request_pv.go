@@ -16,8 +16,6 @@ type getMapRequestParameterValue struct {
 }
 
 // parseQueryParameters builds a getMapRequestParameterValue object based on the available query parameters
-//
-//nolint:cyclop,staticcheck
 func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	params := make(map[string]bool)

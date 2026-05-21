@@ -15,7 +15,6 @@ func TestGetCapabilitiesType(t *testing.T) {
 	}
 }
 
-//nolint:nestif
 func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
 		body      []byte

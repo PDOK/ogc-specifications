@@ -15,7 +15,6 @@ func TestDescribeFeatureTypeType(t *testing.T) {
 	}
 }
 
-//nolint:nestif
 func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	var tests = []struct {
 		body      []byte
@@ -101,7 +100,6 @@ func TestDescribeFeatureTypeParseXML(t *testing.T) {
 	}
 }
 
-//nolint:nestif
 func TestDescribeFeatureTypeParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query     url.Values

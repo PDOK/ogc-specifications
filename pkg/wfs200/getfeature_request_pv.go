@@ -46,8 +46,6 @@ type standardResolveParameters struct {
 
 // AdhocQueryKeywords struct
 // NOTE filter, resourceid and bbox are mutually exclusive
-//
-//nolint:tagliatelle
 type adhocQueryKeywords struct {
 	// Table 8
 	typenames string  `yaml:"typenames"`
@@ -68,7 +66,6 @@ type storedQueryKeywords struct {
 	// storedquery_parameter not implemented
 }
 
-//nolint:cyclop,nestif
 func (fpv *getFeatureRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
@@ -172,8 +169,7 @@ func (fpv *getFeatureRequestParameterValue) parseQueryParameters(query url.Value
 	return nil
 }
 
-//nolint:cyclop,funlen
-func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureRequest) {
+func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureRequest) []wsc110.Exception {
 
 	fpv.request = getfeature
 	fpv.version = Version
@@ -250,14 +246,13 @@ func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureR
 	}
 
 	if f.Query.Filter != nil {
-		switch {
-		case f.Query.Filter.ResourceID != nil:
+		if f.Query.Filter.ResourceID != nil {
 			s := f.Query.Filter.ResourceID.toString()
 			fpv.resourceid = &(s)
-		case f.Query.Filter.BBOX != nil:
+		} else if f.Query.Filter.BBOX != nil {
 			s := f.Query.Filter.BBOX.MarshalText()
 			fpv.bbox = &s
-		default:
+		} else {
 			f := f.Query.Filter.toString()
 			fpv.filter = &f
 		}
@@ -273,9 +268,10 @@ func (fpv *getFeatureRequestParameterValue) parseGetFeatureRequest(f GetFeatureR
 
 	// TODO
 	// fpv.storedQueryKeywords.storedqueryid = v[0]
+
+	return nil
 }
 
-//nolint:cyclop
 func (fpv getFeatureRequestParameterValue) toQueryParameters() url.Values {
 	query := make(map[string][]string)
 
