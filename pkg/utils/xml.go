@@ -9,13 +9,13 @@ type XMLAttribute []xml.Attr
 
 // StripDuplicateAttr removes the duplicate Attributes from a []Attribute
 func StripDuplicateAttr(attr []xml.Attr) []xml.Attr {
-	attributeMap := make(map[xml.Name]string)
+	attributemap := make(map[xml.Name]string)
 	for _, a := range attr {
-		attributeMap[xml.Name{Space: a.Name.Space, Local: a.Name.Local}] = a.Value
+		attributemap[xml.Name{Space: a.Name.Space, Local: a.Name.Local}] = a.Value
 	}
 
 	var strippedAttr []xml.Attr
-	for k, v := range attributeMap {
+	for k, v := range attributemap {
 		strippedAttr = append(strippedAttr, xml.Attr{Name: k, Value: v})
 	}
 	return strippedAttr
@@ -23,18 +23,21 @@ func StripDuplicateAttr(attr []xml.Attr) []xml.Attr {
 
 // UnmarshalXML func for the XMLAttr struct
 func (xmlattr *XMLAttribute) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var newAttributes XMLAttribute
+	var newattributes XMLAttribute
 	for _, attr := range start.Attr {
-		newAttributes = append(newAttributes, xml.Attr{Name: attr.Name, Value: attr.Value})
+		switch attr.Name.Local {
+		default:
+			newattributes = append(newattributes, xml.Attr{Name: attr.Name, Value: attr.Value})
+		}
 	}
-	*xmlattr = newAttributes
+	*xmlattr = newattributes
 
 	for {
 		// if it got this far the XML is 'valid' and the xmlattr are set
 		// so we ignore the err
 		token, _ := d.Token()
-
-		if el, ok := token.(xml.EndElement); ok {
+		switch el := token.(type) {
+		case xml.EndElement:
 			if el == start.End() {
 				return nil
 			}

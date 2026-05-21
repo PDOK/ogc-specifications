@@ -2,7 +2,6 @@ package wms130
 
 import (
 	"encoding/xml"
-	"errors"
 	"net/url"
 	"strings"
 	"testing"
@@ -149,8 +148,8 @@ func TestGetFeatureInfoToXML(t *testing.T) {
 	for k, test := range tests {
 		body := test.gfi.ToXML()
 
-		x := strings.ReplaceAll(string(body), "\n", ``)
-		y := strings.ReplaceAll(test.result, "\n", ``)
+		x := strings.Replace(string(body), "\n", ``, -1)
+		y := strings.Replace(test.result, "\n", ``, -1)
 
 		if x != y {
 			t.Errorf("test: %d, Expected body: \n%s\nbut was not got: \n%s", k, y, x)
@@ -158,7 +157,6 @@ func TestGetFeatureInfoToXML(t *testing.T) {
 	}
 }
 
-//nolint:nestif
 func TestGetFeatureInfoParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query      url.Values
@@ -235,8 +233,8 @@ func TestGetFeatureInfoParseQueryParameters(t *testing.T) {
 			} else {
 				for _, exception := range exceptions {
 					found := false
-					for _, testException := range test.exceptions {
-						if errors.Is(testException, exception) {
+					for _, testexception := range test.exceptions {
+						if testexception == exception {
 							found = true
 						}
 					}
@@ -339,7 +337,6 @@ func TestGetFeatureInfoParseXML(t *testing.T) {
 	}
 }
 
-//nolint:cyclop
 func compareGetFeatureInfoObject(result, expected GetFeatureInfoRequest, t *testing.T, k int) {
 	if result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test Version: %d, expected: %s ,\n got: %s", k, expected.Version, result.Version)

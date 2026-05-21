@@ -2,7 +2,6 @@ package wsc110
 
 import (
 	"encoding/xml"
-
 	"github.com/pdok/ogc-specifications/pkg/common"
 )
 

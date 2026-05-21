@@ -5,12 +5,12 @@ import (
 )
 
 // ParseXML func
-func (c *Contents) ParseXML(_ []byte) error {
+func (c *Contents) ParseXML(doc []byte) error {
 	return nil
 }
 
 // ParseYAML func
-func (c *Contents) ParseYAML(_ []byte) error {
+func (c *Contents) ParseYAML(doc []byte) error {
 	return nil
 }
 

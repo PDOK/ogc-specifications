@@ -63,7 +63,7 @@ func LockHasExpired() wsc110.Exception {
 // OperationParsingFailed exception
 func OperationParsingFailed(value, locator string) wsc110.Exception {
 	return exception{
-		ExceptionText: "Failed to parse the operation, found: " + value,
+		ExceptionText: fmt.Sprintf("Failed to parse the operation, found: %s", value),
 		LocatorCode:   locator,
 		ExceptionCode: "OperationParsingFailed"}
 }
