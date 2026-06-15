@@ -32,11 +32,9 @@ type Capabilities struct {
 }
 
 // WMSCapabilities base struct
-//
-//nolint:tagliatelle
 type WMSCapabilities struct {
 	Request              Request               `xml:"Request" yaml:"request"`
-	Exception            ExceptionType         `xml:"Exception" yaml:"Exception"`
+	Exception            ExceptionType         `xml:"Exception" yaml:"exception"`
 	ExtendedCapabilities *ExtendedCapabilities `xml:"inspire_vs:ExtendedCapabilities" yaml:"extendedCapabilities,omitempty"`
 	Layer                []Layer               `xml:"Layer" yaml:"layer"`
 }
