@@ -1,12 +1,12 @@
 package wcs201
 
 // ParseXML func
-func (c *Capabilities) ParseXML(doc []byte) error {
+func (c *Capabilities) ParseXML(_ []byte) error {
 	return nil
 }
 
 // ParseYAML func
-func (c *Capabilities) ParseYAML(doc []byte) error {
+func (c *Capabilities) ParseYAML(_ []byte) error {
 	return nil
 }
 

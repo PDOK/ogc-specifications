@@ -47,15 +47,15 @@ type GetCapabilitiesResponse struct {
 
 // Namespaces struct containing the namespaces needed for the XML document
 type Namespaces struct {
-	XmlnsGML           string `xml:"xmlns:gml,attr" yaml:"gml"`                                          //http://www.opengis.net/gml/3.2
-	XmlnsWFS           string `xml:"xmlns,attr" yaml:"wfs"`                                              //http://www.opengis.net/wfs/2.0
-	XmlnsOWS           string `xml:"xmlns:ows,attr" yaml:"common"`                                       //http://www.opengis.net/ows/1.1
-	XmlnsXlink         string `xml:"xmlns:xlink,attr" yaml:"xlink"`                                      //http://www.w3.org/1999/xlink
-	XmlnsXSI           string `xml:"xmlns:xsi,attr" yaml:"xsi"`                                          //http://www.w3.org/2001/XMLSchema-instance
-	XmlnsFes           string `xml:"xmlns:fes,attr" yaml:"fes"`                                          //http://www.opengis.net/fes/2.0
-	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspireCommon,omitempty"` //http://inspire.ec.europa.eu/schemas/common/1.0
-	XmlnsInspireDls    string `xml:"xmlns:inspire_dls,attr,omitempty" yaml:"inspireDls,omitempty"`       //http://inspire.ec.europa.eu/schemas/inspire_dls/1.0
-	XmlnsPrefix        string `xml:"xmlns:{{.Prefix}},attr" yaml:"prefix"`                               //namespace_uri placeholder
+	XmlnsGML           string `xml:"xmlns:gml,attr" yaml:"gml"`                                          // http://www.opengis.net/gml/3.2
+	XmlnsWFS           string `xml:"xmlns,attr" yaml:"wfs"`                                              // http://www.opengis.net/wfs/2.0
+	XmlnsOWS           string `xml:"xmlns:ows,attr" yaml:"common"`                                       // http://www.opengis.net/ows/1.1
+	XmlnsXlink         string `xml:"xmlns:xlink,attr" yaml:"xlink"`                                      // http://www.w3.org/1999/xlink
+	XmlnsXSI           string `xml:"xmlns:xsi,attr" yaml:"xsi"`                                          // http://www.w3.org/2001/XMLSchema-instance
+	XmlnsFes           string `xml:"xmlns:fes,attr" yaml:"fes"`                                          // http://www.opengis.net/fes/2.0
+	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspireCommon,omitempty"` // http://inspire.ec.europa.eu/schemas/common/1.0
+	XmlnsInspireDls    string `xml:"xmlns:inspire_dls,attr,omitempty" yaml:"inspireDls,omitempty"`       // http://inspire.ec.europa.eu/schemas/inspire_dls/1.0
+	XmlnsPrefix        string `xml:"xmlns:{{.Prefix}},attr" yaml:"prefix"`                               // namespace_uri placeholder
 	Version            string `xml:"version,attr" yaml:"version"`
 	SchemaLocation     string `xml:"xsi:schemaLocation,attr" yaml:"schemaLocation"`
 }
