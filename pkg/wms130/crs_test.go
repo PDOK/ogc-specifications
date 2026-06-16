@@ -31,10 +31,8 @@ othercrs:
 		err := yaml.Unmarshal(test.yaml, &ftl)
 		if err != nil {
 			t.Errorf("test: %d, yaml.UnMarshal failed with '%s'\n", k, err)
-		} else {
-			if ftl.DefaultCRS.Code != test.expectedCrs.Code || ftl.DefaultCRS.Namespace != test.expectedCrs.Namespace {
-				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedCrs, ftl.DefaultCRS)
-			}
+		} else if ftl.DefaultCRS.Code != test.expectedCrs.Code || ftl.DefaultCRS.Namespace != test.expectedCrs.Namespace {
+			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedCrs, ftl.DefaultCRS)
 		}
 	}
 }

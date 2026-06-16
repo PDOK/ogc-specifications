@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+//nolint:nestif
 func TestGetCapabilitiesParseXML(t *testing.T) {
 	var tests = []struct {
 		body      []byte
@@ -59,6 +60,7 @@ func TestGetCapabilitiesParseXML(t *testing.T) {
 	}
 }
 
+//nolint:nestif
 func TestGetCapabilitiesParseQueryParameters(t *testing.T) {
 	var tests = []struct {
 		query      url.Values
@@ -95,7 +97,7 @@ func TestGetCapabilitiesParseQueryParameters(t *testing.T) {
 					}
 				}
 				if !found {
-					t.Errorf("test exception: %d, expected one of: %s ,\n got: %s", k, test.exceptions, exception.Error())
+					t.Errorf("test Exception: %d, expected one of: %s ,\n got: %s", k, test.exceptions, exception.Error())
 				}
 			}
 		} else {

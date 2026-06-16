@@ -56,6 +56,8 @@ func (b *BaseRequest) ParseQueryParameters(q url.Values) Exceptions {
 }
 
 // parseBaseParameterValueRequest builds a BaseRequest struct
+//
+//nolint:unparam
 func (b *BaseRequest) parseBaseParameterValueRequest(bpv baseParameterValueRequest) Exceptions {
 	// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
 	b.Service = Service

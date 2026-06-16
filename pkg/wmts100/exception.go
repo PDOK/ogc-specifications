@@ -2,8 +2,8 @@ package wmts100
 
 import (
 	"encoding/xml"
-	"github.com/pdok/ogc-specifications/pkg/common"
 
+	"github.com/pdok/ogc-specifications/pkg/common"
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 

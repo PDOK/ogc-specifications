@@ -21,7 +21,7 @@ func (d DescribeFeatureTypeRequest) Type() string {
 }
 
 // Validate returns GetCapabilities
-func (d DescribeFeatureTypeRequest) Validate(c wsc110.Capabilities) []wsc110.Exception {
+func (d DescribeFeatureTypeRequest) Validate(_ wsc110.Capabilities) []wsc110.Exception {
 	return nil
 }
 
@@ -83,8 +83,8 @@ func (d *DescribeFeatureTypeRequest) parsedescribeFeatureTypeRequestParameterVal
 
 	d.TypeNames = dpv.typeName
 
-	if dpv.outputFormat != nil {
-		d.OutputFormat = dpv.outputFormat
+	if dpv.OutputFormat != nil {
+		d.OutputFormat = dpv.OutputFormat
 	} else {
 		s := gml32
 		d.OutputFormat = &(s)
