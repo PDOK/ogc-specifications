@@ -43,6 +43,7 @@ type GetMapRequest struct {
 	// TODO: something with Time & Elevation
 	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
 	// Time                  *string               `xml:"Time" yaml:"time"`
+	VendorSpecificParameters map[string]string `xml:"-" yaml:"vendorParameters,omitempty"`
 }
 
 // Validate validates a GetMapRequest
@@ -109,6 +110,7 @@ func (m *GetMapRequest) parsegetMapRequestParameterValue(mpv getMapRequestParame
 	m.Output = output
 
 	m.Exceptions = mpv.exceptions
+	m.VendorSpecificParameters = mpv.vendorParameters
 
 	return nil
 }

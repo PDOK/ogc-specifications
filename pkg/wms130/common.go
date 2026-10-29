@@ -20,6 +20,7 @@ const (
 	SERVICE = `SERVICE`
 	REQUEST = `REQUEST`
 	VERSION = `VERSION`
+	CRS_KEY = `CRS`
 )
 
 // baseParameterValueRequest struct
