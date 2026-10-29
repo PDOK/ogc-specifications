@@ -18,7 +18,7 @@ type getFeatureInfoRequestParameterValue struct {
 
 // parseQueryParameters builds a getFeatureInfoRequestParameterValue object based on the available query parameters
 //
-//nolint:cyclop,staticcheck,goconst
+//nolint:cyclop,staticcheck
 func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.Values) (exceptions Exceptions) {
 	for k, v := range query {
 		if len(v) != 1 {
@@ -36,7 +36,7 @@ func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.V
 			ipv.getMapParameterValueMandatory.layers = v[0]
 		case STYLES:
 			ipv.getMapParameterValueMandatory.styles = v[0]
-		case "CRS":
+		case CRS_KEY:
 			ipv.getMapParameterValueMandatory.crs = v[0]
 		case BBOX:
 			ipv.getMapParameterValueMandatory.bbox = v[0]
@@ -77,7 +77,7 @@ func (ipv getFeatureInfoRequestParameterValue) toQueryParameters() url.Values {
 	query[REQUEST] = []string{ipv.request}
 	query[LAYERS] = []string{ipv.layers}
 	query[STYLES] = []string{ipv.styles}
-	query["CRS"] = []string{ipv.crs}
+	query[CRS_KEY] = []string{ipv.crs}
 	query[BBOX] = []string{ipv.bbox}
 	query[WIDTH] = []string{ipv.width}
 	query[HEIGHT] = []string{ipv.height}
