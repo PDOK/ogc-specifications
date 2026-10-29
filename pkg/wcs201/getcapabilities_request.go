@@ -23,7 +23,7 @@ func (gc *GetCapabilitiesRequest) Type() string {
 }
 
 // Validate validates the GetCapabilities struct
-func (gc *GetCapabilitiesRequest) Validate(c Capabilities) []wsc200.Exception {
+func (gc *GetCapabilitiesRequest) Validate(_ Capabilities) []wsc200.Exception {
 	return nil
 }
 
@@ -86,8 +86,8 @@ func (gc GetCapabilitiesRequest) ToXML() []byte {
 
 // GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilitiesRequest struct {
-	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getcapabilities"`
+	XMLName xml.Name           `xml:"GetCapabilities" yaml:"getCapabilities"`
 	Service string             `xml:"service,attr" yaml:"service"`
 	Version string             `xml:"version,attr" yaml:"version"`
-	Attr    utils.XMLAttribute `xml:",attr"`
+	Attr    utils.XMLAttribute `xml:",attr" yaml:"attr"`
 }

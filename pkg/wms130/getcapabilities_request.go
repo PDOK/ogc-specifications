@@ -11,12 +11,12 @@ import (
 
 // GetCapabilitiesRequest struct with the needed parameters/attributes needed for making a GetCapabilities request
 type GetCapabilitiesRequest struct {
-	XMLName xml.Name `xml:"GetCapabilities" yaml:"getcapabilities"`
+	XMLName xml.Name `xml:"GetCapabilities" yaml:"getCapabilities"`
 	BaseRequest
 }
 
 // Validate returns GetCapabilities
-func (g *GetCapabilitiesRequest) Validate(c Capabilities) Exceptions {
+func (g *GetCapabilitiesRequest) Validate(_ Capabilities) Exceptions {
 	var exceptions Exceptions
 	return exceptions
 }
@@ -57,15 +57,17 @@ func (g *GetCapabilitiesRequest) ParseQueryParameters(query url.Values) Exceptio
 		return exception
 	}
 
-	if exception := g.parsegetCapabilitiesRequestParameterValue(gpv); exception != nil {
+	if exception := g.parseGetCapabilitiesRequestParameterValue(gpv); exception != nil {
 		return exception
 	}
 
 	return nil
 }
 
-// parsegetCapabilitiesRequestParameterValue process the simple struct to a complex struct
-func (g *GetCapabilitiesRequest) parsegetCapabilitiesRequestParameterValue(gpv getCapabilitiesRequestParameterValue) Exceptions {
+// parseGetCapabilitiesRequestParameterValue process the simple struct to a complex struct
+//
+//nolint:staticcheck
+func (g *GetCapabilitiesRequest) parseGetCapabilitiesRequestParameterValue(gpv getCapabilitiesRequestParameterValue) Exceptions {
 
 	g.XMLName.Local = gpv.request
 	g.BaseRequest.parseBaseParameterValueRequest(gpv.baseParameterValueRequest)

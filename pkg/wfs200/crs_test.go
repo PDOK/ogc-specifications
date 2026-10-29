@@ -51,10 +51,28 @@ othercrs:
 		err := yaml.Unmarshal(test.yaml, &ftl)
 		if err != nil {
 			t.Errorf("test: %d, yaml.UnMarshal failed with '%s'\n", k, err)
-		} else {
-			if ftl.DefaultCRS.Code != test.expectedcrs.Code || ftl.DefaultCRS.Namespace != test.expectedcrs.Namespace {
-				t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedcrs, ftl.DefaultCRS)
-			}
+		} else if ftl.DefaultCRS.Code != test.expectedcrs.Code || ftl.DefaultCRS.Namespace != test.expectedcrs.Namespace {
+			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedcrs, ftl.DefaultCRS)
+		}
+	}
+}
+
+func TestMarshalYAMLCrs(t *testing.T) {
+	var stringYAML = `urn:ogc:def:crs:EPSG::4326
+`
+	tests := []struct {
+		CRS          *CRS
+		expectedYAML string
+	}{
+		0: {CRS: &CRS{Code: 4326, Namespace: codeSpace}, expectedYAML: stringYAML},
+	}
+	for k, test := range tests {
+		yamlCRS, err := yaml.Marshal(test.CRS)
+
+		if err != nil {
+			t.Errorf("test: %d, yaml.Marshal failed with '%s'\n", k, err)
+		} else if stringCRS := string(yamlCRS); stringCRS != test.expectedYAML {
+			t.Errorf("test: %d, expected: %v+,\n got: %v+", k, test.expectedYAML, stringCRS)
 		}
 	}
 }

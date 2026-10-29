@@ -35,14 +35,15 @@ const (
 type GetMapRequest struct {
 	XMLName xml.Name `xml:"GetMap" yaml:"getmap"`
 	BaseRequest
-	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledlayerdescriptor"`
+	StyledLayerDescriptor StyledLayerDescriptor `xml:"StyledLayerDescriptor" yaml:"styledLayerDescriptor"`
 	CRS                   CRS                   `xml:"CRS" yaml:"crs"`
-	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingbox"`
+	BoundingBox           BoundingBox           `xml:"BoundingBox" yaml:"boundingBox"`
 	Output                Output                `xml:"Output" yaml:"output"`
 	Exceptions            *string               `xml:"Exceptions" yaml:"exceptions"`
 	// TODO: something with Time & Elevation
 	// Elevation             *[]Elevation          `xml:"Elevation" yaml:"elevation"`
 	// Time                  *string               `xml:"Time" yaml:"time"`
+	VendorSpecificParameters map[string]string `xml:"-" yaml:"vendorParameters,omitempty"`
 }
 
 // Validate validates a GetMapRequest
@@ -80,6 +81,8 @@ func (m *GetMapRequest) ParseQueryParameters(query url.Values) Exceptions {
 }
 
 // parsegetMapRequestParameterValue process the simple struct to a complex struct
+//
+//nolint:staticcheck
 func (m *GetMapRequest) parsegetMapRequestParameterValue(mpv getMapRequestParameterValue) Exceptions {
 	m.XMLName.Local = getmap
 	m.BaseRequest.parseBaseParameterValueRequest(mpv.baseParameterValueRequest)
@@ -107,17 +110,22 @@ func (m *GetMapRequest) parsegetMapRequestParameterValue(mpv getMapRequestParame
 	m.Output = output
 
 	m.Exceptions = mpv.exceptions
+	m.VendorSpecificParameters = mpv.vendorParameters
 
 	return nil
 }
 
 // ParseXML builds a GetMap object based on a XML document
+//
+//nolint:staticcheck
 func (m *GetMapRequest) ParseXML(body []byte) Exceptions {
 	var xmlattributes utils.XMLAttribute
 	if err := xml.Unmarshal(body, &xmlattributes); err != nil {
 		return Exceptions{MissingParameterValue()}
 	}
-	xml.Unmarshal(body, &m) //When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
+	// When object can be Unmarshalled -> XMLAttributes, it can be Unmarshalled -> GetMap
+	_ = xml.Unmarshal(body, &m)
+
 	var n []xml.Attr
 	for _, a := range xmlattributes {
 		switch strings.ToUpper(a.Name.Local) {
@@ -163,7 +171,7 @@ func (output *Output) Validate(c Capabilities) Exceptions {
 		exceptions = append(exceptions, NoApplicableCode(fmt.Sprintf("Image size out of range, HEIGHT must be between 1 and %d pixels", c.MaxHeight)))
 	}
 
-	for _, format := range c.WMSCapabilities.Request.GetMap.Format {
+	for _, format := range c.Request.GetMap.Format {
 		found := false
 		if format == output.Format {
 			found = true
@@ -192,7 +200,7 @@ type Size struct {
 // StyledLayerDescriptor struct
 type StyledLayerDescriptor struct {
 	Version    string       `xml:"version,attr" yaml:"version"`
-	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedlayer"`
+	NamedLayer []NamedLayer `xml:"NamedLayer" yaml:"namedLayer"`
 }
 
 // Validate the StyledLayerDescriptor
@@ -277,7 +285,7 @@ func (sld *StyledLayerDescriptor) getNamedStyles() []string {
 // NamedLayer struct
 type NamedLayer struct {
 	Name       string      `xml:"Name" yaml:"name"`
-	NamedStyle *NamedStyle `xml:"NamedStyle" yaml:"namedstyle"`
+	NamedStyle *NamedStyle `xml:"NamedStyle" yaml:"namedStyle"`
 }
 
 // NamedStyle contains the style name that needs be applied
@@ -296,6 +304,7 @@ type Elevation struct {
 	} `xml:"Interval" yaml:"interval"`
 }
 
+//nolint:goconst
 func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor, Exceptions) {
 	// Because the LAYERS & STYLES parameters are intertwined we process as follows:
 	// 1. cnt(STYLE) == 0 -> Added LAYERS
@@ -307,29 +316,29 @@ func buildStyledLayerDescriptor(layers, styles []string) (StyledLayerDescriptor,
 	//    That is because POST xml and GET Parameter Value request handle this 'different' (at least not in the same way...)
 	//    When 3 is hit the validation at the Validation step wil resolve this
 
+	switch {
 	// 1.
-	if len(styles) == 0 {
+	case len(styles) == 0:
 		var sld StyledLayerDescriptor
 		for _, layer := range layers {
 			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer})
 		}
 		sld.Version = "1.1.0"
 		return sld, nil
-		// 2.
-	} else if len(layers) == 0 {
+	// 2.
+	case len(layers) == 0:
 		// do nothing
 		// will be resolved during validation
-
-		// 3.
-	} else if len(layers) == len(styles) {
+	// 3.
+	case len(layers) == len(styles):
 		var sld StyledLayerDescriptor
 		for k, layer := range layers {
 			sld.NamedLayer = append(sld.NamedLayer, NamedLayer{Name: layer, NamedStyle: &NamedStyle{Name: styles[k]}})
 		}
 		sld.Version = "1.1.0"
 		return sld, nil
-		// 4.
-	} else if len(layers) != len(styles) {
+	// 4.
+	case len(layers) != len(styles):
 		return StyledLayerDescriptor{}, StyleNotDefined().ToExceptions()
 	}
 

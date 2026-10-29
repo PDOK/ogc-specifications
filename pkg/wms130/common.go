@@ -6,7 +6,6 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/utils"
 )
 
-//
 const (
 	getcapabilities = `GetCapabilities`
 	getmap          = `GetMap`
@@ -21,6 +20,7 @@ const (
 	SERVICE = `SERVICE`
 	REQUEST = `REQUEST`
 	VERSION = `VERSION`
+	CRS_KEY = `CRS`
 )
 
 // baseParameterValueRequest struct
@@ -35,7 +35,7 @@ type baseParameterValueRequest struct {
 type BaseRequest struct {
 	Service string             `xml:"service,attr" yaml:"service,omitempty"`
 	Version string             `xml:"version,attr" yaml:"version"`
-	Attr    utils.XMLAttribute `xml:",attr"`
+	Attr    utils.XMLAttribute `xml:",attr" yaml:"attr"`
 }
 
 // ParseQueryParameters builds a BaseRequest struct based on the given parameters
@@ -57,6 +57,8 @@ func (b *BaseRequest) ParseQueryParameters(q url.Values) Exceptions {
 }
 
 // parseBaseParameterValueRequest builds a BaseRequest struct
+//
+//nolint:unparam
 func (b *BaseRequest) parseBaseParameterValueRequest(bpv baseParameterValueRequest) Exceptions {
 	// Service is optional, because it's implicit for a GetMap/GetFeatureInfo request
 	b.Service = Service

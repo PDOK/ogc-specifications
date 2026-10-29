@@ -31,11 +31,13 @@ func (gc GetCapabilitiesResponse) ToXML() []byte {
 
 // GetCapabilitiesResponse base struct
 type GetCapabilitiesResponse struct {
-	XMLName               xml.Name `xml:"wcs:Capabilities"`
-	Namespaces            `yaml:"namespaces"`
-	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceidentification"`
-	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceprovider"`
-	Capabilities
+	XMLName xml.Name `xml:"wcs:Capabilities" yaml:"wcsCapabilities"`
+	Namespaces
+	ServiceIdentification ServiceIdentification `xml:"ows:ServiceIdentification" yaml:"serviceIdentification"`
+	ServiceProvider       ServiceProvider       `xml:"ows:ServiceProvider" yaml:"serviceProvider"`
+	OperationsMetadata    OperationsMetadata    `xml:"ows:OperationsMetadata" yaml:"operationsMetadata"`
+	ServiceMetadata       ServiceMetadata       `xml:"wcs:ServiceMetadata" yaml:"serviceMetadata"`
+	Contents              Contents              `xml:"wcs:Contents" yaml:"contents"`
 }
 
 // Namespaces struct containing the namespaces needed for the XML document
@@ -48,59 +50,80 @@ type Namespaces struct {
 	XmlnsGML           string `xml:"xmlns:gml,attr" yaml:"gml"`                                //http://www.opengis.net/gml/3.2
 	XmlnsGMLcov        string `xml:"xmlns:gmlcov,attr" yaml:"gmlcov"`                          //http://www.opengis.net/gmlcov/1.0
 	XmlnsSWE           string `xml:"xmlns:swe,attr" yaml:"swe"`                                //http://www.opengis.net/swe/2.0
-	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspirecommon"` //http://inspire.ec.europa.eu/schemas/common/1.0
-	XmlnsInspireDls    string `xml:"xmlns:inspire_dls,attr,omitempty" yaml:"inspiredls"`       //http://inspire.ec.europa.eu/schemas/inspire_dls/1.0
+	XmlnsInspireCommon string `xml:"xmlns:inspire_common,attr,omitempty" yaml:"inspireCommon"` //http://inspire.ec.europa.eu/schemas/common/1.0
+	XmlnsInspireDls    string `xml:"xmlns:inspire_dls,attr,omitempty" yaml:"inspireDls"`       //http://inspire.ec.europa.eu/schemas/inspire_dls/1.0
 	XmlnsCrs           string `xml:"xmlns:crs,attr" yaml:"crs"`                                //http://www.opengis.net/wcs/crs/1.0
 	XmlnsInt           string `xml:"xmlns:int,attr" yaml:"int"`                                //http://www.opengis.net/wcs/interpolation/1.0
 	Version            string `xml:"version,attr" yaml:"version"`
-	SchemaLocation     string `xml:"xsi:schemaLocation,attr" yaml:"schemalocation"`
+	SchemaLocation     string `xml:"xsi:schemaLocation,attr" yaml:"schemaLocation"`
 }
 
 // ServiceIdentification struct should only be fill by the "template" configuration wcs201.yaml
 type ServiceIdentification struct {
-	Title       string           `xml:"ows:Title" yaml:"title"`
-	Abstract    string           `xml:"ows:Abstract" yaml:"abstract"`
-	Keywords    *wsc200.Keywords `xml:"ows:Keywords" yaml:"keywords"`
-	ServiceType struct {
-		Text      string `xml:",chardata" yaml:"text"`
-		CodeSpace string `xml:"codeSpace,attr" yaml:"codespace"`
-	} `xml:"ows:ServiceType" yaml:"servicetype"`
-	ServiceTypeVersion []string `xml:"ows:ServiceTypeVersion" yaml:"servicetypeversion"`
-	Profile            []string `xml:"ows:Profile" yaml:"profile"`
-	Fees               string   `xml:"ows:Fees" yaml:"fees"`
-	AccessConstraints  string   `xml:"ows:AccessConstraints" yaml:"accessconstraints"`
+	Title              string           `xml:"ows:Title" yaml:"title"`
+	Abstract           string           `xml:"ows:Abstract" yaml:"abstract"`
+	Keywords           *wsc200.Keywords `xml:"ows:Keywords" yaml:"keywords"`
+	ServiceType        ServiceType      `xml:"ows:ServiceType" yaml:"serviceType"`
+	ServiceTypeVersion []string         `xml:"ows:ServiceTypeVersion" yaml:"serviceTypeVersion"`
+	Profile            []string         `xml:"ows:Profile" yaml:"profile"`
+	Fees               string           `xml:"ows:Fees" yaml:"fees"`
+	AccessConstraints  string           `xml:"ows:AccessConstraints" yaml:"accessConstraints"`
+}
+
+// ServiceType struct containing the service type
+type ServiceType struct {
+	Text      string `xml:",chardata" yaml:"text"`
+	CodeSpace string `xml:"codeSpace,attr" yaml:"codeSpace"`
 }
 
 // ServiceProvider struct containing the provider/organization information should only be fill by the "template" configuration wcs201.yaml
 type ServiceProvider struct {
-	ProviderName string `xml:"ows:ProviderName" yaml:"providername"`
-	ProviderSite struct {
-		Type string `xml:"xlink:type,attr" yaml:"type"`
-		Href string `xml:"xlink:href,attr" yaml:"href"`
-	} `xml:"ows:ProviderSite" yaml:"providersite"`
-	ServiceContact struct {
-		IndividualName string `xml:"ows:IndividualName" yaml:"individualname"`
-		PositionName   string `xml:"ows:PositionName" yaml:"positionname"`
-		ContactInfo    struct {
-			Phone struct {
-				Voice     string `xml:"ows:Voice" yaml:"voice"`
-				Facsimile string `xml:"ows:Facsimile" yaml:"facsimile"`
-			} `xml:"ows:Phone" yaml:"phone"`
-			Address struct {
-				DeliveryPoint         string `xml:"ows:DeliveryPoint" yaml:"deliverypoint"`
-				City                  string `xml:"ows:City" yaml:"city"`
-				AdministrativeArea    string `xml:"ows:AdministrativeArea" yaml:"administrativearea"`
-				PostalCode            string `xml:"ows:PostalCode" yaml:"postalcode"`
-				Country               string `xml:"ows:Country" yaml:"country"`
-				ElectronicMailAddress string `xml:"ows:ElectronicMailAddress" yaml:"electronicmailaddress"`
-			} `xml:"ows:Address" yaml:"address"`
-			OnlineResource *struct {
-				Type string `xml:"xlink:type,attr,omitempty" yaml:"type"`
-				Href string `xml:"xlink:href,attr,omitempty" yaml:"href"`
-			} `xml:"ows:OnlineResource,omitempty" yaml:"onlineresource"`
-			HoursOfService      string `xml:"ows:HoursOfService,omitempty" yaml:"hoursofservice"`
-			ContactInstructions string `xml:"ows:ContactInstructions,omitempty" yaml:"contactinstructions"`
-		} `xml:"ows:ContactInfo" yaml:"contactinfo"`
-		Role string `xml:"ows:Role,omitempty" yaml:"role"`
-	} `xml:"ows:ServiceContact" yaml:"servicecontact"`
+	ProviderName   string `xml:"ows:ProviderName" yaml:"providerName"`
+	ProviderSite   `xml:"ows:ProviderSite" yaml:"providerSite"`
+	ServiceContact ServiceContact `xml:"ows:ServiceContact" yaml:"serviceContact"`
+}
+
+// ProviderSite struct containing the website of the provider/organization
+type ProviderSite struct {
+	Type string `xml:"xlink:type,attr" yaml:"type"`
+	Href string `xml:"xlink:href,attr" yaml:"href"`
+}
+
+// ServiceContact struct containing information for the person to contact
+type ServiceContact struct {
+	IndividualName string      `xml:"ows:IndividualName" yaml:"individualName"`
+	PositionName   string      `xml:"ows:PositionName" yaml:"positionName"`
+	ContactInfo    ContactInfo `xml:"ows:ContactInfo" yaml:"contactInfo"`
+	Role           string      `xml:"ows:Role,omitempty" yaml:"role"`
+}
+
+// ContactInfo struct containing the contact information for the service
+type ContactInfo struct {
+	Phone               Phone           `xml:"ows:Phone" yaml:"phone"`
+	Address             Address         `xml:"ows:Address" yaml:"address"`
+	OnlineResource      *OnlineResource `xml:"ows:OnlineResource,omitempty" yaml:"onlineResource"`
+	HoursOfService      string          `xml:"ows:HoursOfService,omitempty" yaml:"hoursOfService"`
+	ContactInstructions string          `xml:"ows:ContactInstructions,omitempty" yaml:"contactInstructions"`
+}
+
+// Phone struct containing the contact telephone or fax number
+type Phone struct {
+	Voice     string `xml:"ows:Voice" yaml:"voice"`
+	Facsimile string `xml:"ows:Facsimile" yaml:"facsimile"`
+}
+
+// Address struct containing the address for the contact supplying the service
+type Address struct {
+	DeliveryPoint         string `xml:"ows:DeliveryPoint" yaml:"deliveryPoint"`
+	City                  string `xml:"ows:City" yaml:"city"`
+	AdministrativeArea    string `xml:"ows:AdministrativeArea" yaml:"administrativeArea"`
+	PostalCode            string `xml:"ows:PostalCode" yaml:"postalCode"`
+	Country               string `xml:"ows:Country" yaml:"country"`
+	ElectronicMailAddress string `xml:"ows:ElectronicMailAddress" yaml:"electronicMailAddress"`
+}
+
+// OnlineResource struct containing the top-level web address of a service or service provider
+type OnlineResource *struct {
+	Type string `xml:"xlink:type,attr,omitempty" yaml:"type"`
+	Href string `xml:"xlink:href,attr,omitempty" yaml:"href"`
 }

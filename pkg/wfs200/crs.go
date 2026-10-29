@@ -5,14 +5,13 @@ import (
 	"strconv"
 )
 
-//
 const (
 	codeSpace = `urn:ogc:def:crs:EPSG:`
 )
 
 // CRS struct with namespace/authority/registry and code
 type CRS struct {
-	Namespace string //TODO maybe AuthorityType is a better name...?
+	Namespace string // TODO maybe AuthorityType is a better name...?
 	Code      int
 }
 

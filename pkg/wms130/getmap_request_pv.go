@@ -6,16 +6,19 @@ import (
 	"strings"
 )
 
-//getMapRequestParameterValue struct
+// getMapRequestParameterValue struct
 type getMapRequestParameterValue struct {
 	// Table 8 - The Parameters of a GetMap request
 	service string `yaml:"service,omitempty"`
 	baseParameterValueRequest
 	getMapParameterValueMandatory
 	getMapParameterValueOptional
+	vendorParameters map[string]string
 }
 
 // parseQueryParameters builds a getMapRequestParameterValue object based on the available query parameters
+//
+//nolint:cyclop,staticcheck,goconst
 func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
 	var exceptions Exceptions
 	params := make(map[string]bool)
@@ -47,11 +50,16 @@ func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) E
 			case FORMAT:
 				mpv.getMapParameterValueMandatory.format = v[0]
 			case TRANSPARENT:
-				mpv.getMapParameterValueOptional.transparent = &(v[0])
+				mpv.transparent = &(v[0])
 			case BGCOLOR:
-				mpv.getMapParameterValueOptional.bgcolor = &(v[0])
+				mpv.bgcolor = &(v[0])
 			case EXCEPTIONS:
-				mpv.getMapParameterValueOptional.exceptions = &(v[0])
+				mpv.exceptions = &(v[0])
+			default:
+				if mpv.vendorParameters == nil {
+					mpv.vendorParameters = make(map[string]string)
+				}
+				mpv.vendorParameters[k] = v[0]
 			}
 		}
 	}
@@ -89,7 +97,7 @@ func (mpv *getMapRequestParameterValue) parseQueryParameters(query url.Values) E
 }
 
 // parseGetMapRequest builds a getMapRequestParameterValue object based on a GetMap struct
-func (mpv *getMapRequestParameterValue) parseGetMapRequest(m GetMapRequest) Exceptions {
+func (mpv *getMapRequestParameterValue) parseGetMapRequest(m GetMapRequest) {
 
 	mpv.request = getmap
 	mpv.version = Version
@@ -117,8 +125,7 @@ func (mpv *getMapRequestParameterValue) parseGetMapRequest(m GetMapRequest) Exce
 	// mpv.Elevation = m.Elevation
 
 	mpv.exceptions = m.Exceptions
-
-	return nil
+	mpv.vendorParameters = m.VendorSpecificParameters
 }
 
 // BuildOutput builds a Output struct from the getMapRequestParameterValue information
@@ -137,7 +144,7 @@ func (mpv *getMapRequestParameterValue) buildOutput() (Output, Exceptions) {
 	output.Size = Size{Height: h, Width: w}
 	output.Format = mpv.format
 	if mpv.transparent != nil {
-		b, err := strconv.ParseBool(*mpv.transparent);
+		b, err := strconv.ParseBool(*mpv.transparent)
 		if err != nil {
 			return output, InvalidParameterValue(*mpv.transparent, TRANSPARENT).ToExceptions()
 		}
@@ -197,7 +204,21 @@ func (mpv *getMapRequestParameterValue) toQueryParameters() url.Values {
 		query[EXCEPTIONS] = []string{*mpv.exceptions}
 	}
 
+	for key, value := range mpv.vendorParameters {
+		if !isStandardGetMapParameter(key) {
+			query[key] = []string{value}
+		}
+	}
+
 	return query
+}
+
+func isStandardGetMapParameter(key string) bool {
+	switch strings.ToUpper(key) {
+	case SERVICE, VERSION, REQUEST, LAYERS, STYLES, CRS_KEY, BBOX, WIDTH, HEIGHT, FORMAT, TRANSPARENT, BGCOLOR, EXCEPTIONS:
+		return true
+	}
+	return false
 }
 
 // getMapParameterValueMandatory struct containing the mandatory WMS request Parameter Value

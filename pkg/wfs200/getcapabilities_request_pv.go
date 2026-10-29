@@ -7,13 +7,15 @@ import (
 	"github.com/pdok/ogc-specifications/pkg/wsc110"
 )
 
-//getCapabilitiesRequestParameterValue struct
+// getCapabilitiesRequestParameterValue struct
 type getCapabilitiesRequestParameterValue struct {
 	service string `yaml:"service,omitempty"`
 	baseParameterValueRequest
 }
 
 // ParseQueryParameters builds a GetCapabilities object based on the available query parameters
+//
+//nolint:staticcheck
 func (gpv *getCapabilitiesRequestParameterValue) parseQueryParameters(query url.Values) []wsc110.Exception {
 	var exceptions []wsc110.Exception
 	for k, v := range query {
@@ -41,14 +43,14 @@ func (gpv *getCapabilitiesRequestParameterValue) parseQueryParameters(query url.
 // parseGetCapabilitiesRequest builds a getCapabilitiesRequestParameterValue object based on a GetCapabilities struct
 // This is a 'dummy' implementation, because for a GetCapabilities request it will always be
 // Mandatory:  REQUEST=GetCapabilities
-//             SERVICE=WFS
+//
+//	SERVICE=WFS
+//
 // Optional:   VERSION=2.0.0
-func (gpv *getCapabilitiesRequestParameterValue) parseGetCapabilitiesRequest(gc GetCapabilitiesRequest) []wsc110.Exception {
+func (gpv *getCapabilitiesRequestParameterValue) parseGetCapabilitiesRequest(gc GetCapabilitiesRequest) {
 	gpv.request = getcapabilities
 	gpv.version = gc.Version
 	gpv.service = gc.Service
-
-	return nil
 }
 
 // toQueryParameters builds a url.Values query from a getCapabilitiesRequestParameterValue struct

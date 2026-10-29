@@ -1,5 +1,5 @@
 # ogc-specifications
-
+[![Lint](https://github.com/PDOK/ogc-specifications/actions/workflows/lint.yml/badge.svg)](https://github.com/PDOK/ogc-specifications/actions/workflows/lint.yml)
 ![GitHub license](https://img.shields.io/github/license/PDOK/ogc-specifications)
 [![GitHub
 release](https://img.shields.io/github/release/PDOK/ogc-specifications.svg)](https://github.com/PDOK/ogc-specifications/releases)

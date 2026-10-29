@@ -10,8 +10,8 @@ import (
 type BoundingBox struct {
 	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
 	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
-	LowerCorner Position `xml:"LowerCorner" yaml:"lowercorner"`
-	UpperCorner Position `xml:"UpperCorner" yaml:"uppercorner"`
+	LowerCorner Position `xml:"LowerCorner" yaml:"lowerCorner"`
+	UpperCorner Position `xml:"UpperCorner" yaml:"upperCorner"`
 }
 
 // Position type
@@ -22,7 +22,7 @@ func (b *BoundingBox) ToQueryParameters() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
-//ParseString builds a BoundingBox based on a string
+// ParseString builds a BoundingBox based on a string
 func (b *BoundingBox) parseString(boundingbox string) Exceptions {
 	result := strings.Split(boundingbox, ",")
 	var lx, ly, ux, uy float64

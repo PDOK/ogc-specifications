@@ -40,7 +40,7 @@ func (p *Position) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 func getPositionFromString(position string) []float64 {
 	regex := regexp.MustCompile(` `)
 	result := regex.Split(position, -1)
-	var ps []float64 //slice because length can be 2 or more
+	var ps []float64 // slice because length can be 2 or more
 
 	// check if 'strings' are parsable to float64
 	// if one is not return nothing

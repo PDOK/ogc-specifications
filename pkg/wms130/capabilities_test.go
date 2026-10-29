@@ -2,26 +2,36 @@ package wms130
 
 import (
 	"testing"
+
+	"gopkg.in/yaml.v3"
 )
 
 var capabilities = Capabilities{
 	WMSCapabilities: WMSCapabilities{
 		Layer: []Layer{
-			{Name: sp(`depthOneLayerOne`),
+			{Name: new(`depthOneLayerOne`),
 				Layer: []*Layer{
-					{Name: sp(`depthTwoLayerThree`), Style: []*Style{{Name: `StyleOne`}, {Name: `StyleTwo`}}},
-					{Name: sp(`depthTwoLayerFour`),
+					{Name: new(`depthTwoLayerThree`), Style: []*Style{{Name: `StyleOne`}, {Name: `StyleTwo`}}},
+					{Name: new(`depthTwoLayerFour`),
 						Layer: []*Layer{
-							{Name: sp(`depthThreeLayerSix`)},
-							{Name: sp(`depthThreeLayerSeven`), Style: []*Style{{Name: `StyleThree`}}},
+							{Name: new(`depthThreeLayerSix`)},
+							{Name: new(`depthThreeLayerSeven`), Style: []*Style{{Name: `StyleThree`}}},
 						},
 					},
 				},
 			},
-			{Name: sp(`depthOneLayerTwo`),
+			{Name: new(`depthOneLayerTwo`),
 				Layer: []*Layer{
-					{Name: sp(`depthTwoLayerFive`), Style: []*Style{{Name: `StyleFour`}, {Name: `StyleFive`}}}},
+					{Name: new(`depthTwoLayerFive`), Style: []*Style{{Name: `StyleFour`}, {Name: `StyleFive`}}}},
 			},
+		},
+	},
+}
+
+var capabilitiesWithException = Capabilities{
+	WMSCapabilities: WMSCapabilities{
+		Exception: ExceptionType{
+			Format: []string{"XML"},
 		},
 	},
 }
@@ -63,26 +73,82 @@ func TestStyleDefined(t *testing.T) {
 
 func TestGetLayer(t *testing.T) {
 	var tests = []struct {
-		layername string
+		layerName string
 		exception Exceptions
 	}{
-		0: {layername: `depthTwoLayerThree`},
-		1: {layername: `depthThreeLayerSeven`},
-		2: {layername: `unknownLayer`, exception: Exceptions{LayerNotDefined(`unknownLayer`)}},
+		0: {layerName: `depthTwoLayerThree`},
+		1: {layerName: `depthThreeLayerSeven`},
+		2: {layerName: `unknownLayer`, exception: Exceptions{LayerNotDefined(`unknownLayer`)}},
 	}
 
 	for k, test := range tests {
-		layerfound, exception := capabilities.GetLayer(test.layername)
+		layerFound, exception := capabilities.GetLayer(test.layerName)
 		if exception != nil {
 			if test.exception != nil {
 				if test.exception[0].Code() != exception[0].Code() {
-					t.Errorf("test: %d, expected: %s \ngot: %v", k, test.layername, capabilities.GetLayerNames())
+					t.Errorf("test: %d, expected: %s \ngot: %v", k, test.layerName, capabilities.GetLayerNames())
 				}
 			}
 		} else {
-			if *layerfound.Name != test.layername {
-				t.Errorf("test: %d, expected: %s \ngot: %s", k, capabilities.GetLayerNames(), *layerfound.Name)
+			if *layerFound.Name != test.layerName {
+				t.Errorf("test: %d, expected: %s \ngot: %s", k, capabilities.GetLayerNames(), *layerFound.Name)
 			}
 		}
+	}
+}
+
+func TestException(t *testing.T) {
+
+	out, err := yaml.Marshal(capabilitiesWithException)
+	if err != nil {
+		t.Fatalf("marshal failed: %v", err)
+	}
+
+	var got map[string]any
+	if err = yaml.Unmarshal(out, &got); err != nil {
+		t.Fatalf("unmarshal failed: %v", err)
+	}
+
+	wmsRaw, ok := got["wmsCapabilities"]
+	if !ok {
+		t.Fatalf("expected 'wmsCapabilities' key")
+	}
+
+	wms, ok := wmsRaw.(map[string]any)
+	if !ok {
+		t.Fatalf("'wmsCapabilities' is not a map, got %T", wmsRaw)
+	}
+
+	exceptionRaw, ok := wms["exception"]
+	if !ok {
+		t.Fatalf("expected 'exception' key to exist")
+	}
+
+	exception, ok := exceptionRaw.(map[string]any)
+	if !ok {
+		t.Fatalf("'exception' is not a map, got %T", exceptionRaw)
+	}
+
+	formatsRaw, ok := exception["format"]
+	if !ok {
+		t.Fatalf("expected 'format' key to exist")
+	}
+
+	formats, ok := formatsRaw.([]any)
+	if !ok {
+		t.Fatalf("'format' is not a slice, got %T", formatsRaw)
+	}
+
+	if len(formats) != 1 {
+		t.Fatalf("expected exactly 1 format, got %d", len(formats))
+	}
+
+	formatStr, ok := formats[0].(string)
+	if !ok {
+		t.Fatalf("format value is not string, got %T", formats[0])
+	}
+
+	if formatStr != "XML" {
+		t.Errorf("expected 'XML', got %s", formatStr)
 	}
 }

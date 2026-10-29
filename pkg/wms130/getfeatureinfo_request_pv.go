@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//getFeatureInfoRequestParameterValue struct
+// getFeatureInfoRequestParameterValue struct
 type getFeatureInfoRequestParameterValue struct {
 	// Table 8 - The Parameters of a GetFeatureInfo request
 	service string `yaml:"service,omitempty"`
@@ -17,46 +17,47 @@ type getFeatureInfoRequestParameterValue struct {
 }
 
 // parseQueryParameters builds a getFeatureInfoRequestParameterValue object based on the available query parameters
-func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.Values) Exceptions {
-	var exceptions Exceptions
+//
+//nolint:cyclop,staticcheck
+func (ipv *getFeatureInfoRequestParameterValue) parseQueryParameters(query url.Values) (exceptions Exceptions) {
 	for k, v := range query {
 		if len(v) != 1 {
 			exceptions = append(exceptions, InvalidParameterValue(k, strings.Join(v, ",")))
-		} else {
-			switch strings.ToUpper(k) {
-			case SERVICE:
-				ipv.service = strings.ToUpper(v[0])
-			case VERSION:
-				ipv.baseParameterValueRequest.version = v[0]
-			case REQUEST:
-				ipv.baseParameterValueRequest.request = v[0]
-			case LAYERS:
-				ipv.getMapParameterValueMandatory.layers = v[0]
-			case STYLES:
-				ipv.getMapParameterValueMandatory.styles = v[0]
-			case "CRS":
-				ipv.getMapParameterValueMandatory.crs = v[0]
-			case BBOX:
-				ipv.getMapParameterValueMandatory.bbox = v[0]
-			case WIDTH:
-				ipv.getMapParameterValueMandatory.width = v[0]
-			case HEIGHT:
-				ipv.getMapParameterValueMandatory.height = v[0]
-			case FORMAT:
-				ipv.getMapParameterValueMandatory.format = v[0]
-			case QUERYLAYERS:
-				ipv.getFeatureInfoParameterValueMandatory.querylayers = v[0]
-			case INFOFORMAT:
-				ipv.getFeatureInfoParameterValueMandatory.infoformat = v[0]
-			case I:
-				ipv.getFeatureInfoParameterValueMandatory.i = v[0]
-			case J:
-				ipv.getFeatureInfoParameterValueMandatory.j = v[0]
-			case FEATURECOUNT:
-				ipv.getFeatureInfoParameterValueOptional.featurecount = &(v[0])
-			case EXCEPTIONS:
-				ipv.getFeatureInfoParameterValueOptional.exceptions = &(v[0])
-			}
+			continue
+		}
+		switch strings.ToUpper(k) {
+		case SERVICE:
+			ipv.service = strings.ToUpper(v[0])
+		case VERSION:
+			ipv.baseParameterValueRequest.version = v[0]
+		case REQUEST:
+			ipv.baseParameterValueRequest.request = v[0]
+		case LAYERS:
+			ipv.getMapParameterValueMandatory.layers = v[0]
+		case STYLES:
+			ipv.getMapParameterValueMandatory.styles = v[0]
+		case CRS_KEY:
+			ipv.getMapParameterValueMandatory.crs = v[0]
+		case BBOX:
+			ipv.getMapParameterValueMandatory.bbox = v[0]
+		case WIDTH:
+			ipv.getMapParameterValueMandatory.width = v[0]
+		case HEIGHT:
+			ipv.getMapParameterValueMandatory.height = v[0]
+		case FORMAT:
+			ipv.getMapParameterValueMandatory.format = v[0]
+		case QUERYLAYERS:
+			ipv.getFeatureInfoParameterValueMandatory.querylayers = v[0]
+		case INFOFORMAT:
+			ipv.getFeatureInfoParameterValueMandatory.infoformat = v[0]
+		case I:
+			ipv.getFeatureInfoParameterValueMandatory.i = v[0]
+		case J:
+			ipv.getFeatureInfoParameterValueMandatory.j = v[0]
+		case FEATURECOUNT:
+			ipv.getFeatureInfoParameterValueOptional.featurecount = &(v[0])
+		case EXCEPTIONS:
+			ipv.getFeatureInfoParameterValueOptional.exceptions = &(v[0])
 		}
 	}
 
@@ -76,7 +77,7 @@ func (ipv getFeatureInfoRequestParameterValue) toQueryParameters() url.Values {
 	query[REQUEST] = []string{ipv.request}
 	query[LAYERS] = []string{ipv.layers}
 	query[STYLES] = []string{ipv.styles}
-	query["CRS"] = []string{ipv.crs}
+	query[CRS_KEY] = []string{ipv.crs}
 	query[BBOX] = []string{ipv.bbox}
 	query[WIDTH] = []string{ipv.width}
 	query[HEIGHT] = []string{ipv.height}
@@ -101,7 +102,7 @@ func (ipv getFeatureInfoRequestParameterValue) toQueryParameters() url.Values {
 }
 
 // parseGetFeatureInfoRequest builds a getFeatureInfoRequestParameterValue object based on a GetFeatureInfoRequest struct
-func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i GetFeatureInfoRequest) Exceptions {
+func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i GetFeatureInfoRequest) {
 
 	ipv.request = getfeatureinfo
 	ipv.version = Version
@@ -126,20 +127,18 @@ func (ipv *getFeatureInfoRequestParameterValue) parseGetFeatureInfoRequest(i Get
 	}
 
 	ipv.exceptions = i.Exceptions
-
-	return nil
 }
 
 // GetFeatureInfoParameterValueMandatory struct containing the mandatory WMS request Parameter Value
 type getFeatureInfoParameterValueMandatory struct {
-	querylayers string `yaml:"query_layers,omitempty"`
-	infoformat  string `yaml:"info_format,omitempty"`
+	querylayers string `yaml:"queryLayers,omitempty"`
+	infoformat  string `yaml:"infoFormat,omitempty"`
 	i           string `yaml:"i,omitempty"`
 	j           string `yaml:"j,omitempty"`
 }
 
 // GetFeatureInfoParameterValueOptional struct containing the optional WMS request Parameter Value
 type getFeatureInfoParameterValueOptional struct {
-	featurecount *string `yaml:"feature_count,omitempty"`
+	featurecount *string `yaml:"featureCount,omitempty"`
 	exceptions   *string `yaml:"exceptions,omitempty"`
 }

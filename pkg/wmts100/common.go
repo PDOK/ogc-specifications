@@ -1,6 +1,5 @@
 package wmts100
 
-//
 const (
 	getcapabilities = `GetCapabilities`
 	gettile         = `GetTile`

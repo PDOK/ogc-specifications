@@ -13,16 +13,16 @@ import (
 type BoundingBoxUnmarshal struct {
 	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
 	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
-	LowerCorner Position `xml:"LowerCorner" yaml:"lowercorner"`
-	UpperCorner Position `xml:"UpperCorner" yaml:"uppercorner"`
+	LowerCorner Position `xml:"LowerCorner" yaml:"lowerCorner"`
+	UpperCorner Position `xml:"UpperCorner" yaml:"upperCorner"`
 }
 
 // BoundingBox struct
 type BoundingBox struct {
 	Crs         string   `xml:"crs,attr,omitempty" yaml:"crs,omitempty"`
 	Dimensions  string   `xml:"dimensions,attr,omitempty" yaml:"dimensions,omitempty"`
-	LowerCorner Position `xml:"ows:LowerCorner" yaml:"lowercorner"`
-	UpperCorner Position `xml:"ows:UpperCorner" yaml:"uppercorner"`
+	LowerCorner Position `xml:"ows:LowerCorner" yaml:"lowerCorner"`
+	UpperCorner Position `xml:"ows:UpperCorner" yaml:"upperCorner"`
 }
 
 // WGS84BoundingBox layers on the wsc110.BoundingBox
@@ -38,7 +38,7 @@ func (b *BoundingBox) ToQueryParameters() string {
 	return fmt.Sprintf("%f,%f,%f,%f", b.LowerCorner[0], b.LowerCorner[1], b.UpperCorner[0], b.UpperCorner[1])
 }
 
-//ParseString builds a BoundingBox based on a string
+// ParseString builds a BoundingBox based on a string
 func (b *BoundingBox) ParseString(boundingbox string) Exception {
 	result := strings.Split(boundingbox, ",")
 	var lx, ly, ux, uy float64

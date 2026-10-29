@@ -33,7 +33,7 @@ func TestGetFeatureToXML(t *testing.T) {
 			StandardPresentationParameters: StandardPresentationParameters{
 				OutputFormat: sp("application/gml+xml; version=3.2"),
 				Count:        ip(3),
-				Startindex:   ip(0)},
+				StartIndex:   ip(0)},
 			BaseRequest: BaseRequest{
 				Service: Service,
 				Version: Version},
@@ -50,7 +50,7 @@ func TestGetFeatureToXML(t *testing.T) {
 			StandardPresentationParameters: StandardPresentationParameters{
 				OutputFormat: sp("application/gml+xml; version=3.2"),
 				Count:        ip(3),
-				Startindex:   ip(0),
+				StartIndex:   ip(0),
 			},
 			BaseRequest: BaseRequest{
 				Attr: utils.XMLAttribute{
@@ -80,6 +80,8 @@ func TestGetFeatureToXML(t *testing.T) {
 
 // TODO
 // Merge TestParseBodyGetFeature & TestParseQueryParameters GetFeature comporison into single func, like with WMS GetMap
+//
+//nolint:nestif
 func TestGetFeatureParseXML(t *testing.T) {
 	var tests = []struct {
 		body      []byte
@@ -90,7 +92,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 		0: {body: []byte(`<GetFeature outputFormat="application/gml+xml; version=3.2" count="3" startindex="0" service="WFS" version="2.0.0">
 		<Query typeNames="kadastralekaart:kadastralegrens" srsName="urn:ogc:def:crs:EPSG::28992"/>
 	   </GetFeature>`),
-			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
+			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), StartIndex: ip(0)},
 				BaseRequest: BaseRequest{Service: "WFS", Version: "2.0.0"}}},
 		// Get feature by resourceid
 		1: {body: []byte(`<?xml version="1.0" encoding="UTF-8"?>
@@ -101,7 +103,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 		  </fes:Filter>
 		 </Query>
 		</GetFeature>`),
-			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
+			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), StartIndex: ip(0)},
 				Query: Query{Filter: &Filter{
 					ResourceID: &ResourceIDs{{Rid: "kadastralegrens.29316bf0-b87f-4e8d-bf00-21f894bdf655"}}}},
 				BaseRequest: BaseRequest{
@@ -121,7 +123,7 @@ func TestGetFeatureParseXML(t *testing.T) {
 			  </fes:Filter>
 			 </Query>
 			</GetFeature>`),
-			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), Startindex: ip(0)},
+			result: GetFeatureRequest{XMLName: xml.Name{Local: "GetFeature"}, StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/gml+xml; version=3.2"), Count: ip(3), StartIndex: ip(0)},
 				Query: Query{Filter: &Filter{
 					ComparisonOperator: ComparisonOperator{PropertyIsEqualTo: &[]PropertyIsEqualTo{{
 						ComparisonOperatorAttribute: ComparisonOperatorAttribute{MatchCase: sp("true"), ValueReference: sp("id"), Literal: "29316bf0-b87f-4e8d-bf00-21f894bdf655"},
@@ -214,7 +216,7 @@ func TestProcesNamespaces(t *testing.T) {
 			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://www.someserver.com/ns1"}}},
 		// Duplicate namespace with the different values
 		4: {namespace: "xmlns(ns1,http://www.someserver.com/ns1),xmlns(ns1,http://someserver.com/ns2)",
-			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://someserver.com/ns2"}}}, //takes the last matched result
+			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://someserver.com/ns2"}}}, // takes the last matched result
 		// A namespace with a trailing string outside the xmlns()
 		5: {namespace: "xmlns(ns1,http://www.someserver.com/ns1),not a correct,namespace query,string",
 			result: []xml.Attr{{Name: xml.Name{Local: "ns1"}, Value: "http://www.someserver.com/ns1"}}},
@@ -264,12 +266,12 @@ func TestGetFeatureParseQueryParameters(t *testing.T) {
 						{Name: xml.Name{Space: "xmlns", Local: "ns2"}, Value: "http://someserver.com/ns2"}},
 				},
 				Query: Query{TypeNames: "dummy"}}},
-		// Startindex & resulttype
+		// StartIndex & resulttype
 		3: {queryParams: map[string][]string{OUTPUTFORMAT: {"application/xml"}, STARTINDEX: {"1000"}, RESULTTYPE: {"hits"}, TYPENAMES: {"dummy"}, COUNT: {"3"}, VERSION: {Version}},
 			result: GetFeatureRequest{
 				StandardPresentationParameters: StandardPresentationParameters{OutputFormat: sp("application/xml"),
 					Count:      ip(3),
-					Startindex: ip(1000), ResultType: sp("hits"),
+					StartIndex: ip(1000), ResultType: sp("hits"),
 				},
 				XMLName:     xml.Name{Local: getfeature},
 				BaseRequest: BaseRequest{Service: Service, Version: Version}, Query: Query{TypeNames: "dummy"}},
@@ -319,6 +321,7 @@ func TestGetFeatureParseQueryParameters(t *testing.T) {
 	}
 }
 
+//nolint:nestif
 func compareGetFeatureQuery(result, expected GetFeatureRequest, tid int, t *testing.T) {
 	if result.BaseRequest.Service != expected.BaseRequest.Service || result.BaseRequest.Version != expected.BaseRequest.Version {
 		t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, expected.BaseRequest, result.BaseRequest)
@@ -347,9 +350,9 @@ func compareGetFeatureQuery(result, expected GetFeatureRequest, tid int, t *test
 			t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, expected.OutputFormat, result.OutputFormat)
 		}
 	}
-	if expected.Startindex != nil {
-		if *result.Startindex != *expected.Startindex {
-			t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, expected.Startindex, result.Startindex)
+	if expected.StartIndex != nil {
+		if *result.StartIndex != *expected.StartIndex {
+			t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, expected.StartIndex, result.StartIndex)
 		}
 	}
 	if expected.ResultType != nil {
@@ -366,10 +369,8 @@ func compareGetFeatureQuery(result, expected GetFeatureRequest, tid int, t *test
 	}
 
 	if expected.Query.Filter != nil {
-		if expected.Query.SrsName != nil {
-			if *expected.Query.SrsName != *result.Query.SrsName {
-				t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, *expected.Query.SrsName, *result.Query.SrsName)
-			}
+		if expected.Query.SrsName != nil && *expected.Query.SrsName != *result.Query.SrsName {
+			t.Errorf("test: %d, expected: %+v ,\n got: %+v", tid, *expected.Query.SrsName, *result.Query.SrsName)
 		}
 		if expected.Query.Filter.ResourceID != nil {
 			for _, erid := range *expected.Query.Filter.ResourceID {
@@ -460,7 +461,7 @@ func TestGetFeatureToQueryParameters(t *testing.T) {
 			expectedquery: map[string][]string{REQUEST: {getfeature}, SERVICE: {Service}, VERSION: {Version}, TYPENAMES: {`ns1:F1`}}},
 		1: {getfeature: GetFeatureRequest{XMLName: xml.Name{Local: getfeature},
 			BaseRequest:                    BaseRequest{Service: Service, Version: Version},
-			StandardPresentationParameters: StandardPresentationParameters{Startindex: ip(100), Count: ip(21)},
+			StandardPresentationParameters: StandardPresentationParameters{StartIndex: ip(100), Count: ip(21)},
 			Query: Query{
 				TypeNames: `ns1:F1`,
 				Filter:    &Filter{ResourceID: &ResourceIDs{{Rid: "one"}, {Rid: "two"}}}},

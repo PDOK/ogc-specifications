@@ -1,6 +1,8 @@
 package wsc110
 
 import (
+	"github.com/pdok/ogc-specifications/pkg/common"
+
 	"testing"
 )
 
@@ -11,7 +13,7 @@ func TestOWSException(t *testing.T) {
 		exceptionCode string
 		locatorCode   string
 	}{
-		0: {exception: exception{ExceptionCode: "", ExceptionText: "", LocatorCode: ""},
+		0: {exception: exception{ExceptionDetails: common.ExceptionDetails{ExceptionCode: "", ExceptionText: "", LocatorCode: ""}},
 			exceptionText: "",
 			exceptionCode: "",
 			locatorCode:   "",

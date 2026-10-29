@@ -2,29 +2,33 @@ package wms130
 
 import (
 	"encoding/xml"
+
+	"github.com/pdok/ogc-specifications/pkg/common"
 )
 
-// exception
-type exception struct {
-	ExceptionText string `xml:",chardata" yaml:"exception"`
-	ExceptionCode string `xml:"code,attr" yaml:"code"`
-	LocatorCode   string `xml:"locator,attr,omitempty" yaml:"locator,omitempty"`
+// Exception
+//
+//nolint:errname
+type Exception struct {
+	common.ExceptionDetails
 }
 
-// Exceptions is a array of the Exception interface
-type Exceptions []exception
+// Exceptions is an array of the Exception interface
+type Exceptions []Exception
 
 // ServiceExceptionReport struct
 type ServiceExceptionReport struct {
-	XMLName          xml.Name   `xml:"ServiceExceptionReport" yaml:"serviceexceptionreport"`
+	XMLName          xml.Name   `xml:"ServiceExceptionReport" yaml:"serviceExceptionReport"`
 	Version          string     `xml:"version,attr" yaml:"version"`
-	Xmlns            string     `xml:"xmlns,attr,omitempty"`
-	Xsi              string     `xml:"xsi,attr,omitempty"`
-	SchemaLocation   string     `xml:"schemaLocation,attr,omitempty"`
-	ServiceException Exceptions `xml:"ServiceException"`
+	Xmlns            string     `xml:"xmlns,attr,omitempty" yaml:"xmlns"`
+	Xsi              string     `xml:"xsi,attr,omitempty" yaml:"xsi"`
+	SchemaLocation   string     `xml:"schemaLocation,attr,omitempty" yaml:"schemaLocation"`
+	ServiceException Exceptions `xml:"ServiceException" yaml:"serviceException"`
 }
 
 // ToReport builds a ServiceExceptionReport from an array of Exceptions
+//
+//nolint:goconst
 func (e Exceptions) ToReport() ServiceExceptionReport {
 	r := ServiceExceptionReport{}
 	r.SchemaLocation = `http://www.opengis.net/ogc http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd`
@@ -41,22 +45,22 @@ func (r ServiceExceptionReport) ToBytes() []byte {
 	return append([]byte(xml.Header), si...)
 }
 
-// ToExceptions promotes a single exception to an array of one
-func (e exception) ToExceptions() Exceptions {
+// ToExceptions promotes a single Exception to an array of one
+func (e Exception) ToExceptions() Exceptions {
 	return Exceptions{e}
 }
 
 // Error returns available ExceptionText
-func (e exception) Error() string {
+func (e Exception) Error() string {
 	return e.ExceptionText
 }
 
 // Code returns available ExceptionCode
-func (e exception) Code() string {
+func (e Exception) Code() string {
 	return e.ExceptionCode
 }
 
 // Locator returns available ExceptionCode
-func (e exception) Locator() string {
+func (e Exception) Locator() string {
 	return e.LocatorCode
 }
